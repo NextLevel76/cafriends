@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VariablesViewState
+   version = "1.0">
+   <ContextStates>
+      <ContextState
+         contextName = "AViewController.timerAction():AViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "MainManager.shared.bMemberPhoneCertifi">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+   </ContextStates>
+</VariablesViewState>
