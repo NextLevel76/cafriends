@@ -9,6 +9,13 @@
 // 깃허브 주소
 // git remote add CarFriends2 https://github.com/NextLevel76/cafriends
 
+// 깃 초기화
+//git config --global user.name "NextLevel76"
+// git config --global user.email "lcblue@naver.com"
+
+
+
+
 
 import Foundation
 import UIKit
