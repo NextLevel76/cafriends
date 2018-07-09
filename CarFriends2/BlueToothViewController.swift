@@ -66,7 +66,12 @@ class BlueToothViewController: UIViewController {
         
         
         // TEST // 0:비회원    1:차정보없이 가입     2:차정보입력 가입
-        //MainManager.shared.iMemberJoinState = 0
+        
+        if( MainManager.shared.bAPP_TEST == true ) {
+        
+            MainManager.shared.iMemberJoinState = 0
+        }
+        
     }
     
     

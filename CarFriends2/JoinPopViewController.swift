@@ -16,7 +16,7 @@ class JoinPopViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         label_notis.text = MainManager.shared.str_certifi_notis
         btn_OK.backgroundColor = UIColor(red: 11/256, green: 85/255, blue: 156/255, alpha: 1)
         print(MainManager.shared.str_certifi_notis)

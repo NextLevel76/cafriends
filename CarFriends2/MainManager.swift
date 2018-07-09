@@ -408,7 +408,6 @@ struct BLE_Info {
     
     
     
-    
     //    var str =  "Hello Zedd!"
     //    var arr =  str.components(separatedBy: " ") // " "안어 들어간 문자로 나눠 배열로 준다
     //    print(arr)
@@ -425,13 +424,15 @@ class MainManager   {
     static let shared = MainManager()
     
     
-    
+    var bAPP_TEST = true
     
     
     
     
     var mainGranted: Bool = false
     var iMemberJoinState: Int = 0           // 0:비회원 1:차정보없이 가입 2:차정보입력 가입
+    
+    var iMemberJoinMessageState: Int = 0
     
     var bMemberPhoneCertifi: Bool = false   // 핸폰 인증
     

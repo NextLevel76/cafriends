@@ -228,24 +228,86 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
         
         
         
+       
+        
+        
+        
+        
         
         field_car_kind.inputView = pickerView
         field_car_kind.textAlignment = .center
         field_car_kind.placeholder = "Select Car"
         
+        // ToolBar
+        let toolBar = UIToolbar()
+        toolBar.barStyle = .default
+        toolBar.isTranslucent = true
+        toolBar.tintColor = UIColor(red: 92/255, green: 216/255, blue: 255/255, alpha: 1)
+        toolBar.sizeToFit()
+        
+        // Adding Button ToolBar
+        let doneButton = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(MemberJoinViewController.doneClick))
+        //let spaceButton = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+        //        let cancelButton = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(ViewController.cancelClick))
+        //toolBar.setItems([cancelButton, spaceButton, doneButton], animated: false)
+        toolBar.setItems([doneButton], animated: false)
+        toolBar.isUserInteractionEnabled = true
+        field_car_kind.inputAccessoryView = toolBar
+        
+        // test
+        pickerView.selectRow(1, inComponent: 0, animated: true)
+        
+        
         field_certifi_num.delegate = self
-        field_certifi_num.placeholder = "번호판번호입력"
+        field_certifi_num.placeholder = "99가9999"
         
         field_car_dae_num.delegate = self
-        field_car_dae_num.placeholder = "예:AB000000000000"
+        field_car_dae_num.placeholder = "KLYDC487DHC701056"
         
         field_car_year.inputView = pickerView2
         field_car_year.textAlignment = .center
         field_car_year.placeholder = "차량 연식"
         
+        // ToolBar
+        let toolBar1 = UIToolbar()
+        toolBar1.barStyle = .default
+        toolBar1.isTranslucent = true
+        toolBar1.tintColor = UIColor(red: 92/255, green: 216/255, blue: 255/255, alpha: 1)
+        toolBar1.sizeToFit()
+        
+        // Adding Button ToolBar
+        let doneButton1 = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(MemberJoinViewController.doneClick1))
+        //let spaceButton = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+        //        let cancelButton = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(ViewController.cancelClick))
+        //toolBar.setItems([cancelButton, spaceButton, doneButton], animated: false)
+        toolBar1.setItems([doneButton1], animated: false)
+        toolBar1.isUserInteractionEnabled = true
+        field_car_year.inputAccessoryView = toolBar1
+        
+        
+        
+        
+        
         field_car_fuel.inputView = pickerView3
         field_car_fuel.textAlignment = .center
         field_car_fuel.placeholder = "연료 타입"
+        
+        // ToolBar
+        let toolBar2 = UIToolbar()
+        toolBar2.barStyle = .default
+        toolBar2.isTranslucent = true
+        toolBar2.tintColor = UIColor(red: 92/255, green: 216/255, blue: 255/255, alpha: 1)
+        toolBar2.sizeToFit()
+        
+        // Adding Button ToolBar
+        let doneButton2 = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(MemberJoinViewController.doneClick2))
+        //let spaceButton = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+        //        let cancelButton = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(ViewController.cancelClick))
+        //toolBar.setItems([cancelButton, spaceButton, doneButton], animated: false)
+        toolBar2.setItems([doneButton2], animated: false)
+        toolBar2.isUserInteractionEnabled = true
+        field_car_fuel.inputAccessoryView = toolBar2
+        
         
         field_car_tot_km.delegate = self
         field_car_tot_km.placeholder = "예:12000"
@@ -253,7 +315,30 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
         field_car_km_L.delegate = self
         field_car_km_L.placeholder = "예:15"
         
+        
+        
+        Join_View.frame = MainManager.shared.initLoadChangeFrame(frame: Join_View.frame)
+        OBDLoad_View.frame = MainManager.shared.initLoadChangeFrame(frame: OBDLoad_View.frame)
+        CarInfo_view.frame = MainManager.shared.initLoadChangeFrame(frame: CarInfo_view.frame)
+        JoinOkAppStart_view.frame = MainManager.shared.initLoadChangeFrame(frame: JoinOkAppStart_view.frame)
     }
+    
+    
+    func doneClick() {
+        
+        field_car_kind.resignFirstResponder()
+    }
+    
+    func doneClick1() {
+        
+        field_car_year.resignFirstResponder()
+    }
+    
+    func doneClick2() {
+        
+        field_car_fuel.resignFirstResponder()
+    }
+    
     
     
     // blue001 / 01012345678
@@ -393,8 +478,9 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
         
         
         if( field_nick_input.text?.count == 0 ) {
-            
-            self.label_notis.text = "닉네임을 입력하세요~!"
+           
+            MainManager.shared.str_certifi_notis = "닉네임을 입력하세요~!"
+            self.performSegue(withIdentifier: "joinPopSegue", sender: self)
         }
         else {
             
@@ -453,7 +539,8 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
                         if( temp == "MEM_NO_EXISTS" ) {
                             
                             self.bNickNameUplicateCheck = true
-                            self.label_notis.text = "사용 가능한 닉네임입니다.~!"
+                            MainManager.shared.str_certifi_notis = "사용 가능한 닉네임입니다.~!"
+                            self.performSegue(withIdentifier: "joinPopSegue", sender: self)
                             
                             // 닉네임 저장
                             // MainManager.shared.member_info?.str_id_nick = (self.field_nick_input.text)!
@@ -465,7 +552,8 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
                         else {
                             
                             self.bNickNameUplicateCheck = false
-                            self.label_notis.text = "닉네임이 중복입니다.~!"
+                            MainManager.shared.str_certifi_notis = "닉네임이 중복입니다.~!"
+                            self.performSegue(withIdentifier: "joinPopSegue", sender: self)
                             
                             print("닉네임 중복")
                             print(temp)
@@ -484,14 +572,13 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
         
         
         if( bNickNameUplicateCheck == false ) {
-            
-            self.label_notis.text = "닉네임 중복체크를 먼저 해주세요.~!"
+
+            MainManager.shared.str_certifi_notis = "닉네임 중복체크를 먼저 해주세요.~!"
+            self.performSegue(withIdentifier: "joinPopSegue", sender: self)
         }
         else if( bTimeCheckStart == false ) {
             
-            // 시간 카운트 시작
-            bTimeCheckStart = true
-            certifi_count = 180 // 3분
+            
             
             let tempString01 = field_phone_01.text as String?
             let tempString02 = field_phone_02.text as String?
@@ -501,12 +588,19 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
             MainManager.shared.member_info.str_id_phone_num = tempString01! + tempString02! + tempString03!
             
             if( field_phone_01.text!.count == 0 ||
-                field_phone_01.text!.count == 0 ||
-                field_phone_01.text!.count == 0 ) {
-                
-                self.label_notis.text = "전화번호를 전부 입력해 주세요.!"
+                field_phone_02.text!.count == 0 ||
+                field_phone_03.text!.count == 0 ) {
+              
+
+                MainManager.shared.str_certifi_notis = "전화번호를 전부 입력해 주세요.!"
+                self.performSegue(withIdentifier: "joinPopSegue", sender: self)
                 return
             }
+            
+            
+            // 시간 카운트 시작
+            bTimeCheckStart = true
+            certifi_count = 180 // 3분
             
             
             // login.php?Req=PhoneCheck&PhoneNo=핸폰번호
@@ -556,12 +650,15 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
         MainManager.shared.str_certifi_notis = "인증 번호가 맞지 않습니다.!"
         
         if( bNickNameUplicateCheck == false ) {
-            
-            self.label_notis.text = "닉네임 중복체크를 먼저 해주세요.~!"
+
+            MainManager.shared.str_certifi_notis = "닉네임 중복체크를 먼저 해주세요.~!"
+            self.performSegue(withIdentifier: "joinPopSegue", sender: self)
         }
         else if( field_certifi_input.text!.count == 0 ) {
             
-            self.label_notis.text = "인증번호를 입력 해주세요.~! "
+
+            MainManager.shared.str_certifi_notis = "인증번호를 입력 해주세요.~! "
+            self.performSegue(withIdentifier: "joinPopSegue", sender: self)
         }
         else if( (self.server_get_phone_certifi_num == field_certifi_input.text) ) {
             
@@ -665,8 +762,9 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
                         defaults.set(1, forKey: "iMemberJoinState")
                     }
                     else {
-                        
-                        self.label_notis.text = "회원가입 실패, 정보를 다시 확인해주세요~!"
+
+                        MainManager.shared.str_certifi_notis = "회원가입 실패, 정보를 다시 확인해주세요~!"
+                        self.performSegue(withIdentifier: "joinPopSegue", sender: self)
                         print( "회원가입 실패" )
                     }
                     
@@ -835,8 +933,9 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
                             
                         }
                         else {
-                            
-                            self.label_notis.text = "회원가입 실패, 정보를 다시 확인해주세요~!"
+
+                            MainManager.shared.str_certifi_notis = "회원가입 실패, 정보를 다시 확인해주세요~!"
+                            self.performSegue(withIdentifier: "joinPopSegue", sender: self)
                             print( "회원가입 실패2" )
                         }
                         
@@ -889,7 +988,9 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
         else if (textField == field_nick_input) {
             textField.text = ""
             bNickNameUplicateCheck = false
-            self.label_notis.text = "닉네임 중복체크를 해주세요.~!"
+
+            MainManager.shared.str_certifi_notis = "닉네임 중복체크를 해주세요.~!"
+            self.performSegue(withIdentifier: "joinPopSegue", sender: self)
         }
         else if (textField == field_phone_01) {
             textField.text = ""
@@ -911,7 +1012,8 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
         if (textField == field_nick_input) {
             
             bNickNameUplicateCheck = false
-            self.label_notis.text = "닉네임 중복체크를 해주세요.~!"
+            //MainManager.shared.str_certifi_notis = "닉네임 중복체크를 해주세요.~!"
+            //self.performSegue(withIdentifier: "joinPopSegue", sender: self)
         }
     }
     
