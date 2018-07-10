@@ -27,10 +27,17 @@ struct Member_Info {
     var str_id_nick = "파랑오빠(회원가입데이타없다.)"
     var str_id_email = "aadfa@naver.com"
     var str_id_phone_num = "01012349999"
+    
     var str_car_kind = "임프레자"
+    var i_car_piker_select = 0
+    
     var str_car_year = "2018"
-    var str_car_dae_num = "KLAJA69KDB12345"
+    var i_year_piker_select = 0
+    
     var str_car_fuel_type = "디젤"
+    var i_fuel_piker_select = 0
+    
+    var str_car_dae_num = "KLAJA69KDB12345"
     var str_car_plate_num = "서울가1234"
     
     var str_TotalDriveMileage = "10000"    // 총 주행거리
@@ -448,6 +455,12 @@ class MainManager   {
     var bA02ON:[Bool] = [false,true,false,true,false,true,true,false,true,false,false]
     // 팝업창에서 예약시동 설정할시 이미지 변경
     var bStartPopTimeReserv:Bool = false
+    
+    
+    
+    var bCarListRequest:Bool = false
+    var str_select_carList:[String] = []
+    var str_select_yearList:[String] = []
     
     
     

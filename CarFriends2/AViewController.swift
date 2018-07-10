@@ -491,12 +491,12 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     
     var timer = Timer()
     
-    let sz_car_name = ["쉐보레","AE86","니차똥차","란에보","임프레자","람보르기니","부가티","포니2","엑셀런트","프라이드","벤츠"]
-    let sz_car_year = ["2001","2002","2003","2004","2005","2006","2007","2008","2009","2010",
-                       "2011","2012","2013","2014","2015","2016","2017","2018","2019","2020",
-                       "2021","2022","2023","2024","2025","2026","2027","2028","2029","2030"]
+//    let sz_car_name = ["쉐보레","AE86","니차똥차","란에보","임프레자","람보르기니","부가티","포니2","엑셀런트","프라이드","벤츠"]
+//    let sz_car_year = ["2001","2002","2003","2004","2005","2006","2007","2008","2009","2010",
+//                       "2011","2012","2013","2014","2015","2016","2017","2018","2019","2020",
+//                       "2021","2022","2023","2024","2025","2026","2027","2028","2029","2030"]
     
-    let sz_car_fuel = ["경유","휘발유","가스(GAS)","전기차","하이브리드","수소차","기타"]
+    let sz_car_fuel = ["휘발유","경유","가스(GAS)"]
     
     var pickerView = UIPickerView();    // 차종
     var pickerView2 = UIPickerView();   // 연식
@@ -924,26 +924,107 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         pickerView3.delegate = self
         pickerView3.dataSource = self
         
+        
+        
         a01_01_info_mod_view.field_car_kind.inputView = pickerView
         a01_01_info_mod_view.field_car_kind.textAlignment = .center
         a01_01_info_mod_view.field_car_kind.placeholder = "Select Car"
+        
+        
+        // ToolBar
+        let toolBar = UIToolbar()
+        toolBar.barStyle = .default
+        toolBar.isTranslucent = true
+        toolBar.tintColor = UIColor(red: 92/255, green: 216/255, blue: 255/255, alpha: 1)
+        toolBar.sizeToFit()
+        // Adding Button ToolBar
+        let doneButton = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(AViewController.doneClick))
+        //let spaceButton = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+        //        let cancelButton = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(ViewController.cancelClick))
+        //toolBar.setItems([cancelButton, spaceButton, doneButton], animated: false)
+        toolBar.setItems([doneButton], animated: false)
+        toolBar.isUserInteractionEnabled = true
+        a01_01_info_mod_view.field_car_kind.inputAccessoryView = toolBar
+        
+        // test 피커뷰 셀 이동시켜놓기
+        pickerView.selectRow(MainManager.shared.member_info.i_car_piker_select, inComponent: 0, animated: false)
+        a01_01_info_mod_view.field_car_kind.text = MainManager.shared.member_info.str_car_kind
+        
+        
+        
+        
         
         a01_01_info_mod_view.field_car_year.inputView = pickerView2
         a01_01_info_mod_view.field_car_year.textAlignment = .center
         a01_01_info_mod_view.field_car_year.placeholder = "차량 연식"
         
+        // ToolBar
+        let toolBar1 = UIToolbar()
+        toolBar1.barStyle = .default
+        toolBar1.isTranslucent = true
+        toolBar1.tintColor = UIColor(red: 92/255, green: 216/255, blue: 255/255, alpha: 1)
+        toolBar1.sizeToFit()
+        // Adding Button ToolBar
+        let doneButton1 = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(AViewController.doneClick1))
+        //let spaceButton = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+        //        let cancelButton = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(ViewController.cancelClick))
+        //toolBar.setItems([cancelButton, spaceButton, doneButton], animated: false)
+        toolBar1.setItems([doneButton1], animated: false)
+        toolBar1.isUserInteractionEnabled = true
+        a01_01_info_mod_view.field_car_year.inputAccessoryView = toolBar1
+        
+        // 피커뷰 셀 이동시켜놓기
+        // test 피커뷰 셀 이동시켜놓기
+        pickerView2.selectRow(MainManager.shared.member_info.i_year_piker_select, inComponent: 0, animated: false)
+        a01_01_info_mod_view.field_car_year.text = MainManager.shared.member_info.str_car_year
+        
+        
+        
+        
+        
+        
         a01_01_info_mod_view.field_car_fuel.inputView = pickerView3
         a01_01_info_mod_view.field_car_fuel.textAlignment = .center
         a01_01_info_mod_view.field_car_fuel.placeholder = "연료 타입"
+        
+        
+        // ToolBar
+        let toolBar2 = UIToolbar()
+        toolBar2.barStyle = .default
+        toolBar2.isTranslucent = true
+        toolBar2.tintColor = UIColor(red: 92/255, green: 216/255, blue: 255/255, alpha: 1)
+        toolBar2.sizeToFit()
+        // Adding Button ToolBar
+        let doneButton2 = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(AViewController.doneClick2))
+        //let spaceButton = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+        //        let cancelButton = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(ViewController.cancelClick))
+        //toolBar.setItems([cancelButton, spaceButton, doneButton], animated: false)
+        toolBar2.setItems([doneButton2], animated: false)
+        toolBar2.isUserInteractionEnabled = true
+        a01_01_info_mod_view.field_car_year.inputAccessoryView = toolBar2
+        // 피커뷰 셀 이동시켜놓기
+        pickerView3.selectRow(MainManager.shared.member_info.i_fuel_piker_select, inComponent: 0, animated: false)
+        a01_01_info_mod_view.field_car_fuel.text = MainManager.shared.member_info.str_car_fuel_type
+        
+
+        
+        
+                
+        
         
         a01_01_info_mod_view.field_certifi_input.delegate = self
         a01_01_info_mod_view.field_certifi_input.placeholder = "인증번호입력(4자리)"
         
         a01_01_info_mod_view.field_car_dae_num.delegate = self
-        a01_01_info_mod_view.field_car_dae_num.placeholder = "예:AB000000000000"
+        a01_01_info_mod_view.field_car_dae_num.placeholder = "예:KLYDC487DHC701056"
+        a01_01_info_mod_view.field_car_dae_num.text = MainManager.shared.member_info.str_car_dae_num
+        
         
         a01_01_info_mod_view.field_plate_num.delegate = self
-        a01_01_info_mod_view.field_plate_num.placeholder = "예:12가1234"
+        a01_01_info_mod_view.field_plate_num.placeholder = "예:99가9999"
+        a01_01_info_mod_view.field_plate_num.text = MainManager.shared.member_info.str_car_plate_num
+        
+
         
         
         
@@ -1222,8 +1303,24 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     }
     
     
+    // 피커뷰 닫기
+    func doneClick() {
+        
+        a01_01_info_mod_view.field_car_kind.resignFirstResponder()
+    }
+    
+    func doneClick1() {
+        
+        a01_01_info_mod_view.field_car_year.resignFirstResponder()
+    }
+    
+    func doneClick2() {
+        
+        a01_01_info_mod_view.field_car_fuel.resignFirstResponder()
+    }
+    
+    
     func a01_04_viewInit() {
-
 
         
         a01_04_view.progress_fuel.transform = CGAffineTransform(scaleX: 1.0, y: 7.0)
@@ -2060,16 +2157,20 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     }
     
     
+
+    
+    
+    
     // returns the # of rows in each component..
     public func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int
     {
         if( pickerView == self.pickerView ) {
             
-            return sz_car_name.count
+            return MainManager.shared.str_select_carList.count
         }
         else if( pickerView == self.pickerView2 ) {
             
-            return sz_car_year.count
+            return MainManager.shared.str_select_yearList.count
         }
         else {
             
@@ -2084,11 +2185,11 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         
         if( pickerView == self.pickerView ) {
             
-            return sz_car_name[row]
+            return MainManager.shared.str_select_carList[row]
         }
         else if( pickerView == self.pickerView2 ) {
             
-            return sz_car_year[row]
+            return MainManager.shared.str_select_yearList[row]
         }
         else {
             
@@ -2103,14 +2204,17 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         
         if( pickerView == self.pickerView ) {
             
-            a01_01_info_mod_view.field_car_kind.text = sz_car_name[row]
+            MainManager.shared.member_info.i_car_piker_select = row
+            a01_01_info_mod_view.field_car_kind.text = MainManager.shared.str_select_carList[row]
         }
         else if( pickerView == self.pickerView2 ) {
             
-            a01_01_info_mod_view.field_car_year.text = sz_car_year[row]
+            MainManager.shared.member_info.i_year_piker_select = row
+            a01_01_info_mod_view.field_car_year.text = MainManager.shared.str_select_yearList[row]
         }
         else {
             
+            MainManager.shared.member_info.i_fuel_piker_select = row
             a01_01_info_mod_view.field_car_fuel.text = sz_car_fuel[row]
         }
     }
@@ -2491,6 +2595,9 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
                             
                             // 클라 저장
                             UserDefaults.standard.set(MainManager.shared.member_info.str_car_kind, forKey: "str_car_kind")
+                            // 피커뷰 선택번호 저장
+                            UserDefaults.standard.set(MainManager.shared.member_info.i_car_piker_select, forKey: "i_car_piker_select")
+
                             self.a01_01_info_mod_view.label_notis.text = "차종 수정 성공"
                             print( "차종 수정 성공" )
                         }
@@ -2551,6 +2658,8 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
                             
                             // 클라 저장
                             UserDefaults.standard.set(MainManager.shared.member_info.str_car_fuel_type, forKey: "str_car_fuel_type")
+                            UserDefaults.standard.set(MainManager.shared.member_info.i_fuel_piker_select, forKey: "i_fuel_piker_select")
+                            
                             self.a01_01_info_mod_view.label_notis.text = "연료타입 수정 성공"
                             print( "연료타입 수정 성공" )
                         }
@@ -2608,9 +2717,9 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
                         let Result = json["Result"].rawString()!
                         if( Result == "SAVE_OK" ) {
                             
-                            
                             // 클라 저장
                             UserDefaults.standard.set(MainManager.shared.member_info.str_car_year, forKey: "str_car_year")
+                            UserDefaults.standard.set(MainManager.shared.member_info.i_year_piker_select, forKey: "i_year_piker_select")
                             self.a01_01_info_mod_view.label_notis.text = "연식 수정 성공"
                             print( "연식 수정 성공" )
                         }

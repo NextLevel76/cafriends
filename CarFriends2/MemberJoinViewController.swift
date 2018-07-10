@@ -101,12 +101,12 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
     
     
     
-    let sz_car_name = ["쉐보레","AE86","니차똥차","란에보","임프레자","람보르기니","부가티","포니2","엑셀런트","프라이드","벤츠"]
-    let sz_car_year = ["2001","2002","2003","2004","2005","2006","2007","2008","2009","2010",
-                       "2011","2012","2013","2014","2015","2016","2017","2018","2019","2020",
-                       "2021","2022","2023","2024","2025","2026","2027","2028","2029","2030"]
+//    let sz_car_name = ["쉐보레","AE86","니차똥차","란에보","임프레자","람보르기니","부가티","포니2","엑셀런트","프라이드","벤츠"]
+//    let sz_car_year = ["2001","2002","2003","2004","2005","2006","2007","2008","2009","2010",
+//                       "2011","2012","2013","2014","2015","2016","2017","2018","2019","2020",
+//                       "2021","2022","2023","2024","2025","2026","2027","2028","2029","2030"]
     
-    let sz_car_fuel = ["경유","휘발유","가스(GAS)","전기차","하이브리드","수소차","기타"]
+    let sz_car_fuel = ["휘발유","경유","가스(GAS)"]
     
     var pickerView = UIPickerView();    // 차종
     var pickerView2 = UIPickerView();   // 연식
@@ -254,8 +254,8 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
         toolBar.isUserInteractionEnabled = true
         field_car_kind.inputAccessoryView = toolBar
         
-        // test
-        pickerView.selectRow(1, inComponent: 0, animated: true)
+        // test 피커뷰 셀 이동시켜놓기
+        pickerView.selectRow(1, inComponent: 0, animated: false)
         
         
         field_certifi_num.delegate = self
@@ -348,16 +348,19 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
     }
     
     
+    //var str_select_carList:[String] = []
+    //var str_select_yearList:[String] = []
+    
     // returns the # of rows in each component..
     public func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int
     {
         if( pickerView == self.pickerView ) {
             
-            return sz_car_name.count
+            return MainManager.shared.str_select_carList.count
         }
         else if( pickerView == self.pickerView2 ) {
             
-            return sz_car_year.count
+            return MainManager.shared.str_select_yearList.count
         }
         else {
             
@@ -372,11 +375,11 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
         
         if( pickerView == self.pickerView ) {
             
-            return sz_car_name[row]
+            return MainManager.shared.str_select_carList[row]
         }
         else if( pickerView == self.pickerView2 ) {
             
-            return sz_car_year[row]
+            return MainManager.shared.str_select_yearList[row]
         }
         else {
             
@@ -386,19 +389,25 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
         
     }
     
+    
+
+        // 선택된 피커뷰
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         // TODO
         
         if( pickerView == self.pickerView ) {
             
-            field_car_kind.text = sz_car_name[row]
+            MainManager.shared.member_info.i_car_piker_select = row
+            field_car_kind.text = MainManager.shared.str_select_carList[row]
         }
         else if( pickerView == self.pickerView2 ) {
             
-            field_car_year.text = sz_car_year[row]
+            MainManager.shared.member_info.i_year_piker_select = row
+            field_car_year.text = MainManager.shared.str_select_yearList[row]
         }
         else {
             
+            MainManager.shared.member_info.i_fuel_piker_select = row
             field_car_fuel.text = sz_car_fuel[row]
         }
     }
@@ -712,7 +721,7 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
         
         let parameters = [
             "Req": "Register",
-            "mb_password": phone_num,
+            "mb_password": nick_name,
             "mb_nick": nick_name,
             "mb_email": "Register",
             "mb_hp": phone_num,
@@ -856,7 +865,7 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
             
             let parameters = [
                 "Req": "Register",
-                "mb_password": phone_num,
+                "mb_password": nick_name,
                 "mb_nick": nick_name,
                 "mb_email": "",
                 "mb_hp": phone_num,
@@ -915,8 +924,12 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
                             defaults.set(MainManager.shared.member_info.str_car_fuel_type, forKey: "str_car_fuel_type")
                             defaults.set(MainManager.shared.member_info.str_car_plate_num, forKey: "str_car_plate_num")
                             defaults.set(MainManager.shared.member_info.str_car_year, forKey: "str_car_year")
-                            defaults.set(MainManager.shared.member_info.str_AvgFuelMileage, forKey: "str_car_fuel_eff")
+                            defaults.set(MainManager.shared.member_info.str_AvgFuelMileage, forKey: "str_AvgFuelMileage")
                             
+                            // 피커뷰 선택번호 저장
+                            defaults.set(MainManager.shared.member_info.i_car_piker_select, forKey: "i_car_piker_select")
+                            defaults.set(MainManager.shared.member_info.i_year_piker_select, forKey: "i_year_piker_select")
+                            defaults.set(MainManager.shared.member_info.i_fuel_piker_select, forKey: "i_fuel_piker_select")
                             
                             
                             print("_____ 회원가입 성공 정보 _____")
