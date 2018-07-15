@@ -23,7 +23,7 @@
                         <subviews>
                             <button opaque="NO" tag="1" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="038-IJ-Vde">
                                 <rect key="frame" x="0.0" y="0.0" width="125" height="41"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
                                 <state key="normal" backgroundImage="frame-A-01-on"/>
                                 <connections>
                                     <action selector="pressedA01:" destination="BYZ-38-t0r" eventType="touchUpInside" id="hso-Ca-9dU"/>
@@ -170,7 +170,7 @@
                                     <rect key="frame" x="0.0" y="28" width="375" height="56"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="DAZ-wT-5ha" id="Fsq-vA-ANr">
-                                        <rect key="frame" x="0.0" y="0.0" width="375" height="55.5"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="375" height="56"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                         <subviews>
                                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="A-01-03-07-BgList" translatesAutoresizingMaskIntoConstraints="NO" id="jvg-V0-epy">
@@ -1126,7 +1126,7 @@
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <nil key="textColor"/>
                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                            <textInputTraits key="textInputTraits" keyboardType="numberPad" secureTextEntry="YES" textContentType="password"/>
+                            <textInputTraits key="textInputTraits" keyboardType="numberPad" returnKeyType="next" secureTextEntry="YES" textContentType="password"/>
                         </textField>
                         <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="YeY-M9-olk">
                             <rect key="frame" x="118" y="235" width="66" height="30"/>
@@ -1172,7 +1172,7 @@
                     <rect key="frame" x="0.0" y="0.0" width="375" height="574"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     <subviews>
-                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="( 남은시간 3분 00초 )" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1ez-RK-o96">
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="( 남은시간 1분 00초 )" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1ez-RK-o96">
                             <rect key="frame" x="17" y="147" width="338" height="21"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <fontDescription key="fontDescription" type="system" pointSize="13"/>
@@ -1219,14 +1219,7 @@
                             <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
                         </textField>
                         <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="gzf-fa-Gd7">
-                            <rect key="frame" x="16" y="72" width="69" height="30"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                            <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
-                        </textField>
-                        <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="saJ-XT-kw6">
-                            <rect key="frame" x="97" y="72" width="69" height="30"/>
+                            <rect key="frame" x="16" y="72" width="225" height="30"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
@@ -1280,13 +1273,6 @@
                             <color key="textColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <nil key="highlightedColor"/>
                         </label>
-                        <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="fkB-m7-T5O">
-                            <rect key="frame" x="180" y="72" width="69" height="30"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                            <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
-                        </textField>
                         <button opaque="NO" tag="2" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="p14-X2-Rrz">
                             <rect key="frame" x="150" y="0.0" width="75" height="41"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -1448,8 +1434,6 @@
                         <outlet property="field_car_year" destination="33g-5c-R4H" id="Nc4-wL-989"/>
                         <outlet property="field_certifi_input" destination="Qsl-FF-7Xx" id="Iu0-Yp-vw5"/>
                         <outlet property="field_phone01" destination="gzf-fa-Gd7" id="OWD-pq-DtN"/>
-                        <outlet property="field_phone02" destination="saJ-XT-kw6" id="qt9-kr-Ma2"/>
-                        <outlet property="field_phone03" destination="fkB-m7-T5O" id="bc7-JG-Iwh"/>
                         <outlet property="field_plate_num" destination="CjO-0t-LTg" id="O35-CM-7Ke"/>
                         <outlet property="label_certifi_time_chenk" destination="1ez-RK-o96" id="qkS-QS-Ge7"/>
                         <outlet property="label_notis" destination="PAl-ZA-r7m" id="kng-qm-r4T"/>
@@ -1717,6 +1701,7 @@
                         <outlet property="label_fuel_type" destination="Olm-5M-l6b" id="U4P-cd-vKC"/>
                         <outlet property="label_tot_km" destination="aWh-bu-UMh" id="V5c-x3-IvO"/>
                         <outlet property="label_tot_kml" destination="3Le-gU-zrR" id="0bl-rE-2HQ"/>
+                        <outlet property="roundView01" destination="fpT-dj-nwx" id="vGZ-LG-1Zt"/>
                     </connections>
                 </scrollView>
             </objects>
@@ -2363,15 +2348,6 @@
                                 <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="Gju-fx-VkY">
-                                <rect key="frame" x="18" y="99" width="341" height="130"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" red="0.96078431372549022" green="0.96078431372549022" blue="0.96078431372549022" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
-                                <color key="textColor" red="0.51372549019607838" green="0.51372549019607838" blue="0.51372549019607838" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
-                            </textView>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="IFD-UX-oB1">
                                 <rect key="frame" x="241" y="245" width="24" height="22"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
@@ -2416,15 +2392,6 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="nGc-FW-VgX">
-                                <rect key="frame" x="18" y="339" width="341" height="130"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" red="0.96078431369999995" green="0.96078431369999995" blue="0.96078431369999995" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
-                                <color key="textColor" red="0.51372549020000002" green="0.51372549020000002" blue="0.51372549020000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
-                            </textView>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8Wl-3w-Vte">
                                 <rect key="frame" x="14" y="528" width="350" height="55"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
@@ -2446,7 +2413,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="UXX-SH-Wvc" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-522" y="1665"/>
+            <point key="canvasLocation" x="-522.39999999999998" y="1664.617691154423"/>
         </scene>
         <!--Terms02 View Controller-->
         <scene sceneID="w3C-GI-qXm">
@@ -2500,15 +2467,6 @@
                                 <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="I9Z-UM-qqE">
-                                <rect key="frame" x="18" y="99" width="341" height="130"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" red="0.96078431369999995" green="0.96078431369999995" blue="0.96078431369999995" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
-                                <color key="textColor" red="0.51372549020000002" green="0.51372549020000002" blue="0.51372549020000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
-                            </textView>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="f1J-OF-lU1">
                                 <rect key="frame" x="241" y="245" width="24" height="22"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
@@ -2617,7 +2575,6 @@
                         <outlet property="OBDLoad_View" destination="Cea-lV-Btn" id="3nF-Rk-MtJ"/>
                         <outlet property="OBD_indicator" destination="AYu-xf-kCC" id="k75-hw-y4f"/>
                         <outlet property="btn_Join_OK" destination="yxv-bR-JmY" id="6Qk-4y-nca"/>
-                        <outlet property="btn_carInfo_no" destination="hnP-nP-QYF" id="AxC-3B-MaB"/>
                         <outlet property="btn_carInfo_ok" destination="1dv-Ey-bkn" id="VTa-76-dA8"/>
                         <outlet property="btn_certification" destination="ewK-od-Zmu" id="k4c-Df-nPu"/>
                         <outlet property="btn_join_ok_app_start" destination="IJt-8f-sbL" id="6N1-bs-yIZ"/>
@@ -2632,8 +2589,6 @@
                         <outlet property="field_certifi_num" destination="VKh-fZ-db1" id="nDF-s6-zvY"/>
                         <outlet property="field_nick_input" destination="VKz-mE-V7W" id="3Nw-B5-UM5"/>
                         <outlet property="field_phone_01" destination="rlK-UZ-eu0" id="gbW-cn-8cp"/>
-                        <outlet property="field_phone_02" destination="23l-5s-usP" id="vyF-dj-cF4"/>
-                        <outlet property="field_phone_03" destination="vee-SV-LTx" id="PqY-Je-6k0"/>
                         <outlet property="label_car_info_join_notis" destination="N6y-Gm-aWF" id="1Iu-q2-QBW"/>
                         <outlet property="label_certifi_time_chenk" destination="7rO-bU-Zky" id="kcY-Ua-2Ji"/>
                         <outlet property="label_join_ok_notis" destination="sqz-zK-AjR" id="Oat-TT-rHN"/>
@@ -2671,21 +2626,7 @@
                             </connections>
                         </textField>
                         <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="rlK-UZ-eu0">
-                            <rect key="frame" x="19" y="145" width="69" height="30"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
-                            <nil key="textColor"/>
-                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                            <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
-                        </textField>
-                        <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="23l-5s-usP">
-                            <rect key="frame" x="100" y="145" width="69" height="30"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
-                            <nil key="textColor"/>
-                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                            <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
-                        </textField>
-                        <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="vee-SV-LTx">
-                            <rect key="frame" x="183" y="145" width="69" height="30"/>
+                            <rect key="frame" x="19" y="145" width="233" height="30"/>
                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                             <nil key="textColor"/>
                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
@@ -2759,7 +2700,7 @@
                             <color key="textColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <nil key="highlightedColor"/>
                         </label>
-                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="( 남은시간 3분 00초 )" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7rO-bU-Zky">
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="( 남은시간 1분 00초 )" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7rO-bU-Zky">
                             <rect key="frame" x="20" y="257" width="338" height="21"/>
                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
                             <fontDescription key="fontDescription" type="system" pointSize="15"/>
@@ -2883,19 +2824,8 @@
                             <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <nil key="highlightedColor"/>
                         </label>
-                        <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hnP-nP-QYF">
-                            <rect key="frame" x="16" y="550" width="165" height="55"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
-                            <state key="normal" title="나중에 입력">
-                                <color key="titleColor" red="0.99999600649999998" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                            </state>
-                            <connections>
-                                <action selector="pressed_OK:" destination="XlB-0A-NVF" eventType="touchUpInside" id="kJl-Xu-Bao"/>
-                                <action selector="pressed_carInfo_No:" destination="6YP-cQ-wxS" eventType="touchUpInside" id="0aJ-0H-tPH"/>
-                            </connections>
-                        </button>
                         <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1dv-Ey-bkn">
-                            <rect key="frame" x="194" y="550" width="165" height="55"/>
+                            <rect key="frame" x="17" y="550" width="342" height="55"/>
                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
                             <state key="normal" title="확인">
                                 <color key="titleColor" red="0.99999600649999998" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -3189,7 +3119,7 @@
         </scene>
     </scenes>
     <resources>
-        <image name="A-01-01-01-bg00" width="375" height="531"/>
+        <image name="A-01-01-01-bg00" width="391" height="554"/>
         <image name="A-01-01-07-icon" width="40" height="52"/>
         <image name="A-01-03-01-bgBlack" width="375" height="506"/>
         <image name="A-01-03-02-Icon01" width="28" height="28"/>
@@ -3197,13 +3127,13 @@
         <image name="A-01-03-03-percent16" width="234" height="234"/>
         <image name="A-01-03-04-Level02" width="97" height="23"/>
         <image name="A-01-03-04-btnUp" width="214" height="52"/>
-        <image name="A-01-03-05-BtnShopUp" width="67" height="32"/>
+        <image name="A-01-03-05-BtnShopUp" width="70" height="33"/>
         <image name="A-01-03-06-textTop" width="310" height="19"/>
         <image name="A-01-03-07-BgList" width="391" height="58"/>
         <image name="A-01-03-08-iconLevel01" width="27" height="26"/>
-        <image name="A-01-03-08-text01" width="364" height="95"/>
+        <image name="A-01-03-08-text01" width="380" height="99"/>
         <image name="A-01-03-08-textTable" width="375" height="35"/>
-        <image name="A-01-03-09-BgList" width="391" height="59"/>
+        <image name="A-01-03-09-BgList" width="375" height="56"/>
         <image name="A-01-03-09-BgListLast" width="375" height="57"/>
         <image name="A-01-03-09-btnDetailUp" width="72" height="32"/>
         <image name="A-01-03-10-Icon01" width="36" height="36"/>
@@ -3231,7 +3161,7 @@
         <image name="e_img_step01" width="340" height="210"/>
         <image name="e_img_step02" width="340" height="210"/>
         <image name="frame-A-01-01-off" width="78" height="43"/>
-        <image name="frame-A-01-01-on" width="78" height="43"/>
+        <image name="frame-A-01-01-on" width="75" height="41"/>
         <image name="frame-A-01-02-off" width="75" height="41"/>
         <image name="frame-A-01-03-off" width="75" height="41"/>
         <image name="frame-A-01-04-off" width="75" height="41"/>
@@ -3255,6 +3185,6 @@
         <image name="img" width="340" height="335"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="9Di-yW-Dhl"/>
+        <segue reference="ZYi-CW-efW"/>
     </inferredMetricsTieBreakers>
 </document>

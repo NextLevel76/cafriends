@@ -15,7 +15,10 @@ class A01_01_Pin_View: UIView {
     var str_pin_num02:String = ""
     var str_pin_num03:String = ""
     var str_pin_num04:String = ""
-    var pin_input_check_conut:Int = 0
+    var pin_input_repeat_conut:Int = 0
+    
+    var bPin_input_location = false     // 포커스 체크중
+    var iPin_input_location_no = 0      // 포커스 위치
     
     @IBOutlet weak var label_pin_num_notis: UILabel!
     

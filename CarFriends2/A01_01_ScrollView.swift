@@ -27,6 +27,7 @@ class A01_01_ScrollView: UIScrollView {
 //    var str_car_tot_km = "10000"    // 총 주행거리
 //    var str_car_fuel_eff = "18"   // 연비
     
+    @IBOutlet weak var roundView01: RoundUIView!
     
     @IBOutlet weak var label_car_kind_year: UILabel!
     @IBOutlet weak var label_fuel_type: UILabel!

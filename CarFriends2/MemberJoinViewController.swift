@@ -23,6 +23,7 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
     
     var OBD_isStart:Bool?
     var OBD_Count = 0
+        
     
     @IBOutlet var CarInfo_view: UIView!
     
@@ -39,8 +40,7 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
     @IBOutlet weak var field_nick_input: UITextField!
     
     @IBOutlet weak var field_phone_01: UITextField!
-    @IBOutlet weak var field_phone_02: UITextField!
-    @IBOutlet weak var field_phone_03: UITextField!
+
     
     @IBOutlet weak var field_certifi_input: UITextField!
     
@@ -68,7 +68,7 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
     
     @IBOutlet weak var btn_Join_OK: UIButton!
     
-    @IBOutlet weak var btn_carInfo_no: UIButton!
+    
     
     @IBOutlet weak var btn_carInfo_ok: UIButton!
     
@@ -106,8 +106,6 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
 //                       "2011","2012","2013","2014","2015","2016","2017","2018","2019","2020",
 //                       "2021","2022","2023","2024","2025","2026","2027","2028","2029","2030"]
     
-    let sz_car_fuel = ["휘발유","경유","가스(GAS)"]
-    
     var pickerView = UIPickerView();    // 차종
     var pickerView2 = UIPickerView();   // 연식
     var pickerView3 = UIPickerView();   // 연료 타입
@@ -131,6 +129,9 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        
+        // 인터넷 연결 체크
+        MainManager.shared.isConnectCheck()
         
         /*
          // 값 쓰기
@@ -172,15 +173,13 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
         
         btn_Join_OK.backgroundColor = UIColor(red: 11/256, green: 85/255, blue: 156/255, alpha: 1)
         
-        btn_carInfo_no.backgroundColor = UIColor(red: 11/256, green: 85/255, blue: 156/255, alpha: 1)
+        //btn_carInfo_no.backgroundColor = UIColor(red: 11/256, green: 85/255, blue: 156/255, alpha: 1)
         btn_carInfo_ok.backgroundColor = UIColor(red: 11/256, green: 85/255, blue: 156/255, alpha: 1)
         
         btn_join_ok_app_start.backgroundColor = UIColor(red: 11/256, green: 85/255, blue: 156/255, alpha: 1)
         
         // 핸드폰 인증
         field_phone_01.keyboardType = .numberPad
-        field_phone_02.keyboardType = .numberPad
-        field_phone_03.keyboardType = .numberPad
         field_certifi_input.keyboardType = .numberPad
         MainManager.shared.bMemberPhoneCertifi = false
         // 반복 호출 스케줄러
@@ -222,14 +221,11 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
         field_nick_input.delegate = self
         
         field_phone_01.delegate = self
-        field_phone_02.delegate = self
-        field_phone_03.delegate = self
         field_certifi_input.delegate = self
         
         
         
-       
-        
+               
         
         
         
@@ -237,6 +233,7 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
         field_car_kind.inputView = pickerView
         field_car_kind.textAlignment = .center
         field_car_kind.placeholder = "Select Car"
+        field_car_kind.text = MainManager.shared.str_select_carList[0]
         
         // ToolBar
         let toolBar = UIToolbar()
@@ -254,8 +251,11 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
         toolBar.isUserInteractionEnabled = true
         field_car_kind.inputAccessoryView = toolBar
         
+        //field_car_kind.isUserInteractionEnabled = false
         // test 피커뷰 셀 이동시켜놓기
-        pickerView.selectRow(1, inComponent: 0, animated: false)
+        pickerView.selectRow(0, inComponent: 0, animated: false)
+        
+        
         
         
         field_certifi_num.delegate = self
@@ -267,6 +267,7 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
         field_car_year.inputView = pickerView2
         field_car_year.textAlignment = .center
         field_car_year.placeholder = "차량 연식"
+        field_car_year.text = MainManager.shared.str_select_yearList[0]
         
         // ToolBar
         let toolBar1 = UIToolbar()
@@ -283,6 +284,8 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
         toolBar1.setItems([doneButton1], animated: false)
         toolBar1.isUserInteractionEnabled = true
         field_car_year.inputAccessoryView = toolBar1
+
+        pickerView2.selectRow(0, inComponent: 0, animated: false)
         
         
         
@@ -291,6 +294,8 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
         field_car_fuel.inputView = pickerView3
         field_car_fuel.textAlignment = .center
         field_car_fuel.placeholder = "연료 타입"
+        field_car_fuel.text = MainManager.shared.str_select_fuelList[0]
+        
         
         // ToolBar
         let toolBar2 = UIToolbar()
@@ -307,6 +312,10 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
         toolBar2.setItems([doneButton2], animated: false)
         toolBar2.isUserInteractionEnabled = true
         field_car_fuel.inputAccessoryView = toolBar2
+        
+        pickerView3.selectRow(0, inComponent: 0, animated: false)
+        
+
         
         
         field_car_tot_km.delegate = self
@@ -327,16 +336,19 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
     func doneClick() {
         
         field_car_kind.resignFirstResponder()
+        field_car_kind.text = MainManager.shared.str_select_carList[MainManager.shared.member_info.i_car_piker_select]
     }
     
     func doneClick1() {
         
         field_car_year.resignFirstResponder()
+        field_car_year.text = MainManager.shared.str_select_yearList[MainManager.shared.member_info.i_year_piker_select]
     }
     
     func doneClick2() {
         
         field_car_fuel.resignFirstResponder()
+        field_car_fuel.text = MainManager.shared.str_select_fuelList[MainManager.shared.member_info.i_fuel_piker_select]
     }
     
     
@@ -364,7 +376,7 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
         }
         else {
             
-            return sz_car_fuel.count
+            return MainManager.shared.str_select_fuelList.count
         }
         
         
@@ -383,7 +395,7 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
         }
         else {
             
-            return sz_car_fuel[row]
+            return MainManager.shared.str_select_fuelList[row]
         }
         
         
@@ -398,17 +410,17 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
         if( pickerView == self.pickerView ) {
             
             MainManager.shared.member_info.i_car_piker_select = row
-            field_car_kind.text = MainManager.shared.str_select_carList[row]
+           // field_car_kind.text = MainManager.shared.str_select_carList[row]
         }
         else if( pickerView == self.pickerView2 ) {
             
             MainManager.shared.member_info.i_year_piker_select = row
-            field_car_year.text = MainManager.shared.str_select_yearList[row]
+           // field_car_year.text = MainManager.shared.str_select_yearList[row]
         }
         else {
             
             MainManager.shared.member_info.i_fuel_piker_select = row
-            field_car_fuel.text = sz_car_fuel[row]
+           // field_car_fuel.text = sz_car_fuel[row]
         }
     }
     
@@ -502,9 +514,9 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
             self.view.bringSubview(toFront: activityIndicator)
             activityIndicator.startAnimating()
             
-            //Alamofire.request("http://gnu.sdodo.co.kr/login.php", method: .post, parameters: ["ID": "admin", "Pass":"admin"])
+            //Alamofire.request("http://seraphm.cafe24.com/login.php", method: .post, parameters: ["ID": "admin", "Pass":"admin"])
             
-            // var temp = String(format: "http://gnu.sdodo.co.kr/bbs/board.php?bo_table=B_3_1&sca=스파크", i)
+            // var temp = String(format: "http://seraphm.cafe24.com/bbs/board.php?bo_table=B_3_1&sca=스파크", i)
             // let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
             // let URL = temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
             
@@ -516,8 +528,8 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
                 "mb_nick": nick
             ]
             
-            Alamofire.request("http://gnu.sdodo.co.kr/login.php", method: .post, parameters: parameters)
-                //Alamofire.request("http://gnu.sdodo.co.kr/login.php", method: .post, parameters: ["Req": "DupCheck", "mb_nick": "admin" ])
+            Alamofire.request("http://seraphm.cafe24.com/login.php", method: .post, parameters: parameters)
+                //Alamofire.request("http://seraphm.cafe24.com/login.php", method: .post, parameters: ["Req": "DupCheck", "mb_nick": "admin" ])
                 
                 .responseJSON { response in
                     
@@ -590,16 +602,11 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
             
             
             let tempString01 = field_phone_01.text as String?
-            let tempString02 = field_phone_02.text as String?
-            let tempString03 = field_phone_03.text as String?
             
             //전번 저장
-            MainManager.shared.member_info.str_id_phone_num = tempString01! + tempString02! + tempString03!
+            MainManager.shared.member_info.str_id_phone_num = tempString01!
             
-            if( field_phone_01.text!.count == 0 ||
-                field_phone_02.text!.count == 0 ||
-                field_phone_03.text!.count == 0 ) {
-              
+            if( field_phone_01.text!.count == 0 ) {
 
                 MainManager.shared.str_certifi_notis = "전화번호를 전부 입력해 주세요.!"
                 self.performSegue(withIdentifier: "joinPopSegue", sender: self)
@@ -609,7 +616,10 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
             
             // 시간 카운트 시작
             bTimeCheckStart = true
-            certifi_count = 180 // 3분
+            certifi_count = 60 // 3분
+            
+            MainManager.shared.str_certifi_notis = "요청한 인증 번호를 입력해 주세요.!"
+            self.performSegue(withIdentifier: "joinPopSegue", sender: self)
             
             
             // login.php?Req=PhoneCheck&PhoneNo=핸폰번호
@@ -619,7 +629,7 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
                 "PhoneNo": phone_num
             ]
             print(phone_num)
-            Alamofire.request("http://gnu.sdodo.co.kr/login.php", method: .post, parameters: parameters)
+            Alamofire.request("http://seraphm.cafe24.com/login.php", method: .post, parameters: parameters)
                 .responseJSON { response in
                     
                     self.activityIndicator.stopAnimating()
@@ -640,7 +650,6 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
                     if let json = try? JSON(response.result.value) {
                         
                         print(json["Result"])
-                        
                         self.server_get_phone_certifi_num = json["Result"].rawString()!
                         
                         print( self.server_get_phone_certifi_num )
@@ -734,7 +743,7 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
             "mb_7": ""
         ]
         print(phone_num)
-        Alamofire.request("http://gnu.sdodo.co.kr/login.php", method: .post, parameters: parameters)
+        Alamofire.request("http://seraphm.cafe24.com/login.php", method: .post, parameters: parameters)
             .responseJSON { response in
                 
                 self.activityIndicator.stopAnimating()
@@ -818,9 +827,7 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
         //전번 저장
         // MainManager.shared.member_info.str_id_nick =  field_nick_input.text!// 문자열 타입 벗기기?
         let tempString01 = field_phone_01.text as String?
-        let tempString02 = field_phone_02.text as String?
-        let tempString03 = field_phone_03.text as String?
-        MainManager.shared.member_info.str_id_phone_num = tempString01! + tempString02! + tempString03!
+        MainManager.shared.member_info.str_id_phone_num = tempString01!
         
         //차량등록번호 (번호판)
         MainManager.shared.member_info.str_car_plate_num = field_certifi_num.text!
@@ -878,7 +885,7 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
                 "mb_7": (MainManager.shared.member_info.str_AvgFuelMileage)
             ]
             print(phone_num)
-            Alamofire.request("http://gnu.sdodo.co.kr/login.php", method: .post, parameters: parameters)
+            Alamofire.request("http://seraphm.cafe24.com/login.php", method: .post, parameters: parameters)
                 .responseJSON { response in
                     
                     self.activityIndicator.stopAnimating()
@@ -943,7 +950,6 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
                             print(MainManager.shared.member_info.str_car_year)
                             print(MainManager.shared.member_info.str_AvgFuelMileage)
                             
-                            
                         }
                         else {
 
@@ -956,7 +962,6 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
                     }
             }
         }
-        
         
         
         
@@ -1008,12 +1013,6 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
         else if (textField == field_phone_01) {
             textField.text = ""
         }
-        else if (textField == field_phone_02) {
-            textField.text = ""
-        }
-        else if (textField == field_phone_03) {
-            textField.text = ""
-        }
         else if (textField == field_certifi_input) {
             textField.text = ""
         }
@@ -1034,7 +1033,7 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
      self.view.bringSubview(toFront: activityIndicator)
      self.activityIndicator.startAnimating()
      
-     Alamofire.request("http://gnu.sdodo.co.kr/login.php", method: .post, parameters: ["ID": "admin", "Pass":"admin"], encoding: JSONEncoding.default)
+     Alamofire.request("http://seraphm.cafe24.com/login.php", method: .post, parameters: ["ID": "admin", "Pass":"admin"], encoding: JSONEncoding.default)
      .responseJSON { response in
      
      self.activityIndicator.stopAnimating()

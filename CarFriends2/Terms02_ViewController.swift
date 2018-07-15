@@ -7,8 +7,9 @@
 //
 
 import UIKit
+import WebKit
 
-class Terms02_ViewController: UIViewController {
+class Terms02_ViewController: UIViewController, WKNavigationDelegate {
 
     
     @IBOutlet weak var btn_check: UIButton!
@@ -20,11 +21,30 @@ class Terms02_ViewController: UIViewController {
     
     var isCheck01:Bool!
     
+    
+
+    weak var webView: WKWebView!
+
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         isCheck01 = false
         btn_OK.backgroundColor = UIColor(red: 11/256, green: 85/255, blue: 156/255, alpha: 1)
+        
+        // 서비스 이용 약관
+        // 웹뷰 딜리게이트 연결
+        webView = WKWebView(frame: CGRect( x: 18, y: 86, width: 340, height: 140 ), configuration:  WKWebViewConfiguration() )
+        //webView.uiDelegate = self
+        webView.navigationDelegate = self
+        webView.translatesAutoresizingMaskIntoConstraints = false
+        self.view.addSubview( webView )
+        
+        if let videoURL:URL = URL(string: "http://seraphm.cafe24.com/app/contract2.html") {
+            let request:URLRequest = URLRequest(url: videoURL)
+            webView.load(request)
+        }
+        
     }
 
     override func didReceiveMemoryWarning() {

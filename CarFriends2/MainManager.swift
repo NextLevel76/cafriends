@@ -19,6 +19,21 @@
 
 import Foundation
 import UIKit
+import Alamofire
+
+
+
+// 인터넷 연결 체크
+struct Connectivity {
+    static let sharedInstance = NetworkReachabilityManager()!
+    static var isConnectedToInternet:Bool {
+        return self.sharedInstance.isReachable
+    }
+}
+
+
+
+
 
 struct Member_Info {
     
@@ -461,6 +476,7 @@ class MainManager   {
     var bCarListRequest:Bool = false
     var str_select_carList:[String] = []
     var str_select_yearList:[String] = []
+    var str_select_fuelList:[String] = []
     
     
     
@@ -476,6 +492,20 @@ class MainManager   {
         
     }
     
+    
+    
+    // 인터넷 연결 체크
+    func isConnectCheck() {
+        
+        if Connectivity.isConnectedToInternet {
+            print("Internet Connected")
+        } else {
+            
+            print("No Internet")
+            var alert = UIAlertView(title: "No Internet Connection", message: "서버와 연결이 되지 않습니다. 잠시 후 다시 사용해 주세요", delegate: nil, cancelButtonTitle: "OK")
+            alert.show()
+        }
+    }
     
     
     
@@ -541,11 +571,8 @@ class MainManager   {
         newFrame.size.height = frame.size.height * ratio_Y
         
         // CGAffineTransform(scaleX: 2.0, y: 2.0)
-    
         return newFrame
     }
-    
-    
     
 }
 

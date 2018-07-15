@@ -11,11 +11,33 @@ import UIKit
 
 class MainViewController: UIViewController {
 
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        
 
-        MainManager.shared.requestForMainManager()
+        let sz_car_fuel = ["휘발유","경유","가스(GAS)"]
+        
+        
+        MainManager.shared.requestForMainManager() // 싱글톤 생성
         MainManager.shared.getDeviceRatio(view: self.view )
+        
+        // 피커뷰 리스트 초기화
+        MainManager.shared.str_select_carList.removeAll()
+        MainManager.shared.str_select_yearList.removeAll()
+        MainManager.shared.str_select_fuelList.removeAll()
+        
+        MainManager.shared.str_select_fuelList.append(sz_car_fuel[0])
+        MainManager.shared.str_select_fuelList.append(sz_car_fuel[1])
+        MainManager.shared.str_select_fuelList.append(sz_car_fuel[2])
+        
+        
+        // 인터넷 연결 체크
+        MainManager.shared.isConnectCheck()
+
+        
         // Do any additional setup after loading the view.
     }
 

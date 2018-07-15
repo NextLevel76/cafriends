@@ -12,7 +12,7 @@ import Alamofire
 import SwiftyJSON
 
 
-class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WKScriptMessageHandler {
+class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WKScriptMessageHandler, UIScrollViewDelegate {
     
     
     @IBOutlet var menuView_c01: C01_Menu!
@@ -100,13 +100,15 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
 
         // 첫번째 웹 로드
         
-//        //let temp = "http://gnu.sdodo.co.kr/bbs/write.php?bo_table=B_2_4"
-//        let temp = "http://gnu.sdodo.co.kr/bbs/board.php?bo_table=C_1_1&sca=스파크"
+//        //let temp = "http://seraphm.cafe24.com/bbs/write.php?bo_table=B_2_4"
+//        let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=C_1_1&sca=스파크"
 //        let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
 //        let request = URLRequest(url: url! )
 //        webView.load(request)
         
         //userLogin()
+        
+        
         
         
     }
@@ -115,14 +117,40 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
         super.viewDidLoad()
         
         
+        // 인터넷 연결 체크
+        MainManager.shared.isConnectCheck()
+        
         // 저장된 쿠키 불러오기
         HTTPCookieStorage.restore()
         //setupWebView()
         userLogin()
-
     }
     
     
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if scrollView == webView.scrollView {
+            let contentOffset = scrollView.contentOffset.y
+            print("contentOffset: ", contentOffset)
+            
+//            if (contentOffset > self.lastKnowContentOfsset) {
+//                print("scrolling Down")
+//                print("dragging Up")
+//            } else {
+//                print("scrolling Up")
+//                print("dragging Down")
+//            }
+        }
+    }
+    
+    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        
+        let visibleRect = CGRect()
+        
+        //visibleRect.origin = containerView.contentOffset
+        //visibleRect.size = newView.frame.size
+        // print(visibleRect)
+    }
     
     
     
@@ -138,11 +166,11 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
         let parameters = [
             "Req": "Login",
             "ID": MainManager.shared.member_info.str_id_nick,
-            "Pass": MainManager.shared.member_info.str_id_phone_num]
-        
+            "Pass": MainManager.shared.member_info.str_id_nick]        
+       
         print(MainManager.shared.member_info.str_id_nick)
-        print(MainManager.shared.member_info.str_id_phone_num)
-        Alamofire.request("http://gnu.sdodo.co.kr/login.php", method: .post, parameters: parameters)
+        
+        Alamofire.request("http://seraphm.cafe24.com/login.php", method: .post, parameters: parameters)
             .responseJSON { response in
 
                 self.activityIndicator.stopAnimating()
@@ -191,7 +219,7 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
         
         
         
-//        let myUrl = URL(string: "http://gnu.sdodo.co.kr/login.php/");
+//        let myUrl = URL(string: "http://seraphm.cafe24.com/login.php/");
 //        var request = URLRequest(url:myUrl!)
 //        var cookies = HTTPCookie.requestHeaderFields(with: HTTPCookieStorage.shared.cookies(for: request.url!)!)
 //        if let value = cookies["Cookie"] {
@@ -239,7 +267,7 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
         
 //        activityIndicator.startAnimating()
 //
-//        var request = URLRequest(url: URL(string: "http://gnu.sdodo.co.kr/login.php/")!)
+//        var request = URLRequest(url: URL(string: "http://seraphm.cafe24.com/login.php/")!)
 //
 //        /*
 //        var cookies = HTTPCookie.requestHeaderFields(with: HTTPCookieStorage.shared.cookies(for: request.url!)!)
@@ -272,7 +300,7 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
 //
 //        print(MainManager.shared.member_info.str_id_nick)
 //        print(MainManager.shared.member_info.str_id_phone_num)
-//        Alamofire.request("http://gnu.sdodo.co.kr/login.php", method: .post, parameters: parameters)
+//        Alamofire.request("http://seraphm.cafe24.com/login.php", method: .post, parameters: parameters)
 //            .responseJSON { response in
 //
 //                self.activityIndicator.stopAnimating()
@@ -387,7 +415,7 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
             
             menuView_c01.btn_c01_01.backgroundColor = UIColor.blue
             
-            let temp = "http://gnu.sdodo.co.kr/bbs/board.php?bo_table=C_1_1&sca=스파크"
+            let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=C_1_1&sca=스파크"
             let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
             let request = URLRequest(url: url! )
             webView.load(request)
@@ -396,7 +424,7 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
             
             menuView_c01.btn_c01_02.backgroundColor = UIColor.blue
             
-            let temp = "http://gnu.sdodo.co.kr/bbs/board.php?bo_table=C_1_2&sca=스파크"
+            let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=C_1_2&sca=스파크"
             let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
             let request = URLRequest(url: url!)
             webView.load(request)
@@ -406,7 +434,7 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
             
             menuView_c01.btn_c01_03.backgroundColor = UIColor.blue
             
-            let temp = "http://gnu.sdodo.co.kr/bbs/board.php?bo_table=C_1_3&sca=스파크"
+            let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=C_1_3&sca=스파크"
             let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
             var request = URLRequest(url: url!)
 
@@ -416,7 +444,7 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
             
             menuView_c01.btn_c01_04.backgroundColor = UIColor.blue
             
-            let temp = "http://gnu.sdodo.co.kr/bbs/board.php?bo_table=C_1_4&sca=스파크"
+            let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=C_1_4&sca=스파크"
             let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
             let request = URLRequest(url: url!)
             webView.load(request)
@@ -425,7 +453,7 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
             
             menuView_c01.btn_c01_05.backgroundColor = UIColor.blue
             
-            let temp = "http://gnu.sdodo.co.kr/bbs/board.php?bo_table=C_1_5&sca=스파크"
+            let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=C_1_5&sca=스파크"
             let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
             let request = URLRequest(url: url!)
             webView.load(request)
@@ -478,62 +506,62 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
         let select_btn_tag = sender.tag
         
         if( select_btn_tag == 1 ) {
-            let temp = "http://gnu.sdodo.co.kr/bbs/board.php?bo_table=C_2_1&sca=스파크"
+            let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=C_2_1&sca=스파크"
             let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
             let request = URLRequest(url: url! )
             webView.load(request)
         }
         else if( select_btn_tag == 2 ) {
-            let temp = "http://gnu.sdodo.co.kr/bbs/board.php?bo_table=C_2_2&sca=스파크"
+            let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=C_2_2&sca=스파크"
             let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
             let request = URLRequest(url: url!)
             webView.load(request)
         }
         else if( select_btn_tag == 3 ) {
             
-            let temp = "http://gnu.sdodo.co.kr/bbs/board.php?bo_table=C_2_3&sca=스파크"
+            let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=C_2_3&sca=스파크"
             let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
             let request = URLRequest(url: url!)
             webView.load(request)
         }
         else if( select_btn_tag == 4 ) {
             
-            let temp = "http://gnu.sdodo.co.kr/bbs/board.php?bo_table=C_2_4&sca=스파크"
+            let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=C_2_4&sca=스파크"
             let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
             let request = URLRequest(url: url!)
             webView.load(request)
         }
         else if( select_btn_tag == 5 ) {
             
-            let temp = "http://gnu.sdodo.co.kr/bbs/board.php?bo_table=C_2_5&sca=스파크"
+            let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=C_2_5&sca=스파크"
             let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
             let request = URLRequest(url: url!)
             webView.load(request)
         }
         else if( select_btn_tag == 6 ) {
             
-            let temp = "http://gnu.sdodo.co.kr/bbs/board.php?bo_table=C_2_6&sca=스파크"
+            let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=C_2_6&sca=스파크"
             let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
             let request = URLRequest(url: url!)
             webView.load(request)
         }
         else if( select_btn_tag == 7 ) {
             
-            let temp = "http://gnu.sdodo.co.kr/bbs/board.php?bo_table=C_2_7&sca=스파크"
+            let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=C_2_7&sca=스파크"
             let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
             let request = URLRequest(url: url!)
             webView.load(request)
         }
         else if( select_btn_tag == 8 ) {
             
-            let temp = "http://gnu.sdodo.co.kr/bbs/board.php?bo_table=C_2_8&sca=스파크"
+            let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=C_2_8&sca=스파크"
             let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
             let request = URLRequest(url: url!)
             webView.load(request)
         }
         else if( select_btn_tag == 9 ) {
             
-            let temp = "http://gnu.sdodo.co.kr/bbs/board.php?bo_table=C_2_9&sca=스파크"
+            let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=C_2_9&sca=스파크"
             let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
             let request = URLRequest(url: url!)
             webView.load(request)
@@ -566,7 +594,7 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
             
             menuView_c03.btn_c03_01.backgroundColor = UIColor.blue
             
-            let temp = "http://gnu.sdodo.co.kr/bbs/board.php?bo_table=C_3_1&sca=스파크"
+            let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=C_3_1&sca=스파크"
             let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
             let request = URLRequest(url: url! )
             webView.load(request)
@@ -575,7 +603,7 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
             
             menuView_c03.btn_c03_02.backgroundColor = UIColor.blue
             
-            let temp = "http://gnu.sdodo.co.kr/bbs/board.php?bo_table=C_1_2&sca=스파크"
+            let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=C_1_2&sca=스파크"
             let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
             let request = URLRequest(url: url!)
             webView.load(request)
@@ -656,7 +684,7 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
         btn_c02.setBackgroundImage(UIImage(named:"frame-C-02-off"), for: UIControlState.normal )
         btn_c03.setBackgroundImage(UIImage(named:"frame-C-02-on"), for: UIControlState.normal )
         
-//        let url = URL(string: "http://gnu.sdodo.co.kr/adm/" )
+//        let url = URL(string: "http://seraphm.cafe24.com/adm/" )
 //        let request = URLRequest(url: url!)
 //        webView.load(request)
     }
@@ -755,9 +783,11 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
         self.webView.translatesAutoresizingMaskIntoConstraints = false
         self.view.addSubview(webView)
         
+        self.webView.scrollView.delegate = self
+        
         //self.view.bringSubview(toFront: activityIndicator)
         //activityIndicator.startAnimating()
-        let temp = "http://gnu.sdodo.co.kr/bbs/board.php?bo_table=C_1_1&sca=스파크"
+        let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=C_1_1&sca=스파크"
         let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
         let request = URLRequest(url: url! )
         webView.load(request)
@@ -793,7 +823,7 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
 //        // blue001 / 01012345678
 //
 //
-//        let url = URL(string: "http://gnu.sdodo.co.kr/login.php")!
+//        let url = URL(string: "http://seraphm.cafe24.com/login.php")!
 //        let request = NSMutableURLRequest(url: url as URL,
 //                                          cachePolicy: NSURLRequest.CachePolicy.reloadIgnoringLocalAndRemoteCacheData,
 //                                          timeoutInterval: 30.0)

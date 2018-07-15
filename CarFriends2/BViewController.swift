@@ -8,7 +8,7 @@
 
 
 
-// http://gnu.sdodo.co.kr/test222.php 테스트 페이지
+// http://seraphm.cafe24.com/test222.php 테스트 페이지
 
 
 import UIKit
@@ -103,7 +103,7 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
         self.view.bringSubview(toFront: activityIndicator)
 
         // 첫 웹뷰 로드
-//        let temp = "http://gnu.sdodo.co.kr/bbs/board.php?bo_table=B_1_1&wr_id=1"
+//        let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=B_1_1&wr_id=1"
 //        let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
 //        let request = URLRequest(url: url! )
 //        webView.load(request)
@@ -120,9 +120,15 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        
+        // 인터넷 연결 체크
+        MainManager.shared.isConnectCheck()
+        
+        
+        
         // 저장된 쿠키 불러오기
         HTTPCookieStorage.restore()
-        print("____________ 유저 로그이")
+        print("____________ 유저 로그인")
         userLogin()
     }
 
@@ -136,11 +142,11 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
         let parameters = [
             "Req": "Login",
             "ID": MainManager.shared.member_info.str_id_nick,
-            "Pass": MainManager.shared.member_info.str_id_phone_num]
+            "Pass": MainManager.shared.member_info.str_id_nick]
         
         print(MainManager.shared.member_info.str_id_nick)
-        print(MainManager.shared.member_info.str_id_phone_num)
-        Alamofire.request("http://gnu.sdodo.co.kr/login.php", method: .post, parameters: parameters)
+
+        Alamofire.request("http://seraphm.cafe24.com/login.php", method: .post, parameters: parameters)
             .responseJSON { response in
                 
                 self.activityIndicator.stopAnimating()
@@ -236,7 +242,7 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
         
         
         /*
-        let url = URL(string: "http://gnu.sdodo.co.kr/bbs/write.php?bo_table=com_free" )
+        let url = URL(string: "http://seraphm.cafe24.com/bbs/write.php?bo_table=com_free" )
         let request = URLRequest(url: url!)
         webView.load(request)
         
@@ -308,41 +314,41 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
         let select_btn_tag = sender.tag
 
         if( select_btn_tag == 1 ) {
-            let temp = "http://gnu.sdodo.co.kr/bbs/board.php?bo_table=B_1_1&wr_id=1"
+            let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=B_1_1&wr_id=1"
             let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
             let request = URLRequest(url: url! )
             webView.load(request)
         }
         else if( select_btn_tag == 2 ) {
-            let temp = "http://gnu.sdodo.co.kr/bbs/board.php?bo_table=B_2_1&sca=스파크"
+            let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=B_2_1&sca=스파크"
             let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
             let request = URLRequest(url: url!)
             webView.load(request)
         }
         else if( select_btn_tag == 3 ) {
             
-            let temp = "http://gnu.sdodo.co.kr/bbs/board.php?bo_table=B_2_2&sca=스파크"
+            let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=B_2_2&sca=스파크"
             let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
             let request = URLRequest(url: url!)
             webView.load(request)
         }
         else if( select_btn_tag == 4 ) {
             
-            let temp = "http://gnu.sdodo.co.kr/bbs/board.php?bo_table=B_2_3&sca=스파크"
+            let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=B_2_3&sca=스파크"
             let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
             let request = URLRequest(url: url!)
             webView.load(request)
         }
         else if( select_btn_tag == 5 ) {
             
-            let temp = "http://gnu.sdodo.co.kr/bbs/board.php?bo_table=B_2_4&sca=스파크"
+            let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=B_2_4&sca=스파크"
             let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
             let request = URLRequest(url: url!)
             webView.load(request)
         }
         else if( select_btn_tag == 6 ) {
             
-            let temp = "http://gnu.sdodo.co.kr/bbs/board.php?bo_table=B_2_5&sca=스파크"
+            let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=B_2_5&sca=스파크"
             let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
             let request = URLRequest(url: url!)
             webView.load(request)
@@ -360,8 +366,8 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
         
         
 /*
- Alamofire.request("http://gnu.sdodo.co.kr/login.php?ID=admin&Pass=admin")
- //Alamofire.request(.post, "http://gnu.sdodo.co.kr/login.php", parameters: ["ID": "admin", "Pass":"admin"])
+ Alamofire.request("http://seraphm.cafe24.com/login.php?ID=admin&Pass=admin")
+ //Alamofire.request(.post, "http://seraphm.cafe24.com/login.php", parameters: ["ID": "admin", "Pass":"admin"])
  .responseJSON { response in
  print(response.request as Any)  // original URL request
  print(response.response as Any) // URL response
@@ -389,8 +395,8 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
  self.view.bringSubview(toFront: activityIndicator)
  self.activityIndicator.startAnimating()
 
-  //Alamofire.request("http://gnu.sdodo.co.kr/login_0613.php", method: .post, parameters: ["ID": "admin", "Pass":"admin"], encoding: JSONEncoding.default)
-        Alamofire.request("http://gnu.sdodo.co.kr/login.php", method: .post, parameters: ["Req":"Login","ID": "admin", "Pass":"admin"], encoding: JSONEncoding.default)
+  //Alamofire.request("http://seraphm.cafe24.com/login_0613.php", method: .post, parameters: ["ID": "admin", "Pass":"admin"], encoding: JSONEncoding.default)
+        Alamofire.request("http://seraphm.cafe24.com/login.php", method: .post, parameters: ["Req":"Login","ID": "admin", "Pass":"admin"], encoding: JSONEncoding.default)
 //        Alamofire.request("https://api.androidhive.info/contacts/")
  .responseJSON { response in
  
@@ -518,62 +524,62 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
         let select_btn_tag = sender.tag
         
         if( select_btn_tag == 1 ) {
-            let temp = "http://gnu.sdodo.co.kr/bbs/board.php?bo_table=B_3_1&sca=스파크"
+            let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=B_3_1&sca=스파크"
             let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
             let request = URLRequest(url: url! )
             webView.load(request)
         }
         else if( select_btn_tag == 2 ) {
-            let temp = "http://gnu.sdodo.co.kr/bbs/board.php?bo_table=B_3_2&sca=스파크"
+            let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=B_3_2&sca=스파크"
             let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
             let request = URLRequest(url: url!)
             webView.load(request)
         }
         else if( select_btn_tag == 3 ) {
             
-            let temp = "http://gnu.sdodo.co.kr/bbs/board.php?bo_table=B_3_3&sca=스파크"
+            let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=B_3_3&sca=스파크"
             let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
             let request = URLRequest(url: url!)
             webView.load(request)
         }
         else if( select_btn_tag == 4 ) {
             
-            let temp = "http://gnu.sdodo.co.kr/bbs/board.php?bo_table=B_3_4&sca=스파크"
+            let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=B_3_4&sca=스파크"
             let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
             let request = URLRequest(url: url!)
             webView.load(request)
         }
         else if( select_btn_tag == 5 ) {
             
-            let temp = "http://gnu.sdodo.co.kr/bbs/board.php?bo_table=B_3_5&sca=스파크"
+            let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=B_3_5&sca=스파크"
             let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
             let request = URLRequest(url: url!)
             webView.load(request)
         }
         else if( select_btn_tag == 6 ) {
             
-            let temp = "http://gnu.sdodo.co.kr/bbs/board.php?bo_table=B_3_6&sca=스파크"
+            let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=B_3_6&sca=스파크"
             let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
             let request = URLRequest(url: url!)
             webView.load(request)
         }
         else if( select_btn_tag == 7 ) {
             
-            let temp = "http://gnu.sdodo.co.kr/bbs/board.php?bo_table=B_3_7&sca=스파크"
+            let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=B_3_7&sca=스파크"
             let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
             let request = URLRequest(url: url!)
             webView.load(request)
         }
         else if( select_btn_tag == 8 ) {
             
-            let temp = "http://gnu.sdodo.co.kr/bbs/board.php?bo_table=B_3_8&sca=스파크"
+            let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=B_3_8&sca=스파크"
             let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
             let request = URLRequest(url: url!)
             webView.load(request)
         }
         else if( select_btn_tag == 9 ) {
             
-            let temp = "http://gnu.sdodo.co.kr/bbs/board.php?bo_table=B_3_9&sca=스파크"
+            let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=B_3_9&sca=스파크"
             let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
             let request = URLRequest(url: url!)
             webView.load(request)
@@ -663,7 +669,7 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
         
         self.view.bringSubview(toFront: activityIndicator)
         activityIndicator.startAnimating()
-        let temp = "http://gnu.sdodo.co.kr/bbs/board.php?bo_table=B_1_1&wr_id=1"
+        let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=B_1_1&wr_id=1"
         let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
         let request = URLRequest(url: url! )
         webView.load(request)

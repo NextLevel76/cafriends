@@ -35,7 +35,7 @@ import Charts
 
 
 
-class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIPickerViewDelegate, UIPickerViewDataSource, UITextFieldDelegate, WKUIDelegate, WKNavigationDelegate, WKScriptMessageHandler {
+class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIPickerViewDelegate, UIPickerViewDataSource, UITextFieldDelegate, WKUIDelegate, WKNavigationDelegate, WKScriptMessageHandler, UIScrollViewDelegate {
     
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         
@@ -47,7 +47,13 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     }
     
     
-    
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if let touch = touches.first {
+            let position = touch.location(in: self.view )
+            let center = CGPoint(x: position.x, y: position.y)
+            print(center)
+        }
+    }
     
     
     
@@ -81,6 +87,9 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     
     @IBOutlet var a01_01_pin_view: A01_01_Pin_View!
     @IBOutlet var a01_01_info_mod_view: A01_01_InfoMod_View!
+    
+    
+    // 핀번호 입력 위치 ( 포커스 자동이동 )
     
     
     
@@ -199,8 +208,8 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     @IBAction func pressedA(_ sender: UIButton) {
         
         /*
-         Alamofire.request("http://gnu.sdodo.co.kr/login.php?ID=admin&Pass=admin")
-         //Alamofire.request(.post, "http://gnu.sdodo.co.kr/login.php", parameters: ["ID": "admin", "Pass":"admin"])
+         Alamofire.request("http://seraphm.cafe24.com/login.php?ID=admin&Pass=admin")
+         //Alamofire.request(.post, "http://seraphm.cafe24.com/login.php", parameters: ["ID": "admin", "Pass":"admin"])
          .responseJSON { response in
          print(response.request as Any)  // original URL request
          print(response.response as Any) // URL response
@@ -224,7 +233,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         //        self.view.bringSubview(toFront: activityIndicator)
         //        self.activityIndicator.startAnimating()
         //
-        //        Alamofire.request("http://gnu.sdodo.co.kr/login.php", method: .post, parameters: ["ID": "admin", "Pass":"admin"], encoding: JSONEncoding.default)
+        //        Alamofire.request("http://seraphm.cafe24.com/login.php", method: .post, parameters: ["ID": "admin", "Pass":"admin"], encoding: JSONEncoding.default)
         //            .responseJSON { response in
         //
         //                self.activityIndicator.stopAnimating()
@@ -271,7 +280,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     
     
     
-    
+    let weeks = ["당주", "1주전", "2주전", "3주전", "4주전", "5주전", "6주전", "7주전", "8주전", "9주전", "10주전", "11주전"]
     
     func setChartValues(_ count : Int = 8 ) {
         
@@ -284,7 +293,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             return ChartDataEntry(x: Double(i), y: val)
         }
         
-        let set1 = LineChartDataSet(values: values, label: "Data(km)")
+        let set1 = LineChartDataSet(values: values, label: "")
         //let data = LineChartData(dataSet: set1)
         
         let values2 = (1..<count+1).map { (i) -> ChartDataEntry in
@@ -293,7 +302,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             return ChartDataEntry(x: Double(i), y: val2)
         }
         
-        let set2 = LineChartDataSet(values: values2, label: "DataSet 2")
+        let set2 = LineChartDataSet(values: values2, label: "")
         //set2.setColor(UIColor(red: 51/255, green: 181/255, blue: 229/255, alpha: 1))
         set2.setColor(.gray)
         set2.setCircleColor(.blue)
@@ -304,6 +313,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         //set2.fillColor = .red
         set2.highlightColor = UIColor(red: 244/255, green: 117/255, blue: 117/255, alpha: 1)
         
+        
         //set2.drawCircleHoleEnabled = false
         //let data2 = LineChartData(dataSet: set2)
         
@@ -313,7 +323,46 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         
         
         a01_01_scroll_view.graph_line_view01.data = data
+        
+        // X축 하단으로
+        a01_01_scroll_view.graph_line_view01.xAxis.labelPosition = XAxis.LabelPosition.bottom
+        // x축 몇주 세팅
+        a01_01_scroll_view.graph_line_view01.xAxis.valueFormatter = IndexAxisValueFormatter(values:weeks)
+        // 스타트 시점 0:1주, 1:2주
+        a01_01_scroll_view.graph_line_view01.xAxis.granularity = 0 // 시작 번호
+        
+        
+        // 문자열 변환 IndexAxisValueFormatter
+        var strCarDataKm:[String] = []
+        strCarDataKm.append("\(carDataKm[0])")
+        strCarDataKm.append("\(carDataKm[1])")
+        strCarDataKm.append("\(carDataKm[2])")
+        strCarDataKm.append("\(carDataKm[3])")
+        strCarDataKm.append("\(carDataKm[4])")
+        strCarDataKm.append("\(carDataKm[5])")
+        strCarDataKm.append("\(carDataKm[6])")
+        strCarDataKm.append("\(carDataKm[7])")
+        // y축 왼쪽
+        a01_01_scroll_view.graph_line_view01.leftAxis.valueFormatter = MyIndexFormatterKm(values:strCarDataKm)
+        a01_01_scroll_view.graph_line_view01.leftAxis.granularity = 7 // 맥시멈 번호
+        
+        // y축 왼쪽
+//        a01_01_scroll_view.graph_line_view01.rightAxis.valueFormatter = MyIndexFormatter(values:carDataKm1)
+//        a01_01_scroll_view.graph_line_view01.rightAxis.granularity = 7 // 맥시멈 번호
+//         a01_01_scroll_view.graph_line_view01.rightAxis.axisMinimum = 5
+//         a01_01_scroll_view.graph_line_view01.rightAxis.axisMinimum = 25
+        
+        a01_01_scroll_view.graph_line_view01.chartDescription?.text = ""
     }
+    
+    class MyIndexFormatterKm: IndexAxisValueFormatter {
+        
+        open override func stringForValue(_ value: Double, axis: AxisBase?) -> String
+        {
+            return "\(value) km"
+        }
+    }
+    
     
     func setChartValues2(_ count : Int = 8 ) {
         
@@ -326,7 +375,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             return ChartDataEntry(x: Double(i), y: val)
         }
         
-        let set1 = LineChartDataSet(values: values, label: "Data(km/l")
+        let set1 = LineChartDataSet(values: values, label: "")
         //let data = LineChartData(dataSet: set1)
         
         let values2 = (1..<count+1).map { (i) -> ChartDataEntry in
@@ -335,7 +384,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             return ChartDataEntry(x: Double(i), y: val2)
         }
         
-        let set2 = LineChartDataSet(values: values2, label: "DataSet 2")
+        let set2 = LineChartDataSet(values: values2, label: "")
         //set2.setColor(UIColor(red: 51/255, green: 181/255, blue: 229/255, alpha: 1))
         set2.setColor(.gray)
         set2.setCircleColor(.blue)
@@ -354,6 +403,39 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         data.setValueFont(.systemFont(ofSize: 9))
         
         self.a01_01_scroll_view.graph_line_view02.data = data
+        
+        // X축 하단으로
+        a01_01_scroll_view.graph_line_view02.xAxis.labelPosition = XAxis.LabelPosition.bottom
+        
+        // x축 몇주 세팅
+        a01_01_scroll_view.graph_line_view02.xAxis.valueFormatter = IndexAxisValueFormatter(values:weeks)
+        // 스타트 시점 0:1주, 1:2주
+        a01_01_scroll_view.graph_line_view02.xAxis.granularity = 0 // 시작 번호
+        
+        
+        // 문자열 변환 IndexAxisValueFormatter
+        var strCarDataKm:[String] = []
+        strCarDataKm.append("\(carDataKm[0])")
+        strCarDataKm.append("\(carDataKm[1])")
+        strCarDataKm.append("\(carDataKm[2])")
+        strCarDataKm.append("\(carDataKm[3])")
+        strCarDataKm.append("\(carDataKm[4])")
+        strCarDataKm.append("\(carDataKm[5])")
+        strCarDataKm.append("\(carDataKm[6])")
+        strCarDataKm.append("\(carDataKm[7])")
+        // y축 왼쪽
+        a01_01_scroll_view.graph_line_view02.leftAxis.valueFormatter = MyIndexFormatterKl(values:strCarDataKm)
+        a01_01_scroll_view.graph_line_view02.leftAxis.granularity = 7 // 맥시멈 번호
+        
+        a01_01_scroll_view.graph_line_view02.chartDescription?.text = ""
+    }
+    
+    class MyIndexFormatterKl: IndexAxisValueFormatter {
+        
+        open override func stringForValue(_ value: Double, axis: AxisBase?) -> String
+        {
+            return "\(value) km/l"
+        }
     }
     
     
@@ -395,8 +477,31 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         data.setValueTextColor(.black)
         data.setValueFont(.systemFont(ofSize: 9))
         
-        
         a01_02_view.graph_line_view.data = data
+        // X축 하단으로
+        a01_02_view.graph_line_view.xAxis.labelPosition = XAxis.LabelPosition.bottom
+        a01_02_view.graph_line_view.chartDescription?.text = ""
+        
+        // x축 몇주 세팅
+        a01_02_view.graph_line_view.xAxis.valueFormatter = IndexAxisValueFormatter(values:weeks)
+        // 스타트 시점 0:1주, 1:2주
+        a01_02_view.graph_line_view.xAxis.granularity = 0 // 시작 번호
+        
+        
+        // 문자열 변환 IndexAxisValueFormatter
+        var strCarDataKm:[String] = []
+        strCarDataKm.append("\(carDataKm[0])")
+        strCarDataKm.append("\(carDataKm[1])")
+        strCarDataKm.append("\(carDataKm[2])")
+        strCarDataKm.append("\(carDataKm[3])")
+        strCarDataKm.append("\(carDataKm[4])")
+        strCarDataKm.append("\(carDataKm[5])")
+        strCarDataKm.append("\(carDataKm[6])")
+        strCarDataKm.append("\(carDataKm[7])")
+        // y축 왼쪽
+        a01_02_view.graph_line_view.leftAxis.valueFormatter = MyIndexFormatterKl(values:strCarDataKm)
+        a01_02_view.graph_line_view.leftAxis.granularity = 7 // 맥시멈 번호
+        
     }
     
     func setChartValues_a03(_ count : Int = 8 ) {
@@ -438,6 +543,30 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         data.setValueFont(.systemFont(ofSize: 9))
         
         self.a01_03_view.graph_line_view.data = data
+        
+        // X축 하단으로
+        a01_03_view.graph_line_view.xAxis.labelPosition = XAxis.LabelPosition.bottom
+        
+        
+        // x축 몇주 세팅
+        a01_03_view.graph_line_view.xAxis.valueFormatter = IndexAxisValueFormatter(values:weeks)
+        // 스타트 시점 0:1주, 1:2주
+        a01_03_view.graph_line_view.xAxis.granularity = 0 // 시작 번호
+        
+        
+        // 문자열 변환 IndexAxisValueFormatter
+        var strCarDataKm:[String] = []
+        strCarDataKm.append("\(carDataKm[0])")
+        strCarDataKm.append("\(carDataKm[1])")
+        strCarDataKm.append("\(carDataKm[2])")
+        strCarDataKm.append("\(carDataKm[3])")
+        strCarDataKm.append("\(carDataKm[4])")
+        strCarDataKm.append("\(carDataKm[5])")
+        strCarDataKm.append("\(carDataKm[6])")
+        strCarDataKm.append("\(carDataKm[7])")
+        // y축 왼쪽
+        a01_03_view.graph_line_view.leftAxis.valueFormatter = MyIndexFormatterKl(values:strCarDataKm)
+        a01_03_view.graph_line_view.leftAxis.granularity = 7 // 맥시멈 번호
     }
     
     
@@ -481,22 +610,50 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             
             MainManager.shared.bStartPopTimeReserv = false
             MainManager.shared.bA02ON[tempTag] = true
-            ToastView.shared.long(self.view, txt_msg: "예약 시동 활성 모드입니다.")
+            ToastView.shared.short(self.view, txt_msg: "예약 시동 활성 모드입니다.")
             a02_12_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_on[tempTag]), for: UIControlState.normal )
         }
-        
-        
-        
     }
     
+    // 반복호출 스케줄러
+    func timerAction2() {
+        
+        if( a01_01_pin_view.bPin_input_location == true ) {
+            
+            if( a01_01_pin_view.field_pin01.text?.count == 0 && a01_01_pin_view.iPin_input_location_no == 0 ) {
+                
+                a01_01_pin_view.iPin_input_location_no = 1
+                a01_01_pin_view.field_pin01.becomeFirstResponder() // 1번으로 포커스 이동
+            }
+            else if( a01_01_pin_view.field_pin01.text?.count == 1 && a01_01_pin_view.iPin_input_location_no == 1 ) {
+                
+                a01_01_pin_view.iPin_input_location_no = 2
+                a01_01_pin_view.field_pin02.becomeFirstResponder() // 2번으로 포커스 이동
+            }
+            else if( a01_01_pin_view.field_pin02.text?.count == 1 && a01_01_pin_view.iPin_input_location_no == 2 ) {
+                
+                a01_01_pin_view.iPin_input_location_no = 3
+                a01_01_pin_view.field_pin03.becomeFirstResponder() // 3번으로 포커스 이동
+            }
+            else if( a01_01_pin_view.field_pin03.text?.count == 1 && a01_01_pin_view.iPin_input_location_no == 3 ) {
+                
+                a01_01_pin_view.iPin_input_location_no = 4
+                a01_01_pin_view.field_pin04.becomeFirstResponder() // 4번으로 포커스 이동
+            }
+        }
+    }
+    
+    
+    
     var timer = Timer()
+    var timer2 = Timer()
     
 //    let sz_car_name = ["쉐보레","AE86","니차똥차","란에보","임프레자","람보르기니","부가티","포니2","엑셀런트","프라이드","벤츠"]
 //    let sz_car_year = ["2001","2002","2003","2004","2005","2006","2007","2008","2009","2010",
 //                       "2011","2012","2013","2014","2015","2016","2017","2018","2019","2020",
 //                       "2021","2022","2023","2024","2025","2026","2027","2028","2029","2030"]
     
-    let sz_car_fuel = ["휘발유","경유","가스(GAS)"]
+
     
     var pickerView = UIPickerView();    // 차종
     var pickerView2 = UIPickerView();   // 연식
@@ -648,7 +805,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         
         
         //let temp = "https://www.youtube.com/embed/IHNzOHi8sJs?playsinline=1"
-        //        let temp = "http://gnu.sdodo.co.kr/bbs/board.php?bo_table=C_1_1&sca=스파크"
+        //        let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=C_1_1&sca=스파크"
         //let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
         //let request = URLRequest(url: url! )
     }
@@ -727,6 +884,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         
         // 반복 호출 스케줄러
         timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(timerAction), userInfo: nil, repeats: true)
+        timer2 = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(timerAction2), userInfo: nil, repeats: true)
         
         
         ////////////////////////////////////////////////////////// tableView Init
@@ -760,6 +918,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             // kit connect 21
             featView1.btn_kit_connect.addTarget(self, action: #selector(AViewController.pressed_01(sender:)), for: .touchUpInside)
             
+            a01_01_scroll_view.roundView01.backgroundColor = UIColor(red: 69/256, green: 187/255, blue: 229/255, alpha: 0.5)
             
             // 11 12
             a01_01_scroll_view.btn_pin_num_mod.addTarget(self, action: #selector(AViewController.pressed_01(sender:)), for: .touchUpInside)
@@ -782,9 +941,8 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             
             
             a01_01_scroll_view.frame = MainManager.shared.initLoadChangeFrame( frame: a01_01_scroll_view.frame )
-            
             a01_01_scroll_view.resizeScrollViewContentSize()
-
+            a01_01_scroll_view.delegate = self
             
             
             
@@ -820,12 +978,12 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             
             
             // USER ID
-            a01_01_view.label_user_id.text = MainManager.shared.member_info.str_id_nick
+            a01_01_view.label_user_id.text = "\(MainManager.shared.member_info.str_id_nick) 님"
             // GET INFO TIME
             getTime()
             
             
-            a01_01_scroll_view.label_car_kind_year.text = "\(MainManager.shared.member_info.str_car_year) \(MainManager.shared.member_info.str_car_year)년형"
+            a01_01_scroll_view.label_car_kind_year.text = "\(MainManager.shared.member_info.str_car_kind) \(MainManager.shared.member_info.str_car_year)년형"
             a01_01_scroll_view.label_fuel_type.text = "\(MainManager.shared.member_info.str_car_fuel_type) 차량"
             a01_01_scroll_view.label_car_plate_nem.text = MainManager.shared.member_info.str_car_plate_num
             a01_01_scroll_view.label_car_dae_num.text = MainManager.shared.member_info.str_car_dae_num
@@ -1001,7 +1159,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         //toolBar.setItems([cancelButton, spaceButton, doneButton], animated: false)
         toolBar2.setItems([doneButton2], animated: false)
         toolBar2.isUserInteractionEnabled = true
-        a01_01_info_mod_view.field_car_year.inputAccessoryView = toolBar2
+        a01_01_info_mod_view.field_car_fuel.inputAccessoryView = toolBar2
         // 피커뷰 셀 이동시켜놓기
         pickerView3.selectRow(MainManager.shared.member_info.i_fuel_piker_select, inComponent: 0, animated: false)
         a01_01_info_mod_view.field_car_fuel.text = MainManager.shared.member_info.str_car_fuel_type
@@ -1277,10 +1435,8 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
          }
          */
         
-        // test
-        btn_a01_change.frame.origin.x = 0
-        btn_a01_change.frame.origin.y = 0
-        btn_a01_change.frame = MainManager.shared.initLoadChangeFrame(frame: btn_a01_change.frame)
+       
+       
         
         //self.
 
@@ -1291,15 +1447,12 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         a01_01_view.translatesAutoresizingMaskIntoConstraints = false
         //            a01_01_view.frame = (a01_01_view.superview?.bounds)!
         a01_01_view.frame = MainManager.shared.initLoadChangeFrame(frame: a01_01_view.frame)
-       
-
-        
-        //A01_01_ScrollView.frame = MainManager.shared.initLoadChangeFrame(frame: A01_01_ScrollView.frame)        
-        // self.btn_a01_change.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        // self.a01_02_view.contentMode = .scaleToFill
-        
         
         a01_04_viewInit()
+        
+        
+        // 인터넷 연결 체크
+        MainManager.shared.isConnectCheck()
     }
     
     
@@ -1539,9 +1692,8 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             "VehicleName": ""]  // 차종
         
         
-        print(MainManager.shared.member_info.str_id_nick)
-        print(MainManager.shared.member_info.str_id_phone_num)
-        Alamofire.request("http://gnu.sdodo.co.kr/database.php", method: .post, parameters: parameters)
+        
+        Alamofire.request("http://seraphm.cafe24.com/database.php", method: .post, parameters: parameters)
             .responseJSON { response in
                 
                 self.activityIndicator.stopAnimating()
@@ -1646,7 +1798,20 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             
             self.view.bringSubview(toFront: a01_01_pin_view)
             a01_01_pin_view.label_pin_num_notis.text = "핀번호를 입력 하세요.!"
-            a01_01_pin_view.pin_input_check_conut = 0
+            a01_01_pin_view.pin_input_repeat_conut = 0
+            
+            // 자동 포커스 이동 체크
+            a01_01_pin_view.bPin_input_location = true
+            a01_01_pin_view.iPin_input_location_no = 0
+            
+            
+            a01_01_pin_view.field_pin01.text = ""
+            a01_01_pin_view.field_pin02.text = ""
+            a01_01_pin_view.field_pin03.text = ""
+            a01_01_pin_view.field_pin04.text = ""
+            
+            // 포커스 처음으로
+            a01_01_pin_view.field_pin01.becomeFirstResponder()
             print("btn_pin_num")
         }
             // 회원번호 수정 화면으로
@@ -1656,6 +1821,8 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             a01_01_info_mod_view.bTimeCheckStart = false
             a01_01_info_mod_view.certifi_count = 0
             
+            
+            a01_01_info_mod_view.field_phone01.text = MainManager.shared.member_info.str_id_phone_num
             self.view.bringSubview(toFront: a01_01_info_mod_view)
             print("btn_car_info_mod")
             
@@ -1801,12 +1968,34 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     }
     
     
+    
+    // 버튼 이동
+    func moveButton( btn: UIButton ) {
+        btn.center.y += 300
+    }
+    func moveAnimate() {
+        
+        let duration: Double = 1.0
+        UIView.animate(withDuration: duration) {
+            self.moveButton(btn: self.btn_a01_change)
+        }
+    }
+    
+    
+    
     // A01 , A02 , A03 Change
     @IBAction func pressedA01(_ sender: UIButton) {
         
+        if( MainManager.shared.bAPP_TEST ) {
+            
+            moveAnimate()
+        }
+        
+        
+        
         // 차트 테이타 갯수 8주(8개) 테스트
         //setChartValues(8)
-        //ToastView.shared.long(self.view, txt_msg: "활성화 되었습니다.")
+        //ToastView.shared.short(self.view, txt_msg: "활성화 되었습니다.")
         
         btn_a01_change.setBackgroundImage(UIImage(named:"frame-A-01-off"), for: UIControlState.normal )
         btn_a02_change.setBackgroundImage(UIImage(named:"frame-A-02-off"), for: UIControlState.normal )
@@ -1940,48 +2129,48 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             
             self.view.bringSubview(toFront: a02_02_view)
             
-            if( MainManager.shared.bA02ON[sender.tag-2] == true )   { ToastView.shared.long(self.view, txt_msg: set_notis_on[sender.tag-2]) }
-            else                                                    { ToastView.shared.long(self.view, txt_msg: set_notis_off[sender.tag-2]) }
+            if( MainManager.shared.bA02ON[sender.tag-2] == true )   { ToastView.shared.short(self.view, txt_msg: set_notis_on[sender.tag-2]) }
+            else                                                    { ToastView.shared.short(self.view, txt_msg: set_notis_off[sender.tag-2]) }
         }
         else if( sender.tag == 3 )  { self.view.bringSubview(toFront: a02_03_view)
-            if( MainManager.shared.bA02ON[sender.tag-2] == true )   { ToastView.shared.long(self.view, txt_msg: set_notis_on[sender.tag-2]) }
-            else                                                    { ToastView.shared.long(self.view, txt_msg: set_notis_off[sender.tag-2]) }
+            if( MainManager.shared.bA02ON[sender.tag-2] == true )   { ToastView.shared.short(self.view, txt_msg: set_notis_on[sender.tag-2]) }
+            else                                                    { ToastView.shared.short(self.view, txt_msg: set_notis_off[sender.tag-2]) }
         }
         else if( sender.tag == 4 )  { self.view.bringSubview(toFront: a02_04_view)
-            if( MainManager.shared.bA02ON[sender.tag-2] == true )   { ToastView.shared.long(self.view, txt_msg: set_notis_on[sender.tag-2]) }
-            else                                                    { ToastView.shared.long(self.view, txt_msg: set_notis_off[sender.tag-2]) }
+            if( MainManager.shared.bA02ON[sender.tag-2] == true )   { ToastView.shared.short(self.view, txt_msg: set_notis_on[sender.tag-2]) }
+            else                                                    { ToastView.shared.short(self.view, txt_msg: set_notis_off[sender.tag-2]) }
         }
         else if( sender.tag == 5 )  { self.view.bringSubview(toFront: a02_05_view)
-            if( MainManager.shared.bA02ON[sender.tag-2] == true )   { ToastView.shared.long(self.view, txt_msg: set_notis_on[sender.tag-2]) }
-            else                                                    { ToastView.shared.long(self.view, txt_msg: set_notis_off[sender.tag-2]) }
+            if( MainManager.shared.bA02ON[sender.tag-2] == true )   { ToastView.shared.short(self.view, txt_msg: set_notis_on[sender.tag-2]) }
+            else                                                    { ToastView.shared.short(self.view, txt_msg: set_notis_off[sender.tag-2]) }
         }
         else if( sender.tag == 6 )  { self.view.bringSubview(toFront: a02_06_view)
-            if( MainManager.shared.bA02ON[sender.tag-2] == true )   { ToastView.shared.long(self.view, txt_msg: set_notis_on[sender.tag-2]) }
-            else                                                    { ToastView.shared.long(self.view, txt_msg: set_notis_off[sender.tag-2]) }
+            if( MainManager.shared.bA02ON[sender.tag-2] == true )   { ToastView.shared.short(self.view, txt_msg: set_notis_on[sender.tag-2]) }
+            else                                                    { ToastView.shared.short(self.view, txt_msg: set_notis_off[sender.tag-2]) }
         }
         else if( sender.tag == 7 )  { self.view.bringSubview(toFront: a02_07_view)
-            if( MainManager.shared.bA02ON[sender.tag-2] == true )   { ToastView.shared.long(self.view, txt_msg: set_notis_on[sender.tag-2]) }
-            else                                                    { ToastView.shared.long(self.view, txt_msg: set_notis_off[sender.tag-2]) }
+            if( MainManager.shared.bA02ON[sender.tag-2] == true )   { ToastView.shared.short(self.view, txt_msg: set_notis_on[sender.tag-2]) }
+            else                                                    { ToastView.shared.short(self.view, txt_msg: set_notis_off[sender.tag-2]) }
         }
         else if( sender.tag == 8 )  { self.view.bringSubview(toFront: a02_08_view)
-            if( MainManager.shared.bA02ON[sender.tag-2] == true )   { ToastView.shared.long(self.view, txt_msg: set_notis_on[sender.tag-2]) }
-            else                                                    { ToastView.shared.long(self.view, txt_msg: set_notis_off[sender.tag-2]) }
+            if( MainManager.shared.bA02ON[sender.tag-2] == true )   { ToastView.shared.short(self.view, txt_msg: set_notis_on[sender.tag-2]) }
+            else                                                    { ToastView.shared.short(self.view, txt_msg: set_notis_off[sender.tag-2]) }
         }
         else if( sender.tag == 9 )  { self.view.bringSubview(toFront: a02_09_view)
-            if( MainManager.shared.bA02ON[sender.tag-2] == true )   { ToastView.shared.long(self.view, txt_msg: set_notis_on[sender.tag-2]) }
-            else                                                    { ToastView.shared.long(self.view, txt_msg: set_notis_off[sender.tag-2]) }
+            if( MainManager.shared.bA02ON[sender.tag-2] == true )   { ToastView.shared.short(self.view, txt_msg: set_notis_on[sender.tag-2]) }
+            else                                                    { ToastView.shared.short(self.view, txt_msg: set_notis_off[sender.tag-2]) }
         }
         else if( sender.tag == 10 ) { self.view.bringSubview(toFront: a02_10_view)
-            if( MainManager.shared.bA02ON[sender.tag-2] == true )   { ToastView.shared.long(self.view, txt_msg: set_notis_on[sender.tag-2]) }
-            else                                                    { ToastView.shared.long(self.view, txt_msg: set_notis_off[sender.tag-2]) }
+            if( MainManager.shared.bA02ON[sender.tag-2] == true )   { ToastView.shared.short(self.view, txt_msg: set_notis_on[sender.tag-2]) }
+            else                                                    { ToastView.shared.short(self.view, txt_msg: set_notis_off[sender.tag-2]) }
         }
         else if( sender.tag == 11 ) { self.view.bringSubview(toFront: a02_11_view)
-            if( MainManager.shared.bA02ON[sender.tag-2] == true )   { ToastView.shared.long(self.view, txt_msg: set_notis_on[sender.tag-2]) }
-            else                                                    { ToastView.shared.long(self.view, txt_msg: set_notis_off[sender.tag-2]) }
+            if( MainManager.shared.bA02ON[sender.tag-2] == true )   { ToastView.shared.short(self.view, txt_msg: set_notis_on[sender.tag-2]) }
+            else                                                    { ToastView.shared.short(self.view, txt_msg: set_notis_off[sender.tag-2]) }
         }
         else if( sender.tag == 12 ) { self.view.bringSubview(toFront: a02_12_view)
-            if( MainManager.shared.bA02ON[sender.tag-2] == true )   { ToastView.shared.long(self.view, txt_msg: set_notis_on[sender.tag-2]) }
-            else                                                    { ToastView.shared.long(self.view, txt_msg: set_notis_off[sender.tag-2]) }
+            if( MainManager.shared.bA02ON[sender.tag-2] == true )   { ToastView.shared.short(self.view, txt_msg: set_notis_on[sender.tag-2]) }
+            else                                                    { ToastView.shared.short(self.view, txt_msg: set_notis_off[sender.tag-2]) }
         }
         
         print("A02_", sender.tag)
@@ -2019,9 +2208,30 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             a01_01_pin_view.field_pin03 == textField ||
             a01_01_pin_view.field_pin04 == textField ) {
             
+            
+            
+            
             let currentText = textField.text ?? ""
             guard let stringRange = Range(range, in: currentText) else { return false }
             let updatedText = currentText.replacingCharacters(in: stringRange, with: string)
+            
+//            if( a01_01_pin_view.field_pin01 == textField ) {
+//
+//                //a01_01_pin_view.field_pin01.resignFirstResponder()
+//                a01_01_pin_view.field_pin02.becomeFirstResponder()
+//            }
+//            else if( a01_01_pin_view.field_pin02 == textField ) {
+//
+//                //a01_01_pin_view.field_pin02.resignFirstResponder()
+//                a01_01_pin_view.field_pin03.becomeFirstResponder()
+//            }
+//            else if( a01_01_pin_view.field_pin03 == textField ) {
+//
+//                //a01_01_pin_view.field_pin03.resignFirstResponder()
+//                a01_01_pin_view.field_pin04.becomeFirstResponder()
+//            }
+            
+            
             return updatedText.count <= 1 // Change limit based on your requirement.
         }
         else {
@@ -2043,14 +2253,26 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         //
         //        a01_01_pin_view.label_pin_num_notis.text = "핀번호를 입력 하세요.!"
         
-        if( a01_01_pin_view.field_pin01 == textField ||
-            a01_01_pin_view.field_pin02 == textField ||
-            a01_01_pin_view.field_pin03 == textField ||
-            a01_01_pin_view.field_pin04 == textField ) {
+        if( a01_01_pin_view.field_pin01 == textField ) {
             
             textField.text = ""
+            a01_01_pin_view.iPin_input_location_no = 0
         }
-        
+        else if( a01_01_pin_view.field_pin02 == textField ) {
+            
+            textField.text = ""
+            a01_01_pin_view.iPin_input_location_no = 1
+        }
+        else if( a01_01_pin_view.field_pin03 == textField ) {
+            
+            textField.text = ""
+            a01_01_pin_view.iPin_input_location_no = 2
+        }
+        else if( a01_01_pin_view.field_pin04 == textField ) {
+            
+            textField.text = ""
+            a01_01_pin_view.iPin_input_location_no = 3
+        }
         
     }
     
@@ -2063,6 +2285,13 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     @IBAction func pressed_pin_cancel(_ sender: UIButton) {
         
         // pin cancel 핀번호 입력 취소
+        a01_01_pin_view.bPin_input_location = false
+        
+        a01_01_pin_view.field_pin01.resignFirstResponder()
+        a01_01_pin_view.field_pin02.resignFirstResponder()
+        a01_01_pin_view.field_pin03.resignFirstResponder()
+        a01_01_pin_view.field_pin04.resignFirstResponder()
+        
         self.view.bringSubview(toFront: a01_01_view)
         print("pin cancel")
         
@@ -2079,22 +2308,35 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         // 4자리 다 입력하지 않았으면
         if( tempCount == 4 ) {
             
-            if( a01_01_pin_view.pin_input_check_conut == 0 ) {
+            if( a01_01_pin_view.pin_input_repeat_conut == 0 ) {
                 
                 a01_01_pin_view.str_pin_num01 = a01_01_pin_view.field_pin01.text!
                 a01_01_pin_view.str_pin_num02 = a01_01_pin_view.field_pin02.text!
                 a01_01_pin_view.str_pin_num03 = a01_01_pin_view.field_pin03.text!
                 a01_01_pin_view.str_pin_num04 = a01_01_pin_view.field_pin04.text!
-                a01_01_pin_view.label_pin_num_notis.text = "핀번호를 한번 더 입력 하세요.!"
+                
+                // a01_01_pin_view.label_pin_num_notis.text = "핀번호를 한번 더 입력 하세요.!"
+                
+                
+                a01_01_pin_view.field_pin01.becomeFirstResponder()
+                MainManager.shared.str_certifi_notis = "핀번호를 한번 더 입력 하세요.!"
+                // Segue -> 사용 팝업뷰컨트롤러 띠우기
+                self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
+                
+                
+                // 포커스 이동
+                // a01_01_pin_view.field_pin01.becomeFirstResponder()
+                
+                
                 a01_01_pin_view.field_pin01.text = ""
                 a01_01_pin_view.field_pin02.text = ""
                 a01_01_pin_view.field_pin03.text = ""
                 a01_01_pin_view.field_pin04.text = ""
                 
-                a01_01_pin_view.pin_input_check_conut = 1
+                a01_01_pin_view.pin_input_repeat_conut = 1
             }
                 // 중복체크 두번째 입력
-            else if( a01_01_pin_view.pin_input_check_conut == 1 ) {
+            else if( a01_01_pin_view.pin_input_repeat_conut == 1 ) {
                 
                 // 앞의 입력 핀번호와 같다
                 if( a01_01_pin_view.field_pin01.text! == a01_01_pin_view.str_pin_num01 &&
@@ -2103,22 +2345,107 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
                     a01_01_pin_view.field_pin04.text! == a01_01_pin_view.str_pin_num04
                     ){
                     
-                    //a01_01_pin_view.label_pin_num_notis.text = "핀번호가 일치 합니다.변경 되었습니다.!"
-                    //pop up
-                    MainManager.shared.str_certifi_notis = "핀번호가 일치 합니다.변경 되었습니다.!"
-                    // pin ok 핀번호 다시 저장
-                    self.view.bringSubview(toFront: a01_01_view)
                     
-                    // Segue -> 사용 팝업뷰컨트롤러 띠우기
-                    self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
                     
-                    print("pin save")
+                    
+                    
+                    let tempString01 = a01_01_pin_view.field_pin01.text!+a01_01_pin_view.field_pin01.text!+a01_01_pin_view.field_pin01.text!+a01_01_pin_view.field_pin01.text!
+                    
+                    
+                    let pin_num:String = tempString01// 문자열 타입 벗기기?
+                    let parameters = [
+                        "Req": "SetPinNo",
+                        "Pin": pin_num]
+                    
+                    print(pin_num)
+                    Alamofire.request("http://seraphm.cafe24.com/database.php", method: .post, parameters: parameters)
+                        .responseJSON { response in
+                            
+                            self.activityIndicator.stopAnimating()
+                            
+                            print(response)
+                            //to get status code
+                            if let status = response.response?.statusCode {
+                                switch(status){
+                                case 201:
+                                    print("example success")
+                                default:
+                                    print("error with response status: \(status)")
+                                }
+                            }
+                            //to get JSON return value
+                            
+                            if let json = try? JSON(response.result.value) {
+                                
+                                print(json["Result"])
+                                
+                                let Result = json["Result"].rawString()!
+                                
+                                if( Result == "SAVE_OK" ) {
+                                    
+                                    // MainManager.shared.member_info.str_id_phone_num = pin_num // 핸드폰 번호 바꾸기
+                                    // 클라 저장
+                                    // UserDefaults.standard.set(MainManager.shared.member_info.str_id_phone_num, forKey: "str_id_phone_num")
+                                    
+                                    
+                                    self.a01_01_pin_view.field_pin01.resignFirstResponder()
+                                    self.a01_01_pin_view.field_pin02.resignFirstResponder()
+                                    self.a01_01_pin_view.field_pin03.resignFirstResponder()
+                                    self.a01_01_pin_view.field_pin04.resignFirstResponder()
+                                    
+                                    //a01_01_pin_view.label_pin_num_notis.text = "핀번호가 일치 합니다.변경 되었습니다.!"
+                                    
+                                    // pin ok 핀번호 다시 저장
+                                    self.view.bringSubview(toFront: self.a01_01_view)
+                                    
+                                    //pop up
+                                    MainManager.shared.str_certifi_notis = "핀번호가 일치 합니다.변경 되었습니다.!"
+                                    // Segue -> 사용 팝업뷰컨트롤러 띠우기
+                                    self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
+                                    self.a01_01_pin_view.bPin_input_location = false
+                                    
+                                    print("pin save")
+                                    
+                                   
+                                    print( "PIN 번호 수정 성공" )
+                                    
+                                }
+                                else {
+                                    
+                                    MainManager.shared.str_certifi_notis = "휴대폰 번호 저장 실패.!"
+                                    MainManager.shared.bMemberPhoneCertifi = false
+                                    self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
+                                    //self.a01_01_info_mod_view.label_notis.text = "휴대폰 번호 저장 실패.!"
+                                    print( "PIN 번호 저장 실패.!" )
+                                }
+                                
+                                print( Result )
+                            }
+                    }
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
                 }
                     // 앞의 입력 핀번호와 다르다
                 else {
                     
-                    a01_01_pin_view.pin_input_check_conut = 0
-                    a01_01_pin_view.label_pin_num_notis.text = "틀렸습니다.핀번호를 처음 부터 다시 입력 하세요.!"
+                    a01_01_pin_view.pin_input_repeat_conut = 0
+                    a01_01_pin_view.iPin_input_location_no = 0
+                    a01_01_pin_view.field_pin01.becomeFirstResponder()
+                    
+                    MainManager.shared.str_certifi_notis = "틀렸습니다.핀번호를 처음 부터 다시 입력 하세요.!"
+                    // Segue -> 사용 팝업뷰컨트롤러 띠우기
+                    self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
+                    
+                    
                     a01_01_pin_view.field_pin01.text = ""
                     a01_01_pin_view.field_pin02.text = ""
                     a01_01_pin_view.field_pin03.text = ""
@@ -2129,7 +2456,10 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         }
         else {
             
-            a01_01_pin_view.label_pin_num_notis.text = "핀번호를 4자리 모두 입력 하세요.!"
+
+            MainManager.shared.str_certifi_notis = "핀번호를 4자리 모두 입력 하세요.!"
+            // Segue -> 사용 팝업뷰컨트롤러 띠우기
+            self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
         }
         
         
@@ -2174,7 +2504,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         }
         else {
             
-            return sz_car_fuel.count
+            return MainManager.shared.str_select_fuelList.count
         }
         
         
@@ -2193,7 +2523,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         }
         else {
             
-            return sz_car_fuel[row]
+            return MainManager.shared.str_select_fuelList[row]
         }
         
         
@@ -2215,7 +2545,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         else {
             
             MainManager.shared.member_info.i_fuel_piker_select = row
-            a01_01_info_mod_view.field_car_fuel.text = sz_car_fuel[row]
+            a01_01_info_mod_view.field_car_fuel.text = MainManager.shared.str_select_fuelList[row]
         }
     }
     
@@ -2237,34 +2567,40 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             
             // 시간 카운트 시작
             a01_01_info_mod_view.bTimeCheckStart = true
-            a01_01_info_mod_view.certifi_count = 180 // 3분
+            a01_01_info_mod_view.certifi_count = 60 // 3분
             
             let tempString01 = a01_01_info_mod_view.field_phone01.text as String?
-            let tempString02 = a01_01_info_mod_view.field_phone02.text as String?
-            let tempString03 = a01_01_info_mod_view.field_phone03.text as String?
             
-            if( a01_01_info_mod_view.field_phone01.text!.count == 0 ||
-                a01_01_info_mod_view.field_phone02.text!.count == 0 ||
-                a01_01_info_mod_view.field_phone03.text!.count == 0 ) {
+            if( a01_01_info_mod_view.field_phone01.text!.count == 0 ) {
                 
                 a01_01_info_mod_view.bTimeCheckStart = false
-                self.a01_01_info_mod_view.label_notis.text = "전화번호를 전부 입력해 주세요.!"
+                
+                //self.a01_01_info_mod_view.label_notis.text = "전화번호를 전부 입력해 주세요.!"
+                MainManager.shared.str_certifi_notis = "전화번호를 전부 입력해 주세요.!"
+                // Segue -> 사용 팝업뷰컨트롤러 띠우기
+                self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
+                
+                
+            
                 return
             }
             
             
-            //전번 저장
-            MainManager.shared.member_info.str_id_phone_num = tempString01! + tempString02! + tempString03!
+            MainManager.shared.str_certifi_notis = "요청한 인증 번호를 를력해 주세요.!"
+            // Segue -> 사용 팝업뷰컨트롤러 띠우기
+            self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
+            
+            
             
             
             // login.php?Req=PhoneCheck&PhoneNo=핸폰번호
-            let phone_num = MainManager.shared.member_info.str_id_phone_num // 문자열 타입 벗기기?
+            let phone_num = tempString01 // 문자열 타입 벗기기?
             let parameters = [
                 "Req": "PhoneCheck",
                 "PhoneNo": phone_num
             ]
             print(phone_num)
-            Alamofire.request("http://gnu.sdodo.co.kr/login.php", method: .post, parameters: parameters)
+            Alamofire.request("http://seraphm.cafe24.com/login.php", method: .post, parameters: parameters)
                 .responseJSON { response in
                     
                     self.activityIndicator.stopAnimating()
@@ -2302,33 +2638,31 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         
         if( MainManager.shared.bMemberPhoneCertifi == false ) {
             
-            MainManager.shared.str_certifi_notis = "인증 번호가 맞지 않습니다.!"
-            
-            if( self.a01_01_info_mod_view.field_certifi_input.text!.count == 0 ) {
-                
-                self.a01_01_info_mod_view.label_notis.text = "인증번호를 입력 해주세요.~! "
+            if( self.a01_01_info_mod_view.field_certifi_input.text!.count == 0 ) {                
+
+                MainManager.shared.str_certifi_notis = "인증번호를 입력 해주세요.~! "
+                self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
                 return
             }
-                // 인증번호가 같으면 OK
             else if( (self.a01_01_info_mod_view.server_get_phone_certifi_num == self.a01_01_info_mod_view.field_certifi_input.text) ) {
                 
                 // 인증번호가 같으면 OK
-                MainManager.shared.str_certifi_notis = "인증 되었습니다.OK!"
-                MainManager.shared.bMemberPhoneCertifi = true
-                self.a01_01_info_mod_view.label_notis.text = "인증 되었습니다.OK!"
-                //
-                a01_01_info_mod_view.label_certifi_time_chenk.text = "( 인증 완료 )"
+//                MainManager.shared.str_certifi_notis = "인증 되었습니다.OK!"
+//                MainManager.shared.bMemberPhoneCertifi = true
+//                self.a01_01_info_mod_view.label_notis.text = "인증 되었습니다.OK!"
+//                //
+//                a01_01_info_mod_view.label_certifi_time_chenk.text = "( 인증 완료 )"
+                
+                let tempString01 = a01_01_info_mod_view.field_phone01.text as String?
                 
                 
-                
-                
-                let phone_num = MainManager.shared.member_info.str_id_phone_num // 문자열 타입 벗기기?
+                let phone_num = tempString01!// 문자열 타입 벗기기?
                 let parameters = [
                     "Req": "SetPhoneNo",
                     "No": phone_num]
                 
                 print(phone_num)
-                Alamofire.request("http://gnu.sdodo.co.kr/database.php", method: .post, parameters: parameters)
+                Alamofire.request("http://seraphm.cafe24.com/database.php", method: .post, parameters: parameters)
                     .responseJSON { response in
                         
                         self.activityIndicator.stopAnimating()
@@ -2352,15 +2686,25 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
                             let Result = json["Result"].rawString()!
                             
                             if( Result == "SAVE_OK" ) {
+
+                                MainManager.shared.member_info.str_id_phone_num = tempString01! // 핸드폰 번호 바꾸기
+                                // 클라 저장
+                                UserDefaults.standard.set(MainManager.shared.member_info.str_id_phone_num, forKey: "str_id_phone_num")
                                 
-                                self.view.bringSubview(toFront: self.a01_01_view)
+                                MainManager.shared.str_certifi_notis = "인증 되었습니다.OK!"
+                                MainManager.shared.bMemberPhoneCertifi = true
+                                self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
+                                // self.view.bringSubview(toFront: self.a01_01_view)
                                 print( "휴대폰번호 수정 성공2" )
                                 
                             }
                             else {
                                 
-                                self.a01_01_info_mod_view.label_notis.text = "서버 휴대폰 번호 저장 실패.!"
-                                print( "서버 휴대폰 번호 저장 실패.!" )
+                                MainManager.shared.str_certifi_notis = "휴대폰 번호 저장 실패.!"
+                                MainManager.shared.bMemberPhoneCertifi = false
+                                self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
+                                //self.a01_01_info_mod_view.label_notis.text = "휴대폰 번호 저장 실패.!"
+                                print( "휴대폰 번호 저장 실패.!" )
                             }
                             
                             print( Result )
@@ -2373,7 +2717,8 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
                 // 인증번호가 틀렸다.
                 MainManager.shared.str_certifi_notis = "인증 번호가 맞지 않습니다.!"
                 MainManager.shared.bMemberPhoneCertifi = false
-                self.a01_01_info_mod_view.label_notis.text = "인증 번호가 맞지 않습니다.!"
+                self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
+
                 return
             }
         }
@@ -2426,8 +2771,9 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     @IBAction func pressed_mod_plate_num(_ sender: UIButton) {
         
         if( self.a01_01_info_mod_view.field_plate_num.text!.count == 0 ) {
-            
-            self.a01_01_info_mod_view.label_notis.text = "정보를 입력 해주세요.~! "
+
+            MainManager.shared.str_certifi_notis = "정보를 입력 해주세요.~! "
+            self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
             return
         }
         else {
@@ -2436,11 +2782,11 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             MainManager.shared.member_info.str_car_plate_num = self.a01_01_info_mod_view.field_plate_num.text!
             
             let parameters = [
-                "Req": "SetVIN",
+                "Req": "GetCarNo",
                 "VIN": MainManager.shared.member_info.str_car_plate_num]
             
             print(MainManager.shared.member_info.str_car_plate_num)
-            Alamofire.request("http://gnu.sdodo.co.kr/database.php", method: .post, parameters: parameters)
+            Alamofire.request("http://seraphm.cafe24.com/database.php", method: .post, parameters: parameters)
                 .responseJSON { response in
                     
                     self.activityIndicator.stopAnimating()
@@ -2468,13 +2814,15 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
                             
                             // 클라 저장
                             UserDefaults.standard.set(MainManager.shared.member_info.str_car_plate_num, forKey: "str_car_plate_num")
-                            self.a01_01_info_mod_view.label_notis.text = "차대번호 수정 성공"
-                            print( "차대번호 수정 성공" )
+                            MainManager.shared.str_certifi_notis = "차량등록 번호 수정 성공"
+                            self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
+                            print( "차량등록 번호 수정 성공" )
                         }
                         else {
-                            
-                            self.a01_01_info_mod_view.label_notis.text = "차대번호 저장 실패.!"
-                            print( "차대번호 저장 실패.!" )
+
+                            MainManager.shared.str_certifi_notis = "차량등록 번호 저장 실패.!"
+                            self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
+                            print( "차량등록 번호 저장 실패.!" )
                         }
                         
                         print( Result )
@@ -2490,8 +2838,10 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     @IBAction func pressed_mod_dae_num(_ sender: UIButton) {
         
         if( self.a01_01_info_mod_view.field_car_dae_num.text!.count == 0 ) {
-            
-            self.a01_01_info_mod_view.label_notis.text = "정보를 입력 해주세요.~! "
+           
+
+            MainManager.shared.str_certifi_notis = "정보를 입력 해주세요.~! "
+            self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
             return
         }
         else {
@@ -2500,11 +2850,11 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             MainManager.shared.member_info.str_car_dae_num = self.a01_01_info_mod_view.field_car_dae_num.text!
             
             let parameters = [
-                "Req": "SetCarNo",
+                "Req": "SetVIN",
                 "No": MainManager.shared.member_info.str_car_dae_num]
             
             print(MainManager.shared.member_info.str_car_dae_num)
-            Alamofire.request("http://gnu.sdodo.co.kr/database.php", method: .post, parameters: parameters)
+            Alamofire.request("http://seraphm.cafe24.com/database.php", method: .post, parameters: parameters)
                 .responseJSON { response in
                     
                     self.activityIndicator.stopAnimating()
@@ -2530,14 +2880,17 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
                             
                             // 클라 저장
                             UserDefaults.standard.set(MainManager.shared.member_info.str_car_dae_num, forKey: "str_car_dae_num")
-                            self.a01_01_info_mod_view.label_notis.text = "번호판 번호 수정 성공"
                             
-                            print( "번호판 번호 수정 성공" )
+                            MainManager.shared.str_certifi_notis = "차대 번호 수정 성공"
+                            self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
+                            
+                            print( "차대 번호 수정 성공" )
                         }
                         else {
-                            
-                            self.a01_01_info_mod_view.label_notis.text = "번호판 번호 저장 실패.!"
-                            print( "번호판 번호 저장 실패.!" )
+
+                            MainManager.shared.str_certifi_notis = "차대대번호 저장 실패.!"
+                            self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
+                            print( "차대 번호 저장 실패.!" )
                         }
                         
                         print( Result )
@@ -2557,7 +2910,10 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         
         if( self.a01_01_info_mod_view.field_car_kind.text!.count == 0 ) {
             
-            self.a01_01_info_mod_view.label_notis.text = "정보를 입력 해주세요.~! "
+
+            
+            MainManager.shared.str_certifi_notis = "정보를 입력 해주세요.~! "
+            self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
             return
         }
         else {
@@ -2570,7 +2926,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
                 "Name": MainManager.shared.member_info.str_car_kind]
             
             print(MainManager.shared.member_info.str_car_kind)
-            Alamofire.request("http://gnu.sdodo.co.kr/database.php", method: .post, parameters: parameters)
+            Alamofire.request("http://seraphm.cafe24.com/database.php", method: .post, parameters: parameters)
                 .responseJSON { response in
                     
                     self.activityIndicator.stopAnimating()
@@ -2592,18 +2948,19 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
                         let Result = json["Result"].rawString()!
                         if( Result == "SAVE_OK" ) {
                             
-                            
                             // 클라 저장
                             UserDefaults.standard.set(MainManager.shared.member_info.str_car_kind, forKey: "str_car_kind")
                             // 피커뷰 선택번호 저장
                             UserDefaults.standard.set(MainManager.shared.member_info.i_car_piker_select, forKey: "i_car_piker_select")
 
-                            self.a01_01_info_mod_view.label_notis.text = "차종 수정 성공"
+                            MainManager.shared.str_certifi_notis = "차종 수정 성공"
+                            self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
                             print( "차종 수정 성공" )
                         }
                         else {
-                            
-                            self.a01_01_info_mod_view.label_notis.text = "차종 저장 실패.!"
+
+                            MainManager.shared.str_certifi_notis = "차종 저장 실패.!"
+                            self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
                             print( "차종 저장 실패.!" )
                         }
                         print( Result )
@@ -2620,8 +2977,9 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     @IBAction func pressed_mod_fuel_type(_ sender: UIButton) {
         
         if( self.a01_01_info_mod_view.field_car_fuel.text!.count == 0 ) {
-            
-            self.a01_01_info_mod_view.label_notis.text = "정보를 입력 해주세요.~! "
+
+            MainManager.shared.str_certifi_notis = "정보를 입력 해주세요.~! "
+            self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
             return
         }
         else {
@@ -2634,7 +2992,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
                 "Type": MainManager.shared.member_info.str_car_fuel_type ]
             
             print(MainManager.shared.member_info.str_car_kind)
-            Alamofire.request("http://gnu.sdodo.co.kr/database.php", method: .post, parameters: parameters)
+            Alamofire.request("http://seraphm.cafe24.com/database.php", method: .post, parameters: parameters)
                 .responseJSON { response in
                     
                     self.activityIndicator.stopAnimating()
@@ -2660,12 +3018,15 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
                             UserDefaults.standard.set(MainManager.shared.member_info.str_car_fuel_type, forKey: "str_car_fuel_type")
                             UserDefaults.standard.set(MainManager.shared.member_info.i_fuel_piker_select, forKey: "i_fuel_piker_select")
                             
-                            self.a01_01_info_mod_view.label_notis.text = "연료타입 수정 성공"
+
+                            MainManager.shared.str_certifi_notis = "연료타입 수정 성공"
+                            self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
                             print( "연료타입 수정 성공" )
                         }
                         else {
-                            
-                            self.a01_01_info_mod_view.label_notis.text = "연료타입 수정 실패.!"
+
+                            MainManager.shared.str_certifi_notis = "연료타입 수정 실패.!"
+                            self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
                             print( "연료타입 수정 실패.!" )
                         }
                         print( Result )
@@ -2682,7 +3043,9 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         
         if( self.a01_01_info_mod_view.field_car_year.text!.count == 0 ) {
             
-            self.a01_01_info_mod_view.label_notis.text = "정보를 입력 해주세요.~! "
+
+            MainManager.shared.str_certifi_notis = "정보를 입력 해주세요.~! "
+            self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
             return
         }
         else {
@@ -2695,7 +3058,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
                 "MY": MainManager.shared.member_info.str_car_year]
             
             print(MainManager.shared.member_info.str_car_kind)
-            Alamofire.request("http://gnu.sdodo.co.kr/database.php", method: .post, parameters: parameters)
+            Alamofire.request("http://seraphm.cafe24.com/database.php", method: .post, parameters: parameters)
                 .responseJSON { response in
                     
                     self.activityIndicator.stopAnimating()
@@ -2720,12 +3083,15 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
                             // 클라 저장
                             UserDefaults.standard.set(MainManager.shared.member_info.str_car_year, forKey: "str_car_year")
                             UserDefaults.standard.set(MainManager.shared.member_info.i_year_piker_select, forKey: "i_year_piker_select")
-                            self.a01_01_info_mod_view.label_notis.text = "연식 수정 성공"
+                            
+                            MainManager.shared.str_certifi_notis = "연식 수정 성공"
+                            self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
                             print( "연식 수정 성공" )
                         }
                         else {
                             
-                            self.a01_01_info_mod_view.label_notis.text = "연식 저장 실패.!"
+                            MainManager.shared.str_certifi_notis = "연식 저장 실패.!"
+                            self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
                             print( "연식 저장 실패.!" )
                         }
                         print( Result )
@@ -2760,11 +3126,11 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         // 토스트 알람 메세지
         if( sender.isOn == true ) {
             
-            ToastView.shared.long(self.view, txt_msg: set_notis_on[sender.tag])
+            ToastView.shared.short(self.view, txt_msg: set_notis_on[sender.tag])
         }
         else {
             
-            ToastView.shared.long(self.view, txt_msg: set_notis_off[sender.tag])
+            ToastView.shared.short(self.view, txt_msg: set_notis_off[sender.tag])
         }
         
         
@@ -2782,7 +3148,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         if( MainManager.shared.bA02ON[sender.tag] == true ) {
             
             MainManager.shared.bA02ON[sender.tag] = false
-            ToastView.shared.long(self.view, txt_msg: set_notis_off[sender.tag])
+            ToastView.shared.short(self.view, txt_msg: set_notis_off[sender.tag])
             sender.setBackgroundImage(UIImage(named:btn_image_off[sender.tag]), for: UIControlState.normal )
         }
         else {
@@ -2797,7 +3163,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             else {
                 
                 MainManager.shared.bA02ON[sender.tag] = true
-                ToastView.shared.long(self.view, txt_msg: set_notis_on[sender.tag])
+                ToastView.shared.short(self.view, txt_msg: set_notis_on[sender.tag])
                 sender.setBackgroundImage(UIImage(named:btn_image_on[sender.tag]), for: UIControlState.normal )
             }
             
@@ -2817,11 +3183,11 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         let parameters = [
             "Req": "Login",
             "ID": MainManager.shared.member_info.str_id_nick,
-            "Pass": MainManager.shared.member_info.str_id_phone_num]
-        
+            "Pass": MainManager.shared.member_info.str_id_nick]
+
         print(MainManager.shared.member_info.str_id_nick)
-        print(MainManager.shared.member_info.str_id_phone_num)
-        Alamofire.request("http://gnu.sdodo.co.kr/login.php", method: .post, parameters: parameters)
+
+        Alamofire.request("http://seraphm.cafe24.com/login.php", method: .post, parameters: parameters)
             .responseJSON { response in
                 
                 self.activityIndicator.stopAnimating()
@@ -2855,6 +3221,32 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
                 }
         }
     }
+    
+    
+    
+    
+//    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+//        if scrollView == a01_01_scroll_view {
+//            let contentOffset = scrollView.contentOffset.y
+//            print("contentOffset: ", contentOffset)
+//            if (contentOffset > self.lastKnowContentOfsset) {
+//                print("scrolling Down")
+//                print("dragging Up")
+//            } else {
+//                print("scrolling Up")
+//                print("dragging Down")
+//            }
+//        }
+//    }
+//
+//    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+//        if scrollView == a01_01_scroll_view {
+//            self.lastKnowContentOfsset = scrollView.contentOffset.y
+//            print("lastKnowContentOfsset: ", scrollView.contentOffset.y)
+//        }
+//    }
+    
+    
     
     
     

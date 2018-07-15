@@ -7,9 +7,10 @@
 //
 
 import UIKit
+import WebKit
 import Alamofire
 
-class Terms01_ViewController: UIViewController {
+class Terms01_ViewController: UIViewController, WKNavigationDelegate {
 
     @IBOutlet weak var uncheckbox: UIButton!
     @IBOutlet weak var uncheckbox02: UIButton!
@@ -21,6 +22,11 @@ class Terms01_ViewController: UIViewController {
     var isCheck02:Bool!
     
     
+
+    
+    weak var webView01: WKWebView!
+    weak var webView02: WKWebView!
+    
     @IBOutlet weak var btn_OK: UIButton!
     
     
@@ -30,6 +36,46 @@ class Terms01_ViewController: UIViewController {
         isCheck01 = false
         isCheck02 = false
         btn_OK.backgroundColor = UIColor(red: 11/256, green: 85/255, blue: 156/255, alpha: 1)
+        
+        
+        let webConfiguration = WKWebViewConfiguration()
+        // 웹뷰 딜리게이트 연결
+        webView01 = WKWebView(frame: CGRect( x: 18, y: 86, width: 340, height: 140 ), configuration: webConfiguration )
+        webView01.frame = MainManager.shared.initLoadChangeFrame( frame: self.webView01.frame  )
+        //webView.uiDelegate = self
+        webView01.navigationDelegate = self
+        webView01.translatesAutoresizingMaskIntoConstraints = false
+        self.view.addSubview( webView01 )
+        
+        //if let videoURL:URL = URL(string: "http://seraphm.cafe24.com/app/contract1.html") {
+        
+        
+        let temp = "http://www.naver.com"
+        let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
+        let request = URLRequest(url: url! )
+        webView01.load(request)
+        
+        
+        // 웹뷰 딜리게이트 연결
+        webView02 = WKWebView(frame: CGRect( x: 18, y: 330, width: 340, height: 140 ), configuration: webConfiguration )
+        webView02.frame = MainManager.shared.initLoadChangeFrame( frame: self.webView02.frame  )
+        //webView.uiDelegate = self
+        webView02.navigationDelegate = self
+        webView02.translatesAutoresizingMaskIntoConstraints = false
+        self.view.addSubview( webView02 )
+        
+        if let videoURL:URL = URL(string: "http://seraphm.cafe24.com/app/contract3.html") {
+            let request:URLRequest = URLRequest(url: videoURL)
+            webView02.load(request)
+        }
+        
+        
+        
+        
+
+        
+
+        
     }
 
     override func didReceiveMemoryWarning() {
@@ -91,7 +137,7 @@ class Terms01_ViewController: UIViewController {
      self.view.bringSubview(toFront: activityIndicator)
      self.activityIndicator.startAnimating()
      
-     Alamofire.request("http://gnu.sdodo.co.kr/login.php", method: .post, parameters: ["ID": "admin", "Pass":"admin"], encoding: JSONEncoding.default)
+     Alamofire.request("http://seraphm.cafe24.com/login.php", method: .post, parameters: ["ID": "admin", "Pass":"admin"], encoding: JSONEncoding.default)
      .responseJSON { response in
      
      self.activityIndicator.stopAnimating()

@@ -15,9 +15,7 @@ class BlueToothViewController: UIViewController {
     
     var activityIndicator:UIActivityIndicatorView = UIActivityIndicatorView()
     
-    
     var bDataRequest:Bool = false
-    
     
     
     @IBOutlet weak var btn_ble01_kit_not: UIButton!
@@ -79,15 +77,23 @@ class BlueToothViewController: UIViewController {
         self.view.addSubview(activityIndicator)
         
         
+        // 인터넷 연결 체크
+        MainManager.shared.isConnectCheck()
+        
+        
         // 회원가입용 회원정보수정용 카 리스트 받기
         initReadSelectData()
+        
+        
+        
+        
+        
         
         // TEST // 0:비회원    1:차정보없이 가입     2:차정보입력 가입
         if( MainManager.shared.bAPP_TEST == true ) {
         
             // MainManager.shared.iMemberJoinState = 0
         }
-        
     }
     
     
@@ -234,8 +240,7 @@ class BlueToothViewController: UIViewController {
         // 서버 연결 리스트 더 만들지 않는다
         if( MainManager.shared.bCarListRequest == true ) { return }
         
-        MainManager.shared.str_select_carList.removeAll()
-        MainManager.shared.str_select_yearList.removeAll()
+        
         
         self.view.bringSubview(toFront: activityIndicator)
         
@@ -247,7 +252,7 @@ class BlueToothViewController: UIViewController {
             "Req": "CarList"
             ]  // 차종
 
-        Alamofire.request("http://gnu.sdodo.co.kr/database.php", method: .post, parameters: parameters)
+        Alamofire.request("http://seraphm.cafe24.com/database.php", method: .post, parameters: parameters)
             .responseJSON { response in
                 
                 self.activityIndicator.stopAnimating()
