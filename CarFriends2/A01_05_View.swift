@@ -27,10 +27,6 @@ class A01_05_View: UIView {
     
     
     
-    
-    
-    
-    
 
     /*
     // Only override draw() if you perform custom drawing.

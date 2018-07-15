@@ -941,6 +941,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             
             
             a01_01_scroll_view.frame = MainManager.shared.initLoadChangeFrame( frame: a01_01_scroll_view.frame )
+            // 스크롤 영역 크기 자동 계산
             a01_01_scroll_view.resizeScrollViewContentSize()
             a01_01_scroll_view.delegate = self
             
@@ -1444,12 +1445,51 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         // a01_sub_view
         
 
-        a01_01_view.translatesAutoresizingMaskIntoConstraints = false
+        //a01_01_view.translatesAutoresizingMaskIntoConstraints = false
         //            a01_01_view.frame = (a01_01_view.superview?.bounds)!
+        
         a01_01_view.frame = MainManager.shared.initLoadChangeFrame(frame: a01_01_view.frame)
+        a01_02_view.frame = MainManager.shared.initLoadChangeFrame(frame: a01_02_view.frame)
+        a01_03_view.frame = MainManager.shared.initLoadChangeFrame(frame: a01_03_view.frame)
+        a01_04_view.frame = MainManager.shared.initLoadChangeFrame(frame: a01_04_view.frame)
+        
+        // a02_ScrollMenuView.frame = MainManager.shared.initLoadChangeFrame(frame: a02_ScrollMenuView.frame)
+        a02_01_view.frame = MainManager.shared.initLoadChangeFrame(frame: a02_01_view.frame)
+        
+        a02_02_view.frame = MainManager.shared.initLoadChangeFrame(frame: a02_02_view.frame)
+        a02_02_view.webView.frame = MainManager.shared.initLoadChangeFrame(frame: a02_02_view.webView.frame)
+        
+        a02_03_view.frame = MainManager.shared.initLoadChangeFrame(frame: a02_03_view.frame)
+        a02_03_view.webView.frame = MainManager.shared.initLoadChangeFrame(frame: a02_03_view.webView.frame)
+        
+        a02_04_view.frame = MainManager.shared.initLoadChangeFrame(frame: a02_04_view.frame)
+        a02_04_view.webView.frame = MainManager.shared.initLoadChangeFrame(frame: a02_04_view.webView.frame)
+        
+        a02_05_view.frame = MainManager.shared.initLoadChangeFrame(frame: a02_05_view.frame)
+        a02_05_view.webView.frame = MainManager.shared.initLoadChangeFrame(frame: a02_05_view.webView.frame)
+        
+        a02_06_view.frame = MainManager.shared.initLoadChangeFrame(frame: a02_06_view.frame)
+        a02_06_view.webView.frame = MainManager.shared.initLoadChangeFrame(frame: a02_06_view.webView.frame)
+        
+        a02_07_view.frame = MainManager.shared.initLoadChangeFrame(frame: a02_07_view.frame)
+        a02_07_view.webView.frame = MainManager.shared.initLoadChangeFrame(frame: a02_07_view.webView.frame)
+        
+        a02_08_view.frame = MainManager.shared.initLoadChangeFrame(frame: a02_08_view.frame)
+        a02_08_view.webView.frame = MainManager.shared.initLoadChangeFrame(frame: a02_08_view.webView.frame)
+        
+        a02_09_view.frame = MainManager.shared.initLoadChangeFrame(frame: a02_09_view.frame)
+        a02_09_view.webView.frame = MainManager.shared.initLoadChangeFrame(frame: a02_09_view.webView.frame)
+        
+        a02_10_view.frame = MainManager.shared.initLoadChangeFrame(frame: a02_10_view.frame)
+        a02_10_view.webView.frame = MainManager.shared.initLoadChangeFrame(frame: a02_10_view.webView.frame)
+        
+        a02_11_view.frame = MainManager.shared.initLoadChangeFrame(frame: a02_11_view.frame)
+        a02_11_view.webView.frame = MainManager.shared.initLoadChangeFrame(frame: a02_11_view.webView.frame)
+        
+        a02_12_view.frame = MainManager.shared.initLoadChangeFrame(frame: a02_12_view.frame)
+        a02_12_view.webView.frame = MainManager.shared.initLoadChangeFrame(frame: a02_12_view.webView.frame)
         
         a01_04_viewInit()
-        
         
         // 인터넷 연결 체크
         MainManager.shared.isConnectCheck()
@@ -1579,14 +1619,11 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             
             if( bDataRequest_a0105 == true ) {
                 
-                
-                
                 Alamofire.request(a01_05_image[indexPath.row%4]).responseImage { response in
                     if let image = response.result.value {
                         cell.imageIcon.image = image
                     }
                 }
-                
                 
                 // cell.imageIcon.image = UIImage(named: a01_05_image[indexPath.row%10])
                 
@@ -1595,9 +1632,6 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
                 
                 // ServiceList[i]["Service_Name"].stringValue
                 cell.label_name.text = self.a01_05_tableViewData[indexPath.row]
-                
-                
-                
                 
                 
             }
@@ -1722,6 +1756,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
                         self.bDataRequest_a0105 = true // 데이타 받았다 체크
                         
                         let ServiceList = json["ServiceList"]
+                        
                         print( ServiceList )
                         
                         for i in 0..<ServiceList.count {
@@ -1742,9 +1777,11 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
                 
         }
         
-        
     }
     
+    func a01_05_LoadChangeFrame() {
+        a01_05_view.frame = MainManager.shared.initLoadChangeFrame(frame: a01_05_view.frame)
+    }
     
     
     
@@ -1988,7 +2025,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         
         if( MainManager.shared.bAPP_TEST ) {
             
-            moveAnimate()
+            // moveAnimate()
         }
         
         
@@ -2075,24 +2112,36 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         var count = 0
         var px = 0
         //var py = 0
+
+        
+        var width_ratio:Int = Int(52 * MainManager.shared.ratio_X)
+        var height_ratio:Int = Int(68 * MainManager.shared.ratio_Y)
         
         for i in 1...btn_image.count {
             
             count += 1
             
+            
             let tempBtn = UIButton()
             tempBtn.tag = i
-            tempBtn.frame = CGRect(x: (i*52)-52, y: 0, width: 52, height: 68) // 105,136
+            tempBtn.frame = CGRect(x: (i*width_ratio)-width_ratio, y: 0, width: width_ratio, height: height_ratio) // 105,136
             tempBtn.backgroundColor = UIColor.black
             //tempBtn.setTitle("Hello \(i)", for: .normal)
             tempBtn.addTarget(self, action: #selector(a02MenuBtnAction), for: .touchUpInside)
             tempBtn.setImage(UIImage(named:btn_image[i-1]), for: UIControlState.normal )
             
-            px += 52
+            px += width_ratio
             a02_ScrollMenuView.scrollView.addSubview(tempBtn)
             //px = px + Int(scrollView.frame.width)/2 - 30
         }
-        a02_ScrollMenuView.scrollView.contentSize = CGSize(width: px, height: 68)
+        
+        
+        
+        a02_ScrollMenuView.scrollView.contentSize = CGSize(width: (px+width_ratio), height: height_ratio)
+        
+        a02_ScrollMenuView.frame = MainManager.shared.initLoadChangeFrame( frame: a02_ScrollMenuView.frame )
+        a02_ScrollMenuView.scrollView.frame = MainManager.shared.initLoadChangeFrame( frame: a02_ScrollMenuView.scrollView.frame )
+        //a02_ScrollMenuView.scrollView.resizeScrollViewContentSize()
         
     }
     
@@ -2104,7 +2153,6 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
                          "frame_a_02_07_off","frame_a_02_08_off",
                          "frame_a_02_09_off","frame_a_02_10_off",
                          "frame_a_02_11_off","frame_a_02_12_off"]
-        
         
         for i in 1...btn_image.count {
             

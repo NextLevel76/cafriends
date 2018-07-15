@@ -15,11 +15,7 @@ class CustomA0105TableViewCell: UITableViewCell {
     
     @IBOutlet weak var imageIcon: UIImageView!
     @IBOutlet weak var btn_find: UIButton!
-    
-    
     @IBOutlet weak var label_name: UILabel!
-    
-    
     
     
     

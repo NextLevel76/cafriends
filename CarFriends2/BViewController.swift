@@ -17,7 +17,7 @@ import Alamofire
 import SwiftyJSON
 
 
-class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKScriptMessageHandler {
+class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKScriptMessageHandler, UIScrollViewDelegate {
     
     
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
@@ -29,6 +29,9 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
     }
     
     var iWebStart:Int = 0 // 0
+    
+    var bHideSubMenu = false
+    var subMenuViewHeight:CGFloat = 0.0
     
     
     weak var webView: WKWebView!
@@ -86,22 +89,24 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
         view.addSubview(webView)
         
         
-       
         
         
         self.view.addSubview(b02_ScrollMenuView)
-        b02_ScrollMenuView.frame.origin.y = 41
+        b02_ScrollMenuView.frame.origin.y = 40
         
         self.view.addSubview(b01_ScrollMenuView)
-        b01_ScrollMenuView.frame.origin.y = 41
+        b01_ScrollMenuView.frame.origin.y = 40
+        
+        subMenuViewHeight = b01_ScrollMenuView.frame.height
         
         b01_ScrollBtnCreate()
         b02_ScrollBtnCreate()
         
         
-        
         self.view.bringSubview(toFront: activityIndicator)
 
+        
+        
         // 첫 웹뷰 로드
 //        let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=B_1_1&wr_id=1"
 //        let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
@@ -130,6 +135,11 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
         HTTPCookieStorage.restore()
         print("____________ 유저 로그인")
         userLogin()
+        
+        
+        b01_ScrollMenuView.frame = MainManager.shared.initLoadChangeFrame(frame: b01_ScrollMenuView.frame)
+        b02_ScrollMenuView.frame = MainManager.shared.initLoadChangeFrame(frame: b02_ScrollMenuView.frame)
+
     }
 
     
@@ -178,6 +188,46 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
                     print( Result )
                 }
         
+        }
+    }
+    
+    
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if let touch = touches.first {
+            let position = touch.location(in: self.view )
+            let center = CGPoint(x: position.x, y: position.y)
+            print(center)
+        }
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if scrollView == webView.scrollView {
+            let contentOffset = scrollView.contentOffset.y
+            print("contentOffset: ", contentOffset)
+            
+            
+            if( bHideSubMenu == false && contentOffset > 30 ) {
+                
+                bHideSubMenu = true
+                b01_ScrollMenuView.isHidden = bHideSubMenu;
+                b02_ScrollMenuView.isHidden = bHideSubMenu;
+
+                
+            }
+            else if( bHideSubMenu == true && contentOffset < -30 ) {
+                
+                bHideSubMenu = false
+                b01_ScrollMenuView.isHidden = bHideSubMenu;
+                b02_ScrollMenuView.isHidden = bHideSubMenu;
+            }
+            
+            //            if (contentOffset > self.lastKnowContentOfsset) {
+            //                print("scrolling Down")
+            //                print("dragging Up")
+            //            } else {
+            //                print("scrolling Up")
+            //                print("dragging Down")
+            //            }
         }
     }
     
@@ -661,11 +711,15 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
         
         
         // 웹뷰 딜리게이트 연결
-        self.webView = WKWebView(frame: CGRect( x: 0, y: 84-8, width: 375, height: 531+8 ), configuration: webViewConfig)
+        self.webView = WKWebView(frame: CGRect( x: 0, y: 76-subMenuViewHeight, width: 375, height: 539+subMenuViewHeight ), configuration: webViewConfig)
+        
         //webView.uiDelegate = self
         self.webView.navigationDelegate = self
         self.webView.translatesAutoresizingMaskIntoConstraints = false
         self.view.addSubview(webView)
+        
+        // 스크롤 딜리게이트 연결
+        self.webView.scrollView.delegate = self
         
         self.view.bringSubview(toFront: activityIndicator)
         activityIndicator.startAnimating()
@@ -674,7 +728,17 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
         let request = URLRequest(url: url! )
         webView.load(request)
         
+        webView.frame = MainManager.shared.initLoadChangeFrame(frame: webView.frame )
+        
+        self.view.bringSubview(toFront: b01_ScrollMenuView)
+        
     }
+    
+    
+    
+    
+    
+    
     
     ///Generates script to create given cookies
     public func getJSCookiesString(for cookies: [HTTPCookie]) -> String {

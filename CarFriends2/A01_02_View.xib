@@ -17,7 +17,7 @@
             <subviews>
                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="a_02_bg" translatesAutoresizingMaskIntoConstraints="NO" id="yFI-eY-vpx">
                     <rect key="frame" x="0.0" y="0.0" width="375" height="574"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
                 </imageView>
                 <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Q2o-5h-Leb">
                     <rect key="frame" x="0.0" y="0.0" width="75" height="41"/>
@@ -140,9 +140,9 @@
         </view>
     </objects>
     <resources>
-        <image name="A-01-02-04-bg" width="391" height="171"/>
+        <image name="A-01-02-04-bg" width="375" height="164"/>
         <image name="a_02_bg" width="375" height="509"/>
-        <image name="frame-A-01-01-off" width="75" height="41"/>
+        <image name="frame-A-01-01-off" width="78" height="43"/>
         <image name="frame-A-01-02-on" width="75" height="41"/>
         <image name="frame-A-01-03-off" width="75" height="41"/>
         <image name="frame-A-01-04-off" width="75" height="41"/>

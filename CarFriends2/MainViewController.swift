@@ -12,6 +12,25 @@ import UIKit
 class MainViewController: UIViewController {
 
     
+    @IBOutlet weak var imageView: UIImageView!
+    
+    
+    
+    
+    
+    override func loadView() {
+        
+        super.loadView()
+        
+        
+        // self.imageView.autoresizingMask = [.flexibleWidth, .flexibleHeight,.flexibleTopMargin, .flexibleLeftMargin, .flexibleRightMargin, .flexibleBottomMargin]
+        
+        //self.frame = CGRectMake(0, 0, width, height)
+        //imageView.removeFromSuperview()
+        
+        //self.view.addSubview(self.imageView)
+    }
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,6 +55,9 @@ class MainViewController: UIViewController {
         
         // 인터넷 연결 체크
         MainManager.shared.isConnectCheck()
+        
+        
+        
 
         
         // Do any additional setup after loading the view.

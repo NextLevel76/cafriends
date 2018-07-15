@@ -42,6 +42,8 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
     let config = WKWebViewConfiguration()
     
     
+    var bHideSubMenu = false
+    var subMenuViewHeight:CGFloat = 0.0
     
     
     @IBOutlet weak var btn_c01: UIButton!
@@ -77,13 +79,15 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
         
         
         self.view.addSubview(menuView_c03)
-        menuView_c03.frame.origin.y = 41
+        menuView_c03.frame.origin.y = 40
         
         self.view.addSubview(menuView_c02)
-        menuView_c02.frame.origin.y = 41
+        menuView_c02.frame.origin.y = 40
         
         self.view.addSubview(menuView_c01)
-        menuView_c01.frame.origin.y = 41
+        menuView_c01.frame.origin.y = 40
+        
+        subMenuViewHeight = menuView_c01.frame.height
         
         
         c01_BtnCreate()
@@ -111,11 +115,13 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
         
         
         
+        
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // webView.frame = MainManager.shared.initLoadChangeFrame(frame: webView.frame)
         
         // 인터넷 연결 체크
         MainManager.shared.isConnectCheck()
@@ -124,14 +130,56 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
         HTTPCookieStorage.restore()
         //setupWebView()
         userLogin()
+        
+        menuView_c01.frame = MainManager.shared.initLoadChangeFrame(frame: menuView_c01.frame)
+        menuView_c02.frame = MainManager.shared.initLoadChangeFrame(frame: menuView_c02.frame)
+        menuView_c03.frame = MainManager.shared.initLoadChangeFrame(frame: menuView_c03.frame)
     }
     
     
+    
+    
+//    // 버튼 이동 함수
+//    func moveButton( btn: UIButton ) {
+//        btn.center.y += 300
+//    }
+//    func moveAnimate() {
+//
+//        let duration: Double = 1.0
+//        UIView.animate(withDuration: duration) {
+//            self.moveButton(btn: self.btn_a01_change)
+//        }
+//    }
+    
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if let touch = touches.first {
+            let position = touch.location(in: self.view )
+            let center = CGPoint(x: position.x, y: position.y)
+            print(center)
+        }
+    }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if scrollView == webView.scrollView {
             let contentOffset = scrollView.contentOffset.y
             print("contentOffset: ", contentOffset)
+            
+            
+            if( bHideSubMenu == false && contentOffset > 30 ) {
+             
+                bHideSubMenu = true
+                menuView_c01.isHidden = bHideSubMenu;
+                menuView_c02.isHidden = bHideSubMenu;
+                menuView_c03.isHidden = bHideSubMenu;
+                
+            }
+            else if( bHideSubMenu == true && contentOffset < -30 ) {
+                
+                bHideSubMenu = false
+                menuView_c01.isHidden = bHideSubMenu;
+                menuView_c02.isHidden = bHideSubMenu;
+                menuView_c03.isHidden = bHideSubMenu;
+            }
             
 //            if (contentOffset > self.lastKnowContentOfsset) {
 //                print("scrolling Down")
@@ -142,6 +190,8 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
 //            }
         }
     }
+    
+    
     
     func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
         
@@ -774,15 +824,19 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
         }
         let webViewConfig = WKWebViewConfiguration()
         webViewConfig.userContentController = userContentController
-        
 
+        
+        
+        print( "subMenuViewHeight = \(subMenuViewHeight)" )
+        
         // 웹뷰 딜리게이트 연결
-        self.webView = WKWebView(frame: CGRect( x: 0, y: 84-8, width: 375, height: 531+8 ), configuration: webViewConfig)
+        self.webView = WKWebView(frame: CGRect( x: 0, y: 76-subMenuViewHeight, width: 375, height: 539+subMenuViewHeight ), configuration: webViewConfig)
         //webView.uiDelegate = self
         self.webView.navigationDelegate = self
         self.webView.translatesAutoresizingMaskIntoConstraints = false
         self.view.addSubview(webView)
         
+        // 스크롤 딜리게이트 연결
         self.webView.scrollView.delegate = self
         
         //self.view.bringSubview(toFront: activityIndicator)
@@ -792,6 +846,10 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
         let request = URLRequest(url: url! )
         webView.load(request)
         
+        
+        webView.frame = MainManager.shared.initLoadChangeFrame(frame: webView.frame )
+        
+        self.view.bringSubview(toFront: menuView_c01)
     }
     
     ///Generates script to create given cookies
@@ -864,16 +922,6 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
 //
 //    }
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
     
 
