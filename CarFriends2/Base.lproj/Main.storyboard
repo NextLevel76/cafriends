@@ -1888,6 +1888,24 @@
             </objects>
             <point key="canvasLocation" x="2102" y="1262"/>
         </scene>
+        <!--Scanner View Controller-->
+        <scene sceneID="R9y-Ye-3tw">
+            <objects>
+                <viewController storyboardIdentifier="ScannerViewController" id="clk-QB-dRt" customClass="ScannerViewController" customModule="CarFriends2" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="Jfs-eA-JMe"/>
+                        <viewControllerLayoutGuide type="bottom" id="lsO-w5-SQd"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="rNZ-89-BOV">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="gPr-bk-zXD" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-2346" y="551"/>
+        </scene>
         <!--Main View Controller-->
         <scene sceneID="0Bx-uy-4iD">
             <objects>
