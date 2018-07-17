@@ -132,7 +132,7 @@ final class ScannerViewController: UIViewController, UITableViewDataSource, UITa
         
         Timer.scheduledTimer(timeInterval: 10, target: self, selector: #selector(ScannerViewController.connectTimeOut), userInfo: nil, repeats: false)
     }
-    
+        
     
     //MARK: BluetoothSerialDelegate
     
