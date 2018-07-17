@@ -37,7 +37,7 @@ class MainViewController: UIViewController {
         
         
 
-        let sz_car_fuel = ["휘발유","경유","가스(GAS)"]
+        let sz_car_fuel = ["휘발유","경유","가스(GAS)","전기차","수소차"]
         
         
         MainManager.shared.requestForMainManager() // 싱글톤 생성
@@ -51,6 +51,8 @@ class MainViewController: UIViewController {
         MainManager.shared.str_select_fuelList.append(sz_car_fuel[0])
         MainManager.shared.str_select_fuelList.append(sz_car_fuel[1])
         MainManager.shared.str_select_fuelList.append(sz_car_fuel[2])
+        MainManager.shared.str_select_fuelList.append(sz_car_fuel[3])
+        MainManager.shared.str_select_fuelList.append(sz_car_fuel[4])
         
         
         // 인터넷 연결 체크

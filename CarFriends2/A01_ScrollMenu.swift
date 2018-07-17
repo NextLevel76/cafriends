@@ -1,39 +1,17 @@
 //
-//  A01_03_View.swift
+//  A01_ScrollMenu.swift
 //  CarFriends2
 //
-//  Created by Cheong Lee on 2018. 5. 26..
+//  Created by Cheong Lee on 2018. 7. 15..
 //  Copyright © 2018년 Cheong Lee. All rights reserved.
 //
 
 import UIKit
-import Charts
-class A01_03_View: UIView {
 
-    
-    @IBOutlet weak var image_center_bg: UIImageView!
-    
-    @IBOutlet weak var graph_line_view: LineChartView!
+class A01_ScrollMenu: UIView {
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    @IBOutlet weak var scrollView: UIScrollView!
     
     
     /*

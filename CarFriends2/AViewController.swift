@@ -17,7 +17,6 @@ import Charts
 
 
 /*
- 
  { "userId": 1, "id": 1, "title": "delectus aut autem", "completed": false }
  
  출처: http://kka7.tistory.com/88 [때로는 까칠하게..]
@@ -75,21 +74,32 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     @IBOutlet weak var btn_a03_change: UIButton!
     
     
-    
+    @IBOutlet var a01_ScrollMenuView: A01_ScrollMenu!
+        
     // A01 XIB
     var a01_01_view: A01_01_View!
-    var a01_02_view: A01_02_View!
-    var a01_03_view: A01_03_View!
-    var a01_04_view: A01_04_View!
-    var a01_05_view: A01_05_View!
-    
     @IBOutlet var a01_01_scroll_view: A01_01_ScrollView!
-    
     @IBOutlet var a01_01_pin_view: A01_01_Pin_View!
     @IBOutlet var a01_01_info_mod_view: A01_01_InfoMod_View!
     
     
-    // 핀번호 입력 위치 ( 포커스 자동이동 )
+    var a01_02_view: A01_02_View!
+    
+    var a01_03_view: A01_03_View!
+    
+    var a01_04_view: A01_04_View!
+    
+    var a01_04_1_view: A01_04_1_View!
+    
+    // var a01_05_view: A01_05_View!
+    
+    
+    
+    
+    
+    
+    
+
     
     
     
@@ -121,7 +131,6 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     
     
     
-    
     @IBOutlet var a01_06_view: UIView!
     @IBOutlet weak var tableView_A01_06: UITableView!
     
@@ -130,8 +139,11 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     var bDataRequest_a0105 = false
     var a01_05_tableViewData:[String] = []    // 테이블뷰 때문에 메인 스토리보드 생성함
     
-    @IBOutlet weak var tableView_A01_05: UITableView!
+    
+    
     @IBOutlet var a01_05_1_view: UIView!
+    @IBOutlet weak var tableView_A01_05: UITableView!
+    
     @IBAction func pressed_A05(_ sender: UIButton) {
         
         if sender.tag == 0 {
@@ -194,7 +206,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
                          "예약 시동 비활성 모드.!"]
     
     
-    
+    let btn_a01_name = ["내정보","주행거리","평균연비","진단정보","차량상태","주요부품"]
     
     
     
@@ -430,6 +442,76 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         a01_01_scroll_view.graph_line_view02.chartDescription?.text = ""
     }
     
+    
+    
+    func setChartValues3(_ count : Int = 8 ) {
+        
+        let carDataKm = [3,4,5,25,9,17,13,8]
+        
+        let values = (1..<count+1).map { (i) -> ChartDataEntry in
+            
+            let val = Double( carDataKm[i-1] )
+            //let val = Double(arc4random_uniform(UInt32(count)) + 3 )
+            return ChartDataEntry(x: Double(i), y: val)
+        }
+        
+        let set1 = LineChartDataSet(values: values, label: "")
+        //let data = LineChartData(dataSet: set1)
+        
+        let values2 = (1..<count+1).map { (i) -> ChartDataEntry in
+            
+            let val2 = Double(arc4random_uniform(UInt32(count)) + 10 )
+            return ChartDataEntry(x: Double(i), y: val2)
+        }
+        
+        let set2 = LineChartDataSet(values: values2, label: "")
+        //set2.setColor(UIColor(red: 51/255, green: 181/255, blue: 229/255, alpha: 1))
+        set2.setColor(.gray)
+        set2.setCircleColor(.blue)
+        set2.axisDependency = .right
+        set2.lineWidth = 2
+        set2.circleRadius = 3
+        //set2.fillAlpha = 65/255
+        //set2.fillColor = .red
+        set2.highlightColor = UIColor(red: 244/255, green: 117/255, blue: 117/255, alpha: 1)
+        
+        //set2.drawCircleHoleEnabled = false
+        //let data2 = LineChartData(dataSet: set2)
+        
+        let data = LineChartData(dataSets: [set1, set2])
+        data.setValueTextColor(.black)
+        data.setValueFont(.systemFont(ofSize: 9))
+        
+        self.a01_01_scroll_view.graph_line_view03.data = data
+        
+        // X축 하단으로
+        a01_01_scroll_view.graph_line_view03.xAxis.labelPosition = XAxis.LabelPosition.bottom
+        
+        // x축 몇주 세팅
+        a01_01_scroll_view.graph_line_view03.xAxis.valueFormatter = IndexAxisValueFormatter(values:weeks)
+        // 스타트 시점 0:1주, 1:2주
+        a01_01_scroll_view.graph_line_view03.xAxis.granularity = 0 // 시작 번호
+        
+        
+        // 문자열 변환 IndexAxisValueFormatter
+        var strCarDataKm:[String] = []
+        strCarDataKm.append("\(carDataKm[0])")
+        strCarDataKm.append("\(carDataKm[1])")
+        strCarDataKm.append("\(carDataKm[2])")
+        strCarDataKm.append("\(carDataKm[3])")
+        strCarDataKm.append("\(carDataKm[4])")
+        strCarDataKm.append("\(carDataKm[5])")
+        strCarDataKm.append("\(carDataKm[6])")
+        strCarDataKm.append("\(carDataKm[7])")
+        // y축 왼쪽
+        a01_01_scroll_view.graph_line_view03.leftAxis.valueFormatter = MyIndexFormatterKl(values:strCarDataKm)
+        a01_01_scroll_view.graph_line_view03.leftAxis.granularity = 7 // 맥시멈 번호
+        
+        a01_01_scroll_view.graph_line_view03.chartDescription?.text = ""
+    }
+    
+    
+    
     class MyIndexFormatterKl: IndexAxisValueFormatter {
         
         open override func stringForValue(_ value: Double, axis: AxisBase?) -> String
@@ -501,7 +583,6 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         // y축 왼쪽
         a01_02_view.graph_line_view.leftAxis.valueFormatter = MyIndexFormatterKl(values:strCarDataKm)
         a01_02_view.graph_line_view.leftAxis.granularity = 7 // 맥시멈 번호
-        
     }
     
     func setChartValues_a03(_ count : Int = 8 ) {
@@ -515,7 +596,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             return ChartDataEntry(x: Double(i), y: val)
         }
         
-        let set1 = LineChartDataSet(values: values, label: "Data(km/l")
+        let set1 = LineChartDataSet(values: values, label: "진단")
         //let data = LineChartData(dataSet: set1)
         
         let values2 = (1..<count+1).map { (i) -> ChartDataEntry in
@@ -566,7 +647,73 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         strCarDataKm.append("\(carDataKm[7])")
         // y축 왼쪽
         a01_03_view.graph_line_view.leftAxis.valueFormatter = MyIndexFormatterKl(values:strCarDataKm)
-        a01_03_view.graph_line_view.leftAxis.granularity = 7 // 맥시멈 번호
+        a01_03_view.graph_line_view.leftAxis.granularity = 7 // 맥시멈 갯수 번호
+    }
+    
+    
+    func setChartValues_a04(_ count : Int = 8 ) {
+        
+        let carDataKm = [3,4,5,25,9,17,13,8]
+        
+        let values = (1..<count+1).map { (i) -> ChartDataEntry in
+            
+            let val = Double( carDataKm[i-1] )
+            //let val = Double(arc4random_uniform(UInt32(count)) + 3 )
+            return ChartDataEntry(x: Double(i), y: val)
+        }
+        
+        let set1 = LineChartDataSet(values: values, label: "진단")
+        //let data = LineChartData(dataSet: set1)
+        
+        let values2 = (1..<count+1).map { (i) -> ChartDataEntry in
+            
+            let val2 = Double(arc4random_uniform(UInt32(count)) + 10 )
+            return ChartDataEntry(x: Double(i), y: val2)
+        }
+        
+        let set2 = LineChartDataSet(values: values2, label: "DataSet 2")
+        //set2.setColor(UIColor(red: 51/255, green: 181/255, blue: 229/255, alpha: 1))
+        set2.setColor(.gray)
+        set2.setCircleColor(.blue)
+        set2.axisDependency = .right
+        set2.lineWidth = 2
+        set2.circleRadius = 3
+        //set2.fillAlpha = 65/255
+        //set2.fillColor = .red
+        set2.highlightColor = UIColor(red: 244/255, green: 117/255, blue: 117/255, alpha: 1)
+        
+        //set2.drawCircleHoleEnabled = false
+        //let data2 = LineChartData(dataSet: set2)
+        
+        let data = LineChartData(dataSets: [set1, set2])
+        data.setValueTextColor(.black)
+        data.setValueFont(.systemFont(ofSize: 9))
+        
+        self.a01_04_1_view.graph_line_view.data = data
+        
+        // X축 하단으로
+        a01_04_1_view.graph_line_view.xAxis.labelPosition = XAxis.LabelPosition.bottom
+        
+        
+        // x축 몇주 세팅
+        a01_04_1_view.graph_line_view.xAxis.valueFormatter = IndexAxisValueFormatter(values:weeks)
+        // 스타트 시점 0:1주, 1:2주
+        a01_04_1_view.graph_line_view.xAxis.granularity = 0 // 시작 번호
+        
+        
+        // 문자열 변환 IndexAxisValueFormatter
+        var strCarDataKm:[String] = []
+        strCarDataKm.append("\(carDataKm[0])")
+        strCarDataKm.append("\(carDataKm[1])")
+        strCarDataKm.append("\(carDataKm[2])")
+        strCarDataKm.append("\(carDataKm[3])")
+        strCarDataKm.append("\(carDataKm[4])")
+        strCarDataKm.append("\(carDataKm[5])")
+        strCarDataKm.append("\(carDataKm[6])")
+        strCarDataKm.append("\(carDataKm[7])")
+        // y축 왼쪽
+        a01_04_1_view.graph_line_view.leftAxis.valueFormatter = MyIndexFormatterKl(values:strCarDataKm)
+        a01_04_1_view.graph_line_view.leftAxis.granularity = 7 // 맥시멈 갯수 번호
     }
     
     
@@ -581,7 +728,6 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         dateFormatter.locale = Locale(identifier: "ko_KR")
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
         a01_01_view.label_kit_info_get_time.text = dateFormatter.string(from: now)
-        
     }
     
     
@@ -658,7 +804,6 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     var pickerView = UIPickerView();    // 차종
     var pickerView2 = UIPickerView();   // 연식
     var pickerView3 = UIPickerView();   // 연료 타입
-    
     
     
     
@@ -825,10 +970,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         a02_01_view.switch_btn_09.isOn = MainManager.shared.bA02ON[8]
         a02_01_view.switch_btn_10.isOn = MainManager.shared.bA02ON[9]
         a02_01_view.switch_btn_11.isOn = MainManager.shared.bA02ON[10]
-        
-        
-        
-        
+                
         
         
         if( MainManager.shared.bA02ON[0] == true ) { self.a02_02_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_on[0]), for: UIControlState.normal ) }
@@ -863,11 +1005,6 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         
         if( MainManager.shared.bA02ON[10] == true ) { self.a02_12_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_on[10]), for: UIControlState.normal ) }
         else                                        { self.a02_12_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_off[10]), for: UIControlState.normal ) }
-        
-        
-        
-        
-        
         
     }
     
@@ -904,17 +1041,8 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         
         
         
-        
         if let featView1 = Bundle.main.loadNibNamed("A01_01_View", owner: self, options: nil)?.first as? A01_01_View
         {
-            
-            featView1.btn_a01_01.addTarget(self, action: #selector(AViewController.pressed_01(sender:)), for: .touchUpInside)
-            featView1.btn_a01_02.addTarget(self, action: #selector(AViewController.pressed_01(sender:)), for: .touchUpInside)
-            featView1.btn_a01_03.addTarget(self, action: #selector(AViewController.pressed_01(sender:)), for: .touchUpInside)
-            featView1.btn_a01_04.addTarget(self, action: #selector(AViewController.pressed_01(sender:)), for: .touchUpInside)
-            featView1.btn_a01_05.addTarget(self, action: #selector(AViewController.pressed_01(sender:)), for: .touchUpInside)
-            
-            
             // kit connect 21
             featView1.btn_kit_connect.addTarget(self, action: #selector(AViewController.pressed_01(sender:)), for: .touchUpInside)
             
@@ -930,14 +1058,19 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             a01_01_scroll_view.btn_car_info_mod.layer.cornerRadius = 5;
             
             //featView2.frame.origin.x = 10
-            featView1.frame.origin.y = 41
+            featView1.frame.origin.y = 82
             self.view.addSubview(featView1)
             a01_01_view = featView1
             
             // 스크롤뷰 세로 스크롤 영역 설정
             a01_01_view.addSubview(a01_01_scroll_view)
-            a01_01_scroll_view.frame.origin.x = 16
-            a01_01_scroll_view.frame.origin.y = 138
+            a01_01_scroll_view.frame = CGRect(x: 16, y: 97, width: 343, height: 438)
+            
+            a01_01_scroll_view.roundView01.frame.origin.y = 20
+            a01_01_scroll_view.roundView02.frame.origin.y = 169
+            a01_01_scroll_view.roundView03.frame.origin.y = 427
+            a01_01_scroll_view.roundView04.frame.origin.y = 685
+            
             
             
             a01_01_scroll_view.frame = MainManager.shared.initLoadChangeFrame( frame: a01_01_scroll_view.frame )
@@ -946,37 +1079,12 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             a01_01_scroll_view.delegate = self
             
             
-            
-            
-            
-            
             // 슈퍼 뷰의 크기를 따르게 세팅
             // a01_sub_view
             //            a01_01_view.translatesAutoresizingMaskIntoConstraints = false
             //            a01_01_view.frame = (a01_01_view.superview?.bounds)!
             
-            // 스크롤 뷰 컨텐트 사이즈 자동 조절
-
-            
-            
-            
-            
-            
-            
-            
-            //subview.frame = subview.superview.bounds;
-            
-            
-         
-            
-            
-            
-            
-            
-            
-            
-            
-            
+            // 스크롤 뷰 컨텐트 사이즈 자동 조절perview.bounds;
             
             // USER ID
             a01_01_view.label_user_id.text = "\(MainManager.shared.member_info.str_id_nick) 님"
@@ -1007,42 +1115,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             //            let interval = date.timeIntervalSince1970
             //            a01_01_view.label_kit_info_get_time.text = dateString
             
-            
-            
-            
-            /*
-             let myData = [
-             ["1주": 10],
-             ["2주" : 100],
-             ["3주" : 300],
-             ["4주" : 500],
-             ["5주" : 600],
-             ["6주" : 850],
-             ["7주": 700],
-             ["8주": 1000],
-             ]
-             // let graph = GraphView(frame: CGRect(x: x, y: y, width: width-x*2, height: height * 0.5), data: myData)
-             let graph = GraphView(frame: CGRect(x: 10, y: 65, width: 320, height: 100), data: myData)
-             a01_01_view.graph_view01.addSubview(graph)
-             
-             
-             let myData1 = [
-             ["1주": 5],
-             ["2주" : 3],
-             ["3주" : 10],
-             ["4주" : 20],
-             ["5주" : 5],
-             ["6주" : 7],
-             ["7주": 14],
-             ["8주": 17],
-             ]
-             // let graph = GraphView(frame: CGRect(x: x, y: y, width: width-x*2, height: height * 0.5), data: myData)
-             let graph2 = GraphView(frame: CGRect(x: 10, y: 65, width: 320, height: 100), data: myData1)
-             a01_01_view.graph_view02.addSubview(graph2)
-             */
-            
-            
-            //var dataEntries: [ChartDataEntry] = []
+         
         }
         
         // PIN
@@ -1070,7 +1143,6 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         a01_01_info_mod_view.btn_certifi.backgroundColor = UIColor(red: 11/256, green: 85/255, blue: 156/255, alpha: 1)
         a01_01_info_mod_view.btn_cancel.backgroundColor = UIColor(red: 11/256, green: 85/255, blue: 156/255, alpha: 1)
         a01_01_info_mod_view.btn_ok.backgroundColor = UIColor(red: 11/256, green: 85/255, blue: 156/255, alpha: 1)
-        
         
         
         
@@ -1167,167 +1239,87 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         
 
         
-        
-                
-        
-        
         a01_01_info_mod_view.field_certifi_input.delegate = self
         a01_01_info_mod_view.field_certifi_input.placeholder = "인증번호입력(4자리)"
         
         a01_01_info_mod_view.field_car_dae_num.delegate = self
         a01_01_info_mod_view.field_car_dae_num.placeholder = "예:KLYDC487DHC701056"
         a01_01_info_mod_view.field_car_dae_num.text = MainManager.shared.member_info.str_car_dae_num
-        
+       
         
         a01_01_info_mod_view.field_plate_num.delegate = self
         a01_01_info_mod_view.field_plate_num.placeholder = "예:99가9999"
         a01_01_info_mod_view.field_plate_num.text = MainManager.shared.member_info.str_car_plate_num
         
-
         
-        
-        
-        
-        //        field_car_kind.inputView = pickerView
-        //        field_car_kind.textAlignment = .center
-        //        field_car_kind.placeholder = "Sellect Car"
+        a01_ScrollBtnCreate()
+        a01_ScrollMenuView.frame.origin.y = 41
+        self.view.addSubview(a01_ScrollMenuView)
         
         
         
         
         
-        //        if let featView_Pin = Bundle.main.loadNibNamed("A01_01_Pin_View", owner: self, options: nil)?.first as? A01_01_Pin_View
-        //        {
-        //
-        ////            featView_Pin.btn_a01_01.addTarget(self, action: #selector(AViewController.pressed_01(sender:)), for: .touchUpInside)
-        ////            featView_Pin.btn_a01_02.addTarget(self, action: #selector(AViewController.pressed_01(sender:)), for: .touchUpInside)
-        ////            featView_Pin.btn_a01_03.addTarget(self, action: #selector(AViewController.pressed_01(sender:)), for: .touchUpInside)
-        ////            featView_Pin.btn_a01_04.addTarget(self, action: #selector(AViewController.pressed_01(sender:)), for: .touchUpInside)
-        ////            featView_Pin.btn_a01_05.addTarget(self, action: #selector(AViewController.pressed_01(sender:)), for: .touchUpInside)
-        //
-        //            // tag 13
-        //            //featView_Pin.btn_cancel.addTarget(self, action: #selector(AViewController.pressed_01(sender:)), for: .touchUpInside)
-        //            // tag 14
-        //            //featView_Pin.btn_ok.addTarget(self, action: #selector(AViewController.pressed_01(sender:)), for: .touchUpInside)
-        //
-        //            //featView2.frame.origin.x = 10
-        //            featView_Pin.frame.origin.y = 41
-        //            self.view.addSubview(featView_Pin)
-        //            a01_01_pin_view = featView_Pin
-        //        }
-        //
-        //
-        //        if let featView_Info_mod = Bundle.main.loadNibNamed("A01_01_InfoMod_View", owner: self, options: nil)?.first as? A01_01_InfoMod_View
-        //        {
-        //
-        ////            featView_Info_mod.btn_a01_01.addTarget(self, action: #selector(AViewController.pressed_01(sender:)), for: .touchUpInside)
-        ////            featView_Info_mod.btn_a01_02.addTarget(self, action: #selector(AViewController.pressed_01(sender:)), for: .touchUpInside)
-        ////            featView_Info_mod.btn_a01_03.addTarget(self, action: #selector(AViewController.pressed_01(sender:)), for: .touchUpInside)
-        ////            featView_Info_mod.btn_a01_04.addTarget(self, action: #selector(AViewController.pressed_01(sender:)), for: .touchUpInside)
-        ////            featView_Info_mod.btn_a01_05.addTarget(self, action: #selector(AViewController.pressed_01(sender:)), for: .touchUpInside)
-        //
-        //
-        //            // tag 15
-        //            featView_Info_mod.btn_cancel.addTarget(self, action: #selector(AViewController.pressed_01(sender:)), for: .touchUpInside)
-        //            // tag 16
-        //            featView_Info_mod.btn_mod.addTarget(self, action: #selector(AViewController.pressed_01(sender:)), for: .touchUpInside)
-        //
-        //            //featView2.frame.origin.x = 10
-        //            featView_Info_mod.frame.origin.y = 41
-        //            self.view.addSubview(featView_Info_mod)
-        //            a01_01_info_mod_view = featView_Info_mod
-        //        }
         
         
-        
-        
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // A02
         
         if let featView2 = Bundle.main.loadNibNamed("A01_02_View", owner: self, options: nil)?.first as? A01_02_View
         {
-            
-            featView2.btn_a01_01.addTarget(self, action: #selector(AViewController.pressed_02(sender:)), for: .touchUpInside)
-            featView2.btn_a01_02.addTarget(self, action: #selector(AViewController.pressed_02(sender:)), for: .touchUpInside)
-            featView2.btn_a01_03.addTarget(self, action: #selector(AViewController.pressed_02(sender:)), for: .touchUpInside)
-            featView2.btn_a01_04.addTarget(self, action: #selector(AViewController.pressed_02(sender:)), for: .touchUpInside)
-            featView2.btn_a01_05.addTarget(self, action: #selector(AViewController.pressed_02(sender:)), for: .touchUpInside)
-            
             //featView2.frame.origin.x = 10
-            featView2.frame.origin.y = 41
+            featView2.frame.origin.y = 82
             self.view.addSubview(featView2)
             a01_02_view = featView2
         }
         
         if let featView3 = Bundle.main.loadNibNamed("A01_03_View", owner: self, options: nil)?.first as? A01_03_View
         {
-            
-            featView3.btn_a01_01.addTarget(self, action: #selector(AViewController.pressed_03(sender:)), for: .touchUpInside)
-            featView3.btn_a01_02.addTarget(self, action: #selector(AViewController.pressed_03(sender:)), for: .touchUpInside)
-            featView3.btn_a01_03.addTarget(self, action: #selector(AViewController.pressed_03(sender:)), for: .touchUpInside)
-            featView3.btn_a01_04.addTarget(self, action: #selector(AViewController.pressed_03(sender:)), for: .touchUpInside)
-            featView3.btn_a01_05.addTarget(self, action: #selector(AViewController.pressed_03(sender:)), for: .touchUpInside)
-            
             //featView2.frame.origin.x = 10
-            featView3.frame.origin.y = 41
+            featView3.frame.origin.y = 82
             self.view.addSubview(featView3)
             a01_03_view = featView3
         }
         
         if let featView4 = Bundle.main.loadNibNamed("A01_04_View", owner: self, options: nil)?.first as? A01_04_View
         {
-            
-            featView4.btn_a01_01.addTarget(self, action: #selector(AViewController.pressed_04(sender:)), for: .touchUpInside)
-            featView4.btn_a01_02.addTarget(self, action: #selector(AViewController.pressed_04(sender:)), for: .touchUpInside)
-            featView4.btn_a01_03.addTarget(self, action: #selector(AViewController.pressed_04(sender:)), for: .touchUpInside)
-            featView4.btn_a01_04.addTarget(self, action: #selector(AViewController.pressed_04(sender:)), for: .touchUpInside)
-            featView4.btn_a01_05.addTarget(self, action: #selector(AViewController.pressed_04(sender:)), for: .touchUpInside)
-            
             //featView2.frame.origin.x = 10
-            featView4.frame.origin.y = 41
+            featView4.frame.origin.y = 82
             self.view.addSubview(featView4)
             a01_04_view = featView4
         }
         
+        a01_04_1_view = A01_04_1_View.instanceFromNib() as! A01_04_1_View
+        a01_04_1_view.frame.origin.y = 82
+        self.view.addSubview(a01_04_1_view)
         
-        
-        
-        /*
-         if let featView5 = Bundle.main.loadNibNamed("A01_05_View", owner: self, options: nil)?.first as? A01_05_View
-         {
-         
-         featView5.btn_a01_01.addTarget(self, action: #selector(AViewController.pressed_05(sender:)), for: .touchUpInside)
-         //    featView5.btn_a01_02.addTarget(self, action: #selector(AViewController.pressed_05(sender:)), for: .touchUpInside)
-         //    featView5.btn_a01_03.addTarget(self, action: #selector(AViewController.pressed_05(sender:)), for: .touchUpInside)
-         //    featView5.btn_a01_04.addTarget(self, action: #selector(AViewController.pressed_05(sender:)), for: .touchUpInside)
-         //    featView5.btn_a01_05.addTarget(self, action: #selector(AViewController.pressed_05(sender:)), for: .touchUpInside)
-         
-         //featView2.frame.origin.x = 10
-         featView5.frame.origin.y = 41
-         self.view.addSubview(featView5)
-         a01_05_view = featView5
-         }
-         */
         
         
         
         ////////////////////////////// 차트 데이타 그리기
+        // A01 스크롤뷰 차트 3개
         setChartValues()
         setChartValues2()
+        setChartValues3()
         
+        // 다음 뷰 차트 3개
         setChartValues_a02()
         setChartValues_a03()
+        setChartValues_a04()
         
         a01_02_view.image_center_bg.backgroundColor = UIColor(red: 11/256, green: 85/255, blue: 156/255, alpha: 1)
         a01_03_view.image_center_bg.backgroundColor = UIColor(red: 11/256, green: 85/255, blue: 156/255, alpha: 1)
         
         
         
-        // a05 view add
+        // a05 view add 주요부품
         self.view.addSubview(a01_05_1_view)
-        a01_05_1_view.frame.origin.y = 41
+        a01_05_1_view.frame.origin.y = 82
         
+        // 핀번호 수정
         self.view.addSubview(a01_01_pin_view)
         a01_01_pin_view.frame.origin.y = 41
-        
+        // 회원 정보 수정
         self.view.addSubview(a01_01_info_mod_view)
         a01_01_info_mod_view.frame.origin.y = 41
         
@@ -1397,13 +1389,6 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         
         
         
-        
-        
-        // 1 뷰 젤 앞으로
-        self.view.bringSubview(toFront: a01_01_view)
-        
-        
-        
         activityIndicator.center = self.view.center
         activityIndicator.hidesWhenStopped = true
         activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.white
@@ -1417,7 +1402,6 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         createWkWebView()
         
         userLogin()
-        
         
         a01_05_tableViewSet()
         
@@ -1448,10 +1432,23 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         //a01_01_view.translatesAutoresizingMaskIntoConstraints = false
         //            a01_01_view.frame = (a01_01_view.superview?.bounds)!
         
+        
+        
+        a01_04_viewInit()
+        
+        
+        
+        
+        a01_ScrollMenuView.frame = MainManager.shared.initLoadChangeFrame(frame: a01_ScrollMenuView.frame)
+        
         a01_01_view.frame = MainManager.shared.initLoadChangeFrame(frame: a01_01_view.frame)
         a01_02_view.frame = MainManager.shared.initLoadChangeFrame(frame: a01_02_view.frame)
         a01_03_view.frame = MainManager.shared.initLoadChangeFrame(frame: a01_03_view.frame)
         a01_04_view.frame = MainManager.shared.initLoadChangeFrame(frame: a01_04_view.frame)
+        a01_04_1_view.frame = MainManager.shared.initLoadChangeFrame(frame: a01_04_1_view.frame)
+        a01_05_1_view.frame = MainManager.shared.initLoadChangeFrame(frame: a01_05_1_view.frame)
+        
+
         
         // a02_ScrollMenuView.frame = MainManager.shared.initLoadChangeFrame(frame: a02_ScrollMenuView.frame)
         a02_01_view.frame = MainManager.shared.initLoadChangeFrame(frame: a02_01_view.frame)
@@ -1489,7 +1486,16 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         a02_12_view.frame = MainManager.shared.initLoadChangeFrame(frame: a02_12_view.frame)
         a02_12_view.webView.frame = MainManager.shared.initLoadChangeFrame(frame: a02_12_view.webView.frame)
         
-        a01_04_viewInit()
+        
+        a03_01_view.frame = MainManager.shared.initLoadChangeFrame(frame: a03_01_view.frame)
+        a03_02_view.frame = MainManager.shared.initLoadChangeFrame(frame: a03_02_view.frame)
+        a03_03_view.frame = MainManager.shared.initLoadChangeFrame(frame: a03_03_view.frame)
+        
+        
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // 1 뷰 젤 앞으로
+        self.view.bringSubview(toFront: a01_01_view)
+        self.view.bringSubview(toFront: a01_ScrollMenuView)
         
         // 인터넷 연결 체크
         MainManager.shared.isConnectCheck()
@@ -1640,7 +1646,8 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
                 cell.imageIcon.image = UIImage(named: a01_05_image[indexPath.row])
                 
                 cell.btn_find.tag = indexPath.row
-                cell.btn_find.addTarget(self, action: #selector(AViewController.pressed_tableView_A01_05(sender:)), for: .touchUpInside)
+                
+                //cell.btn_find.addTarget(self, action: #selector(AViewController.pressed_tableView_A01_05(sender:)), for: .touchUpInside)
                 
             }
             
@@ -1772,16 +1779,12 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
                             self.tableView_A01_05.contentOffset = .zero
                         })
                     }
-                    
                 }
                 
         }
-        
     }
     
-    func a01_05_LoadChangeFrame() {
-        a01_05_view.frame = MainManager.shared.initLoadChangeFrame(frame: a01_05_view.frame)
-    }
+
     
     
     
@@ -1800,35 +1803,54 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     
     func pressed_01(sender:UIButton) {
         
-        
         print("pressed")
         
+        for i in 0..<btn_a01_name.count  {
+            
+            let tempBtn = a01_ScrollMenuView.scrollView.viewWithTag(i+1) as! UIButton
+            tempBtn.setTitleColor( UIColor.black, for: .normal )
+
+            //tempBtn.setImage(UIImage(named:btn_image[i-1]), for: UIControlState.normal )
+        }
+        // select btn
+        sender.setTitleColor( UIColor(red: 0/256, green: 75/255, blue: 144/255, alpha: 1), for: .normal )
         
-        if sender.tag == 0 {
+        // "내정보","주행거리","평균연비","진단정보","차량상태","주요부품"
+        if sender.tag == 1 {
             
             self.view.bringSubview(toFront: a01_01_view)
             print("A01_01")
         }
-        else if sender.tag == 1 {
+        else if sender.tag == 2 {
             
             self.view.bringSubview(toFront: a01_02_view)
             print("A01_02")
         }
-        else if sender.tag == 2 {
+        else if sender.tag == 3 {
             
             self.view.bringSubview(toFront: a01_03_view)
             print("A01_03")
         }
-        else if sender.tag == 3 {
-            
-            self.view.bringSubview(toFront: a01_04_view)
-            print("A01_04")
-        }
         else if sender.tag == 4 {
             
-            self.view.bringSubview(toFront: a01_05_1_view)
+            self.view.bringSubview(toFront: a01_04_1_view) // 진단정보
+            print("A01_04_1")
+        }
+        else if sender.tag == 5 {
+            
+            self.view.bringSubview(toFront: a01_04_view)   // 차량상태
+            print("A01_04")
+        }
+        else if sender.tag == 6 {
+            
+            self.view.bringSubview(toFront: a01_05_1_view)  // 주요 부품
             print("A01_05")
         }
+            
+            
+            
+            
+            
             
             // 핀번호 화면으로
         else if sender.tag == 11 {
@@ -1865,8 +1887,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             
             userLogin()
         }
-            
-            // kit_connect test
+        // kit_connect test
         else if sender.tag == 21 {
             
             if( MainManager.shared.bKitConnect == false ) {
@@ -1889,124 +1910,12 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         
     }
     
-    func pressed_02(sender:UIButton) {
-        
-        if sender.tag == 0 {
-            
-            self.view.bringSubview(toFront: a01_01_view)
-            print("A01_01")
-        }
-        else if sender.tag == 1 {
-            
-            self.view.bringSubview(toFront: a01_02_view)
-            print("A01_02")
-        }
-        else if sender.tag == 2 {
-            
-            self.view.bringSubview(toFront: a01_03_view)
-            print("A01_03")
-        }
-        else if sender.tag == 3 {
-            
-            self.view.bringSubview(toFront: a01_04_view)
-            print("A01_04")
-        }
-        else if sender.tag == 4 {
-            
-            self.view.bringSubview(toFront: a01_05_1_view)
-            print("A01_05")
-        }
-    }
     
-    func pressed_03(sender:UIButton) {
-        
-        if sender.tag == 0 {
-            
-            self.view.bringSubview(toFront: a01_01_view)
-            print("A01_01")
-        }
-        else if sender.tag == 1 {
-            
-            self.view.bringSubview(toFront: a01_02_view)
-            print("A01_02")
-        }
-        else if sender.tag == 2 {
-            
-            self.view.bringSubview(toFront: a01_03_view)
-            print("A01_03")
-        }
-        else if sender.tag == 3 {
-            
-            self.view.bringSubview(toFront: a01_04_view)
-            print("A01_04")
-        }
-        else if sender.tag == 4 {
-            
-            self.view.bringSubview(toFront: a01_05_1_view)
-            print("A01_05")
-        }    }
-    
-    func pressed_04(sender:UIButton) {
-        
-        if sender.tag == 0 {
-            
-            self.view.bringSubview(toFront: a01_01_view)
-            print("A01_01")
-        }
-        else if sender.tag == 1 {
-            
-            self.view.bringSubview(toFront: a01_02_view)
-            print("A01_02")
-        }
-        else if sender.tag == 2 {
-            
-            self.view.bringSubview(toFront: a01_03_view)
-            print("A01_03")
-        }
-        else if sender.tag == 3 {
-            
-            self.view.bringSubview(toFront: a01_04_view)
-            print("A01_04")
-        }
-        else if sender.tag == 4 {
-            
-            self.view.bringSubview(toFront: a01_05_1_view)
-            print("A01_05")
-        }
-    }
-    
-    func pressed_05(sender:UIButton) {
-        
-        if sender.tag == 0 {
-            
-            self.view.bringSubview(toFront: a01_01_view)
-            print("A01_01")
-        }
-        else if sender.tag == 1 {
-            
-            self.view.bringSubview(toFront: a01_02_view)
-            print("A01_02")
-        }
-        else if sender.tag == 2 {
-            
-            self.view.bringSubview(toFront: a01_03_view)
-            print("A01_03")
-        }
-        else if sender.tag == 3 {
-            
-            self.view.bringSubview(toFront: a01_04_view)
-            print("A01_04")
-        }
-        else if sender.tag == 4 {
-            
-            self.view.bringSubview(toFront: a01_05_1_view)
-            print("A01_05")
-        }
-    }
+   
     
     
     
-    // 버튼 이동
+    // 버튼 이동 TEST 애니
     func moveButton( btn: UIButton ) {
         btn.center.y += 300
     }
@@ -2028,8 +1937,6 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             // moveAnimate()
         }
         
-        
-        
         // 차트 테이타 갯수 8주(8개) 테스트
         //setChartValues(8)
         //ToastView.shared.short(self.view, txt_msg: "활성화 되었습니다.")
@@ -2045,6 +1952,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         sender.setBackgroundImage(UIImage(named:s), for: UIControlState.normal )
         
         self.view.bringSubview(toFront: a01_01_view)
+        self.view.bringSubview(toFront: a01_ScrollMenuView)
         
         print("A01")
         
@@ -2057,15 +1965,14 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         
         btn_a01_change.setBackgroundImage(UIImage(named:"frame-A-01-off"), for: UIControlState.normal )
         btn_a02_change.setBackgroundImage(UIImage(named:"frame-A-02-off"), for: UIControlState.normal )
-        btn_a03_change.setBackgroundImage(UIImage(named:"frame-A-03-off"), for: UIControlState.normal )
-        
+        btn_a03_change.setBackgroundImage(UIImage(named:"frame-A-03-off"), for: UIControlState.normal )        
         
         let s = String(format: "frame-A-%02d-on", sender.tag)
         sender.setBackgroundImage(UIImage(named:s), for: UIControlState.normal )
         
         carOnOffSetting()
-        self.view.bringSubview(toFront: a02_ScrollMenuView)
         self.view.bringSubview(toFront: a02_01_view)
+        self.view.bringSubview(toFront: a02_ScrollMenuView)
         
         
         print("A02")
@@ -2096,11 +2003,46 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     
     
     
+    
+    
+    func a01_ScrollBtnCreate() {
+        
+        var count = 0
+        var px = 0
+        //var py = 0
+        let btn_width = 75
+        for i in 0..<btn_a01_name.count {
+            
+            count += 1
+            
+            let tempBtn = UIButton()
+            tempBtn.tag = i+1
+            tempBtn.frame = CGRect(x: ((i+1)*btn_width)-btn_width, y: 0, width: btn_width, height: 45)
+            
+            tempBtn.setTitleColor( UIColor.black, for: .normal )
+            tempBtn.backgroundColor = UIColor.white
+            
+            if(i == 0)  {
+                tempBtn.setTitleColor( UIColor(red: 0/256, green: 75/255, blue: 144/255, alpha: 1), for: .normal )
+            }
+            //tempBtn.setTitle("Hello \(i)", for: .normal)
+            tempBtn.addTarget(self, action: #selector(pressed_01), for: .touchUpInside)
+            //tempBtn.setImage(UIImage(named:btn_image[i-1]), for: UIControlState.normal )
+            tempBtn.setTitle( btn_a01_name[i], for: .normal)
+            
+            px += btn_width
+            a01_ScrollMenuView.scrollView.addSubview(tempBtn)
+            //px = px + Int(scrollView.frame.width)/2 - 30
+        }
+        
+        a01_ScrollMenuView.scrollView.contentSize = CGSize(width: px, height: 41)
+    }
+    
+    
+    
+    
     // 스크롤뷰에 버튼 만들기
     func a02_ScrollBtnCreate() {
-        
-        //let btnNum = 11
-        
         
         let btn_image = ["frame_a_02_01_on","frame_a_02_02_off",
                          "frame_a_02_03_off","frame_a_02_04_off",
@@ -2858,8 +2800,6 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
                         let Result = json["Result"].rawString()!
                         
                         if( Result == "SAVE_OK" ) {
-                            
-                            
                             // 클라 저장
                             UserDefaults.standard.set(MainManager.shared.member_info.str_car_plate_num, forKey: "str_car_plate_num")
                             MainManager.shared.str_certifi_notis = "차량등록 번호 수정 성공"

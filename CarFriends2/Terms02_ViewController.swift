@@ -40,7 +40,7 @@ class Terms02_ViewController: UIViewController, WKNavigationDelegate {
         webView.translatesAutoresizingMaskIntoConstraints = false
         self.view.addSubview( webView )
         
-        if let videoURL:URL = URL(string: "http://seraphm.cafe24.com/app/contract2.html") {
+        if let videoURL:URL = URL(string: "http://seraphm.cafe24.com/app/contract03.html") {
             let request:URLRequest = URLRequest(url: videoURL)
             webView.load(request)
         }

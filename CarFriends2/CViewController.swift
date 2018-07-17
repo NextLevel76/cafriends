@@ -45,6 +45,9 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
     var bHideSubMenu = false
     var subMenuViewHeight:CGFloat = 0.0
     
+    // 커지고 난 세로 크기
+    var webViewChangeRect:CGRect = CGRect(x:0, y:0, width:0, height:0)
+    
     
     @IBOutlet weak var btn_c01: UIButton!
     @IBOutlet weak var btn_c02: UIButton!
@@ -113,9 +116,6 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
         //userLogin()
         
         
-        
-        
-        
     }
     
     override func viewDidLoad() {
@@ -125,7 +125,6 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
         
         // 인터넷 연결 체크
         MainManager.shared.isConnectCheck()
-        
         // 저장된 쿠키 불러오기
         HTTPCookieStorage.restore()
         //setupWebView()
@@ -162,7 +161,7 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if scrollView == webView.scrollView {
             let contentOffset = scrollView.contentOffset.y
-            print("contentOffset: ", contentOffset)
+           // print("contentOffset: ", contentOffset)
             
             
             if( bHideSubMenu == false && contentOffset > 30 ) {
@@ -172,6 +171,16 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
                 menuView_c02.isHidden = bHideSubMenu;
                 menuView_c03.isHidden = bHideSubMenu;
                 
+                // 커진만큼 키우고 위치 올린다
+                var tempMenuHeight = subMenuViewHeight * MainManager.shared.ratio_Y
+                print(subMenuViewHeight)
+                var tempRect:CGRect = CGRect(x: webViewChangeRect.origin.x, y: webViewChangeRect.origin.y-tempMenuHeight, width: webViewChangeRect.width, height: webViewChangeRect.height+tempMenuHeight)
+                
+                self.webView.frame = tempRect
+                
+
+                
+                
             }
             else if( bHideSubMenu == true && contentOffset < -30 ) {
                 
@@ -179,6 +188,9 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
                 menuView_c01.isHidden = bHideSubMenu;
                 menuView_c02.isHidden = bHideSubMenu;
                 menuView_c03.isHidden = bHideSubMenu;
+                
+                // 원래의 크기대로
+                self.webView.frame = webViewChangeRect
             }
             
 //            if (contentOffset > self.lastKnowContentOfsset) {
@@ -393,11 +405,17 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
         menuView_c01.btn_c01_04.addTarget(self, action: #selector(c01MenuBtnAction), for: .touchUpInside)
         menuView_c01.btn_c01_05.addTarget(self, action: #selector(c01MenuBtnAction), for: .touchUpInside)
         
-        menuView_c01.btn_c01_01.backgroundColor = UIColor.blue
-        menuView_c01.btn_c01_02.backgroundColor = UIColor.black
-        menuView_c01.btn_c01_03.backgroundColor = UIColor.black
-        menuView_c01.btn_c01_04.backgroundColor = UIColor.black
-        menuView_c01.btn_c01_05.backgroundColor = UIColor.black
+        menuView_c01.btn_c01_01.backgroundColor = UIColor.white
+        menuView_c01.btn_c01_02.backgroundColor = UIColor.white
+        menuView_c01.btn_c01_03.backgroundColor = UIColor.white
+        menuView_c01.btn_c01_04.backgroundColor = UIColor.white
+        menuView_c01.btn_c01_05.backgroundColor = UIColor.white
+        
+        menuView_c01.btn_c01_01.setTitleColor( UIColor(red: 0/256, green: 75/255, blue: 144/255, alpha: 1), for: .normal )
+        menuView_c01.btn_c01_02.setTitleColor( UIColor.black, for: .normal )
+        menuView_c01.btn_c01_03.setTitleColor( UIColor.black, for: .normal )
+        menuView_c01.btn_c01_04.setTitleColor( UIColor.black, for: .normal )
+        menuView_c01.btn_c01_05.setTitleColor( UIColor.black, for: .normal )
         
 
     }
@@ -419,8 +437,12 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
             let tempBtn = UIButton()
             tempBtn.tag = i
             tempBtn.frame = CGRect(x: (i*btn_width)-btn_width, y: 0, width: btn_width, height: 34)
-            tempBtn.backgroundColor = UIColor.black
-            if(i == 1)  { tempBtn.backgroundColor = UIColor.blue }
+            
+            tempBtn.setTitleColor( UIColor.black, for: .normal )
+            if(i == 1)  {
+                // select btn
+                tempBtn.setTitleColor( UIColor(red: 0/256, green: 75/255, blue: 144/255, alpha: 1), for: .normal )
+            }
             //tempBtn.setTitle("Hello \(i)", for: .normal)
             tempBtn.addTarget(self, action: #selector(c02MenuBtnAction), for: .touchUpInside)
             //tempBtn.setImage(UIImage(named:btn_image[i-1]), for: UIControlState.normal )
@@ -440,12 +462,18 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
         menuView_c03.btn_c03_01.addTarget(self, action: #selector(c03MenuBtnAction), for: .touchUpInside)
         menuView_c03.btn_c03_02.addTarget(self, action: #selector(c03MenuBtnAction), for: .touchUpInside)
         
-        menuView_c03.btn_c03_01.backgroundColor = UIColor.blue
-        menuView_c03.btn_c03_02.backgroundColor = UIColor.black
+        menuView_c03.btn_c03_01.backgroundColor = UIColor.white
+        menuView_c03.btn_c03_02.backgroundColor = UIColor.white
+        
+        menuView_c03.btn_c03_01.setTitleColor( UIColor(red: 0/256, green: 75/255, blue: 144/255, alpha: 1), for: .normal )
+        menuView_c03.btn_c03_02.setTitleColor( UIColor.black, for: .normal )
     }
     
     
     
+    
+    //------------------------------------------------------------------------------------
+    // pressed
     func c01MenuBtnAction(_ sender: UIButton) {
         
         if( iWebStart < 2 ) { return }
@@ -453,17 +481,19 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
         self.view.bringSubview(toFront: activityIndicator)
         activityIndicator.startAnimating()
         
-        menuView_c01.btn_c01_01.backgroundColor = UIColor.black
-        menuView_c01.btn_c01_02.backgroundColor = UIColor.black
-        menuView_c01.btn_c01_03.backgroundColor = UIColor.black
-        menuView_c01.btn_c01_04.backgroundColor = UIColor.black
-        menuView_c01.btn_c01_05.backgroundColor = UIColor.black
+        menuView_c01.btn_c01_01.setTitleColor( UIColor.black, for: .normal )
+        menuView_c01.btn_c01_02.setTitleColor( UIColor.black, for: .normal )
+        menuView_c01.btn_c01_03.setTitleColor( UIColor.black, for: .normal )
+        menuView_c01.btn_c01_04.setTitleColor( UIColor.black, for: .normal )
+        menuView_c01.btn_c01_05.setTitleColor( UIColor.black, for: .normal )
+        
         
         let select_btn_tag = sender.tag
         
+        sender.setTitleColor( UIColor(red: 0/256, green: 75/255, blue: 144/255, alpha: 1), for: .normal )
+        
+        
         if( select_btn_tag == 1 ) {
-            
-            menuView_c01.btn_c01_01.backgroundColor = UIColor.blue
             
             let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=C_1_1&sca=스파크"
             let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
@@ -471,8 +501,6 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
             webView.load(request)
         }
         else if( select_btn_tag == 2 ) {
-            
-            menuView_c01.btn_c01_02.backgroundColor = UIColor.blue
             
             let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=C_1_2&sca=스파크"
             let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
@@ -482,8 +510,6 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
             // 궁금해요
         else if( select_btn_tag == 3 ) {
             
-            menuView_c01.btn_c01_03.backgroundColor = UIColor.blue
-            
             let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=C_1_3&sca=스파크"
             let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
             var request = URLRequest(url: url!)
@@ -492,8 +518,6 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
         }
         else if( select_btn_tag == 4 ) {
             
-            menuView_c01.btn_c01_04.backgroundColor = UIColor.blue
-            
             let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=C_1_4&sca=스파크"
             let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
             let request = URLRequest(url: url!)
@@ -501,33 +525,12 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
         }
         else if( select_btn_tag == 5 ) {
             
-            menuView_c01.btn_c01_05.backgroundColor = UIColor.blue
-            
             let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=C_1_5&sca=스파크"
             let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
             let request = URLRequest(url: url!)
             webView.load(request)
         }
-        
-        
     }
-    
-    
-    
-   
-
-
-
-
-
-    
-    
-    
-    
-    
-    
-    
-    
     
     
     
@@ -549,9 +552,15 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
             
             let tempBtn = menuView_c02.scrollview.viewWithTag(i) as! UIButton
             //tempBtn.setImage(UIImage(named:btn_image[i-1]), for: UIControlState.normal )
-            tempBtn.backgroundColor = UIColor.black
+            tempBtn.setTitleColor( UIColor.black, for: .normal )
         }
-        sender.backgroundColor = UIColor.blue
+        sender.setTitleColor( UIColor(red: 0/256, green: 75/255, blue: 144/255, alpha: 1), for: .normal )
+        
+        
+        
+        
+        
+        
         
         let select_btn_tag = sender.tag
         
@@ -633,16 +642,16 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
         
         self.view.bringSubview(toFront: activityIndicator)
         activityIndicator.startAnimating()
-        
-        menuView_c03.btn_c03_01.backgroundColor = UIColor.black
-        menuView_c03.btn_c03_02.backgroundColor = UIColor.black
 
+        
+        menuView_c03.btn_c03_01.setTitleColor( UIColor.black, for: .normal )
+        menuView_c03.btn_c03_02.setTitleColor( UIColor.black, for: .normal )
         
         let select_btn_tag = sender.tag
         
         if( select_btn_tag == 1 ) {
             
-            menuView_c03.btn_c03_01.backgroundColor = UIColor.blue
+            menuView_c03.btn_c03_01.setTitleColor( UIColor(red: 0/256, green: 75/255, blue: 144/255, alpha: 1), for: .normal )
             
             let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=C_3_1&sca=스파크"
             let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
@@ -651,15 +660,13 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
         }
         else if( select_btn_tag == 2 ) {
             
-            menuView_c03.btn_c03_02.backgroundColor = UIColor.blue
+            menuView_c03.btn_c03_02.setTitleColor( UIColor(red: 0/256, green: 75/255, blue: 144/255, alpha: 1), for: .normal )
             
             let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=C_1_2&sca=스파크"
             let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
             let request = URLRequest(url: url!)
             webView.load(request)
         }
-       
-        
     }
     
     
@@ -830,7 +837,7 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
         print( "subMenuViewHeight = \(subMenuViewHeight)" )
         
         // 웹뷰 딜리게이트 연결
-        self.webView = WKWebView(frame: CGRect( x: 0, y: 76-subMenuViewHeight, width: 375, height: 539+subMenuViewHeight ), configuration: webViewConfig)
+        self.webView = WKWebView(frame: CGRect( x: 0, y: 76, width: 375, height: 539 ), configuration: webViewConfig)
         //webView.uiDelegate = self
         self.webView.navigationDelegate = self
         self.webView.translatesAutoresizingMaskIntoConstraints = false
@@ -848,6 +855,8 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
         
         
         webView.frame = MainManager.shared.initLoadChangeFrame(frame: webView.frame )
+        // 커진 프레임 저장
+        webViewChangeRect = webView.frame
         
         self.view.bringSubview(toFront: menuView_c01)
     }

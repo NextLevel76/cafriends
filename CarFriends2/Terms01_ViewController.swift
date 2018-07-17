@@ -50,7 +50,7 @@ class Terms01_ViewController: UIViewController, WKNavigationDelegate {
         //if let videoURL:URL = URL(string: "http://seraphm.cafe24.com/app/contract1.html") {
         
         
-        let temp = "http://www.naver.com"
+        let temp = "http://seraphm.cafe24.com/app/contract02.html"
         let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
         let request = URLRequest(url: url! )
         webView01.load(request)
@@ -64,7 +64,7 @@ class Terms01_ViewController: UIViewController, WKNavigationDelegate {
         webView02.translatesAutoresizingMaskIntoConstraints = false
         self.view.addSubview( webView02 )
         
-        if let videoURL:URL = URL(string: "http://seraphm.cafe24.com/app/contract3.html") {
+        if let videoURL:URL = URL(string: "http://seraphm.cafe24.com/app/contract01.html") {
             let request:URLRequest = URLRequest(url: videoURL)
             webView02.load(request)
         }

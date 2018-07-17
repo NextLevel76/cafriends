@@ -19,8 +19,7 @@ class A01_01_InfoMod_View: UIView {
     
   
     @IBOutlet weak var field_phone01: UITextField!
-    @IBOutlet weak var field_phone02: UITextField!
-    @IBOutlet weak var field_phone03: UITextField!
+
     
     @IBOutlet weak var field_certifi_input: UITextField!
     

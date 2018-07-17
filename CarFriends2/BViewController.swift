@@ -33,6 +33,9 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
     var bHideSubMenu = false
     var subMenuViewHeight:CGFloat = 0.0
     
+    // 커지고 난 세로 크기
+    var webViewChangeRect:CGRect = CGRect(x:0, y:0, width:0, height:0)
+    
     
     weak var webView: WKWebView!
     var activityIndicator:UIActivityIndicatorView = UIActivityIndicatorView()
@@ -203,7 +206,8 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if scrollView == webView.scrollView {
             let contentOffset = scrollView.contentOffset.y
-            print("contentOffset: ", contentOffset)
+            
+            //print("contentOffset: ", contentOffset)
             
             
             if( bHideSubMenu == false && contentOffset > 30 ) {
@@ -211,14 +215,27 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
                 bHideSubMenu = true
                 b01_ScrollMenuView.isHidden = bHideSubMenu;
                 b02_ScrollMenuView.isHidden = bHideSubMenu;
+                
+                
+                // 커진만큼 키우고 위치 올린다
+                var tempMenuHeight = subMenuViewHeight * MainManager.shared.ratio_Y
+                print(subMenuViewHeight)
+                var tempRect:CGRect = CGRect(x: webViewChangeRect.origin.x, y: webViewChangeRect.origin.y-tempMenuHeight, width: webViewChangeRect.width, height: webViewChangeRect.height+tempMenuHeight)
+               
 
                 
+                self.webView.frame = tempRect
             }
             else if( bHideSubMenu == true && contentOffset < -30 ) {
                 
                 bHideSubMenu = false
                 b01_ScrollMenuView.isHidden = bHideSubMenu;
                 b02_ScrollMenuView.isHidden = bHideSubMenu;
+                
+                // 원래의 크기대로
+                self.webView.frame = webViewChangeRect
+                
+                
             }
             
             //            if (contentOffset > self.lastKnowContentOfsset) {
@@ -327,8 +344,12 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
             let tempBtn = UIButton()
             tempBtn.tag = i
             tempBtn.frame = CGRect(x: (i*btn_width)-btn_width, y: 0, width: btn_width, height: 34)
-            tempBtn.backgroundColor = UIColor.black
-            if(i == 1) {                tempBtn.backgroundColor = UIColor.blue }
+            tempBtn.backgroundColor = UIColor.white
+            tempBtn.setTitleColor( UIColor.black, for: .normal )
+            if(i == 1)  {
+                // select btn
+                tempBtn.setTitleColor( UIColor(red: 0/256, green: 75/255, blue: 144/255, alpha: 1), for: .normal )
+            }
             //tempBtn.setTitle("Hello \(i)", for: .normal)
             tempBtn.addTarget(self, action: #selector(b01MenuBtnAction), for: .touchUpInside)
             tempBtn.setTitle( btn_image[i-1], for: .normal)
@@ -356,10 +377,9 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
             
             let tempBtn = b01_ScrollMenuView.scrollView.viewWithTag(i) as! UIButton
             //tempBtn.setImage(UIImage(named:btn_image[i-1]), for: UIControlState.normal )
-            tempBtn.backgroundColor = UIColor.black
+            tempBtn.setTitleColor( UIColor.black, for: .normal )
         }
-        
-        sender.backgroundColor = UIColor.blue
+        sender.setTitleColor( UIColor(red: 0/256, green: 75/255, blue: 144/255, alpha: 1), for: .normal )
         
         let select_btn_tag = sender.tag
 
@@ -512,7 +532,6 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
         else if( sender.tag == 11 ) { self.view.bringSubview(toFront: a02_11_view) }
         */
         print("B01_", sender.tag)
-        
     }
     
     
@@ -520,7 +539,6 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
     func b02_ScrollBtnCreate() {
         
         //let btnNum = 11
-        
         
         let btn_image = ["서울,경기","인천,부천","대전,충청","전주,전북","광주,전남","대구,경북","원주,강원","제주도"]
         
@@ -536,8 +554,14 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
             let tempBtn = UIButton()
             tempBtn.tag = i
             tempBtn.frame = CGRect(x: (i*btn_width)-btn_width, y: 0, width: btn_width, height: 34)
-            tempBtn.backgroundColor = UIColor.black
-            if(i == 1)  { tempBtn.backgroundColor = UIColor.blue }
+            tempBtn.backgroundColor = UIColor.white
+            tempBtn.setTitleColor( UIColor.black, for: .normal )
+            
+            if(i == 1)  {
+                
+                tempBtn.setTitleColor( UIColor(red: 0/256, green: 75/255, blue: 144/255, alpha: 1), for: .normal )
+            }
+            
             //tempBtn.setTitle("Hello \(i)", for: .normal)
             tempBtn.addTarget(self, action: #selector(b02MenuBtnAction), for: .touchUpInside)
             //tempBtn.setImage(UIImage(named:btn_image[i-1]), for: UIControlState.normal )
@@ -567,9 +591,9 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
 
             let tempBtn = b02_ScrollMenuView.scrollView.viewWithTag(i) as! UIButton
             //tempBtn.setImage(UIImage(named:btn_image[i-1]), for: UIControlState.normal )
-            tempBtn.backgroundColor = UIColor.black
+            tempBtn.setTitleColor( UIColor.black, for: .normal )
         }
-        sender.backgroundColor = UIColor.blue
+        sender.setTitleColor( UIColor(red: 0/256, green: 75/255, blue: 144/255, alpha: 1), for: .normal )
         
         let select_btn_tag = sender.tag
         
@@ -711,7 +735,7 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
         
         
         // 웹뷰 딜리게이트 연결
-        self.webView = WKWebView(frame: CGRect( x: 0, y: 76-subMenuViewHeight, width: 375, height: 539+subMenuViewHeight ), configuration: webViewConfig)
+        self.webView = WKWebView(frame: CGRect( x: 0, y: 76, width: 375, height: 539 ), configuration: webViewConfig)
         
         //webView.uiDelegate = self
         self.webView.navigationDelegate = self
@@ -729,6 +753,8 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
         webView.load(request)
         
         webView.frame = MainManager.shared.initLoadChangeFrame(frame: webView.frame )
+        
+        webViewChangeRect = webView.frame
         
         self.view.bringSubview(toFront: b01_ScrollMenuView)
         

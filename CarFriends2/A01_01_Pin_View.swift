@@ -22,12 +22,6 @@ class A01_01_Pin_View: UIView {
     
     @IBOutlet weak var label_pin_num_notis: UILabel!
     
-    @IBOutlet weak var btn_a01_01: UIButton!
-    @IBOutlet weak var btn_a01_02: UIButton!
-    @IBOutlet weak var btn_a01_03: UIButton!
-    @IBOutlet weak var btn_a01_04: UIButton!
-    @IBOutlet weak var btn_a01_05: UIButton!
-    
     
     @IBOutlet weak var field_pin01: UITextField!
     @IBOutlet weak var field_pin02: UITextField!

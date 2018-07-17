@@ -9,16 +9,10 @@
 import UIKit
 
 class A01_04_View: UIView {
-
-    
     
     
 
-    @IBOutlet weak var btn_a01_01: UIButton!
-    @IBOutlet weak var btn_a01_02: UIButton!
-    @IBOutlet weak var btn_a01_03: UIButton!
-    @IBOutlet weak var btn_a01_04: UIButton!
-    @IBOutlet weak var btn_a01_05: UIButton!
+
 
     @IBOutlet weak var progress_fuel: UIProgressView!
     @IBOutlet weak var progress_battery: UIProgressView!
