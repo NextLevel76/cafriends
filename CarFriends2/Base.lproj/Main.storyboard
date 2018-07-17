@@ -22,7 +22,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" tag="2" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="drl-KY-KJy">
-                                <rect key="frame" x="125" y="0.0" width="125" height="41"/>
+                                <rect key="frame" x="125" y="18" width="125" height="41"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
                                 <state key="normal" backgroundImage="frame-A-02-off"/>
                                 <connections>
@@ -30,7 +30,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" tag="3" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Lwt-dl-kyl">
-                                <rect key="frame" x="250" y="0.0" width="125" height="41"/>
+                                <rect key="frame" x="250" y="18" width="125" height="41"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
                                 <state key="normal" backgroundImage="frame-A-03-off"/>
                                 <connections>
@@ -62,7 +62,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" tag="1" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="038-IJ-Vde">
-                                <rect key="frame" x="0.0" y="0.0" width="125" height="41"/>
+                                <rect key="frame" x="0.0" y="18" width="125" height="41"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
                                 <state key="normal" backgroundImage="frame-A-01-on"/>
                                 <connections>
@@ -140,7 +140,7 @@
                                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
                                             </imageView>
                                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="A-01-03-02-Icon01" translatesAutoresizingMaskIntoConstraints="NO" id="AJ6-D5-eyr">
-                                                <rect key="frame" x="7" y="12" width="26" height="26"/>
+                                                <rect key="frame" x="7" y="12" width="26" height="25"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
                                             </imageView>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="엔진오일" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aUD-uQ-zk3">
@@ -3072,26 +3072,26 @@
     </scenes>
     <resources>
         <image name="A-01-01-01-bg00" width="391" height="554"/>
-        <image name="A-01-01-07-icon" width="42" height="54"/>
+        <image name="A-01-01-07-icon" width="40" height="52"/>
         <image name="A-01-03-01-bgBlack" width="375" height="506"/>
-        <image name="A-01-03-02-Icon01" width="27" height="27"/>
+        <image name="A-01-03-02-Icon01" width="28" height="28"/>
         <image name="A-01-03-02-imgUserCar" width="189" height="189"/>
         <image name="A-01-03-03-percent16" width="234" height="234"/>
-        <image name="A-01-03-04-Level02" width="101" height="24"/>
+        <image name="A-01-03-04-Level02" width="97" height="23"/>
         <image name="A-01-03-04-btnUp" width="214" height="52"/>
-        <image name="A-01-03-05-BtnShopUp" width="67" height="32"/>
+        <image name="A-01-03-05-BtnShopUp" width="70" height="33"/>
         <image name="A-01-03-06-textTop" width="310" height="19"/>
-        <image name="A-01-03-07-BgList" width="375" height="55"/>
+        <image name="A-01-03-07-BgList" width="391" height="58"/>
         <image name="A-01-03-08-iconLevel01" width="27" height="26"/>
         <image name="A-01-03-08-text01" width="380" height="99"/>
         <image name="A-01-03-08-textTable" width="375" height="35"/>
-        <image name="A-01-03-09-BgList" width="375" height="56"/>
+        <image name="A-01-03-09-BgList" width="391" height="59"/>
         <image name="A-01-03-09-BgListLast" width="375" height="57"/>
         <image name="A-01-03-09-btnDetailUp" width="72" height="32"/>
         <image name="A-01-03-10-Icon01" width="36" height="36"/>
         <image name="A-01-03-11-bgCar" width="375" height="350"/>
         <image name="A-01-03-12-btnClose" width="17" height="17"/>
-        <image name="A-01-03-12-btnSaveUp" width="313" height="45"/>
+        <image name="A-01-03-12-btnSaveUp" width="326" height="47"/>
         <image name="A-01-03-12-line" width="196" height="2"/>
         <image name="A-01-03-13-btn" width="344" height="45"/>
         <image name="A-01-03-14-iconLevel01" width="30" height="29"/>

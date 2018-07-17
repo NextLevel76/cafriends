@@ -500,7 +500,7 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
         
         if( field_nick_input.text?.count == 0 ) {
            
-            MainManager.shared.str_certifi_notis = "닉네임을 입력하세요~!"
+            MainManager.shared.str_certifi_notis = "사용하실 닉네임을 입력해주세요."
             self.performSegue(withIdentifier: "joinPopSegue", sender: self)
         }
         else {
@@ -560,7 +560,7 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
                         if( temp == "MEM_NO_EXISTS" ) {
                             
                             self.bNickNameUplicateCheck = true
-                            MainManager.shared.str_certifi_notis = "사용 가능한 닉네임입니다.~!"
+                            MainManager.shared.str_certifi_notis = "사용 가능한 닉네임입니다."
                             self.performSegue(withIdentifier: "joinPopSegue", sender: self)
                             
                             // 닉네임 저장
@@ -573,7 +573,7 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
                         else {
                             
                             self.bNickNameUplicateCheck = false
-                            MainManager.shared.str_certifi_notis = "닉네임이 중복입니다.~!"
+                            MainManager.shared.str_certifi_notis = "이미 사용중인 닉네임 입니다."
                             self.performSegue(withIdentifier: "joinPopSegue", sender: self)
                             
                             print("닉네임 중복")
@@ -594,7 +594,7 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
         
         if( bNickNameUplicateCheck == false ) {
 
-            MainManager.shared.str_certifi_notis = "닉네임 중복체크를 먼저 해주세요.~!"
+            MainManager.shared.str_certifi_notis = "닉네임 중복체크를 먼저 해주세요."
             self.performSegue(withIdentifier: "joinPopSegue", sender: self)
         }
         else if( bTimeCheckStart == false ) {
@@ -608,7 +608,7 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
             
             if( field_phone_01.text!.count == 0 ) {
 
-                MainManager.shared.str_certifi_notis = "전화번호를 전부 입력해 주세요.!"
+                MainManager.shared.str_certifi_notis = "전화번호로 정확하게 입력해주세요."
                 self.performSegue(withIdentifier: "joinPopSegue", sender: self)
                 return
             }
@@ -618,7 +618,7 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
             bTimeCheckStart = true
             certifi_count = 60 // 3분
             
-            MainManager.shared.str_certifi_notis = "요청한 인증 번호를 입력해 주세요.!"
+            MainManager.shared.str_certifi_notis = "휴대전화에 전송된 인증번호를 입력해 주세요."
             self.performSegue(withIdentifier: "joinPopSegue", sender: self)
             
             
@@ -665,29 +665,29 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
     @IBAction func pressed_certifi_ok(_ sender: UIButton) {
         
         
-        MainManager.shared.str_certifi_notis = "인증 번호가 맞지 않습니다.!"
+        MainManager.shared.str_certifi_notis = "인증번호가 맞지 않습니다."
         
         if( bNickNameUplicateCheck == false ) {
 
-            MainManager.shared.str_certifi_notis = "닉네임 중복체크를 먼저 해주세요.~!"
+            MainManager.shared.str_certifi_notis = "닉네임 중복체크를 먼저 해주세요."
             self.performSegue(withIdentifier: "joinPopSegue", sender: self)
         }
         else if( field_certifi_input.text!.count == 0 ) {
             
 
-            MainManager.shared.str_certifi_notis = "인증번호를 입력 해주세요.~! "
+            MainManager.shared.str_certifi_notis = "인증번호를 입력 해주세요."
             self.performSegue(withIdentifier: "joinPopSegue", sender: self)
         }
         else if( (self.server_get_phone_certifi_num == field_certifi_input.text) ) {
             
             // 인증번호
-            MainManager.shared.str_certifi_notis = "인증 되었습니다.OK!"
+            MainManager.shared.str_certifi_notis = "인증 되었습니다."
             
         }
         else {
             
             // 인증번호가 틀렸다.
-            MainManager.shared.str_certifi_notis = "인증 번호가 맞지 않습니다.!"
+            MainManager.shared.str_certifi_notis = "인증 번호가 맞지 않습니다."
             MainManager.shared.bMemberPhoneCertifi = false
         }
         
@@ -781,7 +781,7 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
                     }
                     else {
 
-                        MainManager.shared.str_certifi_notis = "회원가입 실패, 정보를 다시 확인해주세요~!"
+                        MainManager.shared.str_certifi_notis = "서버와의 연결이 지연되고 있습니다. 잠시후에 다시 사용해 주세요."
                         self.performSegue(withIdentifier: "joinPopSegue", sender: self)
                         print( "회원가입 실패" )
                     }
@@ -953,7 +953,7 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
                         }
                         else {
 
-                            MainManager.shared.str_certifi_notis = "회원가입 실패, 정보를 다시 확인해주세요~!"
+                            MainManager.shared.str_certifi_notis = "서버와의 연결이 지연되고 있습니다. 잠시후에 다시 사용해 주세요."
                             self.performSegue(withIdentifier: "joinPopSegue", sender: self)
                             print( "회원가입 실패2" )
                         }
@@ -1007,7 +1007,7 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
             textField.text = ""
             bNickNameUplicateCheck = false
 
-            MainManager.shared.str_certifi_notis = "닉네임 중복체크를 해주세요.~!"
+            MainManager.shared.str_certifi_notis = "닉네임 중복체크를 해주세요."
             self.performSegue(withIdentifier: "joinPopSegue", sender: self)
         }
         else if (textField == field_phone_01) {
