@@ -2309,7 +2309,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
                 
                 
                 a01_01_pin_view.field_pin01.becomeFirstResponder()
-                MainManager.shared.str_certifi_notis = "핀번호를 한번 더 입력 하세요.!"
+                MainManager.shared.str_certifi_notis = "핀번호를 한번 더 입력해주세요."
                 // Segue -> 사용 팝업뷰컨트롤러 띠우기
                 self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
                 
@@ -2389,7 +2389,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
                                     self.view.bringSubview(toFront: self.a01_01_view)
                                     
                                     //pop up
-                                    MainManager.shared.str_certifi_notis = "핀번호가 일치 합니다.변경 되었습니다.!"
+                                    MainManager.shared.str_certifi_notis = "핀번호가 성공적으로 변경되었습니다."
                                     // Segue -> 사용 팝업뷰컨트롤러 띠우기
                                     self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
                                     self.a01_01_pin_view.bPin_input_location = false
@@ -2402,7 +2402,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
                                 }
                                 else {
                                     
-                                    MainManager.shared.str_certifi_notis = "휴대폰 번호 저장 실패.!"
+                                    MainManager.shared.str_certifi_notis = "서버와의 연결이 지연되고 있습니다. 잠시후에 다시 사용해 주세요."
                                     MainManager.shared.bMemberPhoneCertifi = false
                                     self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
                                     //self.a01_01_info_mod_view.label_notis.text = "휴대폰 번호 저장 실패.!"
@@ -2431,7 +2431,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
                     a01_01_pin_view.iPin_input_location_no = 0
                     a01_01_pin_view.field_pin01.becomeFirstResponder()
                     
-                    MainManager.shared.str_certifi_notis = "틀렸습니다.핀번호를 처음 부터 다시 입력 하세요.!"
+                    MainManager.shared.str_certifi_notis = "핀번호가 맞지않습니다. 처음부터 다시 입력해 주세요."
                     // Segue -> 사용 팝업뷰컨트롤러 띠우기
                     self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
                     
@@ -2447,7 +2447,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         else {
             
 
-            MainManager.shared.str_certifi_notis = "핀번호를 4자리 모두 입력 하세요.!"
+            MainManager.shared.str_certifi_notis = "핀번호를 4자리 모두 입력해 주세요."
             // Segue -> 사용 팝업뷰컨트롤러 띠우기
             self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
         }
@@ -2566,7 +2566,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
                 a01_01_info_mod_view.bTimeCheckStart = false
                 
                 //self.a01_01_info_mod_view.label_notis.text = "전화번호를 전부 입력해 주세요.!"
-                MainManager.shared.str_certifi_notis = "전화번호를 전부 입력해 주세요.!"
+                MainManager.shared.str_certifi_notis = "전화번호를 전부 입력해 주세요."
                 // Segue -> 사용 팝업뷰컨트롤러 띠우기
                 self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
                 
@@ -2576,7 +2576,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             }
             
             
-            MainManager.shared.str_certifi_notis = "요청한 인증 번호를 를력해 주세요.!"
+            MainManager.shared.str_certifi_notis = "전송된 인증번호를 입력해 주세요."
             // Segue -> 사용 팝업뷰컨트롤러 띠우기
             self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
             
@@ -2630,7 +2630,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             
             if( self.a01_01_info_mod_view.field_certifi_input.text!.count == 0 ) {                
 
-                MainManager.shared.str_certifi_notis = "인증번호를 입력 해주세요.~! "
+                MainManager.shared.str_certifi_notis = "전송된 인증번호를 입력 해주세요."
                 self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
                 return
             }
@@ -2681,7 +2681,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
                                 // 클라 저장
                                 UserDefaults.standard.set(MainManager.shared.member_info.str_id_phone_num, forKey: "str_id_phone_num")
                                 
-                                MainManager.shared.str_certifi_notis = "인증 되었습니다.OK!"
+                                MainManager.shared.str_certifi_notis = "인증 되었습니다."
                                 MainManager.shared.bMemberPhoneCertifi = true
                                 self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
                                 // self.view.bringSubview(toFront: self.a01_01_view)
@@ -2690,7 +2690,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
                             }
                             else {
                                 
-                                MainManager.shared.str_certifi_notis = "휴대폰 번호 저장 실패.!"
+                                MainManager.shared.str_certifi_notis = "서버와의 연결이 지연되고 있습니다. 잠시후에 다시 사용해 주세요."
                                 MainManager.shared.bMemberPhoneCertifi = false
                                 self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
                                 //self.a01_01_info_mod_view.label_notis.text = "휴대폰 번호 저장 실패.!"
@@ -2705,7 +2705,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             else {
                 
                 // 인증번호가 틀렸다.
-                MainManager.shared.str_certifi_notis = "인증 번호가 맞지 않습니다.!"
+                MainManager.shared.str_certifi_notis = "인증 번호가 맞지 않습니다."
                 MainManager.shared.bMemberPhoneCertifi = false
                 self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
 
@@ -2762,7 +2762,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         
         if( self.a01_01_info_mod_view.field_plate_num.text!.count == 0 ) {
 
-            MainManager.shared.str_certifi_notis = "정보를 입력 해주세요.~! "
+            MainManager.shared.str_certifi_notis = "정보를 입력 해주세요."
             self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
             return
         }
@@ -2802,13 +2802,13 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
                         if( Result == "SAVE_OK" ) {
                             // 클라 저장
                             UserDefaults.standard.set(MainManager.shared.member_info.str_car_plate_num, forKey: "str_car_plate_num")
-                            MainManager.shared.str_certifi_notis = "차량등록 번호 수정 성공"
+                            MainManager.shared.str_certifi_notis = "차량번호가 성공적으로 수정되었습니다."
                             self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
                             print( "차량등록 번호 수정 성공" )
                         }
                         else {
 
-                            MainManager.shared.str_certifi_notis = "차량등록 번호 저장 실패.!"
+                            MainManager.shared.str_certifi_notis = "서버와의 연결이 지연되고 있습니다. 잠시후에 다시 사용해 주세요."
                             self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
                             print( "차량등록 번호 저장 실패.!" )
                         }
@@ -2828,7 +2828,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         if( self.a01_01_info_mod_view.field_car_dae_num.text!.count == 0 ) {
            
 
-            MainManager.shared.str_certifi_notis = "정보를 입력 해주세요.~! "
+            MainManager.shared.str_certifi_notis = "정보를 입력 해주세요."
             self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
             return
         }
@@ -2869,14 +2869,14 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
                             // 클라 저장
                             UserDefaults.standard.set(MainManager.shared.member_info.str_car_dae_num, forKey: "str_car_dae_num")
                             
-                            MainManager.shared.str_certifi_notis = "차대 번호 수정 성공"
+                            MainManager.shared.str_certifi_notis = "차대가 성공적으로 수정되었습니다"
                             self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
                             
                             print( "차대 번호 수정 성공" )
                         }
                         else {
 
-                            MainManager.shared.str_certifi_notis = "차대대번호 저장 실패.!"
+                            MainManager.shared.str_certifi_notis = "서버와의 연결이 지연되고 있습니다. 잠시후에 다시 사용해 주세요."
                             self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
                             print( "차대 번호 저장 실패.!" )
                         }
@@ -2900,7 +2900,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             
 
             
-            MainManager.shared.str_certifi_notis = "정보를 입력 해주세요.~! "
+            MainManager.shared.str_certifi_notis = "정보를 입력 해주세요."
             self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
             return
         }
@@ -2941,13 +2941,13 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
                             // 피커뷰 선택번호 저장
                             UserDefaults.standard.set(MainManager.shared.member_info.i_car_piker_select, forKey: "i_car_piker_select")
 
-                            MainManager.shared.str_certifi_notis = "차종 수정 성공"
+                            MainManager.shared.str_certifi_notis = "차량종류가 성공적으로 수정되었습니다."
                             self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
                             print( "차종 수정 성공" )
                         }
                         else {
 
-                            MainManager.shared.str_certifi_notis = "차종 저장 실패.!"
+                            MainManager.shared.str_certifi_notis = "서버와의 연결이 지연되고 있습니다. 잠시후에 다시 사용해 주세요."
                             self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
                             print( "차종 저장 실패.!" )
                         }
@@ -2966,7 +2966,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         
         if( self.a01_01_info_mod_view.field_car_fuel.text!.count == 0 ) {
 
-            MainManager.shared.str_certifi_notis = "정보를 입력 해주세요.~! "
+            MainManager.shared.str_certifi_notis = "정보를 입력 해주세요."
             self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
             return
         }
@@ -3007,13 +3007,13 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
                             UserDefaults.standard.set(MainManager.shared.member_info.i_fuel_piker_select, forKey: "i_fuel_piker_select")
                             
 
-                            MainManager.shared.str_certifi_notis = "연료타입 수정 성공"
+                            MainManager.shared.str_certifi_notis = "연료타입이 성공적으로 수정되었습니다"
                             self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
                             print( "연료타입 수정 성공" )
                         }
                         else {
 
-                            MainManager.shared.str_certifi_notis = "연료타입 수정 실패.!"
+                            MainManager.shared.str_certifi_notis = "서버와의 연결이 지연되고 있습니다. 잠시후에 다시 사용해 주세요."
                             self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
                             print( "연료타입 수정 실패.!" )
                         }
@@ -3032,7 +3032,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         if( self.a01_01_info_mod_view.field_car_year.text!.count == 0 ) {
             
 
-            MainManager.shared.str_certifi_notis = "정보를 입력 해주세요.~! "
+            MainManager.shared.str_certifi_notis = "정보를 입력 해주세요."
             self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
             return
         }
@@ -3072,13 +3072,13 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
                             UserDefaults.standard.set(MainManager.shared.member_info.str_car_year, forKey: "str_car_year")
                             UserDefaults.standard.set(MainManager.shared.member_info.i_year_piker_select, forKey: "i_year_piker_select")
                             
-                            MainManager.shared.str_certifi_notis = "연식 수정 성공"
+                            MainManager.shared.str_certifi_notis = "차량연식이 성공적으로 수정되었습니다."
                             self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
                             print( "연식 수정 성공" )
                         }
                         else {
                             
-                            MainManager.shared.str_certifi_notis = "연식 저장 실패.!"
+                            MainManager.shared.str_certifi_notis = "서버와의 연결이 지연되고 있습니다. 잠시후에 다시 사용해 주세요."
                             self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
                             print( "연식 저장 실패.!" )
                         }

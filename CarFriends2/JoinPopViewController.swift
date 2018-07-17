@@ -31,7 +31,7 @@ class JoinPopViewController: UIViewController {
     @IBAction func pressed_OK(_ sender: UIButton) {
         
         
-        if( MainManager.shared.str_certifi_notis == "인증 되었습니다.OK!" ) {
+        if( MainManager.shared.str_certifi_notis == "인증 되었습니다." ) {
             
             MainManager.shared.bMemberPhoneCertifi = true
         }

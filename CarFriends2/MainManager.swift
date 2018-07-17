@@ -502,7 +502,7 @@ class MainManager   {
         } else {
             
             print("No Internet")
-            var alert = UIAlertView(title: "No Internet Connection", message: "서버와 연결이 되지 않습니다. 잠시 후 다시 사용해 주세요", delegate: nil, cancelButtonTitle: "OK")
+            var alert = UIAlertView(title: "No Internet Connection", message: "서버와의 연결이 지연되고 있습니다. 잠시후에 다시 사용해 주세요.", delegate: nil, cancelButtonTitle: "OK")
             alert.show()
         }
     }
