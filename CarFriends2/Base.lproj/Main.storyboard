@@ -140,7 +140,7 @@
                                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
                                             </imageView>
                                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="A-01-03-02-Icon01" translatesAutoresizingMaskIntoConstraints="NO" id="AJ6-D5-eyr">
-                                                <rect key="frame" x="7" y="12" width="26" height="26"/>
+                                                <rect key="frame" x="7" y="12" width="26" height="25"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
                                             </imageView>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="엔진오일" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aUD-uQ-zk3">
@@ -1888,6 +1888,24 @@
             </objects>
             <point key="canvasLocation" x="2102" y="1262"/>
         </scene>
+        <!--Scanner View Controller-->
+        <scene sceneID="R9y-Ye-3tw">
+            <objects>
+                <viewController storyboardIdentifier="ScannerViewController" id="clk-QB-dRt" customClass="ScannerViewController" customModule="CarFriends2" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="Jfs-eA-JMe"/>
+                        <viewControllerLayoutGuide type="bottom" id="lsO-w5-SQd"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="rNZ-89-BOV">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="gPr-bk-zXD" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-2346" y="551"/>
+        </scene>
         <!--Main View Controller-->
         <scene sceneID="0Bx-uy-4iD">
             <objects>
@@ -3054,26 +3072,26 @@
     </scenes>
     <resources>
         <image name="A-01-01-01-bg00" width="391" height="554"/>
-        <image name="A-01-01-07-icon" width="42" height="54"/>
+        <image name="A-01-01-07-icon" width="40" height="52"/>
         <image name="A-01-03-01-bgBlack" width="375" height="506"/>
-        <image name="A-01-03-02-Icon01" width="27" height="27"/>
+        <image name="A-01-03-02-Icon01" width="28" height="28"/>
         <image name="A-01-03-02-imgUserCar" width="189" height="189"/>
         <image name="A-01-03-03-percent16" width="234" height="234"/>
-        <image name="A-01-03-04-Level02" width="101" height="24"/>
+        <image name="A-01-03-04-Level02" width="97" height="23"/>
         <image name="A-01-03-04-btnUp" width="214" height="52"/>
-        <image name="A-01-03-05-BtnShopUp" width="67" height="32"/>
+        <image name="A-01-03-05-BtnShopUp" width="70" height="33"/>
         <image name="A-01-03-06-textTop" width="310" height="19"/>
-        <image name="A-01-03-07-BgList" width="375" height="55"/>
+        <image name="A-01-03-07-BgList" width="391" height="58"/>
         <image name="A-01-03-08-iconLevel01" width="27" height="26"/>
         <image name="A-01-03-08-text01" width="380" height="99"/>
         <image name="A-01-03-08-textTable" width="375" height="35"/>
-        <image name="A-01-03-09-BgList" width="375" height="56"/>
+        <image name="A-01-03-09-BgList" width="391" height="59"/>
         <image name="A-01-03-09-BgListLast" width="375" height="57"/>
         <image name="A-01-03-09-btnDetailUp" width="72" height="32"/>
         <image name="A-01-03-10-Icon01" width="36" height="36"/>
         <image name="A-01-03-11-bgCar" width="375" height="350"/>
         <image name="A-01-03-12-btnClose" width="17" height="17"/>
-        <image name="A-01-03-12-btnSaveUp" width="313" height="45"/>
+        <image name="A-01-03-12-btnSaveUp" width="326" height="47"/>
         <image name="A-01-03-12-line" width="196" height="2"/>
         <image name="A-01-03-13-btn" width="344" height="45"/>
         <image name="A-01-03-14-iconLevel01" width="30" height="29"/>
