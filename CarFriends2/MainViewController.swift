@@ -19,8 +19,6 @@ class MainViewController: UIViewController {
     
     
     
-    
-    
     override func loadView() {
         
         super.loadView()
@@ -77,9 +75,10 @@ class MainViewController: UIViewController {
     @IBAction func pressed(_ sender: UIButton) {
         
         let myView = self.storyboard?.instantiateViewController(withIdentifier: "ScannerViewController") as! ScannerViewController
-        //let myView = self.storyboard?.instantiateViewController(withIdentifier: "bluetoothmain") as! BlueToothViewController
+        // let myView = self.storyboard?.instantiateViewController(withIdentifier: "bluetoothmain") as! BlueToothViewController
         self.present(myView, animated: true, completion: nil)
     }
+    
     /*
     // MARK: - Navigation
 

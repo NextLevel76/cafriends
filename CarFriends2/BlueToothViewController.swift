@@ -83,8 +83,14 @@ class BlueToothViewController: UIViewController {
         
         // 회원가입용 회원정보수정용 카 리스트 받기
         initReadSelectData()
+       
         
         
+        
+            
+            
+        
+       
         
         
         
@@ -104,6 +110,7 @@ class BlueToothViewController: UIViewController {
         
         // 카 리스트 서버에서 받지 못했으면 버튼동작 중지
         if( MainManager.shared.bCarListRequest == false ) { return }
+        
         
         print("_____ 기기없음 _____")
         
@@ -237,6 +244,9 @@ class BlueToothViewController: UIViewController {
     
     func initReadSelectData() {
         
+        
+        print("initReadSelectData")
+        
         // 서버 연결 리스트 더 만들지 않는다
         if( MainManager.shared.bCarListRequest == true ) { return }
         
@@ -289,6 +299,12 @@ class BlueToothViewController: UIViewController {
                 }
                 
         }
+        
+        
+        print("ASFDASDFASFDSDFASFASDFASDFASDFASFDSDFAFD")
+        
+        
+        
     }
     
     

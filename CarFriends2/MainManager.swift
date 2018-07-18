@@ -102,6 +102,7 @@ struct Member_Info {
 struct BLE_Info {
     
     //-------------------------------------------------------------------------- BLE GET INFO
+    var TOTAL_BLE_READ_ACC_DATA:String = ""
     
     // [TOTAL_MILEAGE]=000000
     func getTOTAL_MILEAGE(_ TOTAL_MILEAGE: String ) -> String {
@@ -314,116 +315,146 @@ struct BLE_Info {
     //-------------------------------------------------------------------------- BLE SET INFO
     
     var str_Instruction:String = ""
+    var dataWriteBLE:NSData = NSData()
+    
     
     // [DATETIME]=YYYY-MM-DD HH:MM:SS!
     // mutating <----- 구조체안 func 에서 변수값을 변경가능하도록 해준다. 사용안하면 변경안됨
-    mutating func setDTC_EBCM(_ strDATA: String ) {
+    
+    mutating func setDTC_EBCM(_ strDATA: String ) -> NSData {
         
         str_Instruction = "[DATETIME]=" + strDATA + "!"
+        return writeData( str_Instruction )
     }
     
     // [DOORLOCK]=1! (잠금) [DOORLOCK]=0! (열림)
-    mutating func setDOORLOCK(_ strDATA: String ) {
+    mutating func setDOORLOCK(_ strDATA: String ) -> NSData{
         
         str_Instruction = "[DOORLOCK]=" + strDATA + "!"
+        return writeData( str_Instruction )
     }
     // [HATCH]=1!
-    mutating func setHATCH(_ strDATA: String ) {
+    mutating func setHATCH(_ strDATA: String ) -> NSData {
         
         str_Instruction = "[HATCH]=" + strDATA + "!"
+        return writeData( str_Instruction )
     }
     // [WINDOW]=1!
-    mutating func setWINDOW(_ strDATA: String ) {
+    mutating func setWINDOW(_ strDATA: String ) -> NSData {
         
         str_Instruction = "[WINDOW]=" + strDATA + "!"
+        return writeData( str_Instruction )
     }
     // [SUNROOF]=1!
-    mutating func setSUNROOF(_ strDATA: String ) {
+    mutating func setSUNROOF(_ strDATA: String ) -> NSData {
         
         str_Instruction = "[SUNROOF]=" + strDATA + "!"
+        return writeData( str_Instruction )
     }
     // [RVS]=1!
-    mutating func setRVS(_ strDATA: String ) {
+    mutating func setRVS(_ strDATA: String ) -> NSData {
         
         str_Instruction = "[RVS]=" + strDATA + "!"
+        return writeData( str_Instruction )
     }
     // [KEYON]=1!
-    mutating func setKEYON(_ strDATA: String ) {
+    mutating func setKEYON(_ strDATA: String ) -> NSData {
         
         str_Instruction = "[KEYON]=" + strDATA + "!"
+        return writeData( str_Instruction )
     }
     // [KEY]=00000000!
-    mutating func setKEY(_ strDATA: String ) {
+    mutating func setKEY(_ strDATA: String ) -> NSData {
         
         str_Instruction = "[KEY]=" + strDATA + "!"
+        return writeData( str_Instruction )
     }
     // [SEC]=1!
-    mutating func setSEC(_ strDATA: String ) {
+    mutating func setSEC(_ strDATA: String ) -> NSData {
         
         str_Instruction = "[SEC]=" + strDATA + "!"
+        return writeData( str_Instruction )
     }
     // [LOCKFOLDING]=1!
-    mutating func setLOCKFOLDING(_ strDATA: String ) {
+    mutating func setLOCKFOLDING(_ strDATA: String ) -> NSData {
         
         str_Instruction = "[LOCKFOLDING]=" + strDATA + "!"
+        return writeData( str_Instruction )
     }
     // [AUTOWINDOWS]=1!
-    mutating func setAUTOWINDOWS(_ strDATA: String ) {
+    mutating func setAUTOWINDOWS(_ strDATA: String ) -> NSData {
         
         str_Instruction = "[AUTOWINDOWS]=" + strDATA + "!"
+        return writeData( str_Instruction )
     }
     // [AUTOSUNROOF]=1!
-    mutating func setAUTOSUNROOF(_ strDATA: String ) {
+    mutating func setAUTOSUNROOF(_ strDATA: String ) -> NSData {
         
         str_Instruction = "[AUTOSUNROOF]=" + strDATA + "!"
+        return writeData( str_Instruction )
     }
     // [REVWINDOW]=1!
-    mutating func setREVWINDOW(_ strDATA: String ) {
+    mutating func setREVWINDOW(_ strDATA: String ) -> NSData {
         
         str_Instruction = "[REVWINDOW]=" + strDATA + "!"
+        return writeData( str_Instruction )
     }
     // [RES_RVS_TIME]=00:00:00!
-    mutating func setRES_RVS_TIME(_ strDATA: String ) {
+    mutating func setRES_RVS_TIME(_ strDATA: String ) -> NSData {
         
         str_Instruction = "[RES_RVS_TIME]=" + strDATA + "!"
+        return writeData( str_Instruction )
     }
     // [RES_RVS]=1!
-    mutating func setRES_RVS(_ strDATA: String ) {
+    mutating func setRES_RVS(_ strDATA: String ) -> NSData {
         
         str_Instruction = "[AUTOWINDOWS]=" + strDATA + "!"
+        return writeData( str_Instruction )
     }
     // [PIN_CODE]=0000!
-    mutating func setPIN_CODE(_ strDATA: String ) {
+    mutating func setPIN_CODE(_ strDATA: String ) -> NSData {
         
         str_Instruction = "[PIN_CODE]=" + strDATA + "!"
+        return writeData( str_Instruction )
     }
     // [RESET]=1!
-    mutating func setRESET(_ strDATA: String ) {
+    mutating func setRESET(_ strDATA: String ) -> NSData {
         
         str_Instruction = "[RESET]=" + strDATA + "!"
+        return writeData( str_Instruction )
     }
     // [READ_DTC_ECM]=1!
-    mutating func setREAD_DTC_ECM(_ strDATA: String ) {
+    mutating func setREAD_DTC_ECM(_ strDATA: String ) -> NSData {
         
         str_Instruction = "[READ_DTC_ECM]=" + strDATA + "!"
+        return writeData( str_Instruction )
     }
     // [READ_DTC_BCM]=1!
-    mutating func setREAD_DTC_BCM(_ strDATA: String ) {
+    mutating func setREAD_DTC_BCM(_ strDATA: String ) -> NSData {
         
         str_Instruction = "[READ_DTC_BCM]=" + strDATA + "!"
+        return writeData( str_Instruction )
     }
     // [READ_DTC_TCM]=1!
-    mutating func setREAD_DTC_TCM(_ strDATA: String ) {
+    mutating func setREAD_DTC_TCM(_ strDATA: String ) -> NSData {
         
         str_Instruction = "[READ_DTC_TCM]=" + strDATA + "!"
+        return writeData( str_Instruction )
     }
     // [READ_DTC_EBCM]=1!
-    mutating func setREAD_DTC_EBCM(_ strDATA: String ) {
+    mutating func setREAD_DTC_EBCM(_ strDATA: String ) -> NSData {
         
         str_Instruction = "[READ_DTC_EBCM]=" + strDATA + "!"
+        return writeData( str_Instruction )
     }
     
-    
+    mutating func writeData(_ strDATA: String) -> NSData {
+        
+        let buf: [UInt8] = Array(strDATA.utf8)
+        dataWriteBLE = NSData(bytes: buf, length: buf.count)
+        
+        return dataWriteBLE
+    }
     
     
     
@@ -445,7 +476,6 @@ class MainManager   {
     
     static let shared = MainManager()
     
-    
     var bAPP_TEST = true
     
     
@@ -461,6 +491,9 @@ class MainManager   {
     var check: Int = 0
     
     var member_info:Member_Info = Member_Info.init()
+    var ble_Info:BLE_Info = BLE_Info.init()
+    
+    
     
     var str_certifi_notis:String = ""
     
@@ -489,7 +522,6 @@ class MainManager   {
         iMemberJoinState = 0
         self.member_info = Member_Info.init()
         print("[[ MainManager granted ]]")
-        
     }
     
     
