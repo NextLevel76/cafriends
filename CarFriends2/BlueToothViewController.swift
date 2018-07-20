@@ -301,7 +301,7 @@ class BlueToothViewController: UIViewController {
         }
         
         
-        print("ASFDASDFASFDSDFASFASDFASDFASDFASFDSDFAFD")
+
         
         
         

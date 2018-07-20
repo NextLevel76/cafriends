@@ -37,6 +37,18 @@ struct Connectivity {
 
 struct Member_Info {
     
+    let DF_DOOR_LOCK = 0
+    let DF_HATCH = 1
+    let DF_WINDOW = 2
+    let DF_SUNROOF = 3
+    let DF_RVS = 4
+    let DF_KEY_ON_IGN = 5
+    let DF_AUTO_LOCK_FOLDING = 6
+    let DF_AUTO_WINDOW_CLOSE = 7
+    let DF_AUTO_SUNROOF = 8
+    let DF_AUTO_WINDOW_REV_OPEN = 9
+    let DF_RES_RVS_TIME = 10
+    
     // mem_join
     var str_password = "불러오기안됨"
     var str_id_nick = "파랑오빠(회원가입데이타없다.)"
@@ -86,229 +98,167 @@ struct Member_Info {
     var bCar_Car_Status_IGN = false     // 키온
     
     var str_Car_Status_Seed = ""
-    var bCar_Status_Key = false
+    var ser_Car_Status_Key = ""
     var bCar_Status_Security = false
     var bCar_Func_LockFolding = false
     var bCar_Func_AutoWindowClose = false
     var bCar_Func_AutoSunroofClose = false
-    var bCar_Func_AutoWindowOpen = false
-    var bCar_Status_ReservedRVSTime = false
+    var bCar_Func_AutoWindowRevOpen = false
+    
     var bCar_Func_RVS = false
+    var strCar_Status_ReservedRVSTime = ""
     
     var str_BLE_PinCode = "1111"
-}
-
-
-struct BLE_Info {
     
-    //-------------------------------------------------------------------------- BLE GET INFO
+    var isCAR_FRIENDS_CONNECT:Bool = false
+    var isBLE_ON:Bool = false
+    
     var TOTAL_BLE_READ_ACC_DATA:String = ""
     
-    // [TOTAL_MILEAGE]=000000
-    func getTOTAL_MILEAGE(_ TOTAL_MILEAGE: String ) -> String {
-        
-        var arr = TOTAL_MILEAGE.components(separatedBy: "=")
-        return arr[1]
-    }
+    var strTOTAL_MILEAGE:String = ""
     
-    //[WEEK_MILEAGE]=000000
-    func getWEEK_MILEAGE(_ WEEK_MILEAGE: String ) -> String {
-        
-        var arr = WEEK_MILEAGE.components(separatedBy: "=")
-        return arr[1]
-    }
     
-    // [MONTH_MILEAGE]=000000
-    func getMONTH_MILEAGE(_ MONTH_MILEAGE: String ) -> String {
-        
-        var arr = MONTH_MILEAGE.components(separatedBy: "=")
-        return arr[1]
-    }
     
-    // [TOTAL_MPG]=000.0
-    func getTOTAL_MPG(_ TOTAL_MPG: String ) -> String {
-        
-        var arr = TOTAL_MPG.components(separatedBy: "=")
-        return arr[1]
-    }
+    // 버튼 상태 실시간 끊기 딜레이.
+    // 버튼이벤트 발행시 딜레이준다 2초 후 딜레이후 값세팅되도록
     
-    // [WEEK_MPG]=000.0
-    func getWEEK_MPG(_ WEEK_MPG: String ) -> String {
-        
-        var arr = WEEK_MPG.components(separatedBy: "=")
-        return arr[1]
-    }
+    // 창문만 10초
+    let carWindowDelaySec = 10
+    var bCarStatusWindowDelay = false
+    var carStatusWindowDelayCount = 0
+    // 다른변수들 2초
+    let carStatusDelay = 2
+    var bCarStatusDelay = false
+    var carStatusDelayCount = 0
     
-    // [MONTH_MPG]=000.0
-    func getMONTH_MPG(_ MONTH_MPG: String ) -> String {
-        
-        var arr = MONTH_MPG.components(separatedBy: "=")
-        return arr[1]
-    }
     
-    // [TPMS-FL]=000.0 [TPMS-FR]=000.0 [TPMS-RL]=000.0  [TPMS-RR]=000.0
-    func getTPMS(_ TPMS: String ) -> Array<Any> {
+    
+    
+    
+    // 카프렌즈 블루투스를 통해 올라오는 문자열 명령 처리
+    mutating func BLE_READ_ACC_DATA_PROC( _ READ_DATA: String ) {
         
-        var arr = TPMS.components(separatedBy: " ") // 공백으로 4등분 한다
+        var arr = READ_DATA.components(separatedBy: "=")
         
-        for i in 0...3 {
+        // 공백 제거
+        //let cleanedText = arr[1].filter { !" \n\t\r".characters.contains($0) }
+        let cleanedText = arr[1].trimmingCharacters(in: .whitespacesAndNewlines)
+        // 데이타 없다 처리 안함
+        if( cleanedText.count == 0 ) {
             
-            var temp = arr[i].components(separatedBy: "=") // 2등분 뒷 숫자만 뽑아낸다
-            arr[i] = temp[1] // 숫자만 저장
+            print("______ \(arr[0])   = [Empty Data]")
+            return
         }
+     
         
-        print(arr)
-        return arr
+        print( "READ_DATA = \(arr[0])  \(cleanedText)")
+        
+        switch arr[0] {
+        case "[TOTAL_MILEAGE]":
+            str_TotalDriveMileage = String(cleanedText)
+            break
+        case "[WEEK_MILEAGE]":
+            str_ThisWeekDriveMileage = String(cleanedText)
+            break
+        case "[MONTH_MILEAGE]":
+            str_ThisMonthDriveMileage = String(cleanedText)
+            break
+        case "[TOTAL_MPG]":
+            str_AvgFuelMileage = String(cleanedText)
+            break
+        case "[WEEK_MPG]":
+            str_ThisWeekFuelMileage = String(cleanedText)
+            break
+        case "[MONTH_MPG]":
+            str_ThisMonthFuelMileage = String(cleanedText)
+            break
+        case "[TPMS-FL]":
+            str_TPMS_FL = String(cleanedText)
+            break
+        case "[TPMS-FR]":
+            str_TPMS_FR = String(cleanedText)
+            break
+        case "[TPMS-RL]":
+            str_TPMS_RL = String(cleanedText)
+            break
+        case "[TPMS-RR]":
+            str_TPMS_RR = String(cleanedText)
+            break
+        case "[BATT]":
+            str_BattVoltage = String(cleanedText)
+            break
+        case "[FUEL]":
+            str_FuelTank = String(cleanedText)
+            break
+        case "[DATETIME]":
+            str_Car_DateTime = String(cleanedText)
+            break
+        case "[DOORLOCK]":
+            bCar_Status_DoorLock = false
+            if( cleanedText == "1" ) { bCar_Status_DoorLock = true }
+            break
+        case "[HATCH]":
+            bCar_Status_Hatch = false
+            if( cleanedText == "1" ) { bCar_Status_Hatch = true }
+            break
+        case "[WINDOW]":
+            bCar_Status_Window = false
+            if( cleanedText == "1" ) { bCar_Status_Window = true }
+            break
+        case "[SUNROOF]":
+            bCar_Status_Sunroof = false
+            if( cleanedText == "1" ) { bCar_Status_Sunroof = true }
+            break
+        case "[RVS]":
+            bCar_Status_RVS = false
+            if( cleanedText == "1" ) { bCar_Status_RVS = true }
+            break
+        case "[KEYON]":
+            bCar_Car_Status_IGN = false
+            if( cleanedText == "1" ) { bCar_Car_Status_IGN = true }
+            break
+        case "[SEED]":
+            str_Car_Status_Seed = String(cleanedText)
+            break
+        case "[KEY]":
+            ser_Car_Status_Key = String(cleanedText)
+            break
+        case "[SEC]":
+            bCar_Status_Security = false
+            if( cleanedText == "1" ) { bCar_Status_Security = true }
+            break
+        case "[LOCKFOLDING]":
+            bCar_Func_LockFolding = false
+            if( cleanedText == "1" ) { bCar_Func_LockFolding = true }
+            break
+        case "[AUTOWINDOWS]":
+            bCar_Func_AutoWindowClose = false
+            if( cleanedText == "1" ) { bCar_Func_AutoWindowClose = true }
+            break
+        case "[AUTOSUNROOF]":
+            bCar_Func_AutoSunroofClose = false
+            if( cleanedText == "1" ) { bCar_Func_AutoSunroofClose = true }
+            break
+        case "[REV_WINDOW]":
+            bCar_Func_AutoWindowRevOpen = false
+            if( cleanedText == "1" ) { bCar_Func_AutoWindowRevOpen = true }
+            break
+        case "[RES_RVS_TIME]":
+            strCar_Status_ReservedRVSTime = String(cleanedText)
+            break
+        case "[RES_RVS]":
+            bCar_Func_RVS = false
+            if( cleanedText == "1" ) { bCar_Func_RVS = true }
+            break
+        case "[PIN_CODE]":
+            str_BLE_PinCode = String(cleanedText)
+            break
+        default:
+            print(String(cleanedText))
+        }
     }
     
-    // [BATT]=00.00
-    func getBATT(_ BATT: String ) -> String {
-        
-        var arr = BATT.components(separatedBy: "=")
-        return arr[1]
-    }
     
-    // [FUEL]=000.0
-    func getFUEL(_ FUEL: String ) -> String {
-        
-        var arr = FUEL.components(separatedBy: "=")
-        return arr[1]
-    }
-    
-    // [DATETIME]=YYYY-MM-DD HH:MM:SS
-    func getDATETIME(_ DATETIME: String ) -> String {
-        
-        var arr = DATETIME.components(separatedBy: "=")
-        return arr[1]
-    }
-    
-    // [DOORLOCK]=1 또는 0
-    func getDOORLOCK(_ DOORLOCK: String ) -> String {
-        
-        var arr = DOORLOCK.components(separatedBy: "=")
-        return arr[1]
-    }
-    
-    // [HATCH]=1
-    func getHATCH(_ HATCH: String ) -> String {
-        
-        var arr = HATCH.components(separatedBy: "=")
-        return arr[1]
-    }
-    
-    // [WINDOW]=1
-    func getWINDOW(_ WINDOW: String ) -> String {
-        
-        var arr = WINDOW.components(separatedBy: "=")
-        return arr[1]
-    }
-    
-    // [SUNROOF]=1
-    func getSUNROOF(_ SUNROOF: String ) -> String {
-        
-        var arr = SUNROOF.components(separatedBy: "=")
-        return arr[1]
-    }
-    // [RVS]=1
-    func getRVS(_ RVS: String ) -> String {
-        
-        var arr = RVS.components(separatedBy: "=")
-        return arr[1]
-    }
-    // [KEYON]=1
-    func getKEYON(_ KEYON: String ) -> String {
-        
-        var arr = KEYON.components(separatedBy: "=")
-        return arr[1]
-    }
-    // [SEED]=00000000
-    func getSEED(_ SEED: String ) -> String {
-        
-        var arr = SEED.components(separatedBy: "=")
-        return arr[1]
-    }
-    // [KEY]=00000000
-    func getKEY(_ KEY: String ) -> String {
-        
-        var arr = KEY.components(separatedBy: "=")
-        return arr[1]
-    }
-    // [SEC]=1 또는 0
-    func getSEC(_ SEC: String ) -> String {
-        
-        var arr = SEC.components(separatedBy: "=")
-        return arr[1]
-    }
-    // [LOCKFOLDING]=1
-    func getLOCKFOLDING(_ LOCKFOLDING: String ) -> String {
-        
-        var arr = LOCKFOLDING.components(separatedBy: "=")
-        return arr[1]
-    }
-    // [AUTOWINDOWS]=1
-    func getAUTOWINDOWS(_ AUTOWINDOWS: String ) -> String {
-        
-        var arr = AUTOWINDOWS.components(separatedBy: "=")
-        return arr[1]
-    }
-    // [AUTOSUNROOF]=1
-    func getAUTOSUNROOF(_ AUTOSUNROOF: String ) -> String {
-        
-        var arr = AUTOSUNROOF.components(separatedBy: "=")
-        return arr[1]
-    }
-    // [REV_WINDOW]=1
-    func getREV_WINDOW(_ REV_WINDOW: String ) -> String {
-        
-        var arr = REV_WINDOW.components(separatedBy: "=")
-        return arr[1]
-    }
-    // [RES_RVS_TIME]=00:00:00
-    func getRES_RVS_TIME(_ RES_RVS_TIME: String ) -> String {
-        
-        var arr = RES_RVS_TIME.components(separatedBy: "=")
-        return arr[1]
-    }
-    // [RES_RVS]=1
-    func getRES_RVS(_ RES_RVS: String ) -> String {
-        
-        var arr = RES_RVS.components(separatedBy: "=")
-        return arr[1]
-    }
-    // [PIN_CODE]=0000
-    func getPIN_CODE(_ PIN_CODE: String ) -> String {
-        
-        var arr = PIN_CODE.components(separatedBy: "=")
-        return arr[1]
-    }
-    
-    // [DTC_ECM]=P0000-00 YYYY-MM-DD HH:MM:SS
-    func getDTC_ECM(_ DTC_ECM: String ) -> String {
-        
-        var arr = DTC_ECM.components(separatedBy: "=")
-        return arr[1]
-    }
-    
-    // [DTC_BCM]=P0000-00 YYYY-MM-DD HH:MM:SS
-    func getDTC_BCM(_ DTC_BCM: String ) -> String {
-        
-        var arr = DTC_BCM.components(separatedBy: "=")
-        return arr[1]
-    }
-    
-    // [DTC_TCM]=P0000-00 YYYY-MM-DD HH:MM:SS
-    func getDTC_TCM(_ DTC_TCM: String ) -> String {
-        
-        var arr = DTC_TCM.components(separatedBy: "=")
-        return arr[1]
-    }
-    
-    // [DTC_EBCM]=P0000-00 YYYY-MM-DD HH:MM:SS
-    func getDTC_EBCM(_ DTC_EBCM: String ) -> String {
-        
-        var arr = DTC_EBCM.components(separatedBy: "=")
-        return arr[1]
-    }
     
     
     
@@ -317,11 +267,10 @@ struct BLE_Info {
     var str_Instruction:String = ""
     var dataWriteBLE:NSData = NSData()
     
-    
     // [DATETIME]=YYYY-MM-DD HH:MM:SS!
     // mutating <----- 구조체안 func 에서 변수값을 변경가능하도록 해준다. 사용안하면 변경안됨
     
-    mutating func setDTC_EBCM(_ strDATA: String ) -> NSData {
+    mutating func setDATETIME(_ strDATA: String ) -> NSData {
         
         str_Instruction = "[DATETIME]=" + strDATA + "!"
         return writeData( str_Instruction )
@@ -396,7 +345,7 @@ struct BLE_Info {
     // [REVWINDOW]=1!
     mutating func setREVWINDOW(_ strDATA: String ) -> NSData {
         
-        str_Instruction = "[REVWINDOW]=" + strDATA + "!"
+        str_Instruction = "[REV_WINDOW]=" + strDATA + "!"
         return writeData( str_Instruction )
     }
     // [RES_RVS_TIME]=00:00:00!
@@ -450,13 +399,66 @@ struct BLE_Info {
     
     mutating func writeData(_ strDATA: String) -> NSData {
         
+        
+        // myBluetoothPeripheral.writeValue(dataToSend as Data, for: myCharacteristic, type: CBCharacteristicWriteType.withoutResponse)
+        
+        print( "____________ strDATA = \(strDATA)  " )
+        
         let buf: [UInt8] = Array(strDATA.utf8)
         dataWriteBLE = NSData(bytes: buf, length: buf.count)
         
         return dataWriteBLE
     }
     
-    
+    mutating func readDataCarFriendsBLE() {
+        
+        if( isCAR_FRIENDS_CONNECT == false || isBLE_ON == false ) { return }
+        
+        
+        var startHeadAdd:Int  = 0
+        var startReaultAdd:Int  = 0
+        
+        var stringValue = TOTAL_BLE_READ_ACC_DATA;
+        
+        TOTAL_BLE_READ_ACC_DATA = "";
+        
+        var addHeadString = ""
+        var addCount = 0
+        
+        print( stringValue )
+        
+        for i in 0..<stringValue.count {
+            // 한글자 빼기
+            var tempString:String = String( stringValue[ stringValue.index( stringValue.startIndex, offsetBy: i)] )
+            
+            addCount += 1 // 처리하고 지울 글자수 카운트
+            
+            if( tempString == "[" ) {
+                
+                // 다음 명령어 "[" 까지오면 처리
+                if( startHeadAdd == 2 ) {
+                    
+                    // 읽은 데이타 변수에 세팅
+                    BLE_READ_ACC_DATA_PROC(addHeadString)
+                    // print("addHeadString = \(addHeadString) ")
+                }
+                
+                addHeadString = "" // 초기화 reset
+                startHeadAdd = 1
+            }
+            
+            // 헤더 담는다
+            if( startHeadAdd <= 2 &&  startHeadAdd > 0 ) { addHeadString += tempString }
+            
+            if(tempString == "]" ) {
+                startHeadAdd = 2
+            }
+        }
+        
+        print("처리한 숫자 = \(addCount)")
+        //        MainManager.shared.ble_Info.TOTAL_BLE_READ_ACC_DATA[MainManager.shared.ble_Info.TOTAL_BLE_READ_ACC_DATA.index(MainManager.shared.ble_Info.TOTAL_BLE_READ_ACC_DATA.startIndex, offsetBy: (addCount+1) )...]
+        
+    }
     
     
     
@@ -467,9 +469,10 @@ struct BLE_Info {
     //    출처: http://zeddios.tistory.com/74 [ZeddiOS]
     
     
-    
-    
 }
+
+
+
 
 
 class MainManager   {
@@ -491,7 +494,7 @@ class MainManager   {
     var check: Int = 0
     
     var member_info:Member_Info = Member_Info.init()
-    var ble_Info:BLE_Info = BLE_Info.init()
+
     
     
     

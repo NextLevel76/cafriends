@@ -1908,9 +1908,29 @@
                                     <action selector="pressed_write:" destination="clk-QB-dRt" eventType="touchUpInside" id="d1e-aY-Sfd"/>
                                 </connections>
                             </button>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="sNc-BE-Mkj">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="87"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="NCO-s8-Oon">
+                                <rect key="frame" x="0.0" y="131" width="375" height="311"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </view>
+                    <connections>
+                        <outlet property="textView" destination="sNc-BE-Mkj" id="miI-jp-aOv"/>
+                        <outlet property="textView2" destination="NCO-s8-Oon" id="9mQ-i0-Pgm"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="gPr-bk-zXD" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -3082,26 +3102,26 @@
     </scenes>
     <resources>
         <image name="A-01-01-01-bg00" width="391" height="554"/>
-        <image name="A-01-01-07-icon" width="40" height="52"/>
+        <image name="A-01-01-07-icon" width="42" height="54"/>
         <image name="A-01-03-01-bgBlack" width="375" height="506"/>
         <image name="A-01-03-02-Icon01" width="28" height="28"/>
         <image name="A-01-03-02-imgUserCar" width="189" height="189"/>
         <image name="A-01-03-03-percent16" width="234" height="234"/>
-        <image name="A-01-03-04-Level02" width="101" height="24"/>
+        <image name="A-01-03-04-Level02" width="97" height="23"/>
         <image name="A-01-03-04-btnUp" width="214" height="52"/>
-        <image name="A-01-03-05-BtnShopUp" width="70" height="33"/>
+        <image name="A-01-03-05-BtnShopUp" width="67" height="32"/>
         <image name="A-01-03-06-textTop" width="310" height="19"/>
-        <image name="A-01-03-07-BgList" width="375" height="55"/>
+        <image name="A-01-03-07-BgList" width="391" height="58"/>
         <image name="A-01-03-08-iconLevel01" width="27" height="26"/>
-        <image name="A-01-03-08-text01" width="380" height="99"/>
+        <image name="A-01-03-08-text01" width="364" height="95"/>
         <image name="A-01-03-08-textTable" width="375" height="35"/>
-        <image name="A-01-03-09-BgList" width="391" height="59"/>
-        <image name="A-01-03-09-BgListLast" width="375" height="57"/>
+        <image name="A-01-03-09-BgList" width="375" height="56"/>
+        <image name="A-01-03-09-BgListLast" width="391" height="60"/>
         <image name="A-01-03-09-btnDetailUp" width="72" height="32"/>
         <image name="A-01-03-10-Icon01" width="34" height="34"/>
         <image name="A-01-03-11-bgCar" width="375" height="350"/>
         <image name="A-01-03-12-btnClose" width="17" height="17"/>
-        <image name="A-01-03-12-btnSaveUp" width="326" height="47"/>
+        <image name="A-01-03-12-btnSaveUp" width="313" height="45"/>
         <image name="A-01-03-12-line" width="196" height="2"/>
         <image name="A-01-03-13-btn" width="344" height="45"/>
         <image name="A-01-03-14-iconLevel01" width="30" height="29"/>

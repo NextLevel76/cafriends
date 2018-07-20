@@ -7,19 +7,17 @@
 //
 
 import UIKit
+import CoreBluetooth
 import WebKit
 import Alamofire
 import AlamofireImage
 import SwiftyJSON
 import Charts
 
-// GIT TEST ~~~~~~~~~~~@#$^$%&$^&^*&$^*$^*
 
 
 /*
- { "userId": 1, "id": 1, "title": "delectus aut autem", "completed": false }
- 
- 출처: http://kka7.tistory.com/88 [때로는 까칠하게..]
+
  
  
  struct Todo: Codable {
@@ -45,7 +43,6 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         }
     }
     
-    
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         if let touch = touches.first {
             let position = touch.location(in: self.view )
@@ -53,6 +50,17 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             print(center)
         }
     }
+    
+    //------------------------------------------------------------------------------------------------
+    // CORE_BLUE_TOOTH
+    
+    var centralManager: CBCentralManager!
+    let BEAN_NAME = "BT05"
+    /// The peripheral the user has selected
+    // 블루 투스 연결된 객체
+    var carFriendsPeripheral: CBPeripheral?
+    var myCharacteristic: CBCharacteristic?
+    
     
     
     
@@ -790,9 +798,58 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     }
     
     
+    // 2초
+    func timerActionBLE() {
+            
+        if( self.isBLE_CONNECT() == true ) {
+            
+            MainManager.shared.member_info.readDataCarFriendsBLE()
+        }
+        
+        // 블루 투스 켜짐 연결 꺼짐 UI 표시 체크
+        connectCheckBLE()
+        
+        // 온오프 버튼 이미지 상태변경
+        carOnOffSetting()
+    }
+    
+    
+    
+    func connectCheckBLE() {
+        
+        // 블루 투스 기기 꺼짐
+        if( MainManager.shared.member_info.isBLE_ON == false ) {
+            // 연결됨
+            a01_01_view.btn_kit_connect.setBackgroundImage(UIImage(named:"a_01_01_unlink"), for: .normal)
+            self.a01_01_view.label_kit_connect.text = "블루투스 꺼짐"
+            self.a01_01_view.label_kit_connect.textColor = UIColor.red
+        }
+        else {
+            
+            if( MainManager.shared.member_info.isCAR_FRIENDS_CONNECT == true ) {
+                // 연결됨
+                a01_01_view.btn_kit_connect.setBackgroundImage(UIImage(named:"a_01_01_link"), for: .normal)
+                self.a01_01_view.label_kit_connect.text = "연결 됨"
+                self.a01_01_view.label_kit_connect.textColor = UIColor(red: 41/256, green: 232/255, blue: 223/255, alpha: 1)
+            }
+            else {
+                // 카프렌즈 연결중
+                a01_01_view.btn_kit_connect.setBackgroundImage(UIImage(named:"a_01_01_unlink"), for: .normal)
+                self.a01_01_view.label_kit_connect.text = "연결중..."
+                self.a01_01_view.label_kit_connect.textColor = UIColor.red
+            }
+        }
+    }
+    
+    
+    
+    
+    
+    
     
     var timer = Timer()
     var timer2 = Timer()
+    var timerBLE = Timer()
     
 //    let sz_car_name = ["쉐보레","AE86","니차똥차","란에보","임프레자","람보르기니","부가티","포니2","엑셀런트","프라이드","벤츠"]
 //    let sz_car_year = ["2001","2002","2003","2004","2005","2006","2007","2008","2009","2010",
@@ -957,54 +1014,109 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     
     
     // A02 ON OFF 세팅
+    
+    func carOnOffIsHiddenSet() {
+        
+        if( MainManager.shared.member_info.isBLE_ON == false ||
+            MainManager.shared.member_info.isCAR_FRIENDS_CONNECT == false ) {
+            
+            a02_01_view.switch_btn_01.isEnabled = false
+            a02_01_view.switch_btn_02.isEnabled = false
+            a02_01_view.switch_btn_03.isEnabled = false
+            a02_01_view.switch_btn_04.isEnabled = false
+            a02_01_view.switch_btn_05.isEnabled = false
+            a02_01_view.switch_btn_06.isEnabled = false
+            a02_01_view.switch_btn_07.isEnabled = false
+            a02_01_view.switch_btn_08.isEnabled = false
+            a02_01_view.switch_btn_09.isEnabled = false
+            a02_01_view.switch_btn_10.isEnabled = false
+            a02_01_view.switch_btn_11.isEnabled = false
+        }
+        else if( MainManager.shared.member_info.isCAR_FRIENDS_CONNECT == true ) {
+            
+            a02_01_view.switch_btn_01.isEnabled = MainManager.shared.member_info.isCAR_FRIENDS_CONNECT
+            a02_01_view.switch_btn_02.isEnabled = MainManager.shared.member_info.isCAR_FRIENDS_CONNECT
+            a02_01_view.switch_btn_03.isEnabled = MainManager.shared.member_info.isCAR_FRIENDS_CONNECT
+            a02_01_view.switch_btn_04.isEnabled = MainManager.shared.member_info.isCAR_FRIENDS_CONNECT
+            a02_01_view.switch_btn_05.isEnabled = MainManager.shared.member_info.isCAR_FRIENDS_CONNECT
+            a02_01_view.switch_btn_06.isEnabled = MainManager.shared.member_info.isCAR_FRIENDS_CONNECT
+            a02_01_view.switch_btn_07.isEnabled = MainManager.shared.member_info.isCAR_FRIENDS_CONNECT
+            a02_01_view.switch_btn_08.isEnabled = MainManager.shared.member_info.isCAR_FRIENDS_CONNECT
+            a02_01_view.switch_btn_09.isEnabled = MainManager.shared.member_info.isCAR_FRIENDS_CONNECT
+            a02_01_view.switch_btn_10.isEnabled = MainManager.shared.member_info.isCAR_FRIENDS_CONNECT
+            a02_01_view.switch_btn_11.isEnabled = MainManager.shared.member_info.isCAR_FRIENDS_CONNECT
+        }
+    }
+        
     func carOnOffSetting() {
-        // test
-        a02_01_view.switch_btn_01.isOn = MainManager.shared.bA02ON[0]
-        a02_01_view.switch_btn_02.isOn = MainManager.shared.bA02ON[1]
-        a02_01_view.switch_btn_03.isOn = MainManager.shared.bA02ON[2]
-        a02_01_view.switch_btn_04.isOn = MainManager.shared.bA02ON[3]
-        a02_01_view.switch_btn_05.isOn = MainManager.shared.bA02ON[4]
-        a02_01_view.switch_btn_06.isOn = MainManager.shared.bA02ON[5]
-        a02_01_view.switch_btn_07.isOn = MainManager.shared.bA02ON[6]
-        a02_01_view.switch_btn_08.isOn = MainManager.shared.bA02ON[7]
-        a02_01_view.switch_btn_09.isOn = MainManager.shared.bA02ON[8]
-        a02_01_view.switch_btn_10.isOn = MainManager.shared.bA02ON[9]
-        a02_01_view.switch_btn_11.isOn = MainManager.shared.bA02ON[10]
-                
+        
+//        let DF_DOOR_LOCK = 0
+//        let DF_HATCH = 1
+//        let DF_WINDOW = 2
+//        let DF_SUNROOF = 3
+//        let DF_RVS = 4
+//        let DF_KEY_ON_IGN = 5
+//        let DF_AUTO_LOCK_FOLDING = 6
+//        let DF_AUTO_WINDOW_CLOSE = 7
+//        let DF_AUTO_SUNROOF = 8
+//        let DF_AUTO_WINDOW_REV_OPEN = 9
+//        let DF_RES_RVS_TIME = 10
         
         
-        if( MainManager.shared.bA02ON[0] == true ) { self.a02_02_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_on[0]), for: UIControlState.normal ) }
-        else                                       { self.a02_02_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_off[0]), for: UIControlState.normal ) }
+
+        a02_01_view.switch_btn_01.isOn = MainManager.shared.member_info.bCar_Status_DoorLock
+        a02_01_view.switch_btn_02.isOn = MainManager.shared.member_info.bCar_Status_Hatch
+        a02_01_view.switch_btn_03.isOn = MainManager.shared.member_info.bCar_Status_Window
+        a02_01_view.switch_btn_04.isOn = MainManager.shared.member_info.bCar_Status_Sunroof
+        // 원격 시동
+        a02_01_view.switch_btn_05.isOn = MainManager.shared.member_info.bCar_Status_RVS
+        // 키리스 온
+        a02_01_view.switch_btn_06.isOn = MainManager.shared.member_info.bCar_Car_Status_IGN
         
-        if( MainManager.shared.bA02ON[1] == true ) { self.a02_03_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_on[1]), for: UIControlState.normal ) }
-        else                                       { self.a02_03_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_off[1]), for: UIControlState.normal ) }
         
-        if( MainManager.shared.bA02ON[2] == true ) { self.a02_04_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_on[2]), for: UIControlState.normal ) }
-        else                                       { self.a02_04_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_off[2]), for: UIControlState.normal ) }
+        // 여기부터 AUTO
+        a02_01_view.switch_btn_07.isOn = MainManager.shared.member_info.bCar_Func_LockFolding
+        a02_01_view.switch_btn_08.isOn = MainManager.shared.member_info.bCar_Func_AutoWindowClose
         
-        if( MainManager.shared.bA02ON[3] == true ) { self.a02_05_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_on[3]), for: UIControlState.normal ) }
-        else                                       { self.a02_05_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_off[3]), for: UIControlState.normal ) }
+        a02_01_view.switch_btn_09.isOn = MainManager.shared.member_info.bCar_Func_AutoSunroofClose
+        // 후진시 창문
+        a02_01_view.switch_btn_10.isOn = MainManager.shared.member_info.bCar_Func_AutoWindowRevOpen
+        // 예약 시동
+        a02_01_view.switch_btn_11.isOn = MainManager.shared.member_info.bCar_Func_RVS
         
-        if( MainManager.shared.bA02ON[4] == true ) { self.a02_06_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_on[4]), for: UIControlState.normal ) }
-        else                                       { self.a02_06_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_off[4]), for: UIControlState.normal ) }
         
-        if( MainManager.shared.bA02ON[5] == true ) { self.a02_07_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_on[5]), for: UIControlState.normal ) }
-        else                                       { self.a02_07_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_off[5]), for: UIControlState.normal ) }
+        if( MainManager.shared.member_info.bCar_Status_DoorLock == true ) { self.a02_02_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_on[0]), for: UIControlState.normal ) }
+        else                                                              { self.a02_02_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_off[0]), for: UIControlState.normal ) }
         
-        if( MainManager.shared.bA02ON[6] == true ) { self.a02_08_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_on[6]), for: UIControlState.normal ) }
-        else                                       { self.a02_08_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_off[6]), for: UIControlState.normal ) }
+        if( MainManager.shared.member_info.bCar_Status_Hatch == true )  { self.a02_03_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_on[1]), for: UIControlState.normal ) }
+        else                                                            { self.a02_03_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_off[1]), for: UIControlState.normal ) }
         
-        if( MainManager.shared.bA02ON[7] == true ) { self.a02_09_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_on[7]), for: UIControlState.normal ) }
-        else                                       { self.a02_09_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_off[7]), for: UIControlState.normal ) }
+        if( MainManager.shared.member_info.bCar_Status_Window == true ) { self.a02_04_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_on[2]), for: UIControlState.normal ) }
+        else                                                            { self.a02_04_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_off[2]), for: UIControlState.normal ) }
         
-        if( MainManager.shared.bA02ON[8] == true ) { self.a02_10_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_on[8]), for: UIControlState.normal ) }
-        else                                       { self.a02_10_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_off[8]), for: UIControlState.normal ) }
+        if( MainManager.shared.member_info.bCar_Status_Sunroof == true ) { self.a02_05_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_on[3]), for: UIControlState.normal ) }
+        else                                                             { self.a02_05_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_off[3]), for: UIControlState.normal ) }
         
-        if( MainManager.shared.bA02ON[9] == true ) { self.a02_11_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_on[9]), for: UIControlState.normal ) }
-        else                                       { self.a02_11_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_off[9]), for: UIControlState.normal ) }
+        if( MainManager.shared.member_info.bCar_Status_RVS == true ) { self.a02_06_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_on[4]), for: UIControlState.normal ) }
+        else                                                         { self.a02_06_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_off[4]), for: UIControlState.normal ) }
         
-        if( MainManager.shared.bA02ON[10] == true ) { self.a02_12_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_on[10]), for: UIControlState.normal ) }
-        else                                        { self.a02_12_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_off[10]), for: UIControlState.normal ) }
+        if( MainManager.shared.member_info.bCar_Car_Status_IGN == true ) { self.a02_07_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_on[5]), for: UIControlState.normal ) }
+        else                                                             { self.a02_07_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_off[5]), for: UIControlState.normal ) }
+        
+        if( MainManager.shared.member_info.bCar_Func_LockFolding == true ) { self.a02_08_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_on[6]), for: UIControlState.normal ) }
+        else                                                                { self.a02_08_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_off[6]), for: UIControlState.normal ) }
+        
+        if( MainManager.shared.member_info.bCar_Func_AutoWindowClose == true ) { self.a02_09_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_on[7]), for: UIControlState.normal ) }
+        else                                                                   { self.a02_09_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_off[7]), for: UIControlState.normal ) }
+        
+        if( MainManager.shared.member_info.bCar_Func_AutoSunroofClose == true ) { self.a02_10_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_on[8]), for: UIControlState.normal ) }
+        else                                                                    { self.a02_10_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_off[8]), for: UIControlState.normal ) }
+        
+        if( MainManager.shared.member_info.bCar_Func_AutoWindowRevOpen == true ) { self.a02_11_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_on[9]), for: UIControlState.normal ) }
+        else                                                                    { self.a02_11_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_off[9]), for: UIControlState.normal ) }
+        
+        if( MainManager.shared.member_info.bCar_Func_RVS == true ) { self.a02_12_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_on[10]), for: UIControlState.normal ) }
+        else                                                                      { self.a02_12_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_off[10]), for: UIControlState.normal ) }
         
     }
     
@@ -1023,6 +1135,8 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(timerAction), userInfo: nil, repeats: true)
         timer2 = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(timerAction2), userInfo: nil, repeats: true)
         
+        // 2초
+        timerBLE = Timer.scheduledTimer(timeInterval: 2, target: self, selector: #selector(timerActionBLE), userInfo: nil, repeats: true)
         
         ////////////////////////////////////////////////////////// tableView Init
         //
@@ -1499,6 +1613,9 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         
         // 인터넷 연결 체크
         MainManager.shared.isConnectCheck()
+        
+        // 블루투스 시작
+        initStartBLE()
     }
     
     
@@ -1970,9 +2087,32 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         let s = String(format: "frame-A-%02d-on", sender.tag)
         sender.setBackgroundImage(UIImage(named:s), for: UIControlState.normal )
         
-        carOnOffSetting()
+        
+        //carOnOffSetting()
+        carOnOffIsHiddenSet()
         self.view.bringSubview(toFront: a02_01_view)
         self.view.bringSubview(toFront: a02_ScrollMenuView)
+        
+        
+//        a02_01_view.switch_btn_01.isOn = MainManager.shared.member_info.bCar_Status_DoorLock
+//        a02_01_view.switch_btn_02.isOn = MainManager.shared.member_info.bCar_Status_Hatch
+//        a02_01_view.switch_btn_03.isOn = MainManager.shared.member_info.bCar_Status_Window
+//        a02_01_view.switch_btn_04.isOn = MainManager.shared.member_info.bCar_Status_Sunroof
+//        // 원격 시동
+//        a02_01_view.switch_btn_05.isOn = MainManager.shared.member_info.bCar_Status_RVS
+//        // 키리스 온
+//        a02_01_view.switch_btn_06.isOn = MainManager.shared.member_info.bCar_Car_Status_IGN
+//
+//
+//        // 여기부터 AUTO
+//        a02_01_view.switch_btn_07.isOn = MainManager.shared.member_info.bCar_Func_LockFolding
+//        a02_01_view.switch_btn_08.isOn = MainManager.shared.member_info.bCar_Func_AutoWindowClose
+//
+//        a02_01_view.switch_btn_09.isOn = MainManager.shared.member_info.bCar_Func_AutoSunroofClose
+//        // 후진시 창문
+//        a02_01_view.switch_btn_10.isOn = MainManager.shared.member_info.bCar_Func_AutoWindowRevOpen
+//        // 예약 시동
+//        a02_01_view.switch_btn_11.isOn = MainManager.shared.member_info.bCar_Status_ReservedRVSTime
         
         
         print("A02")
@@ -2112,54 +2252,76 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         // sub view change
         if( sender.tag == 1 )       {
             
-            carOnOffSetting()
+            
+            //carOnOffSetting()
+            carOnOffIsHiddenSet()
             self.view.bringSubview(toFront: a02_01_view)
         }
         else if( sender.tag == 2 )  {
             
             self.view.bringSubview(toFront: a02_02_view)
             
-            if( MainManager.shared.bA02ON[sender.tag-2] == true )   { ToastView.shared.short(self.view, txt_msg: set_notis_on[sender.tag-2]) }
+            if( MainManager.shared.member_info.bCar_Status_DoorLock == true )   { ToastView.shared.short(self.view, txt_msg: set_notis_on[sender.tag-2]) }
             else                                                    { ToastView.shared.short(self.view, txt_msg: set_notis_off[sender.tag-2]) }
         }
-        else if( sender.tag == 3 )  { self.view.bringSubview(toFront: a02_03_view)
-            if( MainManager.shared.bA02ON[sender.tag-2] == true )   { ToastView.shared.short(self.view, txt_msg: set_notis_on[sender.tag-2]) }
+        else if( sender.tag == 3 )  {
+            
+            self.view.bringSubview(toFront: a02_03_view)
+            if( MainManager.shared.member_info.bCar_Status_Hatch == true )   { ToastView.shared.short(self.view, txt_msg: set_notis_on[sender.tag-2]) }
             else                                                    { ToastView.shared.short(self.view, txt_msg: set_notis_off[sender.tag-2]) }
         }
-        else if( sender.tag == 4 )  { self.view.bringSubview(toFront: a02_04_view)
-            if( MainManager.shared.bA02ON[sender.tag-2] == true )   { ToastView.shared.short(self.view, txt_msg: set_notis_on[sender.tag-2]) }
+        else if( sender.tag == 4 )  {
+            
+            self.view.bringSubview(toFront: a02_04_view)
+            if( MainManager.shared.member_info.bCar_Status_Window == true )   { ToastView.shared.short(self.view, txt_msg: set_notis_on[sender.tag-2]) }
             else                                                    { ToastView.shared.short(self.view, txt_msg: set_notis_off[sender.tag-2]) }
         }
-        else if( sender.tag == 5 )  { self.view.bringSubview(toFront: a02_05_view)
-            if( MainManager.shared.bA02ON[sender.tag-2] == true )   { ToastView.shared.short(self.view, txt_msg: set_notis_on[sender.tag-2]) }
+        else if( sender.tag == 5 )  {
+            
+            self.view.bringSubview(toFront: a02_05_view)
+            if( MainManager.shared.member_info.bCar_Status_Sunroof == true )   { ToastView.shared.short(self.view, txt_msg: set_notis_on[sender.tag-2]) }
             else                                                    { ToastView.shared.short(self.view, txt_msg: set_notis_off[sender.tag-2]) }
         }
-        else if( sender.tag == 6 )  { self.view.bringSubview(toFront: a02_06_view)
-            if( MainManager.shared.bA02ON[sender.tag-2] == true )   { ToastView.shared.short(self.view, txt_msg: set_notis_on[sender.tag-2]) }
+        else if( sender.tag == 6 )  {
+            
+            self.view.bringSubview(toFront: a02_06_view)
+            if( MainManager.shared.member_info.bCar_Status_RVS == true )   { ToastView.shared.short(self.view, txt_msg: set_notis_on[sender.tag-2]) }
             else                                                    { ToastView.shared.short(self.view, txt_msg: set_notis_off[sender.tag-2]) }
         }
-        else if( sender.tag == 7 )  { self.view.bringSubview(toFront: a02_07_view)
-            if( MainManager.shared.bA02ON[sender.tag-2] == true )   { ToastView.shared.short(self.view, txt_msg: set_notis_on[sender.tag-2]) }
+        else if( sender.tag == 7 )  {
+            
+            self.view.bringSubview(toFront: a02_07_view)
+            if( MainManager.shared.member_info.bCar_Car_Status_IGN == true )   { ToastView.shared.short(self.view, txt_msg: set_notis_on[sender.tag-2]) }
             else                                                    { ToastView.shared.short(self.view, txt_msg: set_notis_off[sender.tag-2]) }
         }
-        else if( sender.tag == 8 )  { self.view.bringSubview(toFront: a02_08_view)
-            if( MainManager.shared.bA02ON[sender.tag-2] == true )   { ToastView.shared.short(self.view, txt_msg: set_notis_on[sender.tag-2]) }
+        else if( sender.tag == 8 )  {
+            
+            self.view.bringSubview(toFront: a02_08_view)
+            if( MainManager.shared.member_info.bCar_Func_LockFolding == true )   { ToastView.shared.short(self.view, txt_msg: set_notis_on[sender.tag-2]) }
             else                                                    { ToastView.shared.short(self.view, txt_msg: set_notis_off[sender.tag-2]) }
         }
-        else if( sender.tag == 9 )  { self.view.bringSubview(toFront: a02_09_view)
-            if( MainManager.shared.bA02ON[sender.tag-2] == true )   { ToastView.shared.short(self.view, txt_msg: set_notis_on[sender.tag-2]) }
+        else if( sender.tag == 9 )  {
+            
+            self.view.bringSubview(toFront: a02_09_view)
+            if( MainManager.shared.member_info.bCar_Func_AutoWindowClose == true )   { ToastView.shared.short(self.view, txt_msg: set_notis_on[sender.tag-2]) }
             else                                                    { ToastView.shared.short(self.view, txt_msg: set_notis_off[sender.tag-2]) }
         }
-        else if( sender.tag == 10 ) { self.view.bringSubview(toFront: a02_10_view)
-            if( MainManager.shared.bA02ON[sender.tag-2] == true )   { ToastView.shared.short(self.view, txt_msg: set_notis_on[sender.tag-2]) }
+        else if( sender.tag == 10 ) {
+            
+            self.view.bringSubview(toFront: a02_10_view)
+            if( MainManager.shared.member_info.bCar_Func_AutoSunroofClose == true )   { ToastView.shared.short(self.view, txt_msg: set_notis_on[sender.tag-2]) }
             else                                                    { ToastView.shared.short(self.view, txt_msg: set_notis_off[sender.tag-2]) }
         }
-        else if( sender.tag == 11 ) { self.view.bringSubview(toFront: a02_11_view)
-            if( MainManager.shared.bA02ON[sender.tag-2] == true )   { ToastView.shared.short(self.view, txt_msg: set_notis_on[sender.tag-2]) }
+        else if( sender.tag == 11 ) {
+            
+            self.view.bringSubview(toFront: a02_11_view)
+            if( MainManager.shared.member_info.bCar_Func_AutoWindowRevOpen == true )   { ToastView.shared.short(self.view, txt_msg: set_notis_on[sender.tag-2]) }
             else                                                    { ToastView.shared.short(self.view, txt_msg: set_notis_off[sender.tag-2]) }
         }
-        else if( sender.tag == 12 ) { self.view.bringSubview(toFront: a02_12_view)
-            if( MainManager.shared.bA02ON[sender.tag-2] == true )   { ToastView.shared.short(self.view, txt_msg: set_notis_on[sender.tag-2]) }
+        else if( sender.tag == 12 ) {
+            
+            self.view.bringSubview(toFront: a02_12_view)
+            if( MainManager.shared.member_info.bCar_Func_RVS == true )   { ToastView.shared.short(self.view, txt_msg: set_notis_on[sender.tag-2]) }
             else                                                    { ToastView.shared.short(self.view, txt_msg: set_notis_off[sender.tag-2]) }
         }
         
@@ -2197,8 +2359,6 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             a01_01_pin_view.field_pin02 == textField ||
             a01_01_pin_view.field_pin03 == textField ||
             a01_01_pin_view.field_pin04 == textField ) {
-            
-            
             
             
             let currentText = textField.text ?? ""
@@ -2334,8 +2494,6 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
                     a01_01_pin_view.field_pin03.text! == a01_01_pin_view.str_pin_num03 &&
                     a01_01_pin_view.field_pin04.text! == a01_01_pin_view.str_pin_num04
                     ){
-                    
-                    
                     
                     
                     
@@ -3107,9 +3265,100 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     
     
     @IBAction func a02_SwitchButton(_ sender: UISwitch) {
+
+        
+        // 버튼 상태 실시간 끊기처리. 버튼이벤트 발행시 딜레이준다 2초 후 딜레이후 값세팅되도록
+        // 창문만 10초
         
         
-        MainManager.shared.bA02ON[sender.tag] = sender.isOn
+//        var bCarStatusWindowDelay = false
+//        var carStatusWindowDelayCount = 0
+//        // 다른변수들 2초
+//        var bCarStatusDelay = false
+//        var carStatusDelayCount = 0
+        
+        
+        if( self.isBLE_CONNECT() == false ) { return }
+        
+        var setData:String = "0"
+        if( sender.isOn == true ) { setData = "1" }
+        
+        //let data:NSData = MainManager.shared.member_info.setRES_RVS_TIME("2019-09-09 09:99:99")
+//        let data:NSData = MainManager.shared.member_info.setAUTOSUNROOF(setData)
+//        self.carFriendsPeripheral?.writeValue( data as Data, for: self.myCharacteristic!, type: CBCharacteristicWriteType.withoutResponse)
+//        print( "____ sender.isOn \(setData)" )
+        
+        
+        switch sender.tag {
+        case 0:
+            let nsData:NSData = MainManager.shared.member_info.setDOORLOCK( setData )
+            self.carFriendsPeripheral?.writeValue( nsData as Data, for: self.myCharacteristic!, type: CBCharacteristicWriteType.withoutResponse)
+            MainManager.shared.member_info.bCar_Status_DoorLock = sender.isOn
+            break
+            
+        case 1:
+            // 딜레이 10초
+            var bCarStatusWindowDelay = false
+            var carStatusWindowDelayCount = 0
+            
+            let nsData:NSData = MainManager.shared.member_info.setHATCH( setData )
+            self.carFriendsPeripheral?.writeValue( nsData as Data, for: self.myCharacteristic!, type: CBCharacteristicWriteType.withoutResponse)
+            MainManager.shared.member_info.bCar_Status_Hatch = sender.isOn
+            break
+            
+        case 2:
+            let nsData:NSData = MainManager.shared.member_info.setWINDOW( setData )
+            self.carFriendsPeripheral?.writeValue( nsData as Data, for: self.myCharacteristic!, type: CBCharacteristicWriteType.withoutResponse)
+            MainManager.shared.member_info.bCar_Status_Window = sender.isOn
+            break
+            
+        case 3:
+            let nsData:NSData = MainManager.shared.member_info.setSUNROOF( setData )
+            self.carFriendsPeripheral?.writeValue( nsData as Data, for: self.myCharacteristic!, type: CBCharacteristicWriteType.withoutResponse)
+            MainManager.shared.member_info.bCar_Status_Sunroof = sender.isOn
+            break
+            
+        case 4:
+            let nsData:NSData = MainManager.shared.member_info.setRVS( setData )
+            self.carFriendsPeripheral?.writeValue( nsData as Data, for: self.myCharacteristic!, type: CBCharacteristicWriteType.withoutResponse)
+            MainManager.shared.member_info.bCar_Status_RVS = sender.isOn
+            break
+            
+        case 5:
+            let nsData:NSData = MainManager.shared.member_info.setKEYON( setData )
+            self.carFriendsPeripheral?.writeValue( nsData as Data, for: self.myCharacteristic!, type: CBCharacteristicWriteType.withoutResponse)
+            MainManager.shared.member_info.bCar_Car_Status_IGN = sender.isOn
+            break
+            
+        case 6:
+            let nsData:NSData = MainManager.shared.member_info.setLOCKFOLDING( setData )
+            self.carFriendsPeripheral?.writeValue( nsData as Data, for: self.myCharacteristic!, type: CBCharacteristicWriteType.withoutResponse)
+            MainManager.shared.member_info.bCar_Func_LockFolding = sender.isOn
+            break
+        case 7:
+            let nsData:NSData = MainManager.shared.member_info.setAUTOWINDOWS( setData )
+            self.carFriendsPeripheral?.writeValue( nsData as Data, for: self.myCharacteristic!, type: CBCharacteristicWriteType.withoutResponse)
+            MainManager.shared.member_info.bCar_Func_AutoWindowClose = sender.isOn
+            break
+        case 8:
+            let nsData:NSData = MainManager.shared.member_info.setAUTOSUNROOF( setData )
+            self.carFriendsPeripheral?.writeValue( nsData as Data, for: self.myCharacteristic!, type: CBCharacteristicWriteType.withoutResponse)
+            MainManager.shared.member_info.bCar_Func_AutoSunroofClose = sender.isOn
+            break
+        case 9:
+            let nsData:NSData = MainManager.shared.member_info.setREVWINDOW( setData )
+            self.carFriendsPeripheral?.writeValue( nsData as Data, for: self.myCharacteristic!, type: CBCharacteristicWriteType.withoutResponse)
+            MainManager.shared.member_info.bCar_Func_AutoWindowRevOpen = sender.isOn
+            break
+        case 10:
+            let nsData:NSData = MainManager.shared.member_info.setRES_RVS_TIME( setData )
+            self.carFriendsPeripheral?.writeValue( nsData as Data, for: self.myCharacteristic!, type: CBCharacteristicWriteType.withoutResponse)
+            MainManager.shared.member_info.bCar_Func_RVS = sender.isOn
+            break
+        default:
+            break
+        }
+        
         
         // 토스트 알람 메세지
         if( sender.isOn == true ) {
@@ -3121,17 +3370,11 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             ToastView.shared.short(self.view, txt_msg: set_notis_off[sender.tag])
         }
         
-        
-        // 싱클톤 온오프 변수와 버튼 이미지 상태변경
-        carOnOffSetting()
-        
     }
     
     
     
     @IBAction func a02BtnOnOff(_ sender: UIButton) {
-        
-        
         
         if( MainManager.shared.bA02ON[sender.tag] == true ) {
             
@@ -3154,7 +3397,6 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
                 ToastView.shared.short(self.view, txt_msg: set_notis_on[sender.tag])
                 sender.setBackgroundImage(UIImage(named:btn_image_on[sender.tag]), for: UIControlState.normal )
             }
-            
         }
     }
     
@@ -3259,6 +3501,10 @@ extension UIScrollView {
 }
 
 
+
+
+
+
 //let url = URL(string: image.url)
 //let data = try? Data(contentsOf: url!) //make sure your image in this url does exist, otherwise unwrap in a if let check / try-catch
 //imageView.image = UIImage(data: data!)
@@ -3300,6 +3546,209 @@ extension UIScrollView {
 //    }
 //}
 
+
+
+
+extension AViewController: CBPeripheralDelegate, CBCentralManagerDelegate {
+    
+    // 핸드폰 블루투스 상태?
+    func centralManagerDidUpdateState(_ central: CBCentralManager) {
+        
+        switch central.state {
+        case .unknown:
+            print("central.state is .unknown")
+            MainManager.shared.member_info.isBLE_ON = false
+            MainManager.shared.member_info.isCAR_FRIENDS_CONNECT = false;
+        case .resetting:
+            print("central.state is .resetting")
+            MainManager.shared.member_info.isBLE_ON = false
+            MainManager.shared.member_info.isCAR_FRIENDS_CONNECT = false;
+        case .unsupported:
+            print("central.state is .unsupported")
+            MainManager.shared.member_info.isBLE_ON = false
+            MainManager.shared.member_info.isCAR_FRIENDS_CONNECT = false;
+        case .unauthorized:
+            print("central.state is .unauthorized")
+            MainManager.shared.member_info.isBLE_ON = false
+            MainManager.shared.member_info.isCAR_FRIENDS_CONNECT = false;
+        case .poweredOff:
+            print("central.state is .poweredOff")
+            MainManager.shared.member_info.isBLE_ON = false
+            MainManager.shared.member_info.isCAR_FRIENDS_CONNECT = false;
+        case .poweredOn:
+            print("central.state is .poweredOn")
+            MainManager.shared.member_info.isBLE_ON = true
+            // 스캔시작
+            centralManager.scanForPeripherals (withServices : nil )
+            // A4992052-4B0D-3041-EABB-729B52C73924
+        default:
+            print("central.state is .other")
+            MainManager.shared.member_info.isBLE_ON = false
+            MainManager.shared.member_info.isCAR_FRIENDS_CONNECT = false;
+        }
+    }
+    
+    func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral,                    advertisementData: [String: Any], rssi RSSI: NSNumber) {
+        print(peripheral)
+        
+        if( peripheral.name == BEAN_NAME ) {
+            carFriendsPeripheral = peripheral
+            carFriendsPeripheral?.delegate = self
+            centralManager.stopScan()
+            centralManager.connect(carFriendsPeripheral!)
+            print("카프렌즈 찾음. 연결 시작")
+        }
+        else {
+            
+            print("카프렌즈 장치 못찾음")
+        }
+    }
+    
+    // 장치의 서비스 목록 가져올수 있다
+    func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
+        
+        MainManager.shared.member_info.isCAR_FRIENDS_CONNECT = true;
+        print("Connected! ")
+        print("서비스 목록 가져오기")
+        carFriendsPeripheral?.discoverServices(nil)
+    }
+    
+    // 서비스 발견 및 획득
+    func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
+        
+        guard let services = peripheral.services else { return }
+        
+        // 핸드폰 아닌 블루투스 연결된 장치의 서비스 목록
+        // service = <CBService: 0x145e70e80, isPrimary = YES, UUID = Device Information>
+        // service = <CBService: 0x145e7f950, isPrimary = YES, UUID = FFE0>
+        for service in services {
+            
+            print(" service = \(service)" )
+            // 서비스 등록?
+            peripheral.discoverCharacteristics( nil, for: service   )
+        }
+    }
+    
+    
+    func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
+        
+        guard let characteristics = service.characteristics else { return }
+        
+        for characteristic in characteristics {
+            print("---Characteristic found with \(characteristic.uuid) \n" )
+            
+            let uuid = CBUUID(string: "FFE1")
+            if characteristic.uuid == uuid {
+                
+                //                    if characteristic.properties.contains(.read) {
+                //                        print("\(characteristic.uuid): properties contains .read")
+                //                    }
+                //                    if characteristic.properties.contains(.notify) {
+                //                        print("\(characteristic.uuid): properties contains .notify")
+                //                    }
+                
+                myCharacteristic = characteristic
+                
+                peripheral.setNotifyValue(true, for: characteristic)
+                peripheral.readValue(for: characteristic)
+                
+            }
+        }
+        
+        //        for c in service.characteristics!{
+        //            print("---Characteristic found with UUID: \(c.uuid) \n")
+        //
+        //            let uuid = CBUUID(string: "2A19")//Battery Level
+        //
+        //            if c.uuid == uuid{
+        //                //peripheral.setNotifyValue(true, for: c)//Battery Level
+        //                peripheral.readValue(for: c)
+        //            }
+        //        }
+    }
+    
+    func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic,
+                    error: Error?) {
+        
+        // FFE1
+        // 20 bytes
+        //print( "didUpdateValueFor = \(characteristic.uuid)" )
+        //print(characteristic.value ?? "no value")
+        
+        let data = characteristic.value
+        var dataString = String(data: data!, encoding: String.Encoding.utf8)
+        //print( dataString! )
+        
+        // 데이타
+        MainManager.shared.member_info.TOTAL_BLE_READ_ACC_DATA += dataString!
+        
+        //        switch characteristic.uuid {
+        //        case bodySensorLocationCharacteristicCBUUID:
+        //            print(characteristic.value ?? "no value")
+        //        default:
+        //            print("Unhandled Characteristic UUID: \(characteristic.uuid)")
+        //        }
+    }
+    
+    
+    
+    
+    func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
+        // Something disconnected, check to see if it's our peripheral
+        // If so, clear active device/service
+        
+        print( "___ didDisconnectPeripheral ___" )
+        
+        if peripheral == self.carFriendsPeripheral {
+            
+            MainManager.shared.member_info.isCAR_FRIENDS_CONNECT = false;
+            self.carFriendsPeripheral = nil
+            self.myCharacteristic = nil
+            //self.mySerview = nil
+        }
+        
+        // Scan for new devices using the function you initially connected to the perhipheral
+        // self.scanForNewDevices()
+        
+        // 다시 스캔
+        centralManager.scanForPeripherals (withServices : nil )
+    }
+    
+    
+    
+    // 장치를 감지하면 "didDiscoverPeripheral"대리자 메서드가 다시 호출됩니다. 그런 다음 탐지 된 BLE 장치와의 연결을 설정하십시오.
+    
+    func centralManager(central: CBCentralManager, didDiscoverPeripheral peripheral: CBPeripheral, advertisementData: [String : AnyObject], RSSI: NSNumber)
+    {
+        if peripheral.state == .connected {
+            
+            print("didDiscoverPeripheral 대리자 메서드가 다시 호출됩니다")
+            //            self.peripherals.append(carFriendsPeripheral!)
+            peripheral.delegate = self
+            centralManager.connect(peripheral , options: nil)
+        }
+    }
+    
+    func isBLE_CONNECT() -> Bool {
+    
+        if( MainManager.shared.member_info.isBLE_ON == false || MainManager.shared.member_info.isCAR_FRIENDS_CONNECT == false )
+        {
+            return false
+        }
+        return true
+    }
+    
+    
+    func initStartBLE() {
+        
+        centralManager = CBCentralManager(delegate: self, queue: nil)
+    }
+    
+    
+    
+    
+    
+}
 
 
 
