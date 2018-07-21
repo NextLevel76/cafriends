@@ -128,10 +128,14 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        
+                
         // 인터넷 연결 체크
-        MainManager.shared.isConnectCheck()
+        if( MainManager.shared.isConnectCheck() == false ) {
+            
+            let myView = self.storyboard?.instantiateViewController(withIdentifier: "MainView") as! MainViewController
+            self.present(myView, animated: true, completion: nil)
+            return
+        }
         
         /*
          // 값 쓰기
@@ -644,13 +648,17 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
                             print("error with response status: \(status)")
                         }
                     }
-                    //to get JSON return value
                     
+                    //to get JSON return value
                     
                     if let json = try? JSON(response.result.value) {
                         
                         print(json["Result"])
                         self.server_get_phone_certifi_num = json["Result"].rawString()!
+                        
+                        if( MainManager.shared.bAPP_TEST == true ) {
+                            self.field_certifi_input.text = self.server_get_phone_certifi_num
+                        }
                         
                         print( self.server_get_phone_certifi_num )
                     }
@@ -730,7 +738,7 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
         
         let parameters = [
             "Req": "Register",
-            "mb_password": nick_name,
+            "mb_password": phone_num,
             "mb_nick": nick_name,
             "mb_email": "Register",
             "mb_hp": phone_num,

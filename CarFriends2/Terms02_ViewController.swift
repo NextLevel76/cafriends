@@ -28,6 +28,17 @@ class Terms02_ViewController: UIViewController, WKNavigationDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // 인터넷 연결 체크
+        if( MainManager.shared.isConnectCheck() == false ) {
+            
+            let myView = self.storyboard?.instantiateViewController(withIdentifier: "MainView") as! MainViewController
+            self.present(myView, animated: true, completion: nil)
+            return
+        }
+        
+        
+        
 
         isCheck01 = false
         btn_OK.backgroundColor = UIColor(red: 11/256, green: 85/255, blue: 156/255, alpha: 1)

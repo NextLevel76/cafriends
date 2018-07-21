@@ -24,7 +24,7 @@ open class ToastView: UILabel {
     
     func setup(_ view: UIView,txt_msg:String)
     {
-        let white = UIColor ( red: 1/255, green: 0/255, blue:0/255, alpha: 0.0 )
+        let white = UIColor ( red: 1/255, green: 1/255, blue:1/255, alpha: 0.0 )
         
         backView.frame = CGRect(x: 0, y: 0, width: view.frame.width , height: view.frame.height)
         backView.center = view.center

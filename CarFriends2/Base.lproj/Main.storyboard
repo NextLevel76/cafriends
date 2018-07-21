@@ -22,7 +22,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" tag="2" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="drl-KY-KJy">
-                                <rect key="frame" x="125" y="18" width="125" height="41"/>
+                                <rect key="frame" x="125" y="1" width="125" height="41"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
                                 <state key="normal" backgroundImage="frame-A-02-off"/>
                                 <connections>
@@ -30,7 +30,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" tag="3" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Lwt-dl-kyl">
-                                <rect key="frame" x="250" y="18" width="125" height="41"/>
+                                <rect key="frame" x="250" y="1" width="125" height="41"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
                                 <state key="normal" backgroundImage="frame-A-03-off"/>
                                 <connections>
@@ -62,7 +62,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" tag="1" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="038-IJ-Vde">
-                                <rect key="frame" x="0.0" y="18" width="125" height="41"/>
+                                <rect key="frame" x="0.0" y="1" width="125" height="41"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
                                 <state key="normal" backgroundImage="frame-A-01-on"/>
                                 <connections>
@@ -260,7 +260,7 @@
                     </connections>
                 </view>
                 <view contentMode="scaleToFill" id="gnm-X7-D9l" customClass="A02_ScrollMenu" customModule="CarFriends2" customModuleProvider="target">
-                    <rect key="frame" x="0.0" y="0.0" width="375" height="80"/>
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="68"/>
                     <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
                     <subviews>
                         <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="OjI-Os-gvh">
@@ -268,7 +268,7 @@
                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
                         </scrollView>
                     </subviews>
-                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <connections>
                         <outlet property="scrollView" destination="OjI-Os-gvh" id="o3J-TY-VJy"/>
                     </connections>
@@ -1939,7 +1939,7 @@
         <!--Main View Controller-->
         <scene sceneID="0Bx-uy-4iD">
             <objects>
-                <viewController storyboardIdentifier="main" id="GTh-4k-isw" customClass="MainViewController" customModule="CarFriends2" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="MainView" id="GTh-4k-isw" customClass="MainViewController" customModule="CarFriends2" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="HLz-ZR-mNJ"/>
                         <viewControllerLayoutGuide type="bottom" id="wv9-Up-hpo"/>
@@ -3019,31 +3019,8 @@
                                         <color key="textColor" red="0.51372549020000002" green="0.51372549020000002" blue="0.51372549020000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="JmW-6L-DNN">
-                                        <rect key="frame" x="106" y="75" width="24" height="22"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
-                                        <state key="normal" image="D-04-CheckBoxOff"/>
-                                        <connections>
-                                            <action selector="pressed_AM_PM:" destination="aX9-3G-EDc" eventType="touchUpInside" id="PaG-Gj-eJh"/>
-                                        </connections>
-                                    </button>
-                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nph-Bv-lzZ">
-                                        <rect key="frame" x="180" y="75" width="24" height="22"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
-                                        <state key="normal" image="D-04-CheckBoxOff"/>
-                                        <connections>
-                                            <action selector="pressed_AM_PM:" destination="aX9-3G-EDc" eventType="touchUpInside" id="Wde-ab-hzX"/>
-                                        </connections>
-                                    </button>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="AM" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uZg-fi-ZbU">
-                                        <rect key="frame" x="132" y="76" width="26" height="21"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <nil key="textColor"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="PM" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bYM-Ub-wH8">
-                                        <rect key="frame" x="212" y="76" width="25" height="21"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="24시간 기준 입니다." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bYM-Ub-wH8">
+                                        <rect key="frame" x="22" y="76" width="300" height="21"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <nil key="textColor"/>
@@ -3088,9 +3065,7 @@
                     </view>
                     <connections>
                         <outlet property="btn_OK" destination="euh-ic-enk" id="3gD-sx-Wun"/>
-                        <outlet property="btn_am" destination="JmW-6L-DNN" id="jzJ-k1-Qt8"/>
                         <outlet property="btn_cancel" destination="oVm-uj-D8w" id="34g-yb-N9N"/>
-                        <outlet property="btn_pm" destination="nph-Bv-lzZ" id="EKk-lh-Uw2"/>
                         <outlet property="field_hours" destination="bqh-S5-0NK" id="0rW-mR-Ck2"/>
                         <outlet property="field_min" destination="BNs-ky-BuI" id="dSJ-B3-0nl"/>
                     </connections>
@@ -3101,7 +3076,7 @@
         </scene>
     </scenes>
     <resources>
-        <image name="A-01-01-01-bg00" width="391" height="554"/>
+        <image name="A-01-01-01-bg00" width="375" height="531"/>
         <image name="A-01-01-07-icon" width="42" height="54"/>
         <image name="A-01-03-01-bgBlack" width="375" height="506"/>
         <image name="A-01-03-02-Icon01" width="28" height="28"/>
@@ -3109,9 +3084,9 @@
         <image name="A-01-03-03-percent16" width="234" height="234"/>
         <image name="A-01-03-04-Level02" width="97" height="23"/>
         <image name="A-01-03-04-btnUp" width="214" height="52"/>
-        <image name="A-01-03-05-BtnShopUp" width="67" height="32"/>
+        <image name="A-01-03-05-BtnShopUp" width="70" height="33"/>
         <image name="A-01-03-06-textTop" width="310" height="19"/>
-        <image name="A-01-03-07-BgList" width="391" height="58"/>
+        <image name="A-01-03-07-BgList" width="375" height="55"/>
         <image name="A-01-03-08-iconLevel01" width="27" height="26"/>
         <image name="A-01-03-08-text01" width="364" height="95"/>
         <image name="A-01-03-08-textTable" width="375" height="35"/>
@@ -3121,7 +3096,7 @@
         <image name="A-01-03-10-Icon01" width="34" height="34"/>
         <image name="A-01-03-11-bgCar" width="375" height="350"/>
         <image name="A-01-03-12-btnClose" width="17" height="17"/>
-        <image name="A-01-03-12-btnSaveUp" width="313" height="45"/>
+        <image name="A-01-03-12-btnSaveUp" width="326" height="47"/>
         <image name="A-01-03-12-line" width="196" height="2"/>
         <image name="A-01-03-13-btn" width="344" height="45"/>
         <image name="A-01-03-14-iconLevel01" width="30" height="29"/>
@@ -3160,6 +3135,6 @@
         <image name="img" width="340" height="335"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="ZYi-CW-efW"/>
+        <segue reference="9Di-yW-Dhl"/>
     </inferredMetricsTieBreakers>
 </document>

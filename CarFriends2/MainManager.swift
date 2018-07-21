@@ -14,6 +14,9 @@
 // git config --global user.email "lcblue@naver.com"
 
 
+    //DTC DATA 2018~1-1 ~ 2-27
+
+
 
 
 
@@ -68,27 +71,27 @@ struct Member_Info {
     var str_car_plate_num = "서울가1234"
     
     var str_TotalDriveMileage = "10000"    // 총 주행거리
-    var str_ThisWeekDriveMileage = ""    // 당주 주행거리
-    var str_ThisMonthDriveMileage = ""    // 총 주행거리
+    var str_ThisWeekDriveMileage = "0"    // 당주 주행거리
+    var str_ThisMonthDriveMileage = "0"    // 월 주행거리
     
     var str_AvgFuelMileage = "18"   // 연비
-    var str_ThisWeekFuelMileage = ""   // 연비
-    var str_ThisMonthFuelMileage = ""   // 연비
+    var str_ThisWeekFuelMileage = "0"   // 연비
+    var str_ThisMonthFuelMileage = "0"   // 연비
     
     
     //타이어 공가압
-    var str_TPMS_FL = ""
-    var str_TPMS_FR = ""
-    var str_TPMS_RL = ""
-    var str_TPMS_RR = ""
+    var str_TPMS_FL = "0"
+    var str_TPMS_FR = "0"
+    var str_TPMS_RL = "0"
+    var str_TPMS_RR = "0"
     
     // 배터리 전압
-    var str_BattVoltage = ""
+    var str_BattVoltage = "0"
     // 연료탱크 잔량
-    var str_FuelTank = ""
+    var str_FuelTank = "0"
     
     // 모듈  Date/Time
-    var str_Car_DateTime = ""
+    var str_Car_DateTime = "0"
     
     var bCar_Status_DoorLock = false    // 도어락
     var bCar_Status_Hatch = false       // 트렁크
@@ -97,8 +100,8 @@ struct Member_Info {
     var bCar_Status_RVS = false         // 원격시동
     var bCar_Car_Status_IGN = false     // 키온
     
-    var str_Car_Status_Seed = ""
-    var ser_Car_Status_Key = ""
+    var str_Car_Status_Seed = "0"
+    var ser_Car_Status_Key = "0"
     var bCar_Status_Security = false
     var bCar_Func_LockFolding = false
     var bCar_Func_AutoWindowClose = false
@@ -106,16 +109,16 @@ struct Member_Info {
     var bCar_Func_AutoWindowRevOpen = false
     
     var bCar_Func_RVS = false
-    var strCar_Status_ReservedRVSTime = ""
+    var strCar_Status_ReservedRVSTime = "0"
     
     var str_BLE_PinCode = "1111"
     
     var isCAR_FRIENDS_CONNECT:Bool = false
     var isBLE_ON:Bool = false
     
-    var TOTAL_BLE_READ_ACC_DATA:String = ""
+    var TOTAL_BLE_READ_ACC_DATA:String = "0"
     
-    var strTOTAL_MILEAGE:String = ""
+    var strTOTAL_MILEAGE:String = "0"
     
     
     
@@ -134,7 +137,7 @@ struct Member_Info {
     
     
     
-    
+
     // 카프렌즈 블루투스를 통해 올라오는 문자열 명령 처리
     mutating func BLE_READ_ACC_DATA_PROC( _ READ_DATA: String ) {
         
@@ -194,28 +197,43 @@ struct Member_Info {
             str_Car_DateTime = String(cleanedText)
             break
         case "[DOORLOCK]":
-            bCar_Status_DoorLock = false
-            if( cleanedText == "1" ) { bCar_Status_DoorLock = true }
+            // 딜레이 2초
+            if(bCarStatusDelay == false ) {
+                bCar_Status_DoorLock = false
+                if( cleanedText == "1" ) { bCar_Status_DoorLock = true }
+            }
             break
         case "[HATCH]":
-            bCar_Status_Hatch = false
-            if( cleanedText == "1" ) { bCar_Status_Hatch = true }
+            if( bCarStatusDelay == false ) {
+                bCar_Status_Hatch = false
+                if( cleanedText == "1" ) { bCar_Status_Hatch = true }
+            }
             break
         case "[WINDOW]":
-            bCar_Status_Window = false
-            if( cleanedText == "1" ) { bCar_Status_Window = true }
+            // 딜레이 타임일때 창문 10초동안 갱신안한다.
+            if( bCarStatusWindowDelay == false ) {
+                
+                bCar_Status_Window = false
+                if( cleanedText == "1" ) { bCar_Status_Window = true }
+            }
             break
         case "[SUNROOF]":
-            bCar_Status_Sunroof = false
-            if( cleanedText == "1" ) { bCar_Status_Sunroof = true }
+            if( bCarStatusDelay == false ) {
+                bCar_Status_Sunroof = false
+                if( cleanedText == "1" ) { bCar_Status_Sunroof = true }
+            }
             break
         case "[RVS]":
-            bCar_Status_RVS = false
-            if( cleanedText == "1" ) { bCar_Status_RVS = true }
+            if( bCarStatusDelay == false ) {
+                bCar_Status_RVS = false
+                if( cleanedText == "1" ) { bCar_Status_RVS = true }
+            }
             break
         case "[KEYON]":
-            bCar_Car_Status_IGN = false
-            if( cleanedText == "1" ) { bCar_Car_Status_IGN = true }
+            if( bCarStatusDelay == false ) {
+                bCar_Car_Status_IGN = false
+                if( cleanedText == "1" ) { bCar_Car_Status_IGN = true }
+            }
             break
         case "[SEED]":
             str_Car_Status_Seed = String(cleanedText)
@@ -224,31 +242,43 @@ struct Member_Info {
             ser_Car_Status_Key = String(cleanedText)
             break
         case "[SEC]":
-            bCar_Status_Security = false
-            if( cleanedText == "1" ) { bCar_Status_Security = true }
+                bCar_Status_Security = false
+                if( cleanedText == "1" ) { bCar_Status_Security = true }
             break
         case "[LOCKFOLDING]":
-            bCar_Func_LockFolding = false
-            if( cleanedText == "1" ) { bCar_Func_LockFolding = true }
+            if( bCarStatusDelay == false ) {
+                bCar_Func_LockFolding = false
+                if( cleanedText == "1" ) { bCar_Func_LockFolding = true }
+            }
             break
         case "[AUTOWINDOWS]":
-            bCar_Func_AutoWindowClose = false
-            if( cleanedText == "1" ) { bCar_Func_AutoWindowClose = true }
+            if( bCarStatusDelay == false ) {
+                bCar_Func_AutoWindowClose = false
+                if( cleanedText == "1" ) { bCar_Func_AutoWindowClose = true }
+            }
             break
         case "[AUTOSUNROOF]":
-            bCar_Func_AutoSunroofClose = false
-            if( cleanedText == "1" ) { bCar_Func_AutoSunroofClose = true }
+            if( bCarStatusDelay == false ) {
+                bCar_Func_AutoSunroofClose = false
+                if( cleanedText == "1" ) { bCar_Func_AutoSunroofClose = true }
+            }
             break
         case "[REV_WINDOW]":
-            bCar_Func_AutoWindowRevOpen = false
-            if( cleanedText == "1" ) { bCar_Func_AutoWindowRevOpen = true }
+            if( bCarStatusDelay == false ) {
+                bCar_Func_AutoWindowRevOpen = false
+                if( cleanedText == "1" ) { bCar_Func_AutoWindowRevOpen = true }
+            }
             break
         case "[RES_RVS_TIME]":
-            strCar_Status_ReservedRVSTime = String(cleanedText)
+            if( bCarStatusDelay == false ) {
+                strCar_Status_ReservedRVSTime = String(cleanedText)
+            }
             break
         case "[RES_RVS]":
-            bCar_Func_RVS = false
-            if( cleanedText == "1" ) { bCar_Func_RVS = true }
+            if( bCarStatusDelay == false ) {
+                bCar_Func_RVS = false
+                if( cleanedText == "1" ) { bCar_Func_RVS = true }
+            }
             break
         case "[PIN_CODE]":
             str_BLE_PinCode = String(cleanedText)
@@ -348,16 +378,16 @@ struct Member_Info {
         str_Instruction = "[REV_WINDOW]=" + strDATA + "!"
         return writeData( str_Instruction )
     }
-    // [RES_RVS_TIME]=00:00:00!
+    // [RES_RVS_TIME]=2011-11-11 11:22:33!
     mutating func setRES_RVS_TIME(_ strDATA: String ) -> NSData {
         
-        str_Instruction = "[RES_RVS_TIME]=" + strDATA + "!"
+        str_Instruction = "[RES_RVS_TIME]=1900-01-01 " + strDATA + "!"
         return writeData( str_Instruction )
     }
     // [RES_RVS]=1!
     mutating func setRES_RVS(_ strDATA: String ) -> NSData {
         
-        str_Instruction = "[AUTOWINDOWS]=" + strDATA + "!"
+        str_Instruction = "[RVS]=" + strDATA + "!"
         return writeData( str_Instruction )
     }
     // [PIN_CODE]=0000!
@@ -402,7 +432,7 @@ struct Member_Info {
         
         // myBluetoothPeripheral.writeValue(dataToSend as Data, for: myCharacteristic, type: CBCharacteristicWriteType.withoutResponse)
         
-        print( "____________ strDATA = \(strDATA)  " )
+        print( "____________ BLE SEND DATA = \(strDATA)  " )
         
         let buf: [UInt8] = Array(strDATA.utf8)
         dataWriteBLE = NSData(bytes: buf, length: buf.count)
@@ -504,7 +534,7 @@ class MainManager   {
     
     // 10: 예약시동
     var bA02ON:[Bool] = [false,true,false,true,false,true,true,false,true,false,false]
-    // 팝업창에서 예약시동 설정할시 이미지 변경
+    // 팝업창에서 예약시동 설정, 이미지 변경
     var bStartPopTimeReserv:Bool = false
     
     
@@ -530,15 +560,17 @@ class MainManager   {
     
     
     // 인터넷 연결 체크
-    func isConnectCheck() {
+    func isConnectCheck() -> Bool {
         
         if Connectivity.isConnectedToInternet {
             print("Internet Connected")
+            return true
         } else {
             
             print("No Internet")
             var alert = UIAlertView(title: "No Internet Connection", message: "서버와의 연결이 지연되고 있습니다. 잠시후에 다시 사용해 주세요.", delegate: nil, cancelButtonTitle: "OK")
             alert.show()
+            return false
         }
     }
     
@@ -608,6 +640,35 @@ class MainManager   {
         // CGAffineTransform(scaleX: 2.0, y: 2.0)
         return newFrame
     }
+    
+    
+
+    
+    // [DATETIME]=YYYY-MM-DD HH:MM:SS!
+    func getDateTimeSendBLE() {
+        
+        // 현재 시각 구하기
+        let now = Date()
+        // 데이터 포맷터
+        let dateFormatter = DateFormatter()
+        // 한국 Locale
+        dateFormatter.locale = Locale(identifier: "ko_KR")
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        
+        member_info.str_Car_DateTime = dateFormatter.string(from: now)
+        member_info.setDATETIME( member_info.str_Car_DateTime )
+        
+//        dateFormatter.dateFormat = "yyyy"
+//        let iNowYear:Int = Int(dateFormatter.string(from: now))!
+//        // 차량연식 (당해년도 + 2년 ~ -10 년) 까지 큰 숫자가 처음에 오기
+//        for i in ( (iNowYear-10) ..< iNowYear+3 ).reversed() {
+//
+//            MainManager.shared.str_select_yearList.append(String(i))
+//            print(i) // 4,3,2,1,0
+//        }
+    }
+    
+    
     
 }
 

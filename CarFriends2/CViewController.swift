@@ -122,9 +122,15 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
         super.viewDidLoad()
         
         // webView.frame = MainManager.shared.initLoadChangeFrame(frame: webView.frame)
-        
         // 인터넷 연결 체크
-        MainManager.shared.isConnectCheck()
+        if( MainManager.shared.isConnectCheck() == false ) {
+            
+            let myView = self.storyboard?.instantiateViewController(withIdentifier: "MainView") as! MainViewController
+            self.present(myView, animated: true, completion: nil)
+            return
+        }
+                
+        
         // 저장된 쿠키 불러오기
         HTTPCookieStorage.restore()
         //setupWebView()

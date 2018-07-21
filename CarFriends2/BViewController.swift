@@ -128,10 +128,13 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        
         // 인터넷 연결 체크
-        MainManager.shared.isConnectCheck()
-        
+        if( MainManager.shared.isConnectCheck() == false ) {
+            
+            let myView = self.storyboard?.instantiateViewController(withIdentifier: "MainView") as! MainViewController
+            self.present(myView, animated: true, completion: nil)
+            return
+        }
         
         
         // 저장된 쿠키 불러오기

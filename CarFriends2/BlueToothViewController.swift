@@ -37,6 +37,23 @@ class BlueToothViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        
+        
+        // 인터넷 연결 체크
+        if( MainManager.shared.isConnectCheck() == false ) {
+            
+            let myView = self.storyboard?.instantiateViewController(withIdentifier: "MainView") as! MainViewController
+            self.present(myView, animated: true, completion: nil)
+            return
+        }
+        
+        
+        
+
+        
+        
+        
+        
         btn_ble01_kit_not.backgroundColor = UIColor(red: 11/256, green: 85/255, blue: 156/255, alpha: 1)
         btn_ble01_kit_guide.backgroundColor = UIColor(red: 11/256, green: 85/255, blue: 156/255, alpha: 1)
         btn_ble02_buy_next.backgroundColor = UIColor(red: 11/256, green: 85/255, blue: 156/255, alpha: 1)
@@ -77,8 +94,7 @@ class BlueToothViewController: UIViewController {
         self.view.addSubview(activityIndicator)
         
         
-        // 인터넷 연결 체크
-        MainManager.shared.isConnectCheck()
+        
         
         
         // 회원가입용 회원정보수정용 카 리스트 받기
@@ -98,7 +114,7 @@ class BlueToothViewController: UIViewController {
         // TEST // 0:비회원    1:차정보없이 가입     2:차정보입력 가입
         if( MainManager.shared.bAPP_TEST == true ) {
         
-        //    MainManager.shared.iMemberJoinState = 0
+            MainManager.shared.iMemberJoinState = 0
         }
     }
     
@@ -111,41 +127,13 @@ class BlueToothViewController: UIViewController {
         // 카 리스트 서버에서 받지 못했으면 버튼동작 중지
         if( MainManager.shared.bCarListRequest == false ) { return }
         
-        
         print("_____ 기기없음 _____")
         
         // 회원가입한사람
         if( MainManager.shared.iMemberJoinState >= 1 ) {
             
             // 클라에 저장된 유저 데이타 불러오기
-            let defaults = UserDefaults.standard
-            MainManager.shared.member_info.str_id_nick = defaults.string(forKey: "str_id_nick")!
-            MainManager.shared.member_info.str_id_phone_num = defaults.string(forKey: "str_id_phone_num")!
-            
-            MainManager.shared.member_info.str_car_kind = defaults.string(forKey: "str_car_kind")!
-            MainManager.shared.member_info.str_car_year = defaults.string(forKey: "str_car_year")!
-            MainManager.shared.member_info.str_car_dae_num = defaults.string(forKey: "str_car_dae_num")!
-            MainManager.shared.member_info.str_car_fuel_type = defaults.string(forKey: "str_car_fuel_type")!
-            MainManager.shared.member_info.str_car_plate_num = defaults.string(forKey: "str_car_plate_num")!
-            MainManager.shared.member_info.str_car_year = defaults.string(forKey: "str_car_year")!
-            MainManager.shared.member_info.str_AvgFuelMileage = defaults.string(forKey: "str_AvgFuelMileage")!
-            
-            
-            MainManager.shared.member_info.i_car_piker_select = defaults.integer(forKey: "i_car_piker_select")
-            MainManager.shared.member_info.i_year_piker_select = defaults.integer(forKey: "i_year_piker_select")
-            MainManager.shared.member_info.i_fuel_piker_select = defaults.integer(forKey: "i_fuel_piker_select")
-            
-            print("_____ 회원가입된 정보 불러오기 _____")
-            print(MainManager.shared.member_info.str_id_nick)
-            print(MainManager.shared.member_info.str_id_phone_num)
-            print(MainManager.shared.member_info.str_car_kind)
-            print(MainManager.shared.member_info.str_car_year)
-            print(MainManager.shared.member_info.str_car_dae_num)
-            print(MainManager.shared.member_info.str_car_fuel_type)
-            print(MainManager.shared.member_info.str_car_plate_num)
-            print(MainManager.shared.member_info.str_car_year)
-            print(MainManager.shared.member_info.str_AvgFuelMileage)
-            
+            readMemberLocalData()
             
             // 디바이스 구매 -> 메인 메뉴 B 화면
             let myView = self.storyboard?.instantiateViewController(withIdentifier: "b00") as! BViewController
@@ -189,48 +177,8 @@ class BlueToothViewController: UIViewController {
             //////////////////////////////////////////////////////////// 회원가입했다 구매화면 가기
         else {
             
-            let defaults = UserDefaults.standard
-            
-            /*
-             defaults.set(MainManager.shared.member_info.str_id_phone_num, forKey: "str_id_phone_num")
-             defaults.set(MainManager.shared.member_info.str_id_nick, forKey: "str_id_nick")
-             
-             defaults.set(MainManager.shared.member_info.str_car_kind, forKey:           "str_car_kind")
-             defaults.set(MainManager.shared.member_info.str_car_year, forKey:           "str_car_year")
-             defaults.set(MainManager.shared.member_info.str_car_dae_num, forKey: "str_car_dae_num")
-             defaults.set(MainManager.shared.member_info.str_car_fuel_type, forKey: "str_car_fuel_type")
-             defaults.set(MainManager.shared.member_info.str_car_plate_num, forKey: "str_car_plate_num")
-             defaults.set(MainManager.shared.member_info.str_car_year, forKey: "str_car_year")
-             defaults.set(MainManager.shared.member_info.str_car_fuel_eff, forKey: "str_car_fuel_eff")
-             */
-            
-            // 클라에 저장된 유저 데이타 불러오기
-            MainManager.shared.member_info.str_id_nick = defaults.string(forKey: "str_id_nick")!
-            MainManager.shared.member_info.str_id_phone_num = defaults.string(forKey: "str_id_phone_num")!
-            
-            MainManager.shared.member_info.str_car_kind = defaults.string(forKey: "str_car_kind")!
-            MainManager.shared.member_info.str_car_year = defaults.string(forKey: "str_car_year")!
-            MainManager.shared.member_info.str_car_dae_num = defaults.string(forKey: "str_car_dae_num")!
-            MainManager.shared.member_info.str_car_fuel_type = defaults.string(forKey: "str_car_fuel_type")!
-            MainManager.shared.member_info.str_car_plate_num = defaults.string(forKey: "str_car_plate_num")!
-            MainManager.shared.member_info.str_car_year = defaults.string(forKey: "str_car_year")!
-            MainManager.shared.member_info.str_AvgFuelMileage = defaults.string(forKey: "str_AvgFuelMileage")!
-            
-            MainManager.shared.member_info.i_car_piker_select = defaults.integer(forKey: "i_car_piker_select")
-            MainManager.shared.member_info.i_year_piker_select = defaults.integer(forKey: "i_year_piker_select")
-            MainManager.shared.member_info.i_fuel_piker_select = defaults.integer(forKey: "i_fuel_piker_select")
-            
-            print("_____ 회원가입된 정보 불러오기 _____")
-            print(MainManager.shared.member_info.str_id_nick)
-            print(MainManager.shared.member_info.str_id_phone_num)
-            print(MainManager.shared.member_info.str_car_kind)
-            print(MainManager.shared.member_info.str_car_year)
-            print(MainManager.shared.member_info.str_car_dae_num)
-            print(MainManager.shared.member_info.str_car_fuel_type)
-            print(MainManager.shared.member_info.str_car_plate_num)
-            print(MainManager.shared.member_info.str_car_year)
-            print(MainManager.shared.member_info.str_AvgFuelMileage)
-            
+            // 로컬 회원 정보 읽기
+            readMemberLocalData()
             
             
             // 디바이스 구매 -> 메인 메뉴 B 화면
@@ -244,17 +192,16 @@ class BlueToothViewController: UIViewController {
     
     func initReadSelectData() {
         
-        
         print("initReadSelectData")
-        
-        // 서버 연결 리스트 더 만들지 않는다
+
+        // 카 리스트 데이타 받았다 리스트 획득. 필요 없다
         if( MainManager.shared.bCarListRequest == true ) { return }
-        
-        
         
         self.view.bringSubview(toFront: activityIndicator)
         
+        // 피커뷰 2000~ 2018 년 리스트를 만든다.
         getTime()
+        
         
         // database.php?Req=CarList
         // "Res":"CarList","CarList":["스파크","크루즈",…..]
@@ -301,36 +248,11 @@ class BlueToothViewController: UIViewController {
         }
         
         
-
-        
-        
         
     }
     
     
-    func getTime() {
-        
-        // 현재 시각 구하기
-        let now = Date()
-        // 데이터 포맷터
-        let dateFormatter = DateFormatter()
-        // 한국 Locale
-        dateFormatter.locale = Locale(identifier: "ko_KR")
-        // dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-        dateFormatter.dateFormat = "yyyy"
-        let iNowYear:Int = Int(dateFormatter.string(from: now))!
-
-
-        // 차량연식 (당해년도 + 2년 ~ -10 년) 까지 큰 숫자가 처음에 오기
-        for i in ( (iNowYear-10) ..< iNowYear+3 ).reversed() {
-            
-            MainManager.shared.str_select_yearList.append(String(i))
-            print(i) // 4,3,2,1,0
-        }
-        
-
-        
-    }
+    
 
     
     
@@ -369,6 +291,82 @@ class BlueToothViewController: UIViewController {
     
     
     
+    
+    
+    func readMemberLocalData() {
+        
+        let defaults = UserDefaults.standard
+        
+        /*
+         defaults.set(MainManager.shared.member_info.str_id_phone_num, forKey: "str_id_phone_num")
+         defaults.set(MainManager.shared.member_info.str_id_nick, forKey: "str_id_nick")
+         
+         defaults.set(MainManager.shared.member_info.str_car_kind, forKey:           "str_car_kind")
+         defaults.set(MainManager.shared.member_info.str_car_year, forKey:           "str_car_year")
+         defaults.set(MainManager.shared.member_info.str_car_dae_num, forKey: "str_car_dae_num")
+         defaults.set(MainManager.shared.member_info.str_car_fuel_type, forKey: "str_car_fuel_type")
+         defaults.set(MainManager.shared.member_info.str_car_plate_num, forKey: "str_car_plate_num")
+         defaults.set(MainManager.shared.member_info.str_car_year, forKey: "str_car_year")
+         defaults.set(MainManager.shared.member_info.str_car_fuel_eff, forKey: "str_car_fuel_eff")
+         */
+        
+        // 클라에 저장된 유저 데이타 불러오기
+        MainManager.shared.member_info.str_id_nick = defaults.string(forKey: "str_id_nick")!
+        MainManager.shared.member_info.str_id_phone_num = defaults.string(forKey: "str_id_phone_num")!
+        
+        MainManager.shared.member_info.str_car_kind = defaults.string(forKey: "str_car_kind")!
+        MainManager.shared.member_info.str_car_year = defaults.string(forKey: "str_car_year")!
+        MainManager.shared.member_info.str_car_dae_num = defaults.string(forKey: "str_car_dae_num")!
+        MainManager.shared.member_info.str_car_fuel_type = defaults.string(forKey: "str_car_fuel_type")!
+        MainManager.shared.member_info.str_car_plate_num = defaults.string(forKey: "str_car_plate_num")!
+        MainManager.shared.member_info.str_car_year = defaults.string(forKey: "str_car_year")!
+        MainManager.shared.member_info.str_AvgFuelMileage = defaults.string(forKey: "str_AvgFuelMileage")!
+        
+        MainManager.shared.member_info.i_car_piker_select = defaults.integer(forKey: "i_car_piker_select")
+        MainManager.shared.member_info.i_year_piker_select = defaults.integer(forKey: "i_year_piker_select")
+        MainManager.shared.member_info.i_fuel_piker_select = defaults.integer(forKey: "i_fuel_piker_select")
+        
+        
+        //총 주행거리, 당주 주행거리, 누적 연비, 당주 연비---------------------------------------------------------------------------
+        UserDefaults.standard.set(MainManager.shared.member_info.str_TotalDriveMileage, forKey: "str_TotalDriveMileage")
+        UserDefaults.standard.set(MainManager.shared.member_info.str_ThisWeekDriveMileage, forKey: "str_ThisWeekDriveMileage")
+        UserDefaults.standard.set(MainManager.shared.member_info.str_AvgFuelMileage, forKey: "str_AvgFuelMileage")
+        UserDefaults.standard.set(MainManager.shared.member_info.str_Car_Status_Seed, forKey: "str_Car_Status_Seed")
+        
+        print("_____ 회원가입된 정보 불러오기 _____")
+        print(MainManager.shared.member_info.str_id_nick)
+        print(MainManager.shared.member_info.str_id_phone_num)
+        print(MainManager.shared.member_info.str_car_kind)
+        print(MainManager.shared.member_info.str_car_year)
+        print(MainManager.shared.member_info.str_car_dae_num)
+        print(MainManager.shared.member_info.str_car_fuel_type)
+        print(MainManager.shared.member_info.str_car_plate_num)
+        print(MainManager.shared.member_info.str_car_year)
+        print(MainManager.shared.member_info.str_AvgFuelMileage)
+    }
+    
+    
+    
+    func getTime() {
+        
+        // 현재 시각 구하기
+        let now = Date()
+        // 데이터 포맷터
+        let dateFormatter = DateFormatter()
+        // 한국 Locale
+        dateFormatter.locale = Locale(identifier: "ko_KR")
+        // dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        dateFormatter.dateFormat = "yyyy"
+        let iNowYear:Int = Int(dateFormatter.string(from: now))!
+        
+        
+        // 차량연식 (당해년도 + 2년 ~ -10 년) 까지 큰 숫자가 처음에 오기
+        for i in ( (iNowYear-10) ..< iNowYear+3 ).reversed() {
+            
+            MainManager.shared.str_select_yearList.append(String(i))
+            print(i) // 4,3,2,1,0
+        }
+    }
     
     /*
      // MARK: - Navigation
