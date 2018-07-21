@@ -55,16 +55,16 @@ struct Member_Info {
     // mem_join
     var str_password = "불러오기안됨"
     var str_id_nick = "파랑오빠(회원가입데이타없다.)"
-    var str_id_email = "aadfa@naver.com"
-    var str_id_phone_num = "01012349999"
+    var str_id_email = "blue@naver.com"
+    var str_id_phone_num = "99922229999"
     
-    var str_car_kind = "임프레자"
+    var str_car_kind = "자동차"
     var i_car_piker_select = 0
     
-    var str_car_year = "2018"
+    var str_car_year = "2999"
     var i_year_piker_select = 0
     
-    var str_car_fuel_type = "디젤"
+    var str_car_fuel_type = "수소차"
     var i_fuel_piker_select = 0
     
     var str_car_dae_num = "KLAJA69KDB12345"
@@ -136,12 +136,24 @@ struct Member_Info {
     
     
     
+    // identifier = A4992052-4B0D-3041-EABB-729B52C73924,
+    var carFriendsMacAdd = ""
+    
+    
+    
     
 
     // 카프렌즈 블루투스를 통해 올라오는 문자열 명령 처리
     mutating func BLE_READ_ACC_DATA_PROC( _ READ_DATA: String ) {
         
         var arr = READ_DATA.components(separatedBy: "=")
+        // 배열 갯수 얻기
+        let count = arr.flatMap({$0}).count
+        if( count < 2 ) {
+            
+            print("______BLE DATA ERR \(READ_DATA)")
+            return
+        }
         
         // 공백 제거
         //let cleanedText = arr[1].filter { !" \n\t\r".characters.contains($0) }
@@ -152,7 +164,6 @@ struct Member_Info {
             print("______ \(arr[0])   = [Empty Data]")
             return
         }
-     
         
         print( "READ_DATA = \(arr[0])  \(cleanedText)")
         
@@ -281,13 +292,14 @@ struct Member_Info {
             }
             break
         case "[PIN_CODE]":
-            str_BLE_PinCode = String(cleanedText)
+            // 기기에서 올라온 핀코드
+            var tempPinCode = String(cleanedText)
+            // str_BLE_PinCode = String(cleanedText)
             break
         default:
             print(String(cleanedText))
         }
     }
-    
     
     
     
@@ -442,8 +454,11 @@ struct Member_Info {
     
     mutating func readDataCarFriendsBLE() {
         
-        if( isCAR_FRIENDS_CONNECT == false || isBLE_ON == false ) { return }
-        
+        if( isCAR_FRIENDS_CONNECT == false || isBLE_ON == false ) {
+            
+            TOTAL_BLE_READ_ACC_DATA = ""
+            return
+        }
         
         var startHeadAdd:Int  = 0
         var startReaultAdd:Int  = 0
@@ -452,7 +467,7 @@ struct Member_Info {
         
         TOTAL_BLE_READ_ACC_DATA = "";
         
-        var addHeadString = ""
+        var addHeadDataString = ""
         var addCount = 0
         
         print( stringValue )
@@ -469,16 +484,21 @@ struct Member_Info {
                 if( startHeadAdd == 2 ) {
                     
                     // 읽은 데이타 변수에 세팅
-                    BLE_READ_ACC_DATA_PROC(addHeadString)
-                    // print("addHeadString = \(addHeadString) ")
+                    
+                    
+                    if( addHeadDataString.contains("=") == true ) {
+                    
+                        BLE_READ_ACC_DATA_PROC(addHeadDataString)
+                    }
+                    // print("addHeadDataString = \(addHeadDataString) ")
                 }
                 
-                addHeadString = "" // 초기화 reset
+                addHeadDataString = "" // 초기화 reset
                 startHeadAdd = 1
             }
             
             // 헤더 담는다
-            if( startHeadAdd <= 2 &&  startHeadAdd > 0 ) { addHeadString += tempString }
+            if( startHeadAdd <= 2 &&  startHeadAdd > 0 ) { addHeadDataString += tempString }
             
             if(tempString == "]" ) {
                 startHeadAdd = 2
@@ -667,13 +687,14 @@ class MainManager   {
 //            print(i) // 4,3,2,1,0
 //        }
     }
-    
-    
-    
 }
 
 
-
+extension String {
+    func contains(find: String) -> Bool{
+        return self.range(of: find) != nil
+    }
+}
 
 
 //함수는 func 키워드를 사용해서 정의합니다. -> 를 사용해서 함수의 반환 타입을 지정합니다.

@@ -156,7 +156,7 @@ extension ScannerViewController: CBPeripheralDelegate, CBCentralManagerDelegate 
         
         MainManager.shared.member_info.TOTAL_BLE_READ_ACC_DATA = "";
         
-        var addHeadString = ""
+        var addHeadDataString = ""
         var addResultString = ""
         
         var addCount = 0
@@ -175,16 +175,15 @@ extension ScannerViewController: CBPeripheralDelegate, CBCentralManagerDelegate 
                 // 다음 명령어 "[" 까지오면 처리
                 if( startHeadAdd == 2 ) {
                     
-                    print("addHeadString = \(addHeadString) ")
+                    print("addHeadDataString = \(addHeadDataString) ")
                 }
                 
-                
-                addHeadString = "" // 초기화 reset
+                addHeadDataString = "" // 초기화 reset
                 startHeadAdd = 1
             }
             
             // 헤더 담는다
-            if( startHeadAdd <= 2 &&  startHeadAdd > 0 ) { addHeadString += tempString }
+            if( startHeadAdd <= 2 &&  startHeadAdd > 0 ) { addHeadDataString += tempString }
             
             if(tempString == "]" ) {
                 startHeadAdd = 2

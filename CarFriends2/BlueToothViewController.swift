@@ -37,8 +37,6 @@ class BlueToothViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        
-        
         // 인터넷 연결 체크
         if( MainManager.shared.isConnectCheck() == false ) {
             
@@ -46,10 +44,6 @@ class BlueToothViewController: UIViewController {
             self.present(myView, animated: true, completion: nil)
             return
         }
-        
-        
-        
-
         
         
         
@@ -103,18 +97,11 @@ class BlueToothViewController: UIViewController {
         
         
         
-            
-            
-        
-       
-        
-        
-        
         
         // TEST // 0:비회원    1:차정보없이 가입     2:차정보입력 가입
         if( MainManager.shared.bAPP_TEST == true ) {
         
-            MainManager.shared.iMemberJoinState = 0
+            // MainManager.shared.iMemberJoinState = 0
         }
     }
     
@@ -246,9 +233,6 @@ class BlueToothViewController: UIViewController {
                 }
                 
         }
-        
-        
-        
     }
     
     
@@ -284,7 +268,6 @@ class BlueToothViewController: UIViewController {
             
             let myView = self.storyboard?.instantiateViewController(withIdentifier: "terms01") as! Terms01_ViewController
             self.present(myView, animated: true, completion: nil)
-            
         }
     }
     
@@ -310,28 +293,59 @@ class BlueToothViewController: UIViewController {
          defaults.set(MainManager.shared.member_info.str_car_fuel_eff, forKey: "str_car_fuel_eff")
          */
         
+        
+        
         // 클라에 저장된 유저 데이타 불러오기
-        MainManager.shared.member_info.str_id_nick = defaults.string(forKey: "str_id_nick")!
-        MainManager.shared.member_info.str_id_phone_num = defaults.string(forKey: "str_id_phone_num")!
+        if UserDefaults.standard.object(forKey: "str_id_nick") != nil
+            { MainManager.shared.member_info.str_id_nick = defaults.string(forKey: "str_id_nick")! }
+        if UserDefaults.standard.object(forKey: "str_id_phone_num") != nil
+            { MainManager.shared.member_info.str_id_phone_num = defaults.string(forKey: "str_id_phone_num")! }
+        if UserDefaults.standard.object(forKey: "str_car_kind") != nil
+            { MainManager.shared.member_info.str_car_kind = defaults.string(forKey: "str_car_kind")! }
         
-        MainManager.shared.member_info.str_car_kind = defaults.string(forKey: "str_car_kind")!
-        MainManager.shared.member_info.str_car_year = defaults.string(forKey: "str_car_year")!
-        MainManager.shared.member_info.str_car_dae_num = defaults.string(forKey: "str_car_dae_num")!
-        MainManager.shared.member_info.str_car_fuel_type = defaults.string(forKey: "str_car_fuel_type")!
-        MainManager.shared.member_info.str_car_plate_num = defaults.string(forKey: "str_car_plate_num")!
-        MainManager.shared.member_info.str_car_year = defaults.string(forKey: "str_car_year")!
-        MainManager.shared.member_info.str_AvgFuelMileage = defaults.string(forKey: "str_AvgFuelMileage")!
+        if UserDefaults.standard.object(forKey: "str_car_year") != nil
+            { MainManager.shared.member_info.str_car_year = defaults.string(forKey: "str_car_year")! }
+        if UserDefaults.standard.object(forKey: "str_car_dae_num") != nil
+            { MainManager.shared.member_info.str_car_dae_num = defaults.string(forKey: "str_car_dae_num")! }
+        if UserDefaults.standard.object(forKey: "str_car_fuel_type") != nil
+            { MainManager.shared.member_info.str_car_fuel_type = defaults.string(forKey: "str_car_fuel_type")! }
         
-        MainManager.shared.member_info.i_car_piker_select = defaults.integer(forKey: "i_car_piker_select")
-        MainManager.shared.member_info.i_year_piker_select = defaults.integer(forKey: "i_year_piker_select")
-        MainManager.shared.member_info.i_fuel_piker_select = defaults.integer(forKey: "i_fuel_piker_select")
+        if UserDefaults.standard.object(forKey: "str_car_plate_num") != nil
+            { MainManager.shared.member_info.str_car_plate_num = defaults.string(forKey: "str_car_plate_num")! }
+        if UserDefaults.standard.object(forKey: "str_car_year") != nil
+            { MainManager.shared.member_info.str_car_year = defaults.string(forKey: "str_car_year")! }
+        if UserDefaults.standard.object(forKey: "str_AvgFuelMileage") != nil
+            { MainManager.shared.member_info.str_AvgFuelMileage = defaults.string(forKey: "str_AvgFuelMileage")! }
         
         
-        //총 주행거리, 당주 주행거리, 누적 연비, 당주 연비---------------------------------------------------------------------------
-        UserDefaults.standard.set(MainManager.shared.member_info.str_TotalDriveMileage, forKey: "str_TotalDriveMileage")
-        UserDefaults.standard.set(MainManager.shared.member_info.str_ThisWeekDriveMileage, forKey: "str_ThisWeekDriveMileage")
-        UserDefaults.standard.set(MainManager.shared.member_info.str_AvgFuelMileage, forKey: "str_AvgFuelMileage")
-        UserDefaults.standard.set(MainManager.shared.member_info.str_Car_Status_Seed, forKey: "str_Car_Status_Seed")
+        if UserDefaults.standard.object(forKey: "i_car_piker_select") != nil
+            { MainManager.shared.member_info.i_car_piker_select = defaults.integer(forKey: "i_car_piker_select") }
+        if UserDefaults.standard.object(forKey: "i_year_piker_select") != nil
+            { MainManager.shared.member_info.i_year_piker_select = defaults.integer(forKey: "i_year_piker_select") }
+        if UserDefaults.standard.object(forKey: "i_fuel_piker_select") != nil
+            { MainManager.shared.member_info.i_fuel_piker_select = defaults.integer(forKey: "i_fuel_piker_select") }
+
+        //총 주행거리, 당주 주행거리, 누적 연비, 당주 연비-----------------------------------------------------------------
+        if UserDefaults.standard.object(forKey: "str_TotalDriveMileage") != nil
+            { MainManager.shared.member_info.str_TotalDriveMileage = defaults.string(forKey: "str_TotalDriveMileage")! }
+        if UserDefaults.standard.object(forKey: "str_ThisWeekDriveMileage") != nil
+            { MainManager.shared.member_info.str_ThisWeekDriveMileage = defaults.string(forKey: "str_ThisWeekDriveMileage")! }
+        if UserDefaults.standard.object(forKey: "str_AvgFuelMileage") != nil
+            { MainManager.shared.member_info.str_AvgFuelMileage = defaults.string(forKey: "str_AvgFuelMileage")! }
+        if UserDefaults.standard.object(forKey: "str_Car_Status_Seed") != nil
+            { MainManager.shared.member_info.str_Car_Status_Seed = defaults.string(forKey: "str_Car_Status_Seed")! }
+        
+        // PIN CODE
+        if UserDefaults.standard.object(forKey: "str_BLE_PinCode") != nil
+            { MainManager.shared.member_info.str_BLE_PinCode = defaults.string(forKey: "str_BLE_PinCode")! }
+
+        // MAC_ADDRESS
+        if UserDefaults.standard.object(forKey: "carFriendsMacAdd") != nil
+            { MainManager.shared.member_info.carFriendsMacAdd = defaults.string(forKey: "carFriendsMacAdd")! }
+
+        
+
+        
         
         print("_____ 회원가입된 정보 불러오기 _____")
         print(MainManager.shared.member_info.str_id_nick)

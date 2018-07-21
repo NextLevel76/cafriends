@@ -61,6 +61,13 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     var carFriendsPeripheral: CBPeripheral?
     var myCharacteristic: CBCharacteristic?
     
+    // 카프렌즈 장치들 저장
+    var peripherals: [CBPeripheral?] = []
+    // 신호 세기
+    var signalStrengthBle: [NSNumber?] = []
+    
+    var bleSerachDelayStopState:Int = 0
+    
     
     
     
@@ -772,11 +779,12 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             a02_12_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_on[tempTag]), for: UIControlState.normal )
             // 시간 세팅
             let nsDataT:NSData = MainManager.shared.member_info.setRES_RVS_TIME( MainManager.shared.member_info.strCar_Status_ReservedRVSTime )
-            self.carFriendsPeripheral?.writeValue( nsDataT as Data, for: self.myCharacteristic!, type: CBCharacteristicWriteType.withoutResponse)
+            
+            setDataBLE( nsDataT )
             sleep(1)
             // 예약설정
             let nsData:NSData = MainManager.shared.member_info.setRES_RVS( "1" )
-            self.carFriendsPeripheral?.writeValue( nsData as Data, for: self.myCharacteristic!, type: CBCharacteristicWriteType.withoutResponse)
+            setDataBLE( nsData )
         }
         
         
@@ -809,6 +817,19 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
                 a01_01_pin_view.field_pin04.becomeFirstResponder() // 4번으로 포커스 이동
             }
         }
+        
+        
+        
+        // 카프렌즈 찾았다
+        if( bleSerachDelayStopState == 1 ) {
+            
+            // 3초 딜레이 시작 후 접속 여기서 timerActionSelectCarFriendBLE_Start, bleSerachDelayStopState
+            timerCarFriendStart = Timer.scheduledTimer(timeInterval: 3, target: self, selector: #selector(timerActionSelectCarFriendBLE_Start), userInfo: nil, repeats: false)
+            bleSerachDelayStopState = 2
+        }
+        
+        
+        
     }
     
     
@@ -838,6 +859,8 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             initCarDataSaveDB()
         }
     }
+    
+    
     
     
     //
@@ -902,6 +925,8 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
                 }
         }
     }
+    
+    
     
     
     
@@ -1009,6 +1034,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
                 }
         }
     }
+    
     
     
     
@@ -1149,7 +1175,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
                         
                         print( "Key 가져오기 성공.!" )
                         let nsData:NSData = MainManager.shared.member_info.setKEY( Result )
-                        self.carFriendsPeripheral?.writeValue( nsData as Data, for: self.myCharacteristic!, type: CBCharacteristicWriteType.withoutResponse)
+                        self.setDataBLE( nsData )
                         print( "Key값 BLE set .!" )
                     }
                     else {
@@ -1190,11 +1216,12 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             else {
                 // 카프렌즈 연결중
                 a01_01_view.btn_kit_connect.setBackgroundImage(UIImage(named:"a_01_01_unlink"), for: .normal)
-                self.a01_01_view.label_kit_connect.text = "연결중..."
+                self.a01_01_view.label_kit_connect.text = "감지안됨"
                 self.a01_01_view.label_kit_connect.textColor = UIColor.red
             }
         }
     }
+    
     
     // 변수 체크 딜레이 함수
     func bleStatusCheckDelay() {
@@ -1532,6 +1559,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     var timer2 = Timer()
     var timerBLE = Timer()
     var timerDATETIME = Timer()
+    var timerCarFriendStart = Timer()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -1664,6 +1692,8 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         a01_01_pin_view.field_pin04.delegate = self
         
         a01_01_pin_view.label_pin_num_notis.text = "핀번호를 입력 하세요.!"
+        
+        
         
         
         
@@ -2970,11 +3000,14 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
                                     // Segue -> 사용 팝업뷰컨트롤러 띠우기
                                     self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
                                     self.a01_01_pin_view.bPin_input_location = false
+
+                                    // 클라 저장
+                                    UserDefaults.standard.set(MainManager.shared.member_info.str_BLE_PinCode, forKey: "str_BLE_PinCode")
                                     
                                     print("pin save")
                                     MainManager.shared.member_info.str_BLE_PinCode = pin_num
                                     let nsData:NSData = MainManager.shared.member_info.setPIN_CODE( pin_num )
-                                    self.carFriendsPeripheral?.writeValue( nsData as Data, for: self.myCharacteristic!, type: CBCharacteristicWriteType.withoutResponse)
+                                    self.setDataBLE( nsData )
                                    
                                     print( "PIN 번호 수정 성공" )
                                 }
@@ -3724,21 +3757,21 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         case 0:
 
             let nsData:NSData = MainManager.shared.member_info.setDOORLOCK( setData )
-            self.carFriendsPeripheral?.writeValue( nsData as Data, for: self.myCharacteristic!, type: CBCharacteristicWriteType.withoutResponse)
+            setDataBLE( nsData )
             MainManager.shared.member_info.bCar_Status_DoorLock = sender.isOn
             break
             
         case 1:
 
             let nsData:NSData = MainManager.shared.member_info.setHATCH( setData )
-            self.carFriendsPeripheral?.writeValue( nsData as Data, for: self.myCharacteristic!, type: CBCharacteristicWriteType.withoutResponse)
+            setDataBLE( nsData )
             MainManager.shared.member_info.bCar_Status_Hatch = sender.isOn
             break
             
         case 2:
             
             let nsData:NSData = MainManager.shared.member_info.setWINDOW( setData )
-            self.carFriendsPeripheral?.writeValue( nsData as Data, for: self.myCharacteristic!, type: CBCharacteristicWriteType.withoutResponse)
+            setDataBLE( nsData )
             MainManager.shared.member_info.bCar_Status_Window = sender.isOn
             break
             
@@ -3747,14 +3780,14 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
 
 
             let nsData:NSData = MainManager.shared.member_info.setSUNROOF( setData )
-            self.carFriendsPeripheral?.writeValue( nsData as Data, for: self.myCharacteristic!, type: CBCharacteristicWriteType.withoutResponse)
+            setDataBLE( nsData )
             MainManager.shared.member_info.bCar_Status_Sunroof = sender.isOn
             break
             
         case 4:
            
             let nsData:NSData = MainManager.shared.member_info.setRVS( setData )
-            self.carFriendsPeripheral?.writeValue( nsData as Data, for: self.myCharacteristic!, type: CBCharacteristicWriteType.withoutResponse)
+            setDataBLE( nsData )
             MainManager.shared.member_info.bCar_Status_RVS = sender.isOn
             break
             
@@ -3763,35 +3796,35 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
 
             
             let nsData:NSData = MainManager.shared.member_info.setKEYON( setData )
-            self.carFriendsPeripheral?.writeValue( nsData as Data, for: self.myCharacteristic!, type: CBCharacteristicWriteType.withoutResponse)
+            setDataBLE( nsData )
             MainManager.shared.member_info.bCar_Car_Status_IGN = sender.isOn
             break
             
         case 6:
 
             let nsData:NSData = MainManager.shared.member_info.setLOCKFOLDING( setData )
-            self.carFriendsPeripheral?.writeValue( nsData as Data, for: self.myCharacteristic!, type: CBCharacteristicWriteType.withoutResponse)
+            setDataBLE( nsData )
             MainManager.shared.member_info.bCar_Func_LockFolding = sender.isOn
             break
             
         case 7:
 
             let nsData:NSData = MainManager.shared.member_info.setAUTOWINDOWS( setData )
-            self.carFriendsPeripheral?.writeValue( nsData as Data, for: self.myCharacteristic!, type: CBCharacteristicWriteType.withoutResponse)
+            setDataBLE( nsData )
             MainManager.shared.member_info.bCar_Func_AutoWindowClose = sender.isOn
             break
             
         case 8:
 
             let nsData:NSData = MainManager.shared.member_info.setAUTOSUNROOF( setData )
-            self.carFriendsPeripheral?.writeValue( nsData as Data, for: self.myCharacteristic!, type: CBCharacteristicWriteType.withoutResponse)
+            setDataBLE( nsData )
             MainManager.shared.member_info.bCar_Func_AutoSunroofClose = sender.isOn
             break
             
         case 9:
            
             let nsData:NSData = MainManager.shared.member_info.setREVWINDOW( setData )
-            self.carFriendsPeripheral?.writeValue( nsData as Data, for: self.myCharacteristic!, type: CBCharacteristicWriteType.withoutResponse)
+            setDataBLE( nsData )
             MainManager.shared.member_info.bCar_Func_AutoWindowRevOpen = sender.isOn
             break
             
@@ -3803,7 +3836,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
            
                 // 예약 시동 On/OFF
                 let nsData:NSData = MainManager.shared.member_info.setRES_RVS( "0" )
-                self.carFriendsPeripheral?.writeValue( nsData as Data, for: self.myCharacteristic!, type: CBCharacteristicWriteType.withoutResponse)
+                setDataBLE( nsData )
             }
             
             break
@@ -4183,55 +4216,77 @@ extension AViewController: CBPeripheralDelegate, CBCentralManagerDelegate {
             print("central.state is .unknown")
             MainManager.shared.member_info.isBLE_ON = false
             MainManager.shared.member_info.isCAR_FRIENDS_CONNECT = false;
+            bleSerachDelayStopState = 0
         case .resetting:
             print("central.state is .resetting")
             MainManager.shared.member_info.isBLE_ON = false
             MainManager.shared.member_info.isCAR_FRIENDS_CONNECT = false;
+            bleSerachDelayStopState = 0
         case .unsupported:
             print("central.state is .unsupported")
             MainManager.shared.member_info.isBLE_ON = false
             MainManager.shared.member_info.isCAR_FRIENDS_CONNECT = false;
+            bleSerachDelayStopState = 0
         case .unauthorized:
             print("central.state is .unauthorized")
             MainManager.shared.member_info.isBLE_ON = false
             MainManager.shared.member_info.isCAR_FRIENDS_CONNECT = false;
+            bleSerachDelayStopState = 0
         case .poweredOff:
             print("central.state is .poweredOff")
             MainManager.shared.member_info.isBLE_ON = false
             MainManager.shared.member_info.isCAR_FRIENDS_CONNECT = false;
+            bleSerachDelayStopState = 0
         case .poweredOn:
             print("central.state is .poweredOn")
             MainManager.shared.member_info.isBLE_ON = true
-            // 블루투스 켜져 있다 스캔 시작
+            // 블루투스 켜져 있다 장비 스캔 시작
             centralManager.scanForPeripherals (withServices : nil )
             // A4992052-4B0D-3041-EABB-729B52C73924
         default:
             print("central.state is .other")
             MainManager.shared.member_info.isBLE_ON = false
             MainManager.shared.member_info.isCAR_FRIENDS_CONNECT = false;
+            bleSerachDelayStopState = 0
         }
     }
     
-    func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral,                    advertisementData: [String: Any], rssi RSSI: NSNumber) {
-        print(peripheral)
+    func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String: Any], rssi RSSI: NSNumber) {
+
+        // print("BLE 기기 신호세기\(RSSI)  ::  \(peripheral)")
         
-        if( peripheral.name == BEAN_NAME ) {
-            carFriendsPeripheral = peripheral
-            carFriendsPeripheral?.delegate = self
-            centralManager.stopScan()
-            centralManager.connect(carFriendsPeripheral!)
-            print("카프렌즈 찾음. 연결 시작")
-        }
-        else {
-            
-            print("카프렌즈 장치 못찾음")
-        }
+            if( peripheral.name == BEAN_NAME ) {
+                
+                // 카프렌즈를 하나 찾으면 3초 동안 다른 카프렌즈 기기를 찾아보고 연결 시작
+                if( bleSerachDelayStopState == 0 ) { bleSerachDelayStopState = 1 }
+                // 신호 세기 저장
+                signalStrengthBle.append(RSSI)
+                // 카프렌즈 저장
+                peripherals.append(peripheral)
+                
+                
+    //            peripherals.append(peripheral)
+                
+    //            carFriendsPeripheral = peripheral
+    //            carFriendsPeripheral?.delegate = self
+    //            centralManager.stopScan()
+    //            centralManager.connect(carFriendsPeripheral!)
+                
+                print("카프렌즈 BLE 기기 신호세기\(RSSI)  ::  \(peripheral)")
+                print("카프렌즈 찾음. 연결 시작")
+            }
+            else {
+
+                print("다른장치 BLE 기기 신호세기\(RSSI)  ::  \(peripheral)")
+            }
+        
     }
     
     // 장치의 서비스 목록 가져올수 있다
     func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
         
         MainManager.shared.member_info.isCAR_FRIENDS_CONNECT = true;
+        
         print("Connected! ")
         print("서비스 목록 가져오기")
         carFriendsPeripheral?.discoverServices(nil)
@@ -4251,7 +4306,12 @@ extension AViewController: CBPeripheralDelegate, CBCentralManagerDelegate {
             // 서비스 등록?
             peripheral.discoverCharacteristics( nil, for: service   )
         }
+        
+        // 카프렌즈 연결 되면 10초후   한번 실행
+        timerDATETIME = Timer.scheduledTimer(timeInterval: 10, target: self, selector: #selector(timerActionDATETIME), userInfo: nil, repeats: false)
     }
+    
+    
     
     
     func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
@@ -4317,11 +4377,13 @@ extension AViewController: CBPeripheralDelegate, CBCentralManagerDelegate {
     
     
     
+    
+    
     func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
         // Something disconnected, check to see if it's our peripheral
         // If so, clear active device/service
         
-        print( "___ didDisconnectPeripheral ___" )
+        print( "___ didDisconnectPeripheral 연결된 블루투스 장치 끊김(꺼짐) ___" )
         
         if peripheral == self.carFriendsPeripheral {
             
@@ -4329,6 +4391,7 @@ extension AViewController: CBPeripheralDelegate, CBCentralManagerDelegate {
             self.carFriendsPeripheral = nil
             self.myCharacteristic = nil
             //self.mySerview = nil
+            bleSerachDelayStopState = 0
         }
         
         // Scan for new devices using the function you initially connected to the perhipheral
@@ -4352,6 +4415,9 @@ extension AViewController: CBPeripheralDelegate, CBCentralManagerDelegate {
             centralManager.connect(peripheral , options: nil)
         }
     }
+    
+    
+    
     
     // 블루 투스 카프렌즈 연결 체크
     func isBLE_CAR_FRIENDS_CONNECT() -> Bool {
@@ -4377,6 +4443,98 @@ extension AViewController: CBPeripheralDelegate, CBCentralManagerDelegate {
         MainManager.shared.member_info.bCarStatusDelay = false
         MainManager.shared.member_info.carStatusDelayCount = 0
     }
+    
+    func setDataBLE(_ nsData:NSData ) {
+        // 블루투스 연결시 데이타 전송 실행
+        if( isBLE_CAR_FRIENDS_CONNECT() ) {
+            
+            self.carFriendsPeripheral?.writeValue( nsData as Data, for: self.myCharacteristic!, type: CBCharacteristicWriteType.withoutResponse)
+        }
+    }
+    
+    
+    
+    
+    // 카프렌즈 여러개이면 선택 접속
+    func timerActionSelectCarFriendBLE_Start() {
+        
+        //BLE 검색 중지
+        bleSerachDelayStopState = 3
+        
+//        //
+//        var bConnectFirst = false
+//        // 맥 주소 없다. 처음 접속
+//        if( MainManager.shared.member_info.carFriendsMacAdd.count == 0 ) {
+//
+//            bConnectFirst = true
+//        }
+        
+        // 카프렌즈 한개 그냥접속
+        if( peripherals.count == 1 ) {
+            
+            connectCarFriends(0)
+            print("_____ 카프렌즈 단일 Connect\(carFriendsPeripheral)")
+        }
+        // 카프렌즈 여러개
+        else if( peripherals.count > 1 ) {
+            
+            var isMacFind:Bool = false
+            
+            for i in 0..<peripherals.count {
+                
+                // 같은 맥주소 찾았다.
+                if( peripherals[i]?.identifier.uuidString == MainManager.shared.member_info.carFriendsMacAdd ) {
+                    
+                    connectCarFriends(i)
+                    print("_____ 카프렌즈 MAC FIND Connect\(carFriendsPeripheral)")
+                    isMacFind = true
+                }
+            }
+            
+            // 같은 맥주소 없다. 신호강도 젤 센걸로 접속
+            if( isMacFind == false ) {
+                
+                var tempSignalStrengthBle: [NSNumber?] = []
+                tempSignalStrengthBle = signalStrengthBle
+                // 오름차순 정렬 젤큰값 [0] 배열로 옮긴다.
+                tempSignalStrengthBle.reverse()
+                
+                var tempIndex:Int = 0
+                for i in 0..<signalStrengthBle.count {
+                    
+                    if( tempSignalStrengthBle[0]?.intValue == signalStrengthBle[i]?.intValue ) {
+                        // 원래 배열에서 인덱스 찾는다.
+                        tempIndex = i
+                    }
+                }
+                
+                connectCarFriends(tempIndex)
+                print("_____ 카프렌즈 SignalStrength Connect\(carFriendsPeripheral)")
+            }
+        }
+
+        
+        //            carFriendsPeripheral = peripheral
+        //            carFriendsPeripheral?.delegate = self
+        //            centralManager.stopScan()
+        //            centralManager.connect(carFriendsPeripheral!)
+    }
+    
+    func connectCarFriends(_ index:Int) {
+        
+        // 카프렌즈 저장
+        carFriendsPeripheral = peripherals[index]
+        
+        // 맥주소 저장
+        MainManager.shared.member_info.carFriendsMacAdd = (carFriendsPeripheral?.identifier.uuidString)!
+        UserDefaults.standard.set(MainManager.shared.member_info.carFriendsMacAdd, forKey: "carFriendsMacAdd")
+        
+        // 스캔 중지 연결
+        carFriendsPeripheral?.delegate = self
+        centralManager.stopScan()
+        centralManager.connect(carFriendsPeripheral!)
+    }
+    
     
 //    MainManager.shared.getDateTimeSendBLE()
     

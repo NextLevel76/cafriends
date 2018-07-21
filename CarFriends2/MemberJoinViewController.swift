@@ -137,25 +137,7 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
             return
         }
         
-        /*
-         // 값 쓰기
-         let defaults = UserDefaults.standard
-         defaults.set(25, forKey: "Age")
-         defaults.set(true, forKey: "UseTouchID")
-         defaults.set(CGFloat.pi, forKey: "Pi")
-         defaults.set("Paul Hudson", forKey: "Name")
-         defaults.set(Date(), forKey: "LastRun")
-         
-         // 값 읽기
-         let age = defaults.integer(forKey: "Age")
-         let useTouchID = defaults.bool(forKey: "UseTouchID")
-         let pi = defaults.double(forKey: "Pi")
-         */
-        
-        //        let defaults = UserDefaults.standard
-        //        let age = defaults.integer(forKey: "iMemberJoinState")
-        //        print("age = \(age)")
-        //        //iMemberJoinState
+       
         
         
         
