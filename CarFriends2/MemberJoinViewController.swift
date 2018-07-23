@@ -497,8 +497,7 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
             //login.php?Req=DupCheck&mb_nick=닉네임
             // field_nick_input.text
             
-            self.view.bringSubview(toFront: activityIndicator)
-            activityIndicator.startAnimating()
+            ToastIndicatorView.shared.setup(self.view, txt_msg: "")
             
             //Alamofire.request("http://seraphm.cafe24.com/login.php", method: .post, parameters: ["ID": "admin", "Pass":"admin"])
             
@@ -519,7 +518,7 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
                 
                 .responseJSON { response in
                     
-                    self.activityIndicator.stopAnimating()
+                    ToastIndicatorView.shared.close()
                     
                     print(response)
                     //to get status code
@@ -585,10 +584,7 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
         }
         else if( bTimeCheckStart == false ) {
             
-            
-            
             let tempString01 = field_phone_01.text as String?
-            
             //전번 저장
             MainManager.shared.member_info.str_id_phone_num = tempString01!
             
@@ -599,7 +595,6 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
                 return
             }
             
-            
             // 시간 카운트 시작
             bTimeCheckStart = true
             certifi_count = 60 // 3분
@@ -607,18 +602,19 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
             MainManager.shared.str_certifi_notis = "휴대전화에 전송된 인증번호를 입력해 주세요."
             self.performSegue(withIdentifier: "joinPopSegue", sender: self)
             
-            
             // login.php?Req=PhoneCheck&PhoneNo=핸폰번호
             let phone_num = MainManager.shared.member_info.str_id_phone_num // 문자열 타입 벗기기?
             let parameters = [
                 "Req": "PhoneCheck",
                 "PhoneNo": phone_num
             ]
-            print(phone_num)
+            
+            ToastIndicatorView.shared.setup(self.view, txt_msg: "")
+            
             Alamofire.request("http://seraphm.cafe24.com/login.php", method: .post, parameters: parameters)
                 .responseJSON { response in
                     
-                    self.activityIndicator.stopAnimating()
+                    ToastIndicatorView.shared.close()
                     
                     print(response)
                     //to get status code
@@ -732,11 +728,14 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
             "mb_6": "",
             "mb_7": ""
         ]
+        
         print(phone_num)
+        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
+        
         Alamofire.request("http://seraphm.cafe24.com/login.php", method: .post, parameters: parameters)
             .responseJSON { response in
                 
-                self.activityIndicator.stopAnimating()
+                ToastIndicatorView.shared.close()
                 
                 print(response)
                 //to get status code
@@ -786,33 +785,6 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
     
     // 자동차 정보 모두 입력 -> 회원가입
     @IBAction func pressed_carInfo_Ok(_ sender: UIButton) {
-        
-        /*
-         //차량등록번호 (번호판)
-         @IBOutlet weak var field_certifi_num: UITextField!
-         // 차대번호
-         @IBOutlet weak var field_car_dae_num: UITextField!
-         //차종
-         @IBOutlet weak var field_car_kind: UITextField!
-         // 년식
-         @IBOutlet weak var field_car_year: UITextField!
-         // 연료 타입
-         @IBOutlet weak var field_car_fuel: UITextField!
-         @IBOutlet weak var field_car_tot_km: UITextField!
-         @IBOutlet weak var field_car_km_L: UITextField!
-         
-         var str_password = ""
-         var str_id_nick = ""
-         var str_id_emain = ""
-         var str_id_phone_num = ""
-         var str_car_kind = ""
-         var str_car_year = ""
-         var str_car_dae_num = ""
-         var str_fuel_kind = ""
-         var str_car_plate_num = ""
-         var str_car_tot_km = ""
-         var str_car_fuel_eff = ""
-         */
         
         //전번 저장
         // MainManager.shared.member_info.str_id_nick =  field_nick_input.text!// 문자열 타입 벗기기?
@@ -875,10 +847,13 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
                 "mb_7": (MainManager.shared.member_info.str_AvgFuelMileage)
             ]
             print(phone_num)
+            
+            ToastIndicatorView.shared.setup(self.view, txt_msg: "")
+            
             Alamofire.request("http://seraphm.cafe24.com/login.php", method: .post, parameters: parameters)
                 .responseJSON { response in
                     
-                    self.activityIndicator.stopAnimating()
+                    ToastIndicatorView.shared.close()
                     
                     print(response)
                     //to get status code

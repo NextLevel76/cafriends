@@ -184,7 +184,7 @@ class BlueToothViewController: UIViewController {
         // 카 리스트 데이타 받았다 리스트 획득. 필요 없다
         if( MainManager.shared.bCarListRequest == true ) { return }
         
-        self.view.bringSubview(toFront: activityIndicator)
+        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
         
         // 피커뷰 2000~ 2018 년 리스트를 만든다.
         getTime()
@@ -199,7 +199,7 @@ class BlueToothViewController: UIViewController {
         Alamofire.request("http://seraphm.cafe24.com/database.php", method: .post, parameters: parameters)
             .responseJSON { response in
                 
-                self.activityIndicator.stopAnimating()
+                ToastIndicatorView.shared.close()
                 print(response)
                 //to get status code
                 //"Res":"GetServiceList","Result":"D/B 리턴코드","Service_Name":"","Repair_Period_Milage":"","Repair_Period_Runingtime":"","CheckOrChange":"","Desc":"","Icon_Url":""
@@ -339,10 +339,13 @@ class BlueToothViewController: UIViewController {
         if UserDefaults.standard.object(forKey: "str_BLE_PinCode") != nil
             { MainManager.shared.member_info.str_BLE_PinCode = defaults.string(forKey: "str_BLE_PinCode")! }
 
-        // MAC_ADDRESS
+        // BLE_MAC_ADDRESS
         if UserDefaults.standard.object(forKey: "carFriendsMacAdd") != nil
             { MainManager.shared.member_info.carFriendsMacAdd = defaults.string(forKey: "carFriendsMacAdd")! }
 
+        
+
+        
         
 
         

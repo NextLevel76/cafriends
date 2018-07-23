@@ -10,5 +10,13 @@
             </PersistentString>
          </PersistentStrings>
       </ContextState>
+      <ContextState
+         contextName = "AViewController.centralManager(_:didDiscover:advertisementData:rssi:):AViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "bleSerachDelayStopState">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
    </ContextStates>
 </VariablesViewState>

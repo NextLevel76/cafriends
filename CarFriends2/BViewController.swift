@@ -28,7 +28,7 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
         }
     }
     
-    var iWebStart:Int = 0 // 0
+
     
     var bHideSubMenu = false
     var subMenuViewHeight:CGFloat = 0.0
@@ -45,6 +45,7 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
     
     @IBOutlet weak var btn_b01: UIButton!
     @IBOutlet weak var btn_b02: UIButton!
+    @IBOutlet weak var btn_b03: UIButton!
     
     
     @IBOutlet var b01_ScrollMenuView: B01_ScrollMenu!
@@ -152,8 +153,8 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
     // blue001 / 01012345678
     func userLogin() {
         
-        self.view.bringSubview(toFront: activityIndicator)
-        activityIndicator.startAnimating()
+        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
+        
         // login.php?Req=Login&ID=아이디&Pass=패스워드
         let parameters = [
             "Req": "Login",
@@ -165,7 +166,9 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
         Alamofire.request("http://seraphm.cafe24.com/login.php", method: .post, parameters: parameters)
             .responseJSON { response in
                 
-                self.activityIndicator.stopAnimating()
+                // self.activityIndicator.stopAnimating()
+                ToastIndicatorView.shared.close()
+                
                 print(response)
                 //to get status code
                 if let status = response.response?.statusCode {
@@ -282,9 +285,8 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
     }
     
     
+    // 카프렌즈 단말기
     @IBAction func pressed_b_01(_ sender: UIButton) {
-        
-        
         
         /*
         let url = URL(string: "https://m.naver.com/" )
@@ -297,18 +299,10 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
         
         self.view.bringSubview(toFront: b01_ScrollMenuView)
         
-        
-        
-        
-        
-        
-        
-        
     }
     
-    
+    // 차량전용품
     @IBAction func pressed_b_02(_ sender: UIButton) {
-        
         
         
         /*
@@ -321,9 +315,18 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
          */
         
         self.view.bringSubview(toFront: b02_ScrollMenuView)
-        
     }
     
+    
+    // 전문 대리점
+    @IBAction func pressed_b_03(_ sender: UIButton) {
+        
+        let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=B_2_1&sca=스파크"
+        let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
+        let request = URLRequest(url: url!)
+        webView.load(request)
+        
+    }
     
     
     
@@ -369,10 +372,7 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
     
     func b01MenuBtnAction(_ sender: UIButton) {
         
-        if( iWebStart < 2 ) { return }
-        
-        self.view.bringSubview(toFront: activityIndicator)
-        activityIndicator.startAnimating()
+       ToastIndicatorView.shared.setup(self.view, txt_msg: "")
         
         let btn_image = ["카프렌즈 단말기","실내용품","외장용품","오일류","튜닝","계절용품"]
         
@@ -462,42 +462,7 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
 
 
         
-        
-        /*
- 
- self.view.bringSubview(toFront: activityIndicator)
- self.activityIndicator.startAnimating()
-
-  //Alamofire.request("http://seraphm.cafe24.com/login_0613.php", method: .post, parameters: ["ID": "admin", "Pass":"admin"], encoding: JSONEncoding.default)
-        Alamofire.request("http://seraphm.cafe24.com/login.php", method: .post, parameters: ["Req":"Login","ID": "admin", "Pass":"admin"], encoding: JSONEncoding.default)
-//        Alamofire.request("https://api.androidhive.info/contacts/")
- .responseJSON { response in
- 
- self.activityIndicator.stopAnimating()
- 
- print(response)
- //to get status code
- if let status = response.response?.statusCode {
- switch(status){
- case 201:
- print("example success")
- default:
- print("error with response status: \(status)")
- }
- }
- //to get JSON return value
- 
- if let json = try? JSON(response.result.value) {
- 
-    print(json["Result"])
-    print(json["1"])
-    print(json["0"][0])
-    print(json["1"][1])
- 
- }
- }
- 
-*/
+      
         
         
         /*
@@ -580,10 +545,9 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
     
     func b02MenuBtnAction(_ sender: UIButton) {
         
-        if( iWebStart < 2 ) { return }
+
         
-        self.view.bringSubview(toFront: activityIndicator)
-        activityIndicator.startAnimating()
+        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
         
         
         let btn_image = ["서울,경기","인천,부천","대전,충청","전주,전북","광주,전남","대구,경북","원주,강원","제주도"]
@@ -677,50 +641,34 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
     // 웹뷰 딜리게이트 함수들
     // 페이지 로딩 시
     func webView(_ webView: WKWebView, didCommit navigation: WKNavigation!) {
-        activityIndicator.stopAnimating()
+        
+        ToastIndicatorView.shared.close()
+        //activityIndicator.stopAnimating()
         print("Webview loading");
     }
-    
     /*
      * 페이지 로딩완료 Event
      */
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-        activityIndicator.stopAnimating()
         
-       
-       
-        // 첫번째 화면이 다 로딩되면 다른 버튼 클릭 동작 가능하게
-        if( iWebStart == 1 ) {
-            
-            iWebStart = 2
-        }
-        
+        //activityIndicator.stopAnimating()
+        ToastIndicatorView.shared.close()
         print("Webview did finish load");
-        
     }
     
     func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
         
-        //self.view.bringSubview(toFront: activityIndicator)
-        //activityIndicator.startAnimating()
-        
         print("Webview start");
-        
-        
+        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
         // 첫번째 화면이 다 로딩되면 다른 버튼 클릭 동작 가능하게
-        if( iWebStart == 0 ) {
-            
-            self.view.bringSubview(toFront: activityIndicator)
-            activityIndicator.startAnimating()
-            iWebStart = 1
-        }
         
-    }
-    func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
-        activityIndicator.stopAnimating()
-        print("Webview err");
     }
     
+    func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
+        
+        ToastIndicatorView.shared.close()
+        print("Webview err");
+    }
     
 //    출처: http://cescjuno.tistory.com/entry/Swift-WKWebView의-Delegate [개발주노]
     
@@ -748,8 +696,13 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
         // 스크롤 딜리게이트 연결
         self.webView.scrollView.delegate = self
         
-        self.view.bringSubview(toFront: activityIndicator)
-        activityIndicator.startAnimating()
+        //self.view.bringSubview(toFront: activityIndicator)
+        //activityIndicator.startAnimating()
+        
+        
+        
+        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
+        
         let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=B_1_1&wr_id=1"
         let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
         let request = URLRequest(url: url! )
@@ -760,7 +713,6 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
         webViewChangeRect = webView.frame
         
         self.view.bringSubview(toFront: b01_ScrollMenuView)
-        
     }
     
     

@@ -143,7 +143,6 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
     
     
     
-    
 //    // 버튼 이동 함수
 //    func moveButton( btn: UIButton ) {
 //        btn.center.y += 300
@@ -228,8 +227,7 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
     // blue001 / 01012345678
     func userLogin() {
         
-        self.view.bringSubview(toFront: activityIndicator)
-        activityIndicator.startAnimating()
+        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
         // login.php?Req=Login&ID=아이디&Pass=패스워드
         let parameters = [
             "Req": "Login",
@@ -241,7 +239,7 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
         Alamofire.request("http://seraphm.cafe24.com/login.php", method: .post, parameters: parameters)
             .responseJSON { response in
 
-                self.activityIndicator.stopAnimating()
+                ToastIndicatorView.shared.close()
                 print(response)
                 //to get status code
                 if let status = response.response?.statusCode {
@@ -487,6 +485,8 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
         self.view.bringSubview(toFront: activityIndicator)
         activityIndicator.startAnimating()
         
+        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
+        
         menuView_c01.btn_c01_01.setTitleColor( UIColor.black, for: .normal )
         menuView_c01.btn_c01_02.setTitleColor( UIColor.black, for: .normal )
         menuView_c01.btn_c01_03.setTitleColor( UIColor.black, for: .normal )
@@ -546,8 +546,7 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
         if( iWebStart < 2 ) { return }
         
         
-        self.view.bringSubview(toFront: activityIndicator)
-        activityIndicator.startAnimating()
+        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
         
         
         let btn_image = ["서울,경기","인천,부천","대전,충청","전주,전북","광주,전남","대구,경북","원주,강원","제주도"]
@@ -646,8 +645,7 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
         if( iWebStart < 2 ) { return }
         
         
-        self.view.bringSubview(toFront: activityIndicator)
-        activityIndicator.startAnimating()
+        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
 
         
         menuView_c03.btn_c03_01.setTitleColor( UIColor.black, for: .normal )
@@ -778,7 +776,9 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
     // 웹뷰 딜리게이트 함수들
     // 페이지 로딩 시
     func webView(_ webView: WKWebView, didCommit navigation: WKNavigation!) {
-        activityIndicator.stopAnimating()
+        
+        ToastIndicatorView.shared.close()
+//        activityIndicator.stopAnimating()
         print("Webview loading");
     }
     
@@ -786,14 +786,9 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
      * 페이지 로딩완료 Event
      */
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-        activityIndicator.stopAnimating()
         
-        
-        // 첫번째 화면이 다 로딩되면 다른 버튼 클릭 동작 가능하게
-        if( iWebStart == 1 ) {
-            
-            iWebStart = 2
-        }
+        ToastIndicatorView.shared.close()
+//        activityIndicator.stopAnimating()
         
         print("Webview did finish load");
     }
@@ -801,19 +796,21 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
     func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
         
         
-        
         print("Webview start");
+        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
         // 첫번째 화면이 다 로딩되면 다른 버튼 클릭 동작 가능하게
-        if( iWebStart == 0 ) {
-            
-            self.view.bringSubview(toFront: activityIndicator)
-            activityIndicator.startAnimating()
-            iWebStart = 1
-        }
+//        if( iWebStart == 0 ) {
+//
+//            self.view.bringSubview(toFront: activityIndicator)
+//            activityIndicator.startAnimating()
+//            iWebStart = 1
+//        }
         
     }
     func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
-        activityIndicator.stopAnimating()
+        
+        ToastIndicatorView.shared.close()
+        // activityIndicator.stopAnimating()
         print("Webview err");
     }
     
@@ -851,6 +848,9 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
         
         // 스크롤 딜리게이트 연결
         self.webView.scrollView.delegate = self
+        
+        
+        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
         
         //self.view.bringSubview(toFront: activityIndicator)
         //activityIndicator.startAnimating()

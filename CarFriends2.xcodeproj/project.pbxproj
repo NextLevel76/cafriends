@@ -71,6 +71,7 @@
 		CFC2627520FDD748008527C9 /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = CFC2627220FDD747008527C9 /* MBProgressHUD.m */; };
 		CFC2627620FDD748008527C9 /* ScannerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFC2627320FDD748008527C9 /* ScannerViewController.swift */; };
 		CFC2627720FDD748008527C9 /* BluetoothSerial.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFC2627420FDD748008527C9 /* BluetoothSerial.swift */; };
+		CFCBF69E2104588F00E3A71D /* ToastIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFCBF69D2104588F00E3A71D /* ToastIndicatorView.swift */; };
 		CFEF79F420DE081C0060EC5E /* A01_01_ScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFEF79F320DE081C0060EC5E /* A01_01_ScrollView.swift */; };
 		CFF258F320DD38FB00F543A1 /* A01_01_Pin_View.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFF258F120DD38FA00F543A1 /* A01_01_Pin_View.swift */; };
 		CFF258F420DD38FB00F543A1 /* A01_01_InfoMod_View.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFF258F220DD38FB00F543A1 /* A01_01_InfoMod_View.swift */; };
@@ -287,6 +288,7 @@
 		CFC2627320FDD748008527C9 /* ScannerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScannerViewController.swift; sourceTree = "<group>"; };
 		CFC2627420FDD748008527C9 /* BluetoothSerial.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BluetoothSerial.swift; sourceTree = "<group>"; };
 		CFC2627920FDE3DC008527C9 /* CarFriends2-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "CarFriends2-Bridging-Header.h"; path = "New Group/CarFriends2-Bridging-Header.h"; sourceTree = "<group>"; };
+		CFCBF69D2104588F00E3A71D /* ToastIndicatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastIndicatorView.swift; sourceTree = "<group>"; };
 		CFEF79F320DE081C0060EC5E /* A01_01_ScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = A01_01_ScrollView.swift; sourceTree = "<group>"; };
 		CFF258F120DD38FA00F543A1 /* A01_01_Pin_View.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = A01_01_Pin_View.swift; sourceTree = "<group>"; };
 		CFF258F220DD38FB00F543A1 /* A01_01_InfoMod_View.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = A01_01_InfoMod_View.swift; sourceTree = "<group>"; };
@@ -442,6 +444,7 @@
 				CF8A8B5620D8E7020083010E /* GraphView.swift */,
 				CF44536120D67D9400B89E00 /* RoundUIView.swift */,
 				CF7D8E8120E1149C008263A9 /* ToastView.swift */,
+				CFCBF69D2104588F00E3A71D /* ToastIndicatorView.swift */,
 				CFC2627920FDE3DC008527C9 /* CarFriends2-Bridging-Header.h */,
 			);
 			path = CarFriends2;
@@ -736,6 +739,7 @@
 				CF2CCC2920B90F1E00AA97D9 /* A01_04_View.swift in Sources */,
 				CF3BA4A220BA5E3700419770 /* A02_08_View.swift in Sources */,
 				CF3BA49E20BA5E3700419770 /* A02_02_View.swift in Sources */,
+				CFCBF69E2104588F00E3A71D /* ToastIndicatorView.swift in Sources */,
 				CF8DAF7B20CCF29200D6FF00 /* MainManager.swift in Sources */,
 				CFB0724420E2328A00EA6FCB /* A02_12_View.swift in Sources */,
 				CFC2627620FDD748008527C9 /* ScannerViewController.swift in Sources */,

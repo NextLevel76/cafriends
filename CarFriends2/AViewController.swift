@@ -54,6 +54,8 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     //------------------------------------------------------------------------------------------------
     // CORE_BLUE_TOOTH
     
+    var isMoveSceneDisConnectBLE:Bool = false
+    
     var centralManager: CBCentralManager!
     let BEAN_NAME = "BT05"
     /// The peripheral the user has selected
@@ -292,13 +294,41 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     
     @IBAction func pressedB(_ sender: UIButton) {
         
+        if( MainManager.shared.member_info.isCAR_FRIENDS_CONNECT == true ) {
+            
+            // 블루투스 끊기, 끊김 딜리게이트 호출
+            centralManager.cancelPeripheralConnection(self.carFriendsPeripheral!)
+            self.carFriendsPeripheral = nil
+            self.myCharacteristic = nil
+            //self.mySerview = nil
+            bleSerachDelayStopState = 0
+            
+            
+            isMoveSceneDisConnectBLE = true
+        }
+
+
+        
         let myView = self.storyboard?.instantiateViewController(withIdentifier: "b00") as! BViewController
         self.present(myView, animated: true, completion: nil)
-        
     }
     
     
+    
+    
     @IBAction func pressedC(_ sender: UIButton) {
+        
+        if( MainManager.shared.member_info.isCAR_FRIENDS_CONNECT == true ) {
+            
+            // 블루투스 끊기, 끊김 딜리게이트 호출
+            centralManager.cancelPeripheralConnection(self.carFriendsPeripheral!)
+            self.carFriendsPeripheral = nil
+            self.myCharacteristic = nil
+            //self.mySerview = nil
+            bleSerachDelayStopState = 0
+            
+            isMoveSceneDisConnectBLE = true
+        }
         
         let myView = self.storyboard?.instantiateViewController(withIdentifier: "c00") as! CViewController
         self.present(myView, animated: true, completion: nil)
@@ -885,7 +915,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     
     func setTotalDriveMileageDB() {
         
-        self.activityIndicator.startAnimating()
+        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
         // database.php?Req=SetTotalDriveMileage&DriveMileage=주행거리
         let parameters = [
             "Req": "SetTotalDriveMileage",
@@ -894,7 +924,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         Alamofire.request("http://seraphm.cafe24.com/database.php", method: .post, parameters: parameters)
             .responseJSON { response in
                 
-                self.activityIndicator.stopAnimating()
+                ToastIndicatorView.shared.close()
                 print(response)
                 //to get status code
                 if let status = response.response?.statusCode {
@@ -948,7 +978,8 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         MainManager.shared.member_info.str_ThisWeekDriveMileage = String(tempMileage)
         
         
-        self.activityIndicator.startAnimating()
+
+        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
         // database.php?Req=AddDriveMileage&CheckDate=yyyy-mm-dd&DriveMileage=주행거리
         let parameters = [
             "Req": "AddDriveMileage",
@@ -958,7 +989,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         Alamofire.request("http://seraphm.cafe24.com/database.php", method: .post, parameters: parameters)
             .responseJSON { response in
                 
-                self.activityIndicator.stopAnimating()
+                ToastIndicatorView.shared.close()
                 print(response)
                 //to get status code
                 if let status = response.response?.statusCode {
@@ -1000,10 +1031,13 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             "Req": "SetAvgFuelMileage",
             "FuelMileage":MainManager.shared.member_info.str_AvgFuelMileage ]
         
+        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
+        
         Alamofire.request("http://seraphm.cafe24.com/database.php", method: .post, parameters: parameters)
             .responseJSON { response in
                 
-                self.activityIndicator.stopAnimating()
+                ToastIndicatorView.shared.close()
+                
                 print(response)
                 //to get status code
                 if let status = response.response?.statusCode {
@@ -1055,17 +1089,19 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         MainManager.shared.member_info.str_ThisWeekFuelMileage = String(tempMileage)
         
         
-        self.activityIndicator.startAnimating()
+
         // database.php?Req=AddFuelMileage&CheckDate=yyyy-mm-dd&FuelMileage=연비 (10.1)
         let parameters = [
             "Req": "AddFuelMileage",
             "CheckDate":dateTime,
             "FuelMileage": MainManager.shared.member_info.str_ThisWeekFuelMileage ]
         
+        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
+        
         Alamofire.request("http://seraphm.cafe24.com/database.php", method: .post, parameters: parameters)
             .responseJSON { response in
                 
-                self.activityIndicator.stopAnimating()
+                ToastIndicatorView.shared.close()
                 print(response)
                 //to get status code
                 if let status = response.response?.statusCode {
@@ -1101,7 +1137,8 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     
     func setSeedDB() {
         
-        self.activityIndicator.startAnimating()
+        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
+        
         // database.php?Req=SetSeed&Sed=
         let parameters = [
             "Req": "SetSeed",
@@ -1110,7 +1147,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         Alamofire.request("http://seraphm.cafe24.com/database.php", method: .post, parameters: parameters)
             .responseJSON { response in
                 
-                self.activityIndicator.stopAnimating()
+                ToastIndicatorView.shared.close()
                 print(response)
                 //to get status code
                 if let status = response.response?.statusCode {
@@ -1143,7 +1180,9 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     
     func getKeyDB() {
         
-        self.activityIndicator.startAnimating()
+
+        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
+        
         // database.php?Req=GetKey
         let parameters = [
             "Req": "GetKey"]
@@ -1151,7 +1190,8 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         Alamofire.request("http://seraphm.cafe24.com/database.php", method: .post, parameters: parameters)
             .responseJSON { response in
                 
-                self.activityIndicator.stopAnimating()
+
+                ToastIndicatorView.shared.close()
                 print(response)
                 //to get status code
                 if let status = response.response?.statusCode {
@@ -1183,15 +1223,10 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
                         print( "Key 가져오기 실패.!" )
                     }
                    
-                    print( Result )
+                    // print( Result )
                 }
         }
     }
-    
-    
-    
-    
-    
     
     
     
@@ -1201,7 +1236,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         // 블루 투스 기기 꺼짐
         if( MainManager.shared.member_info.isBLE_ON == false ) {
             // 연결됨
-            a01_01_view.btn_kit_connect.setBackgroundImage(UIImage(named:"a_01_01_unlink"), for: .normal)
+            a01_01_view.btn_kit_connect.setBackgroundImage(UIImage(named:"a_01_01_link02"), for: .normal)
             self.a01_01_view.label_kit_connect.text = "블루투스 꺼짐"
             self.a01_01_view.label_kit_connect.textColor = UIColor.red
         }
@@ -1209,7 +1244,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             
             if( MainManager.shared.member_info.isCAR_FRIENDS_CONNECT == true ) {
                 // 연결됨
-                a01_01_view.btn_kit_connect.setBackgroundImage(UIImage(named:"a_01_01_link"), for: .normal)
+                a01_01_view.btn_kit_connect.setBackgroundImage(UIImage(named:"a_01_01_link01"), for: .normal)
                 self.a01_01_view.label_kit_connect.text = "연결 됨"
                 self.a01_01_view.label_kit_connect.textColor = UIColor(red: 41/256, green: 232/255, blue: 223/255, alpha: 1)
             }
@@ -1221,6 +1256,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             }
         }
     }
+    
     
     
     // 변수 체크 딜레이 함수
@@ -1251,24 +1287,15 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     
     
     
-    
-    
-    
-    
-    
-    
-    
 //    let sz_car_name = ["쉐보레","AE86","니차똥차","란에보","임프레자","람보르기니","부가티","포니2","엑셀런트","프라이드","벤츠"]
 //    let sz_car_year = ["2001","2002","2003","2004","2005","2006","2007","2008","2009","2010",
 //                       "2011","2012","2013","2014","2015","2016","2017","2018","2019","2020",
 //                       "2021","2022","2023","2024","2025","2026","2027","2028","2029","2030"]
     
-
     
     var pickerView = UIPickerView();    // 차종
     var pickerView2 = UIPickerView();   // 연식
     var pickerView3 = UIPickerView();   // 연료 타입
-    
     
     
     // A02 WEBVIEW
@@ -1565,6 +1592,8 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         super.viewDidLoad()
         
         
+        
+        
         // 인터넷 연결 체크
         if( MainManager.shared.isConnectCheck() == false ) {
             
@@ -1579,12 +1608,6 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         timer2 = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(timerAction2), userInfo: nil, repeats: true)
         // 2초
         timerBLE = Timer.scheduledTimer(timeInterval: 2, target: self, selector: #selector(timerActionBLE), userInfo: nil, repeats: true)
-        
-        
-        
-
-        
-        
         
         
         ////////////////////////////////////////////////////////// tableView Init
@@ -1883,16 +1906,14 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         
         // 핀번호 수정
         self.view.addSubview(a01_01_pin_view)
-        a01_01_pin_view.frame.origin.y = 41
+        a01_01_pin_view.frame.origin.y = 82
         // 회원 정보 수정
         self.view.addSubview(a01_01_info_mod_view)
-        a01_01_info_mod_view.frame.origin.y = 41
+        a01_01_info_mod_view.frame.origin.y = 82
         
         
         
-        
-        
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////////////////////
         // A02
         a02_ScrollBtnCreate()
         self.view.addSubview(a01_06_view)
@@ -1998,15 +2019,16 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         //            a01_01_view.frame = (a01_01_view.superview?.bounds)!
         
         
-        
         a01_04_viewInit()
-        
-        
         
         
         a01_ScrollMenuView.frame = MainManager.shared.initLoadChangeFrame(frame: a01_ScrollMenuView.frame)
         
         a01_01_view.frame = MainManager.shared.initLoadChangeFrame(frame: a01_01_view.frame)
+        a01_01_pin_view.frame = MainManager.shared.initLoadChangeFrame(frame: a01_01_pin_view.frame)
+        a01_01_info_mod_view.frame = MainManager.shared.initLoadChangeFrame(frame: a01_01_info_mod_view.frame)
+        
+        
         a01_02_view.frame = MainManager.shared.initLoadChangeFrame(frame: a01_02_view.frame)
         a01_03_view.frame = MainManager.shared.initLoadChangeFrame(frame: a01_03_view.frame)
         a01_04_view.frame = MainManager.shared.initLoadChangeFrame(frame: a01_04_view.frame)
@@ -2092,6 +2114,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         a01_04_view.progress_fuel.transform = CGAffineTransform(scaleX: 1.0, y: 7.0)
         a01_04_view.progress_battery.transform = CGAffineTransform(scaleX: 1.0, y: 7.0)
         a01_04_view.progress_fuel.setProgress(0.3, animated: false)
+
         
         a01_04_view.btn_fuel_state.backgroundColor = UIColor(red: 245/256, green: 245/255, blue: 245/255, alpha: 1)
         a01_04_view.btn_battery_state.backgroundColor = UIColor(red: 245/256, green: 245/255, blue: 245/255, alpha: 1)
@@ -2186,7 +2209,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         if ( tableView.tag == 10 ) {
             
             // 테이블 뷰 셀 세팅
-            print("05_table_cell")
+           // print("05_table_cell")
             
             let cell = tableView_A01_05.dequeueReusableCell(withIdentifier: "a01_05_Cell") as! CustomA0105TableViewCell
             
@@ -2224,7 +2247,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         }
         else if ( tableView.tag == 11 ) {
             
-            print("06_table_cell")
+           // print("06_table_cell")
             let cell = tableView_A01_06.dequeueReusableCell(withIdentifier: "a01_06_Cell") as! CustomA0106TableViewCell
             cell.image_icon.image = UIImage(named: a01_05_image[indexPath.row])
             
@@ -2244,7 +2267,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
 //        P000F-00
         else if ( tableView.tag == 12 ) {
             
-            print("A03_02_table_cell")
+          //  print("A03_02_table_cell")
             let cell = table_A03_02.dequeueReusableCell(withIdentifier: "a03_02_Cell") as! CustomA03TableViewCell
             //cell.image_icon.image = UIImage(named: a01_05_image[indexPath.row])
             
@@ -2300,11 +2323,13 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             "VehicleName": ""]  // 차종
         
         
+        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
         
         Alamofire.request("http://seraphm.cafe24.com/database.php", method: .post, parameters: parameters)
             .responseJSON { response in
                 
-                self.activityIndicator.stopAnimating()
+                ToastIndicatorView.shared.close()
+                
                 print(response)
                 //to get status code
                 //"Res":"GetServiceList","Result":"D/B 리턴코드","Service_Name":"","Repair_Period_Milage":"","Repair_Period_Runingtime":"","CheckOrChange":"","Desc":"","Icon_Url":""
@@ -2955,10 +2980,13 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
                         "Pin": pin_num]
                     
                     print(pin_num)
+                    
+                    ToastIndicatorView.shared.setup(self.view, txt_msg: "")
+                    
                     Alamofire.request("http://seraphm.cafe24.com/database.php", method: .post, parameters: parameters)
                         .responseJSON { response in
                             
-                            self.activityIndicator.stopAnimating()
+                            ToastIndicatorView.shared.close()
                             
                             print(response)
                             //to get status code
@@ -3201,10 +3229,13 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
                 "PhoneNo": phone_num
             ]
             print(phone_num)
+            
+            ToastIndicatorView.shared.setup(self.view, txt_msg: "")
+            
             Alamofire.request("http://seraphm.cafe24.com/login.php", method: .post, parameters: parameters)
                 .responseJSON { response in
                     
-                    self.activityIndicator.stopAnimating()
+                    ToastIndicatorView.shared.close()
                     
                     print(response)
                     //to get status code
@@ -3263,10 +3294,12 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
                     "No": phone_num]
                 
                 print(phone_num)
+                ToastIndicatorView.shared.setup(self.view, txt_msg: "")
+                
                 Alamofire.request("http://seraphm.cafe24.com/database.php", method: .post, parameters: parameters)
                     .responseJSON { response in
                         
-                        self.activityIndicator.stopAnimating()
+                        ToastIndicatorView.shared.close()
                         
                         print(response)
                         //to get status code
@@ -3387,10 +3420,14 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
                 "VIN": MainManager.shared.member_info.str_car_plate_num]
             
             print(MainManager.shared.member_info.str_car_plate_num)
+            
+            
+            ToastIndicatorView.shared.setup(self.view, txt_msg: "")
+            
             Alamofire.request("http://seraphm.cafe24.com/database.php", method: .post, parameters: parameters)
                 .responseJSON { response in
                     
-                    self.activityIndicator.stopAnimating()
+                    ToastIndicatorView.shared.close()
                     
                     print(response)
                     //to get status code
@@ -3453,10 +3490,13 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
                 "No": MainManager.shared.member_info.str_car_dae_num]
             
             print(MainManager.shared.member_info.str_car_dae_num)
+            
+            ToastIndicatorView.shared.setup(self.view, txt_msg: "")
+            
             Alamofire.request("http://seraphm.cafe24.com/database.php", method: .post, parameters: parameters)
                 .responseJSON { response in
                     
-                    self.activityIndicator.stopAnimating()
+                    ToastIndicatorView.shared.close()
                     print(response)
                     //to get status code
                     if let status = response.response?.statusCode {
@@ -3525,10 +3565,12 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
                 "Name": MainManager.shared.member_info.str_car_kind]
             
             print(MainManager.shared.member_info.str_car_kind)
+            ToastIndicatorView.shared.setup(self.view, txt_msg: "")
             Alamofire.request("http://seraphm.cafe24.com/database.php", method: .post, parameters: parameters)
                 .responseJSON { response in
                     
-                    self.activityIndicator.stopAnimating()
+                    ToastIndicatorView.shared.close()
+                    
                     print(response)
                     //to get status code
                     if let status = response.response?.statusCode {
@@ -3591,10 +3633,11 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
                 "Type": MainManager.shared.member_info.str_car_fuel_type ]
             
             print(MainManager.shared.member_info.str_car_kind)
+            ToastIndicatorView.shared.setup(self.view, txt_msg: "")
             Alamofire.request("http://seraphm.cafe24.com/database.php", method: .post, parameters: parameters)
                 .responseJSON { response in
                     
-                    self.activityIndicator.stopAnimating()
+                    ToastIndicatorView.shared.close()
                     print(response)
                     //to get status code
                     if let status = response.response?.statusCode {
@@ -3654,13 +3697,16 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             
             let parameters = [
                 "Req": "SetModelYear",
-                "MY": MainManager.shared.member_info.str_car_year]
+                "MY": MainManager.shared.member_info.str_car_kind]
             
             print(MainManager.shared.member_info.str_car_kind)
+            
+            ToastIndicatorView.shared.setup(self.view, txt_msg: "")
+            
             Alamofire.request("http://seraphm.cafe24.com/database.php", method: .post, parameters: parameters)
                 .responseJSON { response in
                     
-                    self.activityIndicator.stopAnimating()
+                    ToastIndicatorView.shared.close()
                     print(response)
                     //to get status code
                     if let status = response.response?.statusCode {
@@ -4077,10 +4123,13 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
 
         print(MainManager.shared.member_info.str_id_nick)
 
+        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
+        
         Alamofire.request("http://seraphm.cafe24.com/login.php", method: .post, parameters: parameters)
             .responseJSON { response in
                 
-                self.activityIndicator.stopAnimating()
+                ToastIndicatorView.shared.close()
+                
                 print(response)
                 //to get status code
                 if let status = response.response?.statusCode {
@@ -4242,6 +4291,7 @@ extension AViewController: CBPeripheralDelegate, CBCentralManagerDelegate {
             MainManager.shared.member_info.isBLE_ON = true
             // 블루투스 켜져 있다 장비 스캔 시작
             centralManager.scanForPeripherals (withServices : nil )
+            
             // A4992052-4B0D-3041-EABB-729B52C73924
         default:
             print("central.state is .other")
@@ -4257,14 +4307,18 @@ extension AViewController: CBPeripheralDelegate, CBCentralManagerDelegate {
         
             if( peripheral.name == BEAN_NAME ) {
                 
+                ToastIndicatorView.shared.setup(self.view, txt_msg: "")
+                
                 // 카프렌즈를 하나 찾으면 3초 동안 다른 카프렌즈 기기를 찾아보고 연결 시작
-                if( bleSerachDelayStopState == 0 ) { bleSerachDelayStopState = 1 }
+                if( bleSerachDelayStopState == 0 ) {
+                    
+                    bleSerachDelayStopState = 1
+                }
                 // 신호 세기 저장
                 signalStrengthBle.append(RSSI)
                 // 카프렌즈 저장
                 peripherals.append(peripheral)
-                
-                
+                                
     //            peripherals.append(peripheral)
                 
     //            carFriendsPeripheral = peripheral
@@ -4286,7 +4340,6 @@ extension AViewController: CBPeripheralDelegate, CBCentralManagerDelegate {
     func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
         
         MainManager.shared.member_info.isCAR_FRIENDS_CONNECT = true;
-        
         print("Connected! ")
         print("서비스 목록 가져오기")
         carFriendsPeripheral?.discoverServices(nil)
@@ -4319,7 +4372,7 @@ extension AViewController: CBPeripheralDelegate, CBCentralManagerDelegate {
         guard let characteristics = service.characteristics else { return }
         
         for characteristic in characteristics {
-            print("---Characteristic found with \(characteristic.uuid) \n" )
+            //print("___ BLE Characteristic found with \(characteristic.uuid) \n" )
             
             let uuid = CBUUID(string: "FFE1")
             if characteristic.uuid == uuid {
@@ -4385,6 +4438,7 @@ extension AViewController: CBPeripheralDelegate, CBCentralManagerDelegate {
         
         print( "___ didDisconnectPeripheral 연결된 블루투스 장치 끊김(꺼짐) ___" )
         
+        
         if peripheral == self.carFriendsPeripheral {
             
             MainManager.shared.member_info.isCAR_FRIENDS_CONNECT = false;
@@ -4397,8 +4451,11 @@ extension AViewController: CBPeripheralDelegate, CBCentralManagerDelegate {
         // Scan for new devices using the function you initially connected to the perhipheral
         // self.scanForNewDevices()
         
-        // 다시 스캔
-        centralManager.scanForPeripherals (withServices : nil )
+        // 다른씬으로 이동이면 블투 스캔 재 연결 안한다
+        if( isMoveSceneDisConnectBLE == false ) {
+            // 끊기면 다시 스캔 연결
+            centralManager.scanForPeripherals (withServices : nil )
+        }
     }
     
     
@@ -4433,7 +4490,16 @@ extension AViewController: CBPeripheralDelegate, CBCentralManagerDelegate {
     
     func initStartBLE() {
         
+        // BLE init
+        // 블루투스 기기들(카프렌즈들) 찾아놓는 변수 초기화
+        peripherals.removeAll()
+        signalStrengthBle.removeAll()
+        
+        
+        // 추후에 바꿀려면 글로벌 변수로 컨트롤 하는게 쉽다. 블루투스 연결되는 객체도 마찬가지...
+        // 블루투스 매니져 생성
         centralManager = CBCentralManager(delegate: self, queue: nil)
+        
         
         // 블루투스 딜레이 변수 초기화
         // 윈도우 10초 딜레이
@@ -4460,14 +4526,13 @@ extension AViewController: CBPeripheralDelegate, CBCentralManagerDelegate {
         
         //BLE 검색 중지
         bleSerachDelayStopState = 3
+        ToastIndicatorView.shared.close()
         
-//        //
-//        var bConnectFirst = false
-//        // 맥 주소 없다. 처음 접속
-//        if( MainManager.shared.member_info.carFriendsMacAdd.count == 0 ) {
-//
-//            bConnectFirst = true
-//        }
+        
+        // TEST 블투 접속 막기
+        return
+        //
+        
         
         // 카프렌즈 한개 그냥접속
         if( peripherals.count == 1 ) {
@@ -4482,8 +4547,9 @@ extension AViewController: CBPeripheralDelegate, CBCentralManagerDelegate {
             
             for i in 0..<peripherals.count {
                 
+                var bleMacAdd:String = (peripherals[i]?.identifier.uuidString)!
                 // 같은 맥주소 찾았다.
-                if( peripherals[i]?.identifier.uuidString == MainManager.shared.member_info.carFriendsMacAdd ) {
+                if( bleMacAdd == MainManager.shared.member_info.carFriendsMacAdd ) {
                     
                     connectCarFriends(i)
                     print("_____ 카프렌즈 MAC FIND Connect\(carFriendsPeripheral)")
@@ -4527,7 +4593,11 @@ extension AViewController: CBPeripheralDelegate, CBCentralManagerDelegate {
         
         // 맥주소 저장
         MainManager.shared.member_info.carFriendsMacAdd = (carFriendsPeripheral?.identifier.uuidString)!
+        // 맥주소 로컬 저장
         UserDefaults.standard.set(MainManager.shared.member_info.carFriendsMacAdd, forKey: "carFriendsMacAdd")
+        
+        print("_____ MAC :: \(MainManager.shared.member_info.carFriendsMacAdd)" )
+        
         
         // 스캔 중지 연결
         carFriendsPeripheral?.delegate = self

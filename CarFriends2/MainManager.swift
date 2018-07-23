@@ -151,9 +151,10 @@ struct Member_Info {
         let count = arr.flatMap({$0}).count
         if( count < 2 ) {
             
-            print("______BLE DATA ERR \(READ_DATA)")
+            print("______BLE DATA ERR = \(READ_DATA)")
             return
         }
+        
         
         // 공백 제거
         //let cleanedText = arr[1].filter { !" \n\t\r".characters.contains($0) }
@@ -161,11 +162,12 @@ struct Member_Info {
         // 데이타 없다 처리 안함
         if( cleanedText.count == 0 ) {
             
-            print("______ \(arr[0])   = [Empty Data]")
+            print("______ BLE \(arr[0])   = [Empty Data]")
             return
         }
+            print( "_____ BLE READ_DATA = \(arr[0])  \(cleanedText)")
         
-        print( "READ_DATA = \(arr[0])  \(cleanedText)")
+        
         
         switch arr[0] {
         case "[TOTAL_MILEAGE]":
@@ -470,7 +472,7 @@ struct Member_Info {
         var addHeadDataString = ""
         var addCount = 0
         
-        print( stringValue )
+        // print( stringValue )
         
         for i in 0..<stringValue.count {
             // 한글자 빼기
@@ -490,6 +492,7 @@ struct Member_Info {
                     
                         BLE_READ_ACC_DATA_PROC(addHeadDataString)
                     }
+                    
                     // print("addHeadDataString = \(addHeadDataString) ")
                 }
                 
@@ -505,8 +508,8 @@ struct Member_Info {
             }
         }
         
-        print("처리한 숫자 = \(addCount)")
-        //        MainManager.shared.ble_Info.TOTAL_BLE_READ_ACC_DATA[MainManager.shared.ble_Info.TOTAL_BLE_READ_ACC_DATA.index(MainManager.shared.ble_Info.TOTAL_BLE_READ_ACC_DATA.startIndex, offsetBy: (addCount+1) )...]
+        // print("BLE 처리한 숫자 = \(addCount)")
+        //
         
     }
     
