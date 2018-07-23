@@ -1696,7 +1696,7 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="차량전용품"/>
                                 <connections>
-                                    <action selector="pressed_b_03:" destination="bT6-KD-Erg" eventType="touchUpInside" id="ctT-AQ-dti"/>
+                                    <action selector="pressed_b_03:" destination="bT6-KD-Erg" eventType="touchUpInside" id="VC4-Ip-UbT"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2G2-tp-cce">
@@ -1704,50 +1704,25 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="전문 대리점"/>
                                 <connections>
-                                    <action selector="pressed_b_02:" destination="bT6-KD-Erg" eventType="touchUpInside" id="A3M-ny-rUc"/>
+                                    <action selector="pressed_b_02:" destination="bT6-KD-Erg" eventType="touchUpInside" id="O2u-nq-0y7"/>
                                 </connections>
                             </button>
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2bL-Qm-84g">
+                                <rect key="frame" x="0.0" y="41" width="375" height="34"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
+                            </scrollView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </view>
                     <navigationItem key="navigationItem" id="Sio-ey-CCV"/>
                     <connections>
-                        <outlet property="b01_ScrollMenuView" destination="cWj-Si-G8B" id="hHX-Rf-SS5"/>
-                        <outlet property="b02_ScrollMenuView" destination="o8s-BK-wnk" id="pzP-bH-pUn"/>
                         <outlet property="btn_b01" destination="QQ1-Zc-eRv" id="L2R-2J-LQh"/>
-                        <outlet property="btn_b02" destination="2G2-tp-cce" id="jdX-qM-TTV"/>
-                        <outlet property="btn_b03" destination="MUD-yF-daJ" id="gEA-3f-w0G"/>
+                        <outlet property="btn_b02" destination="2G2-tp-cce" id="OvL-l9-fGT"/>
+                        <outlet property="btn_b03" destination="MUD-yF-daJ" id="geH-rq-qFV"/>
+                        <outlet property="menuScrollView" destination="2bL-Qm-84g" id="ZaT-aa-Kfp"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="LBs-qp-W3X" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <view contentMode="scaleToFill" id="cWj-Si-G8B" customClass="B01_ScrollMenu" customModule="CarFriends2" customModuleProvider="target">
-                    <rect key="frame" x="0.0" y="0.0" width="375" height="34"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
-                    <subviews>
-                        <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Hl0-cJ-p9L">
-                            <rect key="frame" x="0.0" y="0.0" width="375" height="34"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
-                        </scrollView>
-                    </subviews>
-                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                    <connections>
-                        <outlet property="scrollView" destination="Hl0-cJ-p9L" id="8Aw-Ei-7VO"/>
-                    </connections>
-                </view>
-                <view contentMode="scaleToFill" id="o8s-BK-wnk" customClass="B02_ScrollMenu" customModule="CarFriends2" customModuleProvider="target">
-                    <rect key="frame" x="0.0" y="0.0" width="375" height="34"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
-                    <subviews>
-                        <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1Yr-Z1-Cxr">
-                            <rect key="frame" x="0.0" y="0.0" width="375" height="34"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
-                        </scrollView>
-                    </subviews>
-                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                    <connections>
-                        <outlet property="scrollView" destination="1Yr-Z1-Cxr" id="5el-pm-noi"/>
-                    </connections>
-                </view>
             </objects>
             <point key="canvasLocation" x="2101.5999999999999" y="330.58470764617692"/>
         </scene>
@@ -1812,6 +1787,10 @@
                                     <action selector="pressed_C03:" destination="NqE-pN-LiA" eventType="touchUpInside" id="hVx-mf-anK"/>
                                 </connections>
                             </button>
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uEw-Mz-L4t">
+                                <rect key="frame" x="0.0" y="41" width="375" height="34"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </scrollView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </view>
@@ -1819,86 +1798,10 @@
                         <outlet property="btn_c01" destination="r7e-Nm-lhk" id="rxL-wI-8N4"/>
                         <outlet property="btn_c02" destination="eqe-HJ-Ytv" id="nd4-9e-H0t"/>
                         <outlet property="btn_c03" destination="l63-yW-zfM" id="yeT-Xx-QSm"/>
-                        <outlet property="menuView_c01" destination="pt0-2x-AlF" id="WDw-tD-rSK"/>
-                        <outlet property="menuView_c02" destination="oq8-Aa-9u1" id="gSF-9C-Xpg"/>
-                        <outlet property="menuView_c03" destination="qR0-Gc-Brm" id="CMK-xE-mDG"/>
+                        <outlet property="menuScrollView" destination="uEw-Mz-L4t" id="9bY-Cy-mS5"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="bfg-s4-tGa" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <view contentMode="scaleToFill" id="pt0-2x-AlF" customClass="C01_Menu" customModule="CarFriends2" customModuleProvider="target">
-                    <rect key="frame" x="0.0" y="0.0" width="375" height="34"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
-                    <subviews>
-                        <button opaque="NO" tag="1" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="68q-hO-9W4">
-                            <rect key="frame" x="0.0" y="0.0" width="75" height="34"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
-                            <state key="normal" title="최신뉴스"/>
-                        </button>
-                        <button opaque="NO" tag="2" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7qC-6p-lvB">
-                            <rect key="frame" x="75" y="0.0" width="75" height="34"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
-                            <state key="normal" title="자유게시판"/>
-                        </button>
-                        <button opaque="NO" tag="3" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bW2-IG-DXh">
-                            <rect key="frame" x="150" y="0.0" width="75" height="34"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
-                            <state key="normal" title="궁금해요"/>
-                        </button>
-                        <button opaque="NO" tag="4" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="q7A-Ic-Rrf">
-                            <rect key="frame" x="225" y="0.0" width="75" height="34"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
-                            <state key="normal" title="정보"/>
-                        </button>
-                        <button opaque="NO" tag="5" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="KG4-Hh-tNb">
-                            <rect key="frame" x="300" y="0.0" width="75" height="34"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
-                            <state key="normal" title="갤러리"/>
-                        </button>
-                    </subviews>
-                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                    <connections>
-                        <outlet property="btn_c01_01" destination="68q-hO-9W4" id="T3D-jF-Dh0"/>
-                        <outlet property="btn_c01_02" destination="7qC-6p-lvB" id="jzh-Fx-HPO"/>
-                        <outlet property="btn_c01_03" destination="bW2-IG-DXh" id="Jcg-Hs-2gt"/>
-                        <outlet property="btn_c01_04" destination="q7A-Ic-Rrf" id="fTC-tQ-ZBT"/>
-                        <outlet property="btn_c01_05" destination="KG4-Hh-tNb" id="dW4-Ui-HMo"/>
-                    </connections>
-                </view>
-                <view contentMode="scaleToFill" id="oq8-Aa-9u1" customClass="C02_Menu" customModule="CarFriends2" customModuleProvider="target">
-                    <rect key="frame" x="0.0" y="0.0" width="375" height="34"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
-                    <subviews>
-                        <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="a6g-Ua-x06">
-                            <rect key="frame" x="0.0" y="0.0" width="375" height="34"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
-                        </scrollView>
-                    </subviews>
-                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                    <connections>
-                        <outlet property="scrollview" destination="a6g-Ua-x06" id="Rdt-BJ-Oad"/>
-                    </connections>
-                </view>
-                <view contentMode="scaleToFill" id="qR0-Gc-Brm" customClass="C03_Menu" customModule="CarFriends2" customModuleProvider="target">
-                    <rect key="frame" x="0.0" y="0.0" width="375" height="34"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
-                    <subviews>
-                        <button opaque="NO" tag="1" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="J9u-Xj-jJF">
-                            <rect key="frame" x="0.0" y="0.0" width="188" height="34"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
-                            <state key="normal" title="차량직거래"/>
-                        </button>
-                        <button opaque="NO" tag="2" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1Ua-az-DDn">
-                            <rect key="frame" x="187" y="0.0" width="188" height="34"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
-                            <state key="normal" title="용품직거래"/>
-                        </button>
-                    </subviews>
-                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                    <connections>
-                        <outlet property="btn_c03_01" destination="J9u-Xj-jJF" id="nSB-tK-lNr"/>
-                        <outlet property="btn_c03_02" destination="1Ua-az-DDn" id="lVC-fx-0Xu"/>
-                    </connections>
-                </view>
             </objects>
             <point key="canvasLocation" x="2102" y="1262"/>
         </scene>
