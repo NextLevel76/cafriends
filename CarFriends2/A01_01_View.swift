@@ -10,16 +10,6 @@ import UIKit
 import Charts
 class A01_01_View: UIView {
 
-    @IBOutlet weak var label_user_id: UILabel!
-    @IBOutlet weak var label_kit_connect: UILabel!
-    @IBOutlet weak var btn_kit_connect: UIButton!    
-    @IBOutlet weak var label_kit_info_get_time: UILabel!
-    
-
-    
-    
-    
-    
     
     
     //    var str_car_kind = ""

@@ -8,12 +8,26 @@
 
 import UIKit
 import Charts
+import WebKit
 
 class A01_04_1_View: UIView {
     
-    @IBOutlet weak var image_center_bg: UIImageView!
+    weak var webView: WKWebView!
+    
+    @IBOutlet weak var scrollView: UIScrollView!
+    
+    @IBOutlet weak var round_view: RoundUIView!
+    
+    @IBOutlet weak var label_tot_big_dtc: UILabel!
+    
+    @IBOutlet weak var label_week_dtc: UILabel!
+    @IBOutlet weak var label_8week_dtc: UILabel!
     
     @IBOutlet weak var graph_line_view: LineChartView!
+
+  
+    
+    
     
     class func instanceFromNib() -> UIView {
         return UINib(nibName: "A01_04_1_View", bundle: nil).instantiate(withOwner: nil, options: nil)[0] as! UIView

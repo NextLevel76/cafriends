@@ -236,58 +236,8 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     // test Alaram
     @IBAction func pressedA(_ sender: UIButton) {
         
-        /*
-         Alamofire.request("http://seraphm.cafe24.com/login.php?ID=admin&Pass=admin")
-         //Alamofire.request(.post, "http://seraphm.cafe24.com/login.php", parameters: ["ID": "admin", "Pass":"admin"])
-         .responseJSON { response in
-         print(response.request as Any)  // original URL request
-         print(response.response as Any) // URL response
-         print(response.data as Any)     // server data
-         print(response.result)   // result of response serialization
-         
-         let b = response.result.value as? String ?? ""
-         print(b)
-         
-         
-         /*
-         if let JSON = response.result.value {
-         print("JSON: \(JSON)")
-         }
-         */
-         }
-         */
-        
-        
-        
-        //        self.view.bringSubview(toFront: activityIndicator)
-        //        self.activityIndicator.startAnimating()
-        //
-        //        Alamofire.request("http://seraphm.cafe24.com/login.php", method: .post, parameters: ["ID": "admin", "Pass":"admin"], encoding: JSONEncoding.default)
-        //            .responseJSON { response in
-        //
-        //                self.activityIndicator.stopAnimating()
-        //
-        //                print(response)
-        //                //to get status code
-        //                if let status = response.response?.statusCode {
-        //                    switch(status){
-        //                    case 201:
-        //                        print("example success")
-        //                    default:
-        //                        print("error with response status: \(status)")
-        //                    }
-        //                }
-        //                //to get JSON return value
-        //
-        //                if let json = try? JSON(response.result.value) {
-        //
-        //                    print(json["1"])
-        //                    print(json["0"][0])
-        //                    print(json["1"][1])
-        //
-        //                }
-        //        }
-        //        print("test URLRequest")
+        // 8주 데이타 읽기
+        //self.getData8Week_Drive()
         
     }
     
@@ -337,29 +287,41 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     
     
     
-    let weeks = ["당주", "1주전", "2주전", "3주전", "4주전", "5주전", "6주전", "7주전", "8주전", "9주전", "10주전", "11주전"]
+    
+    
+    
+    
+    
+    
+    // 8주 데이타 초기화
+
+//    MainManager.shared.str_My8WeeksDriveMileage.removeAll()
+//    MainManager.shared.str_All8WeeksDriveMileage.removeAll()
+
+    
+    let weeks = ["이번주", "1주전", "2주전", "3주전", "4주전", "5주전", "6주전", "7주전", "8주전", "9주전", "10주전", "11주전"]
     
     func setChartValues(_ count : Int = 8 ) {
         
-        let carDataKm = [10,100,200,300,400,700,550,70]
-        
-        let values = (1..<count+1).map { (i) -> ChartDataEntry in
+        let values = (0..<count).map { (i) -> ChartDataEntry in
             
-            let val = Double( carDataKm[i-1] )
+            let val = Double( MainManager.shared.str_My8WeeksDriveMileage[i] )
             //let val = Double(arc4random_uniform(UInt32(count)) + 3 )
-            return ChartDataEntry(x: Double(i), y: val)
+            return ChartDataEntry(x: Double(i), y: val!)
         }
         
-        let set1 = LineChartDataSet(values: values, label: "")
+        let set1 = LineChartDataSet(values: values, label: "My")
         //let data = LineChartData(dataSet: set1)
         
-        let values2 = (1..<count+1).map { (i) -> ChartDataEntry in
+        let values2 = (0..<count).map { (i) -> ChartDataEntry in
             
-            let val2 = Double(arc4random_uniform(UInt32(count)) + 10 )
-            return ChartDataEntry(x: Double(i), y: val2)
+            //let val = Double(arc4random_uniform(UInt32(count)) + 10 )
+            let val = Double( MainManager.shared.str_All8WeeksDriveMileage[i] )
+            
+            return ChartDataEntry(x: Double(i), y: val!)
         }
         
-        let set2 = LineChartDataSet(values: values2, label: "")
+        let set2 = LineChartDataSet(values: values2, label: "All")
         //set2.setColor(UIColor(red: 51/255, green: 181/255, blue: 229/255, alpha: 1))
         set2.setColor(.gray)
         set2.setCircleColor(.blue)
@@ -374,13 +336,12 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         //set2.drawCircleHoleEnabled = false
         //let data2 = LineChartData(dataSet: set2)
         
-        let data = LineChartData(dataSets: [set1, set2])
+        let data = LineChartData(dataSets: [set1])
         data.setValueTextColor(.black)
         data.setValueFont(.systemFont(ofSize: 9))
         
         
         a01_01_scroll_view.graph_line_view01.data = data
-        
         // X축 하단으로
         a01_01_scroll_view.graph_line_view01.xAxis.labelPosition = XAxis.LabelPosition.bottom
         // x축 몇주 세팅
@@ -390,18 +351,13 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         
         
         // 문자열 변환 IndexAxisValueFormatter
-        var strCarDataKm:[String] = []
-        strCarDataKm.append("\(carDataKm[0])")
-        strCarDataKm.append("\(carDataKm[1])")
-        strCarDataKm.append("\(carDataKm[2])")
-        strCarDataKm.append("\(carDataKm[3])")
-        strCarDataKm.append("\(carDataKm[4])")
-        strCarDataKm.append("\(carDataKm[5])")
-        strCarDataKm.append("\(carDataKm[6])")
-        strCarDataKm.append("\(carDataKm[7])")
+        
+        
+        
         // y축 왼쪽
-        a01_01_scroll_view.graph_line_view01.leftAxis.valueFormatter = MyIndexFormatterKm(values:strCarDataKm)
+        a01_01_scroll_view.graph_line_view01.leftAxis.valueFormatter = MyIndexFormatterKm(values:MainManager.shared.str_My8WeeksDriveMileage)
         a01_01_scroll_view.graph_line_view01.leftAxis.granularity = 7 // 맥시멈 번호
+        
         
         // y축 왼쪽
 //        a01_01_scroll_view.graph_line_view01.rightAxis.valueFormatter = MyIndexFormatter(values:carDataKm1)
@@ -420,25 +376,44 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         }
     }
     
+    class MyIndexFormatterKl: IndexAxisValueFormatter {
+        
+        open override func stringForValue(_ value: Double, axis: AxisBase?) -> String
+        {
+            return "\(value) km/l"
+        }
+    }
+    class MyIndexFormatterDtc: IndexAxisValueFormatter {
+        
+        open override func stringForValue(_ value: Double, axis: AxisBase?) -> String
+        {
+            return "\(value) 회"
+        }
+    }
+    
+    
+    
+    //    MainManager.shared.str_My8weeksFuelMileage.removeAll()
+    //    MainManager.shared.str_All8weeksFuelMileage.removeAll()
+    
     
     func setChartValues2(_ count : Int = 8 ) {
+
         
-        let carDataKm = [3,4,5,25,9,17,13,8]
-        
-        let values = (1..<count+1).map { (i) -> ChartDataEntry in
+        let values = (0..<count).map { (i) -> ChartDataEntry in
             
-            let val = Double( carDataKm[i-1] )
+            let val = Double( MainManager.shared.str_My8weeksFuelMileage[i] )
             //let val = Double(arc4random_uniform(UInt32(count)) + 3 )
-            return ChartDataEntry(x: Double(i), y: val)
+            return ChartDataEntry(x: Double(i), y: val!)
         }
         
         let set1 = LineChartDataSet(values: values, label: "")
         //let data = LineChartData(dataSet: set1)
         
-        let values2 = (1..<count+1).map { (i) -> ChartDataEntry in
+        let values2 = (0..<count).map { (i) -> ChartDataEntry in
             
-            let val2 = Double(arc4random_uniform(UInt32(count)) + 10 )
-            return ChartDataEntry(x: Double(i), y: val2)
+            let val = Double( MainManager.shared.str_All8weeksFuelMileage[i] )
+            return ChartDataEntry(x: Double(i), y: val!)
         }
         
         let set2 = LineChartDataSet(values: values2, label: "")
@@ -455,7 +430,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         //set2.drawCircleHoleEnabled = false
         //let data2 = LineChartData(dataSet: set2)
         
-        let data = LineChartData(dataSets: [set1, set2])
+        let data = LineChartData(dataSets: [set1])
         data.setValueTextColor(.black)
         data.setValueFont(.systemFont(ofSize: 9))
         
@@ -471,17 +446,8 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         
         
         // 문자열 변환 IndexAxisValueFormatter
-        var strCarDataKm:[String] = []
-        strCarDataKm.append("\(carDataKm[0])")
-        strCarDataKm.append("\(carDataKm[1])")
-        strCarDataKm.append("\(carDataKm[2])")
-        strCarDataKm.append("\(carDataKm[3])")
-        strCarDataKm.append("\(carDataKm[4])")
-        strCarDataKm.append("\(carDataKm[5])")
-        strCarDataKm.append("\(carDataKm[6])")
-        strCarDataKm.append("\(carDataKm[7])")
         // y축 왼쪽
-        a01_01_scroll_view.graph_line_view02.leftAxis.valueFormatter = MyIndexFormatterKl(values:strCarDataKm)
+        a01_01_scroll_view.graph_line_view02.leftAxis.valueFormatter = MyIndexFormatterKl(values:MainManager.shared.str_My8weeksFuelMileage)
         a01_01_scroll_view.graph_line_view02.leftAxis.granularity = 7 // 맥시멈 번호
         
         a01_01_scroll_view.graph_line_view02.chartDescription?.text = ""
@@ -489,24 +455,28 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     
     
     
+    
+    //    MainManager.shared.str_My8WeeksDTCCount.removeAll()
+    //    MainManager.shared.str_All8WeeksDTCCount.removeAll()
+    
     func setChartValues3(_ count : Int = 8 ) {
         
         let carDataKm = [3,4,5,25,9,17,13,8]
         
-        let values = (1..<count+1).map { (i) -> ChartDataEntry in
+        let values = (0..<count).map { (i) -> ChartDataEntry in
             
-            let val = Double( carDataKm[i-1] )
+            let val = Double( MainManager.shared.str_My8WeeksDTCCount[i] )
             //let val = Double(arc4random_uniform(UInt32(count)) + 3 )
-            return ChartDataEntry(x: Double(i), y: val)
+            return ChartDataEntry(x: Double(i), y: val!)
         }
         
         let set1 = LineChartDataSet(values: values, label: "")
         //let data = LineChartData(dataSet: set1)
         
-        let values2 = (1..<count+1).map { (i) -> ChartDataEntry in
+        let values2 = (0..<count).map { (i) -> ChartDataEntry in
             
-            let val2 = Double(arc4random_uniform(UInt32(count)) + 10 )
-            return ChartDataEntry(x: Double(i), y: val2)
+            let val = Double( MainManager.shared.str_All8WeeksDTCCount[i] )
+            return ChartDataEntry(x: Double(i), y: val!)
         }
         
         let set2 = LineChartDataSet(values: values2, label: "")
@@ -523,7 +493,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         //set2.drawCircleHoleEnabled = false
         //let data2 = LineChartData(dataSet: set2)
         
-        let data = LineChartData(dataSets: [set1, set2])
+        let data = LineChartData(dataSets: [set1])
         data.setValueTextColor(.black)
         data.setValueFont(.systemFont(ofSize: 9))
         
@@ -539,17 +509,8 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         
         
         // 문자열 변환 IndexAxisValueFormatter
-        var strCarDataKm:[String] = []
-        strCarDataKm.append("\(carDataKm[0])")
-        strCarDataKm.append("\(carDataKm[1])")
-        strCarDataKm.append("\(carDataKm[2])")
-        strCarDataKm.append("\(carDataKm[3])")
-        strCarDataKm.append("\(carDataKm[4])")
-        strCarDataKm.append("\(carDataKm[5])")
-        strCarDataKm.append("\(carDataKm[6])")
-        strCarDataKm.append("\(carDataKm[7])")
         // y축 왼쪽
-        a01_01_scroll_view.graph_line_view03.leftAxis.valueFormatter = MyIndexFormatterKl(values:strCarDataKm)
+        a01_01_scroll_view.graph_line_view03.leftAxis.valueFormatter = MyIndexFormatterDtc(values:MainManager.shared.str_My8WeeksDTCCount)
         a01_01_scroll_view.graph_line_view03.leftAxis.granularity = 7 // 맥시멈 번호
         
         a01_01_scroll_view.graph_line_view03.chartDescription?.text = ""
@@ -557,36 +518,35 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     
     
     
-    class MyIndexFormatterKl: IndexAxisValueFormatter {
-        
-        open override func stringForValue(_ value: Double, axis: AxisBase?) -> String
-        {
-            return "\(value) km/l"
-        }
-    }
     
+    
+    
+    
+    //MainManager.shared.str_My8WeeksDriveMileage.removeAll()
+
     
     func setChartValues_a02(_ count : Int = 8 ) {
+
         
-        let carDataKm = [10,100,200,300,400,700,550,70]
-        
-        let values = (1..<count+1).map { (i) -> ChartDataEntry in
+        let values = (0..<count).map { (i) -> ChartDataEntry in
             
-            let val = Double( carDataKm[i-1] )
+            let val = Double( MainManager.shared.str_My8WeeksDriveMileage[i] )
             //let val = Double(arc4random_uniform(UInt32(count)) + 3 )
-            return ChartDataEntry(x: Double(i), y: val)
+            return ChartDataEntry(x: Double(i), y: val!)
         }
         
-        let set1 = LineChartDataSet(values: values, label: "Data(km)")
+        let set1 = LineChartDataSet(values: values, label: "최근 8주간 연비 데이터")
         //let data = LineChartData(dataSet: set1)
         
-        let values2 = (1..<count+1).map { (i) -> ChartDataEntry in
+        
+        
+        let values2 = (0..<count).map { (i) -> ChartDataEntry in
             
-            let val2 = Double(arc4random_uniform(UInt32(count)) + 10 )
-            return ChartDataEntry(x: Double(i), y: val2)
+            let val = Double( MainManager.shared.str_All8WeeksDTCCount[i] )
+            return ChartDataEntry(x: Double(i), y: val!)
         }
         
-        let set2 = LineChartDataSet(values: values2, label: "DataSet 2")
+        let set2 = LineChartDataSet(values: values2, label: "회원 전체 평균")
         //set2.setColor(UIColor(red: 51/255, green: 181/255, blue: 229/255, alpha: 1))
         set2.setColor(.gray)
         set2.setCircleColor(.blue)
@@ -599,6 +559,9 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         
         //set2.drawCircleHoleEnabled = false
         //let data2 = LineChartData(dataSet: set2)
+        
+        
+      
         
         let data = LineChartData(dataSets: [set1, set2])
         data.setValueTextColor(.black)
@@ -613,44 +576,42 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         a01_02_view.graph_line_view.xAxis.valueFormatter = IndexAxisValueFormatter(values:weeks)
         // 스타트 시점 0:1주, 1:2주
         a01_02_view.graph_line_view.xAxis.granularity = 0 // 시작 번호
-        
-        
-        // 문자열 변환 IndexAxisValueFormatter
-        var strCarDataKm:[String] = []
-        strCarDataKm.append("\(carDataKm[0])")
-        strCarDataKm.append("\(carDataKm[1])")
-        strCarDataKm.append("\(carDataKm[2])")
-        strCarDataKm.append("\(carDataKm[3])")
-        strCarDataKm.append("\(carDataKm[4])")
-        strCarDataKm.append("\(carDataKm[5])")
-        strCarDataKm.append("\(carDataKm[6])")
-        strCarDataKm.append("\(carDataKm[7])")
+       
+       
         // y축 왼쪽
-        a01_02_view.graph_line_view.leftAxis.valueFormatter = MyIndexFormatterKl(values:strCarDataKm)
+        a01_02_view.graph_line_view.leftAxis.valueFormatter = MyIndexFormatterKm(values:MainManager.shared.str_My8WeeksDriveMileage)
         a01_02_view.graph_line_view.leftAxis.granularity = 7 // 맥시멈 번호
     }
     
+    
+
+    
+    
+    
+    
+//    MainManager.shared.str_My8weeksFuelMileage.removeAll()
+
     func setChartValues_a03(_ count : Int = 8 ) {
         
-        let carDataKm = [3,4,5,25,9,17,13,8]
         
-        let values = (1..<count+1).map { (i) -> ChartDataEntry in
+        let values = (0..<count).map { (i) -> ChartDataEntry in
             
-            let val = Double( carDataKm[i-1] )
+            let val = Double( MainManager.shared.str_My8weeksFuelMileage[i] )
             //let val = Double(arc4random_uniform(UInt32(count)) + 3 )
-            return ChartDataEntry(x: Double(i), y: val)
+            return ChartDataEntry(x: Double(i), y: val!)
         }
         
-        let set1 = LineChartDataSet(values: values, label: "진단")
+        let set1 = LineChartDataSet(values: values, label: "최근 8주간 DTC")
         //let data = LineChartData(dataSet: set1)
         
-        let values2 = (1..<count+1).map { (i) -> ChartDataEntry in
+        
+        let values2 = (0..<count).map { (i) -> ChartDataEntry in
             
-            let val2 = Double(arc4random_uniform(UInt32(count)) + 10 )
-            return ChartDataEntry(x: Double(i), y: val2)
+            let val = Double( MainManager.shared.str_All8weeksFuelMileage[i] )
+            return ChartDataEntry(x: Double(i), y: val!)
         }
         
-        let set2 = LineChartDataSet(values: values2, label: "DataSet 2")
+        let set2 = LineChartDataSet(values: values2, label: "회원 전체 평균")
         //set2.setColor(UIColor(red: 51/255, green: 181/255, blue: 229/255, alpha: 1))
         set2.setColor(.gray)
         set2.setCircleColor(.blue)
@@ -661,8 +622,6 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         //set2.fillColor = .red
         set2.highlightColor = UIColor(red: 244/255, green: 117/255, blue: 117/255, alpha: 1)
         
-        //set2.drawCircleHoleEnabled = false
-        //let data2 = LineChartData(dataSet: set2)
         
         let data = LineChartData(dataSets: [set1, set2])
         data.setValueTextColor(.black)
@@ -681,42 +640,34 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         
         
         // 문자열 변환 IndexAxisValueFormatter
-        var strCarDataKm:[String] = []
-        strCarDataKm.append("\(carDataKm[0])")
-        strCarDataKm.append("\(carDataKm[1])")
-        strCarDataKm.append("\(carDataKm[2])")
-        strCarDataKm.append("\(carDataKm[3])")
-        strCarDataKm.append("\(carDataKm[4])")
-        strCarDataKm.append("\(carDataKm[5])")
-        strCarDataKm.append("\(carDataKm[6])")
-        strCarDataKm.append("\(carDataKm[7])")
+      
         // y축 왼쪽
-        a01_03_view.graph_line_view.leftAxis.valueFormatter = MyIndexFormatterKl(values:strCarDataKm)
+        a01_03_view.graph_line_view.leftAxis.valueFormatter = MyIndexFormatterKl(values:MainManager.shared.str_My8weeksFuelMileage)
         a01_03_view.graph_line_view.leftAxis.granularity = 7 // 맥시멈 갯수 번호
     }
     
     
+    
+    // MainManager.shared.str_My8WeeksDTCCount.removeAll()
     func setChartValues_a04(_ count : Int = 8 ) {
-        
-        let carDataKm = [3,4,5,25,9,17,13,8]
         
         let values = (1..<count+1).map { (i) -> ChartDataEntry in
             
-            let val = Double( carDataKm[i-1] )
+            let val = Double( MainManager.shared.str_My8WeeksDTCCount[i-1] )
             //let val = Double(arc4random_uniform(UInt32(count)) + 3 )
-            return ChartDataEntry(x: Double(i), y: val)
+            return ChartDataEntry(x: Double(i), y: val!)
         }
         
-        let set1 = LineChartDataSet(values: values, label: "진단")
-        //let data = LineChartData(dataSet: set1)
+        let set1 = LineChartDataSet(values: values, label: "최근 8주간 DTC")
         
-        let values2 = (1..<count+1).map { (i) -> ChartDataEntry in
+        
+        let values2 = (0..<count).map { (i) -> ChartDataEntry in
             
-            let val2 = Double(arc4random_uniform(UInt32(count)) + 10 )
-            return ChartDataEntry(x: Double(i), y: val2)
+            let val = Double( MainManager.shared.str_All8WeeksDTCCount[i] )
+            return ChartDataEntry(x: Double(i), y: val!)
         }
         
-        let set2 = LineChartDataSet(values: values2, label: "DataSet 2")
+        let set2 = LineChartDataSet(values: values2, label: "회원 전체 평균")
         //set2.setColor(UIColor(red: 51/255, green: 181/255, blue: 229/255, alpha: 1))
         set2.setColor(.gray)
         set2.setCircleColor(.blue)
@@ -727,8 +678,6 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         //set2.fillColor = .red
         set2.highlightColor = UIColor(red: 244/255, green: 117/255, blue: 117/255, alpha: 1)
         
-        //set2.drawCircleHoleEnabled = false
-        //let data2 = LineChartData(dataSet: set2)
         
         let data = LineChartData(dataSets: [set1, set2])
         data.setValueTextColor(.black)
@@ -745,19 +694,9 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         // 스타트 시점 0:1주, 1:2주
         a01_04_1_view.graph_line_view.xAxis.granularity = 0 // 시작 번호
         
-        
         // 문자열 변환 IndexAxisValueFormatter
-        var strCarDataKm:[String] = []
-        strCarDataKm.append("\(carDataKm[0])")
-        strCarDataKm.append("\(carDataKm[1])")
-        strCarDataKm.append("\(carDataKm[2])")
-        strCarDataKm.append("\(carDataKm[3])")
-        strCarDataKm.append("\(carDataKm[4])")
-        strCarDataKm.append("\(carDataKm[5])")
-        strCarDataKm.append("\(carDataKm[6])")
-        strCarDataKm.append("\(carDataKm[7])")
         // y축 왼쪽
-        a01_04_1_view.graph_line_view.leftAxis.valueFormatter = MyIndexFormatterKl(values:strCarDataKm)
+        a01_04_1_view.graph_line_view.leftAxis.valueFormatter = MyIndexFormatterDtc(values:MainManager.shared.str_My8WeeksDTCCount)
         a01_04_1_view.graph_line_view.leftAxis.granularity = 7 // 맥시멈 갯수 번호
     }
     
@@ -772,7 +711,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         // 한국 Locale
         dateFormatter.locale = Locale(identifier: "ko_KR")
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-        a01_01_view.label_kit_info_get_time.text = dateFormatter.string(from: now)
+        a01_01_scroll_view.label_kit_info_get_time.text = dateFormatter.string(from: now)
     }
     
     
@@ -885,8 +824,12 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             
             // 핸드폰 현재 시간 BLE 기기에 명령 보내 저장
             MainManager.shared.getDateTimeSendBLE()
-            
             initCarDataSaveDB()
+        }
+        else {
+            
+            initCarDataReadDB()
+            
         }
     }
     
@@ -1231,28 +1174,41 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     
     
     
+    func initCarDataReadDB() {
+        
+        // 전체 주행거리 로컬에서 읽는다.
+//        getTotalDriveMileageDB()
+    }
+    
+//    func getTotalDriveMileageDB() {
+//      
+//    }
+    
+    
+    
+    
     func connectCheckBLE() {
         
         // 블루 투스 기기 꺼짐
         if( MainManager.shared.member_info.isBLE_ON == false ) {
             // 연결됨
-            a01_01_view.btn_kit_connect.setBackgroundImage(UIImage(named:"a_01_01_link02"), for: .normal)
-            self.a01_01_view.label_kit_connect.text = "블루투스 꺼짐"
-            self.a01_01_view.label_kit_connect.textColor = UIColor.red
+            a01_01_scroll_view.btn_kit_connect.setBackgroundImage(UIImage(named:"a_01_01_link02"), for: .normal)
+            self.a01_01_scroll_view.label_kit_connect.text = "블루투스 꺼짐"
+            self.a01_01_scroll_view.label_kit_connect.textColor = UIColor.red
         }
         else {
             
             if( MainManager.shared.member_info.isCAR_FRIENDS_CONNECT == true ) {
                 // 연결됨
-                a01_01_view.btn_kit_connect.setBackgroundImage(UIImage(named:"a_01_01_link01"), for: .normal)
-                self.a01_01_view.label_kit_connect.text = "연결 됨"
-                self.a01_01_view.label_kit_connect.textColor = UIColor(red: 41/256, green: 232/255, blue: 223/255, alpha: 1)
+                a01_01_scroll_view.btn_kit_connect.setBackgroundImage(UIImage(named:"a_01_01_link01"), for: .normal)
+                self.a01_01_scroll_view.label_kit_connect.text = "연결 됨"
+                self.a01_01_scroll_view.label_kit_connect.textColor = UIColor(red: 41/256, green: 232/255, blue: 223/255, alpha: 1)
             }
             else {
                 // 카프렌즈 연결중
-                a01_01_view.btn_kit_connect.setBackgroundImage(UIImage(named:"a_01_01_unlink"), for: .normal)
-                self.a01_01_view.label_kit_connect.text = "감지안됨"
-                self.a01_01_view.label_kit_connect.textColor = UIColor.red
+                a01_01_scroll_view.btn_kit_connect.setBackgroundImage(UIImage(named:"a_01_01_unlink"), for: .normal)
+                self.a01_01_scroll_view.label_kit_connect.text = "감지안됨"
+                self.a01_01_scroll_view.label_kit_connect.textColor = UIColor.red
             }
         }
     }
@@ -1300,7 +1256,75 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     
     // A02 WEBVIEW
     
-    func createWkWebView() {
+    func createWkWebViewA01() {
+        
+        let webConfiguration = WKWebViewConfiguration()
+        webConfiguration.allowsInlineMediaPlayback = true
+        webConfiguration.mediaTypesRequiringUserActionForPlayback = []
+        
+        //A01_02
+        let tempFrame:CGRect = a01_02_view.round_view.frame
+        a01_02_view.webView = WKWebView(frame: tempFrame, configuration: webConfiguration )
+        a01_02_view.webView.navigationDelegate = self
+        a01_02_view.webView.translatesAutoresizingMaskIntoConstraints = false
+        
+        a01_02_view.webView.frame.origin.y += (tempFrame.height+20)
+        a01_02_view.scrollView.addSubview( a01_02_view.webView )
+        
+        if let videoURL:URL = URL(string: "https://www.youtube.com/embed/IHNzOHi8sJs") {
+            let request:URLRequest = URLRequest(url: videoURL)
+            a01_02_view.webView.load(request)
+        }
+        a01_02_view.scrollView.resizeScrollViewContentSize()
+        // 아래 여유 공간 추가
+        a01_02_view.scrollView.contentSize.height += 20
+        
+        
+        
+        
+        
+        //A01_03
+        let tempFrame2:CGRect = a01_03_view.round_view.frame
+        a01_03_view.webView = WKWebView(frame: tempFrame2, configuration: webConfiguration )
+        a01_03_view.webView.navigationDelegate = self
+        a01_03_view.webView.translatesAutoresizingMaskIntoConstraints = false
+        
+        a01_03_view.webView.frame.origin.y += (tempFrame2.height+20)
+        a01_03_view.scrollView.addSubview( a01_03_view.webView )
+        
+        if let videoURL:URL = URL(string: "https://www.youtube.com/embed/IHNzOHi8sJs") {
+            let request:URLRequest = URLRequest(url: videoURL)
+            a01_03_view.webView.load(request)
+        }
+        a01_03_view.scrollView.resizeScrollViewContentSize()
+        // 아래 여유 공간 추가
+        a01_03_view.scrollView.contentSize.height += 20
+        
+        
+        
+        
+        //A01_04_1
+        let tempFrame3:CGRect = a01_04_1_view.round_view.frame
+        a01_04_1_view.webView = WKWebView(frame: tempFrame3, configuration: webConfiguration )
+        a01_04_1_view.webView.navigationDelegate = self
+        a01_04_1_view.webView.translatesAutoresizingMaskIntoConstraints = false
+        
+        a01_04_1_view.webView.frame.origin.y += (tempFrame3.height+20)
+        a01_04_1_view.scrollView.addSubview( a01_04_1_view.webView )
+        
+        if let videoURL:URL = URL(string: "https://www.youtube.com/embed/IHNzOHi8sJs") {
+            let request:URLRequest = URLRequest(url: videoURL)
+            a01_04_1_view.webView.load(request)
+        }
+        a01_04_1_view.scrollView.resizeScrollViewContentSize()
+        // 아래 여유 공간 추가
+        a01_04_1_view.scrollView.contentSize.height += 20
+        
+        
+    }
+    
+    
+    func createWkWebViewA02() {
         
         let webConfiguration = WKWebViewConfiguration()
         webConfiguration.allowsInlineMediaPlayback = true
@@ -1591,16 +1615,16 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     override func viewDidLoad() {
         super.viewDidLoad()
         
+
         
-        
-        
-        // 인터넷 연결 체크
+        // 인터넷 연결 체크, 연결 안됬으면 젤 첨 화면으로
         if( MainManager.shared.isConnectCheck() == false ) {
             
             let myView = self.storyboard?.instantiateViewController(withIdentifier: "MainView") as! MainViewController
             self.present(myView, animated: true, completion: nil)
             return
         }
+        
 
         
         // 반복 호출 스케줄러
@@ -1625,12 +1649,19 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         
         
         
+        // 콤마
+        let tempTotKm:Int = Int(Double(MainManager.shared.member_info.str_TotalDriveMileage)!)
+        let temp8WeekKm:Int = Int(Double(MainManager.shared.member_info.str_8WeekDriveMileage)!)
+        
+        // 소수점 한자리 남게 rounded()
+        let tempTotAvgFuel:Double = Double(MainManager.shared.member_info.str_AvgFuelMileage)!.rounded( toPlaces: 1)
+        let temp8WeekAvgFuel:Double = Double(MainManager.shared.member_info.str_8WeekAvgFuelMileage)!.rounded( toPlaces: 1)
+        
         
         
         if let featView1 = Bundle.main.loadNibNamed("A01_01_View", owner: self, options: nil)?.first as? A01_01_View
         {
-            // kit connect 21
-            featView1.btn_kit_connect.addTarget(self, action: #selector(AViewController.pressed_01(sender:)), for: .touchUpInside)
+            
             
             a01_01_scroll_view.roundView01.backgroundColor = UIColor(red: 69/256, green: 187/255, blue: 229/255, alpha: 0.5)
             
@@ -1650,19 +1681,24 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             
             // 스크롤뷰 세로 스크롤 영역 설정
             a01_01_view.addSubview(a01_01_scroll_view)
-            a01_01_scroll_view.frame = CGRect(x: 16, y: 97, width: 343, height: 438)
-            
-            a01_01_scroll_view.roundView01.frame.origin.y = 20
-            a01_01_scroll_view.roundView02.frame.origin.y = 169
-            a01_01_scroll_view.roundView03.frame.origin.y = 427
-            a01_01_scroll_view.roundView04.frame.origin.y = 685
-            
-            
-            
+            a01_01_scroll_view.frame = CGRect(x: 5, y: 0, width: 365, height: 438+41)
             a01_01_scroll_view.frame = MainManager.shared.initLoadChangeFrame( frame: a01_01_scroll_view.frame )
+            a01_01_scroll_view.delegate = self
+            
+            a01_01_scroll_view.roundView00.frame = MainManager.shared.initLoadChangeFrame( frame: a01_01_scroll_view.roundView00.frame )
+            a01_01_scroll_view.roundView01.frame = MainManager.shared.initLoadChangeFrame( frame: a01_01_scroll_view.roundView01.frame )
+            a01_01_scroll_view.roundView02.frame = MainManager.shared.initLoadChangeFrame( frame: a01_01_scroll_view.roundView02.frame )
+            a01_01_scroll_view.roundView03.frame = MainManager.shared.initLoadChangeFrame( frame: a01_01_scroll_view.roundView03.frame )
+            a01_01_scroll_view.roundView04.frame = MainManager.shared.initLoadChangeFrame( frame: a01_01_scroll_view.roundView04.frame )
+            
             // 스크롤 영역 크기 자동 계산
             a01_01_scroll_view.resizeScrollViewContentSize()
-            a01_01_scroll_view.delegate = self
+            a01_01_scroll_view.contentSize.height += 30
+            
+            
+
+            
+            
             
             
             // 슈퍼 뷰의 크기를 따르게 세팅
@@ -1673,10 +1709,11 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             // 스크롤 뷰 컨텐트 사이즈 자동 조절perview.bounds;
             
             // USER ID
-            a01_01_view.label_user_id.text = "\(MainManager.shared.member_info.str_id_nick) 님"
+            a01_01_scroll_view.label_user_id.text = "\(MainManager.shared.member_info.str_id_nick) 님"
+            // kit connect 21
+            a01_01_scroll_view.btn_kit_connect.addTarget(self, action: #selector(AViewController.pressed_01(sender:)), for: .touchUpInside)
             // GET INFO TIME
             getTime()
-            
             
             a01_01_scroll_view.label_car_kind_year.text = "\(MainManager.shared.member_info.str_car_kind) \(MainManager.shared.member_info.str_car_year)년형"
             a01_01_scroll_view.label_fuel_type.text = "\(MainManager.shared.member_info.str_car_fuel_type) 차량"
@@ -1684,14 +1721,18 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             a01_01_scroll_view.label_car_dae_num.text = MainManager.shared.member_info.str_car_dae_num
             
             
-            // 총 거리, 평균
-            a01_01_scroll_view.label_tot_km.text = "\(MainManager.shared.member_info.str_TotalDriveMileage)km"
-            a01_01_scroll_view.label_avg_8week_km.text = "999km"
+            // 콤마
+            // 총 거리, 합
+            a01_01_scroll_view.label_tot_km.text = "\(tempTotKm.withCommas())km"
+            a01_01_scroll_view.label_avg_8week_km.text = "\(temp8WeekKm.withCommas())km"
+            
             // 연비, 평균
-            a01_01_scroll_view.label_tot_kml.text = "326km/l"
-            a01_01_scroll_view.label_avg_8week_kml.text = "\(MainManager.shared.member_info.str_TotalDriveMileage)km/l"
+            a01_01_scroll_view.label_tot_kml.text = "\(tempTotAvgFuel)km/l"
+            a01_01_scroll_view.label_avg_8week_kml.text = "\(temp8WeekAvgFuel)km/l"
             
-            
+            // 이번주, 8주 합
+            a01_01_scroll_view.label_tot_dtc.text = "\(MainManager.shared.member_info.str_ThisWeekDtcCount) 회"
+            a01_01_scroll_view.label_8week_dtc.text = "\(MainManager.shared.member_info.str_8WeekDtcCount) 회"
             
             
             //            let dateFormatter : DateFormatter = DateFormatter()
@@ -1800,8 +1841,6 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         
         
         
-        
-        
         a01_01_info_mod_view.field_car_fuel.inputView = pickerView3
         a01_01_info_mod_view.field_car_fuel.textAlignment = .center
         a01_01_info_mod_view.field_car_fuel.placeholder = "연료 타입"
@@ -1859,6 +1898,12 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             featView2.frame.origin.y = 82
             self.view.addSubview(featView2)
             a01_02_view = featView2
+
+            // 콤마
+            // 총 거리, 합
+            a01_02_view.label_tot_big_km.text = "\(tempTotKm.withCommas())km"
+            a01_02_view.label_tot_km.text = "\(tempTotKm.withCommas())km"
+            a01_02_view.label_8week_km.text = "\(temp8WeekKm.withCommas())km"
         }
         
         if let featView3 = Bundle.main.loadNibNamed("A01_03_View", owner: self, options: nil)?.first as? A01_03_View
@@ -1877,6 +1922,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             a01_04_view = featView4
         }
         
+        // DTC
         a01_04_1_view = A01_04_1_View.instanceFromNib() as! A01_04_1_View
         a01_04_1_view.frame.origin.y = 82
         self.view.addSubview(a01_04_1_view)
@@ -1895,8 +1941,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         setChartValues_a03()
         setChartValues_a04()
         
-        a01_02_view.image_center_bg.backgroundColor = UIColor(red: 11/256, green: 85/255, blue: 156/255, alpha: 1)
-        a01_03_view.image_center_bg.backgroundColor = UIColor(red: 11/256, green: 85/255, blue: 156/255, alpha: 1)
+
         
         
         
@@ -1985,7 +2030,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         
         
         //A02
-        createWkWebView()
+        createWkWebViewA02()
         
         userLogin()
         
@@ -2077,6 +2122,15 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         a03_01_view.frame = MainManager.shared.initLoadChangeFrame(frame: a03_01_view.frame)
         a03_02_view.frame = MainManager.shared.initLoadChangeFrame(frame: a03_02_view.frame)
         a03_03_view.frame = MainManager.shared.initLoadChangeFrame(frame: a03_03_view.frame)
+        
+        
+        
+
+        
+        
+        
+        
+        createWkWebViewA01()
         
         
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2322,7 +2376,6 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             "Req": "GetServiceList",
             "VehicleName": ""]  // 차종
         
-        
         ToastIndicatorView.shared.setup(self.view, txt_msg: "")
         
         Alamofire.request("http://seraphm.cafe24.com/database.php", method: .post, parameters: parameters)
@@ -2330,7 +2383,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
                 
                 ToastIndicatorView.shared.close()
                 
-                print(response)
+                // print(response)
                 //to get status code
                 //"Res":"GetServiceList","Result":"D/B 리턴코드","Service_Name":"","Repair_Period_Milage":"","Repair_Period_Runingtime":"","CheckOrChange":"","Desc":"","Icon_Url":""
                 if let status = response.response?.statusCode {
@@ -2345,10 +2398,8 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
                 //to get JSON return value
                 if let json = try? JSON(response.result.value) {
                     
-                    print(json["Result"])
+                    // print(json["Result"])
                     let Result = json["Result"].rawString()!
-                    
-                    
                     
                     if( Result == "OK" ) {
                         
@@ -2356,7 +2407,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
                         
                         let ServiceList = json["ServiceList"]
                         
-                        print( ServiceList )
+                        //print( ServiceList )
                         
                         for i in 0..<ServiceList.count {
                             
@@ -2486,15 +2537,15 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
                 
                 MainManager.shared.bKitConnect = true
                 sender.setBackgroundImage(UIImage(named:"a_01_01_link"), for: .normal)
-                self.a01_01_view.label_kit_connect.text = "연결 됨"
-                self.a01_01_view.label_kit_connect.textColor = UIColor(red: 41/256, green: 232/255, blue: 223/255, alpha: 1)
+                self.a01_01_scroll_view.label_kit_connect.text = "연결 됨"
+                self.a01_01_scroll_view.label_kit_connect.textColor = UIColor(red: 41/256, green: 232/255, blue: 223/255, alpha: 1)
             }
             else {
                 
                 MainManager.shared.bKitConnect = false
                 sender.setBackgroundImage(UIImage(named:"a_01_01_unlink"), for: .normal)
-                self.a01_01_view.label_kit_connect.text = "연결끊김"
-                self.a01_01_view.label_kit_connect.textColor = UIColor.red
+                self.a01_01_scroll_view.label_kit_connect.text = "연결끊김"
+                self.a01_01_scroll_view.label_kit_connect.textColor = UIColor.red
             }
             
             print("kit_connect")
@@ -3416,7 +3467,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             MainManager.shared.member_info.str_car_plate_num = self.a01_01_info_mod_view.field_plate_num.text!
             
             let parameters = [
-                "Req": "GetCarNo",
+                "Req": "SetCarNo",
                 "VIN": MainManager.shared.member_info.str_car_plate_num]
             
             print(MainManager.shared.member_info.str_car_plate_num)
@@ -4151,6 +4202,16 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
                         print( "LOGIN_OK" )
                         // 쿠키저장
                         HTTPCookieStorage.save()
+                        
+//                        // 8주치 데이타 읽어오기
+//                        self.getData8Week_myDrive()
+//                        self.getData8Week_AllMemberDrive()
+//
+//                        self.getData8Week_myFuel()
+//                        self.getData8Week_AllMemberFuel()
+//
+//                        self.getData8Week_myDTC()
+//                        self.getData8Week_AllMemberDTC()
                     }
                     else {
                         
@@ -4239,18 +4300,7 @@ extension UIScrollView {
 //}
 //
 //
-//extension UIImage {
-//    func resizeImageWith(newSize: CGSize) -> UIImage? {
-//        let horizontalRatio = newSize.width / size.width
-//        let verticalRatio = newSize.height / size.height
-//        let ratio = max(horizontalRatio, verticalRatio)
-//        let newSize = CGSize(width: size.width * ratio, height: size.height * ratio)
-//        UIGraphicsBeginImageContextWithOptions(newSize, false, 0) <----- false 일때 투명
-//        defer { UIGraphicsEndImageContext() }
-//        draw(in: CGRect(origin: .zero, size: newSize))
-//        return UIGraphicsGetImageFromCurrentImageContext()
-//    }
-//}
+
 
 
 
@@ -4613,8 +4663,22 @@ extension AViewController: CBPeripheralDelegate, CBCentralManagerDelegate {
 }
 
 
+extension Int {
+    func withCommas() -> String {
+        let numberFormatter = NumberFormatter()
+        numberFormatter.numberStyle = NumberFormatter.Style.decimal
+        return numberFormatter.string(from: NSNumber(value:self))!
+    }
+}
 
-
+extension Double {
+    /// Rounds the double to decimal places value
+    func rounded(toPlaces places:Int) -> Double {
+        let divisor = pow(10.0, Double(places))
+        return (self * divisor).rounded() / divisor
+    }
+}
+    
 
 
 

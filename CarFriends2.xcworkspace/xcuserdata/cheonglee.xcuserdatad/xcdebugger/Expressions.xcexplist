@@ -11,6 +11,25 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
+         contextName = "closure #1 in AViewController.setChartValues2(_:):AViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "MainManager.shared.str_My8weeksFuelMileage">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "MainViewController.carInfoCal():MainViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "MainManager.shared.str_My8WeeksDTCCount">
+            </PersistentString>
+            <PersistentString
+               value = "MainManager.shared.str_My8weeksFuelMileage">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "AViewController.centralManager(_:didDiscover:advertisementData:rssi:):AViewController.swift">
          <PersistentStrings>
             <PersistentString

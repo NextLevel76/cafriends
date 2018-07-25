@@ -12,7 +12,10 @@ import Charts
 class A01_01_ScrollView: UIScrollView {
     
     
-    
+    @IBOutlet weak var label_user_id: UILabel!
+    @IBOutlet weak var label_kit_connect: UILabel!
+    @IBOutlet weak var btn_kit_connect: UIButton!
+    @IBOutlet weak var label_kit_info_get_time: UILabel!
     
     
 //    var str_password = "1234"
@@ -29,6 +32,7 @@ class A01_01_ScrollView: UIScrollView {
     
     // 뷰 세로 크기 438
     
+    @IBOutlet weak var roundView00: RoundUIView!
     @IBOutlet weak var roundView01: RoundUIView!
     @IBOutlet weak var roundView02: RoundUIView!
     @IBOutlet weak var roundView03: RoundUIView!
@@ -48,6 +52,8 @@ class A01_01_ScrollView: UIScrollView {
     @IBOutlet weak var label_tot_kml: UILabel!
     @IBOutlet weak var label_avg_8week_kml: UILabel!
     
+    @IBOutlet weak var label_tot_dtc: UILabel!
+    @IBOutlet weak var label_8week_dtc: UILabel!
     
     
     

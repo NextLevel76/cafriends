@@ -8,10 +8,20 @@
 
 import UIKit
 import Charts
-class A01_03_View: UIView {
+import WebKit
 
+class A01_03_View: UIView {
     
-    @IBOutlet weak var image_center_bg: UIImageView!
+    weak var webView: WKWebView!
+    
+    @IBOutlet weak var scrollView: UIScrollView!
+    
+    @IBOutlet weak var round_view: RoundUIView!
+    
+    @IBOutlet weak var label_tot_big_km: UILabel!
+    
+    @IBOutlet weak var label_tot_km: UILabel!
+    @IBOutlet weak var label_8week_km: UILabel!
     
     @IBOutlet weak var graph_line_view: LineChartView!
     

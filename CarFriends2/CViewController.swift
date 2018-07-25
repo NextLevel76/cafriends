@@ -178,9 +178,6 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
                 
                 self.webView.frame = webViewChangeBigRect
                 
-
-                
-                
             }
             else if( bHideSubMenu == true && contentOffset < -30 ) {
                 

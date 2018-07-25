@@ -779,8 +779,6 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
                 }
         }
         
-        
-        
     }
     
     // 자동차 정보 모두 입력 -> 회원가입
@@ -927,11 +925,6 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
                     }
             }
         }
-        
-        
-        
-        
-        
     }
     
     

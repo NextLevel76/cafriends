@@ -75,27 +75,12 @@ class BlueToothViewController: UIViewController {
         view_ble01.translatesAutoresizingMaskIntoConstraints = false
         view_ble01.frame = (view_ble01.superview?.bounds)!
         
-        // 클라에 저장해둔 회원가입정보 읽어오기
-        let defaults = UserDefaults.standard
-        MainManager.shared.iMemberJoinState = defaults.integer(forKey: "iMemberJoinState")
-        
-        
         
         
         activityIndicator.center = self.view.center
         activityIndicator.hidesWhenStopped = true
         activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.white
         self.view.addSubview(activityIndicator)
-        
-        
-        
-        
-        
-        // 회원가입용 회원정보수정용 카 리스트 받기
-        initReadSelectData()
-       
-        
-        
         
         
         // TEST // 0:비회원    1:차정보없이 가입     2:차정보입력 가입
@@ -187,8 +172,7 @@ class BlueToothViewController: UIViewController {
         ToastIndicatorView.shared.setup(self.view, txt_msg: "")
         
         // 피커뷰 2000~ 2018 년 리스트를 만든다.
-        getTime()
-        
+        getTimeYearList()
         
         // database.php?Req=CarList
         // "Res":"CarList","CarList":["스파크","크루즈",…..]
@@ -226,7 +210,6 @@ class BlueToothViewController: UIViewController {
                         print( carList )
                         
                         for i in 0..<carList.count {
-                            
                             MainManager.shared.str_select_carList.append( carList[i].stringValue )
                         }
                     }
@@ -364,7 +347,7 @@ class BlueToothViewController: UIViewController {
     
     
     
-    func getTime() {
+    func getTimeYearList() {
         
         // 현재 시각 구하기
         let now = Date()

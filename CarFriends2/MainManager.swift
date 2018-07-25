@@ -25,7 +25,6 @@
 // 스크롤 동적으로 버튼 할당 수정
 // a 02~03 스크뷰에 아래 웹뷰 추가
 
-
 import Foundation
 import UIKit
 import Alamofire
@@ -39,7 +38,6 @@ struct Connectivity {
         return self.sharedInstance.isReachable
     }
 }
-
 
 
 
@@ -80,9 +78,21 @@ struct Member_Info {
     var str_ThisWeekDriveMileage = "0"    // 당주 주행거리
     var str_ThisMonthDriveMileage = "0"    // 월 주행거리
     
-    var str_AvgFuelMileage = "18"   // 연비
-    var str_ThisWeekFuelMileage = "0"   // 연비
-    var str_ThisMonthFuelMileage = "0"   // 연비
+    var str_8WeekDriveMileage = "10000"    // 8주 총 주행거리
+
+    
+    var str_AvgFuelMileage = "7"       // 총 평균 연비
+    var str_ThisWeekFuelMileage = "9"   // 주 평균 연비
+    var str_ThisMonthFuelMileage = "8"   // 연비
+    
+    var str_8WeekAvgFuelMileage = "0"   // 8주 평균 연비
+    
+    var str_ThisWeekDtcCount = "0"   // 이번주 갯수
+    var str_8WeekDtcCount = "0"       // 8주 합
+
+    
+    
+    
     
     
     //타이어 공가압
@@ -141,11 +151,8 @@ struct Member_Info {
     var carStatusDelayCount = 0
     
     
-    
     // identifier = A4992052-4B0D-3041-EABB-729B52C73924,
     var carFriendsMacAdd = ""
-    
-    
     
     
 
@@ -519,15 +526,10 @@ struct Member_Info {
         
     }
     
-    
-    
-    
     //    var str =  "Hello Zedd!"
     //    var arr =  str.components(separatedBy: " ") // " "안어 들어간 문자로 나눠 배열로 준다
     //    print(arr)
     //    출처: http://zeddios.tistory.com/74 [ZeddiOS]
-    
-    
 }
 
 
@@ -567,12 +569,21 @@ class MainManager   {
     var bStartPopTimeReserv:Bool = false
     
     
-    
     var bCarListRequest:Bool = false
     var str_select_carList:[String] = []
     var str_select_yearList:[String] = []
     var str_select_fuelList:[String] = []
     
+    
+    // 8주 데이타
+    var str_My8weeksFuelMileage:[String] = []
+    var str_All8weeksFuelMileage:[String] = []
+    
+    var str_My8WeeksDriveMileage:[String] = []
+    var str_All8WeeksDriveMileage:[String] = []
+    
+    var str_My8WeeksDTCCount:[String] = []
+    var str_All8WeeksDTCCount:[String] = []
     
     
     //Initializer access level change now
