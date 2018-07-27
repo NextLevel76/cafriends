@@ -319,8 +319,8 @@ final class ScannerViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        
         centralManager = CBCentralManager(delegate: self, queue: nil)
+
         
         // tryAgainButton is only enabled when we've stopped scanning
         //tryAgainButton.isEnabled = false
@@ -334,10 +334,7 @@ final class ScannerViewController: UIViewController {
         // tell the delegate to notificate US instead of the previous view if something happens
         //serial.delegate = self
         
-        
         //serialLoad()
-        
-        
         
         // start scanning and schedule the time out
         //serial.startScan()

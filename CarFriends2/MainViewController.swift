@@ -50,12 +50,32 @@ class MainViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+         // 싱글톤 생성 가장 먼저
+        MainManager.shared.requestForMainManager()
+        MainManager.shared.getDeviceRatio(view: self.view )
+        
+        // 클라에 저장해둔 회원가입정보 읽어오기
+        // 키값이 없으면 0 을 반환
+        MainManager.shared.iMemberJoinState = UserDefaults.standard.integer(forKey: "iMemberJoinState")
+        
+        // TEST // 0:비회원    1:차정보없이 가입     2:차정보입력 가입
+        // MainManager.shared.iMemberJoinState = 0
+
+
+        
+        // 가입된 회원 아니면 정보 안 읽는다.
+        if( MainManager.shared.iMemberJoinState > 0 ) {
+            // 회원정보 로컬 데이타 읽기
+            readMyLocalData()
+        }
+        
+        
 
         let sz_car_fuel = ["휘발유","경유","가스(GAS)","전기차"]
         
         
-        MainManager.shared.requestForMainManager() // 싱글톤 생성
-        MainManager.shared.getDeviceRatio(view: self.view )
+        
         
         // 피커뷰 리스트 초기화
         MainManager.shared.str_select_carList.removeAll()
@@ -81,8 +101,7 @@ class MainViewController: UIViewController {
         
         // 8주 데이타에 쓸 날짜 얻기
         getDateDay()
-        // 회원정보 로컬 데이타 읽기
-        readMyLocalData()
+        
         // 피커뷰 2000~ 2018 년 리스트를 만든다.
         getTimeYearList()
         // 피커뷰 car 리스트
@@ -92,6 +111,14 @@ class MainViewController: UIViewController {
             // 유저 로그인 & 8주 데이타 읽어오기
             userLogin()
         }
+        // 전체 회원정보만 읽는다
+        else {
+            
+            self.getData8Week_AllMemberDrive()
+            self.getData8Week_AllMemberFuel()
+            self.getData8Week_AllMemberDTC()
+        }
+        
     }
 
     override func didReceiveMemoryWarning() {
@@ -112,7 +139,7 @@ class MainViewController: UIViewController {
             return
         }
         
-        // 회원이면 데이타 읽는것 체크
+        // 회원이면 DB 통신완료 까지 대기 체크
         if( MainManager.shared.iMemberJoinState > 0 ) {
         
             if( !isLogin || !getMyDrive || !getAllDrive || !getMyFuel || !getAllFuel || !getMyDTC || !getAllDTC || !getWeekDTC) {
@@ -122,6 +149,18 @@ class MainViewController: UIViewController {
                 return
             }
         }
+        else {
+            // 전체 회원 정보 8주치만 읽는다.
+            if( !getAllDrive || !getAllFuel || !getAllDTC ) {
+                
+                var alert = UIAlertView(title: "No Internet Connection2", message: "서버와의 연결이 지연되고 있습니다. 잠시후에 다시 사용해 주세요.", delegate: nil, cancelButtonTitle: "OK")
+                alert.show()
+                return
+            }
+            
+        }
+        
+        
         
         
         // BLE TEST
@@ -129,16 +168,6 @@ class MainViewController: UIViewController {
         //
         //let myView = self.storyboard?.instantiateViewController(withIdentifier: "MainView") as! MainViewController
         //
-        
-        
-        // TEST // 0:비회원    1:차정보없이 가입     2:차정보입력 가입
-        if( MainManager.shared.bAPP_TEST == true ) {
-            
-            // MainManager.shared.iMemberJoinState = 0
-        }
-        
-        
-        
         
         
         // 비회원
@@ -171,11 +200,23 @@ class MainViewController: UIViewController {
     // blue001 / 01012345678
     func userLogin() {
         
+        
         // login.php?Req=Login&ID=아이디&Pass=패스워드
-        let parameters = [
+        var parameters = [
             "Req": "Login",
             "ID": MainManager.shared.member_info.str_id_nick,
-            "Pass": MainManager.shared.member_info.str_id_nick]
+            "Pass": MainManager.shared.member_info.str_id_phone_num]
+        
+        
+        if( MainManager.shared.bAPP_TEST ) {
+            MainManager.shared.member_info.str_id_nick = "blue005"
+            parameters = [
+                "Req": "Login",
+                "ID": MainManager.shared.member_info.str_id_nick,
+                "Pass": MainManager.shared.member_info.str_id_nick]
+        }
+        
+        
         
         print(MainManager.shared.member_info.str_id_nick)
         
@@ -339,11 +380,7 @@ class MainViewController: UIViewController {
                     }
                 }
                 
-                
                 self.getMyDrive = true
-                
-
-                
                 //to get JSON return value
                 // "Res":"Get8WeeksDrivelMileage",[ {"이번주":"10.1"}, {"1주전":"5.8"}, {"2주전":"3.8"}, {"3주전":"5.8"}, {"4주전":"9.8"}, {"5주전":"9.8"}, {"6주전":"3.8"}, {"7주전":"2.8"} ];
                 
@@ -869,24 +906,6 @@ class MainViewController: UIViewController {
         
         let defaults = UserDefaults.standard
         
-        /*
-         defaults.set(MainManager.shared.member_info.str_id_phone_num, forKey: "str_id_phone_num")
-         defaults.set(MainManager.shared.member_info.str_id_nick, forKey: "str_id_nick")
-         
-         defaults.set(MainManager.shared.member_info.str_car_kind, forKey:           "str_car_kind")
-         defaults.set(MainManager.shared.member_info.str_car_year, forKey:           "str_car_year")
-         defaults.set(MainManager.shared.member_info.str_car_dae_num, forKey: "str_car_dae_num")
-         defaults.set(MainManager.shared.member_info.str_car_fuel_type, forKey: "str_car_fuel_type")
-         defaults.set(MainManager.shared.member_info.str_car_plate_num, forKey: "str_car_plate_num")
-         defaults.set(MainManager.shared.member_info.str_car_year, forKey: "str_car_year")
-         defaults.set(MainManager.shared.member_info.str_car_fuel_eff, forKey: "str_car_fuel_eff")
-         */
-        
-        // 클라에 저장해둔 회원가입정보 읽어오기
-        // 키값이 없으면 0 을 반환
-        MainManager.shared.iMemberJoinState = defaults.integer(forKey: "iMemberJoinState")
-        
-        
         // 클라에 저장된 유저 데이타 불러오기
         if UserDefaults.standard.object(forKey: "str_id_nick") != nil
         { MainManager.shared.member_info.str_id_nick = defaults.string(forKey: "str_id_nick")! }
@@ -897,8 +916,8 @@ class MainViewController: UIViewController {
         
         if UserDefaults.standard.object(forKey: "str_car_year") != nil
         { MainManager.shared.member_info.str_car_year = defaults.string(forKey: "str_car_year")! }
-        if UserDefaults.standard.object(forKey: "str_car_dae_num") != nil
-        { MainManager.shared.member_info.str_car_dae_num = defaults.string(forKey: "str_car_dae_num")! }
+        if UserDefaults.standard.object(forKey: "str_car_vin_number") != nil
+        { MainManager.shared.member_info.str_car_vin_number = defaults.string(forKey: "str_car_vin_number")! }
         if UserDefaults.standard.object(forKey: "str_car_fuel_type") != nil
         { MainManager.shared.member_info.str_car_fuel_type = defaults.string(forKey: "str_car_fuel_type")! }
         
@@ -941,7 +960,7 @@ class MainViewController: UIViewController {
         print(MainManager.shared.member_info.str_id_phone_num)
         print(MainManager.shared.member_info.str_car_kind)
         print(MainManager.shared.member_info.str_car_year)
-        print(MainManager.shared.member_info.str_car_dae_num)
+        print(MainManager.shared.member_info.str_car_vin_number)
         print(MainManager.shared.member_info.str_car_fuel_type)
         print(MainManager.shared.member_info.str_car_plate_num)
         print(MainManager.shared.member_info.str_car_year)

@@ -9,11 +9,9 @@
 // 깃허브 주소
 // git remote add CarFriends2 https://github.com/NextLevel76/cafriends
 
-// 깃 초기화 123124
+// 깃 초기화
 // git config --global user.name "NextLevel76"
 // git config --global user.email "lcblue@naver.com"
-
-
 
 //
 // 카프렌즈 기기 2개이상, 다른블루도 2개이상.... 블루투스 접속 테스트, 신호강도 접속 테스트
@@ -28,7 +26,6 @@
 import Foundation
 import UIKit
 import Alamofire
-
 
 
 // 인터넷 연결 체크
@@ -71,24 +68,23 @@ struct Member_Info {
     var str_car_fuel_type = "수소차"
     var i_fuel_piker_select = 0
     
-    var str_car_dae_num = "KLAJA69KDB12345"
+    var str_car_vin_number = ""
     var str_car_plate_num = "서울가1234"
     
-    var str_TotalDriveMileage = "10000"    // 총 주행거리
+    var str_TotalDriveMileage = "00"    // 총 주행거리
     var str_ThisWeekDriveMileage = "0"    // 당주 주행거리
     var str_ThisMonthDriveMileage = "0"    // 월 주행거리
     
     var str_8WeekDriveMileage = "10000"    // 8주 총 주행거리
-
     
-    var str_AvgFuelMileage = "7"       // 총 평균 연비
-    var str_ThisWeekFuelMileage = "9"   // 주 평균 연비
-    var str_ThisMonthFuelMileage = "8"   // 연비
+    var str_AvgFuelMileage = "00"       // 총 평균 연비
+    var str_ThisWeekFuelMileage = "00"   // 주 평균 연비
+    var str_ThisMonthFuelMileage = "00"   // 연비
     
-    var str_8WeekAvgFuelMileage = "0"   // 8주 평균 연비
+    var str_8WeekAvgFuelMileage = "00"   // 8주 평균 연비
     
-    var str_ThisWeekDtcCount = "0"   // 이번주 갯수
-    var str_8WeekDtcCount = "0"       // 8주 합
+    var str_ThisWeekDtcCount = "00"   // 이번주 갯수
+    var str_8WeekDtcCount = "00"       // 8주 합
 
     
     
@@ -308,8 +304,13 @@ struct Member_Info {
             break
         case "[PIN_CODE]":
             // 기기에서 올라온 핀코드
-            var tempPinCode = String(cleanedText)
-            // str_BLE_PinCode = String(cleanedText)
+            //var tempPinCode = String(cleanedText)
+            str_BLE_PinCode = String(cleanedText)
+            break
+        case "[VIN]":
+            // 차대번호[klaj1231ksasakafsdkasdf]
+            str_car_vin_number = String(cleanedText)
+
             break
         default:
             print(String(cleanedText))

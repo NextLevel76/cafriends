@@ -3,18 +3,18 @@
    version = "1.0">
    <ContextStates>
       <ContextState
-         contextName = "AViewController.timerAction():AViewController.swift">
+         contextName = "AViewController.centralManager(_:didDiscover:advertisementData:rssi:):AViewController.swift">
          <PersistentStrings>
             <PersistentString
-               value = "MainManager.shared.bMemberPhoneCertifi">
+               value = "bleSerachDelayStopState">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "closure #1 in AViewController.setChartValues2(_:):AViewController.swift">
+         contextName = "MemberJoinViewController.timerActionBLE():MemberJoinViewController.swift">
          <PersistentStrings>
             <PersistentString
-               value = "MainManager.shared.str_My8weeksFuelMileage">
+               value = "MainManager.shared.member_info.str_AvgFuelMileage">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -30,10 +30,42 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "AViewController.centralManager(_:didDiscover:advertisementData:rssi:):AViewController.swift">
+         contextName = "closure #1 in AViewController.setChartValues(_:):AViewController.swift">
          <PersistentStrings>
             <PersistentString
-               value = "bleSerachDelayStopState">
+               value = " MainManager.shared.str_My8WeeksDriveMileage">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "MainViewController.viewDidLoad():MainViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "MainManager.shared.iMemberJoinState">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "closure #1 in AViewController.setChartValues2(_:):AViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "MainManager.shared.str_My8weeksFuelMileage">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "AViewController.timerAction():AViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "MainManager.shared.bMemberPhoneCertifi">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "MainViewController.pressed(_:):MainViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "MainManager.shared.iMemberJoinState">
             </PersistentString>
          </PersistentStrings>
       </ContextState>

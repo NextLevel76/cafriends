@@ -21,8 +21,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
-                
-        UIApplication.shared.statusBarStyle = .lightContent
+        
+        // 상단 시계 글자 색깔
+        // UIApplication.shared.statusBarStyle = .lightContent
         
         return true
     }

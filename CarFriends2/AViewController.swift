@@ -72,6 +72,14 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     
     
     
+    // 서브 메뉴 위치
+    // 시간 상단 메뉴 20
+    let subMenuView_y:CGFloat = (50)
+    let subSubView_y:CGFloat = (80)
+    
+    let subSubViewA02_y:CGFloat = (80+38)
+    
+    
     
     
     var activityIndicator:UIActivityIndicatorView = UIActivityIndicatorView()
@@ -85,16 +93,16 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     
     @IBOutlet weak var viewContainer: UIView!
     
-    
     @IBOutlet weak var btn_a01_change: UIButton!
     @IBOutlet weak var btn_a02_change: UIButton!
     @IBOutlet weak var btn_a03_change: UIButton!
     
-    
+    // 스크롤 메뉴 버튼 뷰
     @IBOutlet var a01_ScrollMenuView: A01_ScrollMenu!
         
     // A01 XIB
     var a01_01_view: A01_01_View!
+    // A01 뷰 세로 스크롤
     @IBOutlet var a01_01_scroll_view: A01_01_ScrollView!
     @IBOutlet var a01_01_pin_view: A01_01_Pin_View!
     @IBOutlet var a01_01_info_mod_view: A01_01_InfoMod_View!
@@ -109,16 +117,6 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     var a01_04_1_view: A01_04_1_View!
     
     // var a01_05_view: A01_05_View!
-    
-    
-    
-    
-    
-    
-    
-
-    
-    
     
     
     // A02
@@ -161,35 +159,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     @IBOutlet var a01_05_1_view: UIView!
     @IBOutlet weak var tableView_A01_05: UITableView!
     
-    @IBAction func pressed_A05(_ sender: UIButton) {
-        
-        if sender.tag == 0 {
-            
-            self.view.bringSubview(toFront: a01_01_view)
-            print("A01_011")
-        }
-        else if sender.tag == 1 {
-            
-            self.view.bringSubview(toFront: a01_02_view)
-            print("A01_022")
-        }
-        else if sender.tag == 2 {
-            
-            self.view.bringSubview(toFront: a01_03_view)
-            print("A01_033")
-        }
-        else if sender.tag == 3 {
-            
-            self.view.bringSubview(toFront: a01_04_view)
-            print("A01_044")
-        }
-        else if sender.tag == 4 {
-            
-            self.view.bringSubview(toFront: a01_05_1_view)
-            print("A01_055")
-        }
-        
-    }
+  
     
     
     
@@ -223,7 +193,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
                          "예약 시동 비활성 모드.!"]
     
     
-    let btn_a01_name = ["내정보","주행거리","평균연비","진단정보","차량상태","주요부품"]
+    let btn_a01_name = ["내 정보","주행거리","평균연비","진단정보","차량상태","주요부품"]
     
     
     
@@ -246,13 +216,14 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         
         if( MainManager.shared.member_info.isCAR_FRIENDS_CONNECT == true ) {
             
-            // 블루투스 끊기, 끊김 딜리게이트 호출
-            centralManager.cancelPeripheralConnection(self.carFriendsPeripheral!)
+            if( carFriendsPeripheral != nil ) {
+                // 블루투스 끊기 위해, 끊김 딜리게이트 호출
+                centralManager.cancelPeripheralConnection(self.carFriendsPeripheral!)
+            }
             self.carFriendsPeripheral = nil
             self.myCharacteristic = nil
             //self.mySerview = nil
             bleSerachDelayStopState = 0
-            
             
             isMoveSceneDisConnectBLE = true
         }
@@ -270,7 +241,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         
         if( MainManager.shared.member_info.isCAR_FRIENDS_CONNECT == true ) {
             
-            // 블루투스 끊기, 끊김 딜리게이트 호출
+            // 블루투스 끊기 위해, 끊김 딜리게이트 호출
             centralManager.cancelPeripheralConnection(self.carFriendsPeripheral!)
             self.carFriendsPeripheral = nil
             self.myCharacteristic = nil
@@ -297,76 +268,34 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
 
 //    MainManager.shared.str_My8WeeksDriveMileage.removeAll()
 //    MainManager.shared.str_All8WeeksDriveMileage.removeAll()
+    
+    // 회원 처음 가입시
+    func setChartInit() {
+        
+        if( MainManager.shared.str_My8WeeksDriveMileage.count == 0 ) {
+            
+            for i in 0..<8 {
+                
+                MainManager.shared.str_My8WeeksDriveMileage.append("0")
+            }
+        }
+        
+        if( MainManager.shared.str_My8weeksFuelMileage.count == 0 ) {
+            
+            for i in 0..<8 {
+                MainManager.shared.str_My8weeksFuelMileage.append("0")
+            }
+        }
+        
+        if( MainManager.shared.str_My8WeeksDTCCount.count == 0 ) {
+            
+            for i in 0..<8 {
+                MainManager.shared.str_My8WeeksDTCCount.append("0")
+            }
+        }
+    }
 
     
-    let weeks = ["이번주", "1주전", "2주전", "3주전", "4주전", "5주전", "6주전", "7주전", "8주전", "9주전", "10주전", "11주전"]
-    
-    func setChartValues(_ count : Int = 8 ) {
-        
-        let values = (0..<count).map { (i) -> ChartDataEntry in
-            
-            let val = Double( MainManager.shared.str_My8WeeksDriveMileage[i] )
-            //let val = Double(arc4random_uniform(UInt32(count)) + 3 )
-            return ChartDataEntry(x: Double(i), y: val!)
-        }
-        
-        let set1 = LineChartDataSet(values: values, label: "My")
-        //let data = LineChartData(dataSet: set1)
-        
-        let values2 = (0..<count).map { (i) -> ChartDataEntry in
-            
-            //let val = Double(arc4random_uniform(UInt32(count)) + 10 )
-            let val = Double( MainManager.shared.str_All8WeeksDriveMileage[i] )
-            
-            return ChartDataEntry(x: Double(i), y: val!)
-        }
-        
-        let set2 = LineChartDataSet(values: values2, label: "All")
-        //set2.setColor(UIColor(red: 51/255, green: 181/255, blue: 229/255, alpha: 1))
-        set2.setColor(.gray)
-        set2.setCircleColor(.blue)
-        set2.axisDependency = .right
-        set2.lineWidth = 2
-        set2.circleRadius = 3
-        //set2.fillAlpha = 65/255
-        //set2.fillColor = .red
-        set2.highlightColor = UIColor(red: 244/255, green: 117/255, blue: 117/255, alpha: 1)
-        
-        
-        //set2.drawCircleHoleEnabled = false
-        //let data2 = LineChartData(dataSet: set2)
-        
-        let data = LineChartData(dataSets: [set1])
-        data.setValueTextColor(.black)
-        data.setValueFont(.systemFont(ofSize: 9))
-        
-        
-        a01_01_scroll_view.graph_line_view01.data = data
-        // X축 하단으로
-        a01_01_scroll_view.graph_line_view01.xAxis.labelPosition = XAxis.LabelPosition.bottom
-        // x축 몇주 세팅
-        a01_01_scroll_view.graph_line_view01.xAxis.valueFormatter = IndexAxisValueFormatter(values:weeks)
-        // 스타트 시점 0:1주, 1:2주
-        a01_01_scroll_view.graph_line_view01.xAxis.granularity = 0 // 시작 번호
-        
-        
-        // 문자열 변환 IndexAxisValueFormatter
-        
-        
-        
-        // y축 왼쪽
-        a01_01_scroll_view.graph_line_view01.leftAxis.valueFormatter = MyIndexFormatterKm(values:MainManager.shared.str_My8WeeksDriveMileage)
-        a01_01_scroll_view.graph_line_view01.leftAxis.granularity = 7 // 맥시멈 번호
-        
-        
-        // y축 왼쪽
-//        a01_01_scroll_view.graph_line_view01.rightAxis.valueFormatter = MyIndexFormatter(values:carDataKm1)
-//        a01_01_scroll_view.graph_line_view01.rightAxis.granularity = 7 // 맥시멈 번호
-//         a01_01_scroll_view.graph_line_view01.rightAxis.axisMinimum = 5
-//         a01_01_scroll_view.graph_line_view01.rightAxis.axisMinimum = 25
-        
-        a01_01_scroll_view.graph_line_view01.chartDescription?.text = ""
-    }
     
     class MyIndexFormatterKm: IndexAxisValueFormatter {
         
@@ -391,6 +320,84 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         }
     }
     
+    let weeks = ["이번주", "1주전", "2주전", "3주전", "4주전", "5주전", "6주전", "7주전", "8주전", "9주전", "10주전", "11주전"]
+    
+    func setChartValues(_ count : Int = 8 ) {
+        
+        let values = (0..<count).map { (i) -> ChartDataEntry in
+            
+            let val = Double( MainManager.shared.str_My8WeeksDriveMileage[i] )
+            //let val = Double(arc4random_uniform(UInt32(count)) + 3 )
+            return ChartDataEntry(x: Double(i), y: val!)
+        }
+        
+
+        let set1 = LineChartDataSet(values: values, label: "최근 8주간 주행거리 데이터")
+        let color1 = UIColor(red: 16/255, green: 177/255, blue: 171/255, alpha: 1)
+        set1.setColor(color1)
+        set1.setColors(color1)
+        set1.setCircleColor(color1)
+        set1.setCircleColors(color1)
+
+
+
+        
+        let values2 = (0..<count).map { (i) -> ChartDataEntry in
+            
+            let val = Double( MainManager.shared.str_All8WeeksDriveMileage[i] )
+            //let val = Double(arc4random_uniform(UInt32(count)) + 3 )
+            return ChartDataEntry(x: Double(i), y: val!)
+        }
+        
+        let set2 = LineChartDataSet(values: values2, label: "회원 전체 평균")
+        //set2.setColor(UIColor(red: 51/255, green: 181/255, blue: 229/255, alpha: 1))
+        let color2 = UIColor.gray
+        set2.setColor(color2)
+        set2.setColors(color2)
+        set2.setCircleColor(color2)
+        set2.setCircleColors(color2)
+        
+        //set2.drawCircleHoleEnabled = false
+        //let data2 = LineChartData(dataSet: set2)
+        
+        let data = LineChartData(dataSets: [set2, set1 ])
+        data.setValueTextColor(.black)
+        data.setValueFont(.systemFont(ofSize: 9))
+        
+        
+        
+        
+        a01_01_scroll_view.graph_line_view01.data = data
+        // X축 하단으로
+        a01_01_scroll_view.graph_line_view01.xAxis.labelPosition = XAxis.LabelPosition.bottom
+        // x축 몇주 세팅
+        a01_01_scroll_view.graph_line_view01.xAxis.valueFormatter = IndexAxisValueFormatter(values:weeks)
+        // 스타트 시점 0:1주, 1:2주
+        a01_01_scroll_view.graph_line_view01.xAxis.granularity = 0 // 시작 번호
+        
+        
+        // 문자열 변환 IndexAxisValueFormatter
+        
+        
+        
+        // y축 왼쪽
+        a01_01_scroll_view.graph_line_view01.leftAxis.valueFormatter = MyIndexFormatterKm(values:MainManager.shared.str_My8WeeksDriveMileage)
+//        a01_01_scroll_view.graph_line_view01.leftAxis.granularity = 7 // 맥시멈 번호
+        a01_01_scroll_view.graph_line_view01.fitScreen()
+        
+        
+        
+        // y축 왼쪽
+//        a01_01_scroll_view.graph_line_view01.rightAxis.valueFormatter = MyIndexFormatter(values:carDataKm1)
+//        a01_01_scroll_view.graph_line_view01.rightAxis.granularity = 7 // 맥시멈 번호
+//         a01_01_scroll_view.graph_line_view01.rightAxis.axisMinimum = 5
+//         a01_01_scroll_view.graph_line_view01.rightAxis.axisMinimum = 25
+        
+        a01_01_scroll_view.graph_line_view01.chartDescription?.text = ""
+    }
+    
+    
+    
     
     
     //    MainManager.shared.str_My8weeksFuelMileage.removeAll()
@@ -407,8 +414,12 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             return ChartDataEntry(x: Double(i), y: val!)
         }
         
-        let set1 = LineChartDataSet(values: values, label: "")
-        //let data = LineChartData(dataSet: set1)
+        let set1 = LineChartDataSet(values: values, label: "최근 8주간 연비 데이터")
+        let color1 = UIColor(red: 255/255, green: 57/255, blue: 12/255, alpha: 1)
+        set1.setColor(color1)
+        set1.setColors(color1)
+        set1.setCircleColor(color1)
+        set1.setCircleColors(color1)
         
         let values2 = (0..<count).map { (i) -> ChartDataEntry in
             
@@ -416,21 +427,18 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             return ChartDataEntry(x: Double(i), y: val!)
         }
         
-        let set2 = LineChartDataSet(values: values2, label: "")
+        let set2 = LineChartDataSet(values: values2, label: "회원 전체 평균")
         //set2.setColor(UIColor(red: 51/255, green: 181/255, blue: 229/255, alpha: 1))
-        set2.setColor(.gray)
-        set2.setCircleColor(.blue)
-        set2.axisDependency = .right
-        set2.lineWidth = 2
-        set2.circleRadius = 3
-        //set2.fillAlpha = 65/255
-        //set2.fillColor = .red
-        set2.highlightColor = UIColor(red: 244/255, green: 117/255, blue: 117/255, alpha: 1)
+        let color2 = UIColor.gray
+        set2.setColor(color2)
+        set2.setColors(color2)
+        set2.setCircleColor(color2)
+        set2.setCircleColors(color2)
         
         //set2.drawCircleHoleEnabled = false
         //let data2 = LineChartData(dataSet: set2)
         
-        let data = LineChartData(dataSets: [set1])
+        let data = LineChartData(dataSets: [set2, set1 ])
         data.setValueTextColor(.black)
         data.setValueFont(.systemFont(ofSize: 9))
         
@@ -445,14 +453,21 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         a01_01_scroll_view.graph_line_view02.xAxis.granularity = 0 // 시작 번호
         
         
+        
+        
         // 문자열 변환 IndexAxisValueFormatter
         // y축 왼쪽
         a01_01_scroll_view.graph_line_view02.leftAxis.valueFormatter = MyIndexFormatterKl(values:MainManager.shared.str_My8weeksFuelMileage)
-        a01_01_scroll_view.graph_line_view02.leftAxis.granularity = 7 // 맥시멈 번호
+        
+        a01_01_scroll_view.graph_line_view02.fitScreen()
+        
+        
+//        a01_01_scroll_view.graph_line_view02.leftAxis.granularity = 7 // 맥시멈 번호
+//        a01_01_scroll_view.graph_line_view02.leftAxis.granularity = 7 // 맥시멈 번호
+        
         
         a01_01_scroll_view.graph_line_view02.chartDescription?.text = ""
     }
-    
     
     
     
@@ -470,8 +485,12 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             return ChartDataEntry(x: Double(i), y: val!)
         }
         
-        let set1 = LineChartDataSet(values: values, label: "")
-        //let data = LineChartData(dataSet: set1)
+        let set1 = LineChartDataSet(values: values, label: "최근 8주간 DTC")
+        let color1 = UIColor(red: 15/255, green: 175/255, blue: 225/255, alpha: 1)
+        set1.setColor(color1)
+        set1.setColors(color1)
+        set1.setCircleColor(color1)
+        set1.setCircleColors(color1)
         
         let values2 = (0..<count).map { (i) -> ChartDataEntry in
             
@@ -479,21 +498,17 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             return ChartDataEntry(x: Double(i), y: val!)
         }
         
-        let set2 = LineChartDataSet(values: values2, label: "")
-        //set2.setColor(UIColor(red: 51/255, green: 181/255, blue: 229/255, alpha: 1))
-        set2.setColor(.gray)
-        set2.setCircleColor(.blue)
-        set2.axisDependency = .right
-        set2.lineWidth = 2
-        set2.circleRadius = 3
-        //set2.fillAlpha = 65/255
-        //set2.fillColor = .red
-        set2.highlightColor = UIColor(red: 244/255, green: 117/255, blue: 117/255, alpha: 1)
+        let set2 = LineChartDataSet(values: values2, label: "회원 전체 평균")
+        let color2 = UIColor.gray
+        set2.setColor(color2)
+        set2.setColors(color2)
+        set2.setCircleColor(color2)
+        set2.setCircleColors(color2)
         
         //set2.drawCircleHoleEnabled = false
         //let data2 = LineChartData(dataSet: set2)
         
-        let data = LineChartData(dataSets: [set1])
+        let data = LineChartData(dataSets: [set2, set1])
         data.setValueTextColor(.black)
         data.setValueFont(.systemFont(ofSize: 9))
         
@@ -511,7 +526,12 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         // 문자열 변환 IndexAxisValueFormatter
         // y축 왼쪽
         a01_01_scroll_view.graph_line_view03.leftAxis.valueFormatter = MyIndexFormatterDtc(values:MainManager.shared.str_My8WeeksDTCCount)
-        a01_01_scroll_view.graph_line_view03.leftAxis.granularity = 7 // 맥시멈 번호
+        
+        //a01_01_scroll_view.graph_line_view03.leftAxis.granularity = 7 // 맥시멈 번호
+        
+        a01_01_scroll_view.graph_line_view03.fitScreen()
+        
+        
         
         a01_01_scroll_view.graph_line_view03.chartDescription?.text = ""
     }
@@ -536,7 +556,11 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         }
         
         let set1 = LineChartDataSet(values: values, label: "최근 8주간 연비 데이터")
-        //let data = LineChartData(dataSet: set1)
+        let color1 = UIColor(red: 16/255, green: 177/255, blue: 171/255, alpha: 1)
+        set1.setColor(color1)
+        set1.setColors(color1)
+        set1.setCircleColor(color1)
+        set1.setCircleColors(color1)
         
         
         
@@ -547,15 +571,11 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         }
         
         let set2 = LineChartDataSet(values: values2, label: "회원 전체 평균")
-        //set2.setColor(UIColor(red: 51/255, green: 181/255, blue: 229/255, alpha: 1))
-        set2.setColor(.gray)
-        set2.setCircleColor(.blue)
-        set2.axisDependency = .right
-        set2.lineWidth = 2
-        set2.circleRadius = 3
-        //set2.fillAlpha = 65/255
-        //set2.fillColor = .red
-        set2.highlightColor = UIColor(red: 244/255, green: 117/255, blue: 117/255, alpha: 1)
+        let color2 = UIColor.gray
+        set2.setColor(color2)
+        set2.setColors(color2)
+        set2.setCircleColor(color2)
+        set2.setCircleColors(color2)
         
         //set2.drawCircleHoleEnabled = false
         //let data2 = LineChartData(dataSet: set2)
@@ -563,7 +583,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         
       
         
-        let data = LineChartData(dataSets: [set1, set2])
+        let data = LineChartData(dataSets: [set2, set1])
         data.setValueTextColor(.black)
         data.setValueFont(.systemFont(ofSize: 9))
         
@@ -580,7 +600,9 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
        
         // y축 왼쪽
         a01_02_view.graph_line_view.leftAxis.valueFormatter = MyIndexFormatterKm(values:MainManager.shared.str_My8WeeksDriveMileage)
-        a01_02_view.graph_line_view.leftAxis.granularity = 7 // 맥시멈 번호
+//        a01_02_view.graph_line_view.leftAxis.granularity = 7 // 맥시멈 번호
+        
+        a01_02_view.graph_line_view.fitScreen()
     }
     
     
@@ -601,8 +623,12 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             return ChartDataEntry(x: Double(i), y: val!)
         }
         
-        let set1 = LineChartDataSet(values: values, label: "최근 8주간 DTC")
-        //let data = LineChartData(dataSet: set1)
+        let set1 = LineChartDataSet(values: values, label: "최근 8주간 연비 데이터")
+        let color1 = UIColor(red: 255/255, green: 57/255, blue: 12/255, alpha: 1)
+        set1.setColor(color1)
+        set1.setColors(color1)
+        set1.setCircleColor(color1)
+        set1.setCircleColors(color1)
         
         
         let values2 = (0..<count).map { (i) -> ChartDataEntry in
@@ -612,18 +638,14 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         }
         
         let set2 = LineChartDataSet(values: values2, label: "회원 전체 평균")
-        //set2.setColor(UIColor(red: 51/255, green: 181/255, blue: 229/255, alpha: 1))
-        set2.setColor(.gray)
-        set2.setCircleColor(.blue)
-        set2.axisDependency = .right
-        set2.lineWidth = 2
-        set2.circleRadius = 3
-        //set2.fillAlpha = 65/255
-        //set2.fillColor = .red
-        set2.highlightColor = UIColor(red: 244/255, green: 117/255, blue: 117/255, alpha: 1)
+        let color2 = UIColor.gray
+        set2.setColor(color2)
+        set2.setColors(color2)
+        set2.setCircleColor(color2)
+        set2.setCircleColors(color2)
         
         
-        let data = LineChartData(dataSets: [set1, set2])
+        let data = LineChartData(dataSets: [set2, set1])
         data.setValueTextColor(.black)
         data.setValueFont(.systemFont(ofSize: 9))
         
@@ -631,7 +653,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         
         // X축 하단으로
         a01_03_view.graph_line_view.xAxis.labelPosition = XAxis.LabelPosition.bottom
-        
+        a01_03_view.graph_line_view.chartDescription?.text = ""
         
         // x축 몇주 세팅
         a01_03_view.graph_line_view.xAxis.valueFormatter = IndexAxisValueFormatter(values:weeks)
@@ -643,7 +665,9 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
       
         // y축 왼쪽
         a01_03_view.graph_line_view.leftAxis.valueFormatter = MyIndexFormatterKl(values:MainManager.shared.str_My8weeksFuelMileage)
-        a01_03_view.graph_line_view.leftAxis.granularity = 7 // 맥시멈 갯수 번호
+//        a01_03_view.graph_line_view.leftAxis.granularity = 7 // 맥시멈 갯수 번호
+        
+        a01_03_view.graph_line_view.fitScreen()
     }
     
     
@@ -659,6 +683,11 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         }
         
         let set1 = LineChartDataSet(values: values, label: "최근 8주간 DTC")
+        let color1 = UIColor(red: 15/255, green: 175/255, blue: 225/255, alpha: 1)
+        set1.setColor(color1)
+        set1.setColors(color1)
+        set1.setCircleColor(color1)
+        set1.setCircleColors(color1)
         
         
         let values2 = (0..<count).map { (i) -> ChartDataEntry in
@@ -669,17 +698,14 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         
         let set2 = LineChartDataSet(values: values2, label: "회원 전체 평균")
         //set2.setColor(UIColor(red: 51/255, green: 181/255, blue: 229/255, alpha: 1))
-        set2.setColor(.gray)
-        set2.setCircleColor(.blue)
-        set2.axisDependency = .right
-        set2.lineWidth = 2
-        set2.circleRadius = 3
-        //set2.fillAlpha = 65/255
-        //set2.fillColor = .red
-        set2.highlightColor = UIColor(red: 244/255, green: 117/255, blue: 117/255, alpha: 1)
+        let color2 = UIColor.gray
+        set2.setColor(color2)
+        set2.setColors(color2)
+        set2.setCircleColor(color2)
+        set2.setCircleColors(color2)
         
         
-        let data = LineChartData(dataSets: [set1, set2])
+        let data = LineChartData(dataSets: [set2, set1])
         data.setValueTextColor(.black)
         data.setValueFont(.systemFont(ofSize: 9))
         
@@ -687,7 +713,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         
         // X축 하단으로
         a01_04_1_view.graph_line_view.xAxis.labelPosition = XAxis.LabelPosition.bottom
-        
+        a01_04_1_view.graph_line_view.chartDescription?.text = ""
         
         // x축 몇주 세팅
         a01_04_1_view.graph_line_view.xAxis.valueFormatter = IndexAxisValueFormatter(values:weeks)
@@ -697,7 +723,8 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         // 문자열 변환 IndexAxisValueFormatter
         // y축 왼쪽
         a01_04_1_view.graph_line_view.leftAxis.valueFormatter = MyIndexFormatterDtc(values:MainManager.shared.str_My8WeeksDTCCount)
-        a01_04_1_view.graph_line_view.leftAxis.granularity = 7 // 맥시멈 갯수 번호
+//        a01_04_1_view.graph_line_view.leftAxis.granularity = 7 // 맥시멈 갯수 번호
+        a01_04_1_view.graph_line_view.fitScreen()
     }
     
     
@@ -797,8 +824,6 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             bleSerachDelayStopState = 2
         }
         
-        
-        
     }
     
     
@@ -812,7 +837,6 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         
         // 블루 투스 켜짐 연결 꺼짐 UI 표시 체크
         connectCheckBLE()
-        
         // 온오프 버튼 이미지 상태변경
         carOnOffSetting()
     }
@@ -1193,21 +1217,21 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         if( MainManager.shared.member_info.isBLE_ON == false ) {
             // 연결됨
             a01_01_scroll_view.btn_kit_connect.setBackgroundImage(UIImage(named:"a_01_01_link02"), for: .normal)
-            self.a01_01_scroll_view.label_kit_connect.text = "블루투스 꺼짐"
+            self.a01_01_scroll_view.label_kit_connect.text = "블루투스 꺼짐!"
             self.a01_01_scroll_view.label_kit_connect.textColor = UIColor.red
         }
         else {
             
             if( MainManager.shared.member_info.isCAR_FRIENDS_CONNECT == true ) {
                 // 연결됨
-                a01_01_scroll_view.btn_kit_connect.setBackgroundImage(UIImage(named:"a_01_01_link01"), for: .normal)
-                self.a01_01_scroll_view.label_kit_connect.text = "연결 됨"
+                a01_01_scroll_view.btn_kit_connect.setBackgroundImage(UIImage(named:"a_01_01_link"), for: .normal)
+                self.a01_01_scroll_view.label_kit_connect.text = "블루투스 연결됨"
                 self.a01_01_scroll_view.label_kit_connect.textColor = UIColor(red: 41/256, green: 232/255, blue: 223/255, alpha: 1)
             }
             else {
                 // 카프렌즈 연결중
                 a01_01_scroll_view.btn_kit_connect.setBackgroundImage(UIImage(named:"a_01_01_unlink"), for: .normal)
-                self.a01_01_scroll_view.label_kit_connect.text = "감지안됨"
+                self.a01_01_scroll_view.label_kit_connect.text = "블루투스 연결중"
                 self.a01_01_scroll_view.label_kit_connect.textColor = UIColor.red
             }
         }
@@ -1612,10 +1636,10 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     var timerDATETIME = Timer()
     var timerCarFriendStart = Timer()
     
+
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-
         
         // 인터넷 연결 체크, 연결 안됬으면 젤 첨 화면으로
         if( MainManager.shared.isConnectCheck() == false ) {
@@ -1632,6 +1656,17 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         timer2 = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(timerAction2), userInfo: nil, repeats: true)
         // 2초
         timerBLE = Timer.scheduledTimer(timeInterval: 2, target: self, selector: #selector(timerActionBLE), userInfo: nil, repeats: true)
+        
+        
+        ////////////////////////////////////////////////// main btn init
+        //
+        
+        btn_a01_change.setTitleColor(.white, for: .normal)
+        btn_a01_change.backgroundColor = UIColor(red: 11/256, green: 85/255, blue: 156/255, alpha: 1)
+        btn_a02_change.setTitleColor(.gray, for: .normal)
+        btn_a02_change.backgroundColor = UIColor(red: 11/256, green: 85/255, blue: 156/255, alpha: 1)
+        btn_a03_change.setTitleColor(.gray, for: .normal)
+        btn_a03_change.backgroundColor = UIColor(red: 11/256, green: 85/255, blue: 156/255, alpha: 1)
         
         
         ////////////////////////////////////////////////////////// tableView Init
@@ -1675,13 +1710,13 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             a01_01_scroll_view.btn_car_info_mod.layer.cornerRadius = 5;
             
             //featView2.frame.origin.x = 10
-            featView1.frame.origin.y = 82
+            featView1.frame.origin.y = CGFloat(subSubView_y)
             self.view.addSubview(featView1)
             a01_01_view = featView1
             
             // 스크롤뷰 세로 스크롤 영역 설정
             a01_01_view.addSubview(a01_01_scroll_view)
-            a01_01_scroll_view.frame = CGRect(x: 5, y: 0, width: 365, height: 438+41)
+            a01_01_scroll_view.frame = CGRect(x: 15, y: 0, width: 345, height: 438+47)
             a01_01_scroll_view.frame = MainManager.shared.initLoadChangeFrame( frame: a01_01_scroll_view.frame )
             a01_01_scroll_view.delegate = self
             
@@ -1695,8 +1730,6 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             a01_01_scroll_view.resizeScrollViewContentSize()
             a01_01_scroll_view.contentSize.height += 30
             
-            
-
             
             
             
@@ -1718,17 +1751,16 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             a01_01_scroll_view.label_car_kind_year.text = "\(MainManager.shared.member_info.str_car_kind) \(MainManager.shared.member_info.str_car_year)년형"
             a01_01_scroll_view.label_fuel_type.text = "\(MainManager.shared.member_info.str_car_fuel_type) 차량"
             a01_01_scroll_view.label_car_plate_nem.text = MainManager.shared.member_info.str_car_plate_num
-            a01_01_scroll_view.label_car_dae_num.text = MainManager.shared.member_info.str_car_dae_num
-            
+            a01_01_scroll_view.label_car_dae_num.text = MainManager.shared.member_info.str_car_vin_number
             
             // 콤마
             // 총 거리, 합
-            a01_01_scroll_view.label_tot_km.text = "\(tempTotKm.withCommas())km"
-            a01_01_scroll_view.label_avg_8week_km.text = "\(temp8WeekKm.withCommas())km"
+            a01_01_scroll_view.label_tot_km.text = "\(tempTotKm.withCommas()) km"
+            a01_01_scroll_view.label_avg_8week_km.text = "\(temp8WeekKm.withCommas()) km"
             
             // 연비, 평균
-            a01_01_scroll_view.label_tot_kml.text = "\(tempTotAvgFuel)km/l"
-            a01_01_scroll_view.label_avg_8week_kml.text = "\(temp8WeekAvgFuel)km/l"
+            a01_01_scroll_view.label_tot_kml.text = "\(tempTotAvgFuel) km/l"
+            a01_01_scroll_view.label_avg_8week_kml.text = "\(temp8WeekAvgFuel) km/l"
             
             // 이번주, 8주 합
             a01_01_scroll_view.label_tot_dtc.text = "\(MainManager.shared.member_info.str_ThisWeekDtcCount) 회"
@@ -1871,16 +1903,15 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         
         a01_01_info_mod_view.field_car_dae_num.delegate = self
         a01_01_info_mod_view.field_car_dae_num.placeholder = "예:KLYDC487DHC701056"
-        a01_01_info_mod_view.field_car_dae_num.text = MainManager.shared.member_info.str_car_dae_num
+        a01_01_info_mod_view.field_car_dae_num.text = MainManager.shared.member_info.str_car_vin_number
        
         
         a01_01_info_mod_view.field_plate_num.delegate = self
         a01_01_info_mod_view.field_plate_num.placeholder = "예:99가9999"
         a01_01_info_mod_view.field_plate_num.text = MainManager.shared.member_info.str_car_plate_num
         
-        
         a01_ScrollBtnCreate()
-        a01_ScrollMenuView.frame.origin.y = 41
+        a01_ScrollMenuView.frame.origin.y = CGFloat(subMenuView_y)
         self.view.addSubview(a01_ScrollMenuView)
         
         
@@ -1895,42 +1926,60 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         if let featView2 = Bundle.main.loadNibNamed("A01_02_View", owner: self, options: nil)?.first as? A01_02_View
         {
             //featView2.frame.origin.x = 10
-            featView2.frame.origin.y = 82
+            featView2.frame.origin.y = CGFloat(subSubView_y)
             self.view.addSubview(featView2)
             a01_02_view = featView2
 
             // 콤마
             // 총 거리, 합
-            a01_02_view.label_tot_big_km.text = "\(tempTotKm.withCommas())km"
-            a01_02_view.label_tot_km.text = "\(tempTotKm.withCommas())km"
-            a01_02_view.label_8week_km.text = "\(temp8WeekKm.withCommas())km"
+            a01_02_view.label_tot_big_km.text = "\(tempTotKm.withCommas()) km"
+            a01_02_view.label_tot_km.text = "\(tempTotKm.withCommas()) km"
+            a01_02_view.label_8week_km.text = "\(temp8WeekKm.withCommas()) km"
         }
         
         if let featView3 = Bundle.main.loadNibNamed("A01_03_View", owner: self, options: nil)?.first as? A01_03_View
         {
             //featView2.frame.origin.x = 10
-            featView3.frame.origin.y = 82
+            featView3.frame.origin.y = CGFloat(subSubView_y)
             self.view.addSubview(featView3)
             a01_03_view = featView3
+            
+            a01_03_view.label_tot_big_km.text = "\(tempTotAvgFuel) km/l"
+            a01_03_view.label_tot_km.text = "\(tempTotAvgFuel) km/l"
+            a01_03_view.label_8week_km.text = "\(temp8WeekAvgFuel) km/l"
         }
         
+        
+        // A01_04 새로 추가
+        // DTC
+        a01_04_1_view = A01_04_1_View.instanceFromNib() as! A01_04_1_View
+        a01_04_1_view.frame.origin.y = CGFloat(subSubView_y)
+        self.view.addSubview(a01_04_1_view)
+        
+        a01_04_1_view.label_tot_big_dtc.text = "\(MainManager.shared.member_info.str_ThisWeekDtcCount) 회"
+        a01_04_1_view.label_week_dtc.text = "\(MainManager.shared.member_info.str_ThisWeekDtcCount) 회"
+        a01_04_1_view.label_8week_dtc.text = "\(MainManager.shared.member_info.str_8WeekDtcCount) 회"
+        
+        
+        
+        // 04 아님 바로위 소스 04_1 추가로 인해 5번째로 밀려남 바뀜
         if let featView4 = Bundle.main.loadNibNamed("A01_04_View", owner: self, options: nil)?.first as? A01_04_View
         {
             //featView2.frame.origin.x = 10
-            featView4.frame.origin.y = 82
+            featView4.frame.origin.y = CGFloat(subSubView_y)
             self.view.addSubview(featView4)
             a01_04_view = featView4
         }
         
-        // DTC
-        a01_04_1_view = A01_04_1_View.instanceFromNib() as! A01_04_1_View
-        a01_04_1_view.frame.origin.y = 82
-        self.view.addSubview(a01_04_1_view)
+        
         
         
         
         
         ////////////////////////////// 차트 데이타 그리기
+        //
+        // 회원가입 직후 초기화
+        setChartInit()
         // A01 스크롤뷰 차트 3개
         setChartValues()
         setChartValues2()
@@ -1947,14 +1996,14 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         
         // a05 view add 주요부품
         self.view.addSubview(a01_05_1_view)
-        a01_05_1_view.frame.origin.y = 82
+        a01_05_1_view.frame.origin.y = CGFloat(subSubView_y)
         
         // 핀번호 수정
         self.view.addSubview(a01_01_pin_view)
-        a01_01_pin_view.frame.origin.y = 82
+        a01_01_pin_view.frame.origin.y = CGFloat(subSubView_y)
         // 회원 정보 수정
         self.view.addSubview(a01_01_info_mod_view)
-        a01_01_info_mod_view.frame.origin.y = 82
+        a01_01_info_mod_view.frame.origin.y = CGFloat(subSubView_y)
         
         
         
@@ -1962,60 +2011,59 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         // A02
         a02_ScrollBtnCreate()
         self.view.addSubview(a01_06_view)
-        a01_06_view.frame.origin.y = 41
+        a01_06_view.frame.origin.y = CGFloat(subSubView_y)
         
         self.view.addSubview(a02_ScrollMenuView)
-        a02_ScrollMenuView.frame.origin.y = 41
+        a02_ScrollMenuView.frame.origin.y = CGFloat(subMenuView_y)
         
         self.view.addSubview(a02_01_view)
-        a02_01_view.frame.origin.y = 109
+        a02_01_view.frame.origin.y = subSubViewA02_y
         
         self.view.addSubview(a02_02_view)
-        a02_02_view.frame.origin.y = 109
+        a02_02_view.frame.origin.y = subSubViewA02_y
         
         self.view.addSubview(a02_03_view)
-        a02_03_view.frame.origin.y = 109
+        a02_03_view.frame.origin.y = subSubViewA02_y
         
         self.view.addSubview(a02_04_view)
-        a02_04_view.frame.origin.y = 109
+        a02_04_view.frame.origin.y = subSubViewA02_y
         
         self.view.addSubview(a02_05_view)
-        a02_05_view.frame.origin.y = 109
+        a02_05_view.frame.origin.y = subSubViewA02_y
         
         self.view.addSubview(a02_06_view)
-        a02_06_view.frame.origin.y = 109
+        a02_06_view.frame.origin.y = subSubViewA02_y
         
         self.view.addSubview(a02_07_view)
-        a02_07_view.frame.origin.y = 109
+        a02_07_view.frame.origin.y = subSubViewA02_y
         
         self.view.addSubview(a02_08_view)
-        a02_08_view.frame.origin.y = 109
+        a02_08_view.frame.origin.y = subSubViewA02_y
         
         self.view.addSubview(a02_09_view)
-        a02_09_view.frame.origin.y = 109
+        a02_09_view.frame.origin.y = subSubViewA02_y
         
         self.view.addSubview(a02_10_view)
-        a02_10_view.frame.origin.y = 109
+        a02_10_view.frame.origin.y = subSubViewA02_y
         
         self.view.addSubview(a02_11_view)
-        a02_11_view.frame.origin.y = 109
+        a02_11_view.frame.origin.y = subSubViewA02_y
         
         self.view.addSubview(a02_12_view)
-        a02_12_view.frame.origin.y = 109
+        a02_12_view.frame.origin.y = subSubViewA02_y
         
         
         
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        // A03
-        
+        // A03        
         self.view.addSubview(a03_01_view)
-        a03_01_view.frame.origin.y = 41
+        a03_01_view.frame.origin.y = CGFloat(subMenuView_y)
         
         self.view.addSubview(a03_02_view)
-        a03_02_view.frame.origin.y = 41
+        a03_02_view.frame.origin.y = CGFloat(subMenuView_y)
         
         self.view.addSubview(a03_03_view)
-        a03_03_view.frame.origin.y = 41
+        a03_03_view.frame.origin.y = CGFloat(subMenuView_y)
         
         
         
@@ -2075,14 +2123,16 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         
         
         a01_02_view.frame = MainManager.shared.initLoadChangeFrame(frame: a01_02_view.frame)
+        
+        
         a01_03_view.frame = MainManager.shared.initLoadChangeFrame(frame: a01_03_view.frame)
         a01_04_view.frame = MainManager.shared.initLoadChangeFrame(frame: a01_04_view.frame)
         a01_04_1_view.frame = MainManager.shared.initLoadChangeFrame(frame: a01_04_1_view.frame)
         a01_05_1_view.frame = MainManager.shared.initLoadChangeFrame(frame: a01_05_1_view.frame)
         
 
-        
-        // a02_ScrollMenuView.frame = MainManager.shared.initLoadChangeFrame(frame: a02_ScrollMenuView.frame)
+        a02_ScrollMenuView.frame = MainManager.shared.initLoadChangeFrame(frame: a02_ScrollMenuView.frame)
+
         a02_01_view.frame = MainManager.shared.initLoadChangeFrame(frame: a02_01_view.frame)
         
         a02_02_view.frame = MainManager.shared.initLoadChangeFrame(frame: a02_02_view.frame)
@@ -2451,12 +2501,13 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         for i in 0..<btn_a01_name.count  {
             
             let tempBtn = a01_ScrollMenuView.scrollView.viewWithTag(i+1) as! UIButton
-            tempBtn.setTitleColor( UIColor.black, for: .normal )
+            tempBtn.setTitleColor( UIColor.lightGray, for: .normal )
 
             //tempBtn.setImage(UIImage(named:btn_image[i-1]), for: UIControlState.normal )
         }
         // select btn
-        sender.setTitleColor( UIColor(red: 0/256, green: 75/255, blue: 144/255, alpha: 1), for: .normal )
+        // sender.setTitleColor( UIColor(red: 0/256, green: 75/255, blue: 144/255, alpha: 1), for: .normal )
+        sender.setTitleColor( .black, for: .normal )
         
         // "내정보","주행거리","평균연비","진단정보","차량상태","주요부품"
         if sender.tag == 1 {
@@ -2466,15 +2517,30 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         }
         else if sender.tag == 2 {
             
+            
+            if let videoURL:URL = URL(string: "https://www.youtube.com/embed/F4oHuML9U2A") {
+                let request:URLRequest = URLRequest(url: videoURL)
+                a01_02_view.webView.load(request)
+            }
+            
             self.view.bringSubview(toFront: a01_02_view)
             print("A01_02")
         }
         else if sender.tag == 3 {
             
+            if let videoURL:URL = URL(string: "https://www.youtube.com/embed/F4oHuML9U2A") {
+                let request:URLRequest = URLRequest(url: videoURL)
+                a01_03_view.webView.load(request)
+            }
             self.view.bringSubview(toFront: a01_03_view)
             print("A01_03")
         }
         else if sender.tag == 4 {
+            
+            if let videoURL:URL = URL(string: "https://www.youtube.com/embed/F4oHuML9U2A") {
+                let request:URLRequest = URLRequest(url: videoURL)
+                a01_04_1_view.webView.load(request)
+            }
             
             self.view.bringSubview(toFront: a01_04_1_view) // 진단정보
             print("A01_04_1")
@@ -2580,19 +2646,16 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             // moveAnimate()
         }
         
-        // 차트 테이타 갯수 8주(8개) 테스트
-        //setChartValues(8)
-        //ToastView.shared.short(self.view, txt_msg: "활성화 되었습니다.")
+        btn_a01_change.setTitleColor(.white, for: .normal)
+        btn_a02_change.setTitleColor(.gray, for: .normal)
+        btn_a03_change.setTitleColor(.gray, for: .normal)
         
-        btn_a01_change.setBackgroundImage(UIImage(named:"frame-A-01-off"), for: UIControlState.normal )
-        btn_a02_change.setBackgroundImage(UIImage(named:"frame-A-02-off"), for: UIControlState.normal )
-        btn_a03_change.setBackgroundImage(UIImage(named:"frame-A-03-off"), for: UIControlState.normal )
+//        btn_a01_change.setBackgroundImage(UIImage(named:"frame-A-01-off"), for: UIControlState.normal )
+//        btn_a02_change.setBackgroundImage(UIImage(named:"frame-A-02-off"), for: UIControlState.normal )
+//        btn_a03_change.setBackgroundImage(UIImage(named:"frame-A-03-off"), for: UIControlState.normal )
         
         
-        //btn_a01_change.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        
-        let s = String(format: "frame-A-%02d-on", sender.tag)
-        sender.setBackgroundImage(UIImage(named:s), for: UIControlState.normal )
+       
         
         self.view.bringSubview(toFront: a01_01_view)
         self.view.bringSubview(toFront: a01_ScrollMenuView)
@@ -2605,13 +2668,11 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     @IBAction func pressedA02(_ sender: UIButton) {
         
         //        viewContainer.bringSubview(toFront: a02_view)
+       
         
-        btn_a01_change.setBackgroundImage(UIImage(named:"frame-A-01-off"), for: UIControlState.normal )
-        btn_a02_change.setBackgroundImage(UIImage(named:"frame-A-02-off"), for: UIControlState.normal )
-        btn_a03_change.setBackgroundImage(UIImage(named:"frame-A-03-off"), for: UIControlState.normal )        
-        
-        let s = String(format: "frame-A-%02d-on", sender.tag)
-        sender.setBackgroundImage(UIImage(named:s), for: UIControlState.normal )
+        btn_a01_change.setTitleColor(.gray, for: .normal)
+        btn_a02_change.setTitleColor(.white, for: .normal)
+        btn_a03_change.setTitleColor(.gray, for: .normal)
         
         
         //carOnOffSetting()
@@ -2648,13 +2709,11 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         
         //        viewContainer.bringSubview(toFront: a03_view)
         
-        btn_a01_change.setBackgroundImage(UIImage(named:"frame-A-01-off"), for: UIControlState.normal )
-        btn_a02_change.setBackgroundImage(UIImage(named:"frame-A-02-off"), for: UIControlState.normal )
-        btn_a03_change.setBackgroundImage(UIImage(named:"frame-A-03-off"), for: UIControlState.normal )
         
+        btn_a01_change.setTitleColor(.gray, for: .normal)
+        btn_a02_change.setTitleColor(.gray, for: .normal)
+        btn_a03_change.setTitleColor(.white, for: .normal)
         
-        let s = String(format: "frame-A-%02d-on", sender.tag)
-        sender.setBackgroundImage(UIImage(named:s), for: UIControlState.normal )
         
         
         
@@ -2676,32 +2735,38 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         var count = 0
         var px = 0
         //var py = 0
-        let btn_width = 75
+        let btn_height = 30
+        let btn_width = 70
         for i in 0..<btn_a01_name.count {
             
             count += 1
             
             let tempBtn = UIButton()
             tempBtn.tag = i+1
-            tempBtn.frame = CGRect(x: ((i+1)*btn_width)-btn_width, y: 0, width: btn_width, height: 45)
+            tempBtn.frame = CGRect(x: ((i+1)*btn_width)-btn_width, y: 0, width: btn_width, height: btn_height)
             
-            tempBtn.setTitleColor( UIColor.black, for: .normal )
+            tempBtn.setTitleColor( UIColor.lightGray, for: .normal )
             tempBtn.backgroundColor = UIColor.white
             
+            
             if(i == 0)  {
-                tempBtn.setTitleColor( UIColor(red: 0/256, green: 75/255, blue: 144/255, alpha: 1), for: .normal )
+                //tempBtn.setTitleColor( UIColor(red: 0/256, green: 75/255, blue: 144/255, alpha: 1), for: .normal )
+                tempBtn.setTitleColor(.black, for: .normal )
             }
             //tempBtn.setTitle("Hello \(i)", for: .normal)
             tempBtn.addTarget(self, action: #selector(pressed_01), for: .touchUpInside)
             //tempBtn.setImage(UIImage(named:btn_image[i-1]), for: UIControlState.normal )
             tempBtn.setTitle( btn_a01_name[i], for: .normal)
+            // 글자 크기
+            tempBtn.titleLabel?.font = .systemFont(ofSize: 17)
+            //SystemFont(ofSize: 17)
             
             px += btn_width
             a01_ScrollMenuView.scrollView.addSubview(tempBtn)
             //px = px + Int(scrollView.frame.width)/2 - 30
         }
         
-        a01_ScrollMenuView.scrollView.contentSize = CGSize(width: px, height: 41)
+        a01_ScrollMenuView.scrollView.contentSize = CGSize(width: px, height: btn_height)
     }
     
     
@@ -2722,35 +2787,27 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         //var py = 0
 
         
-        var width_ratio:Int = Int(52 * MainManager.shared.ratio_X)
-        var height_ratio:Int = Int(68 * MainManager.shared.ratio_Y)
-        
+        //var width_ratio:Int = Int(52 * MainManager.shared.ratio_X)
+        //var height_ratio:Int = Int(68 * MainManager.shared.ratio_Y)
+        // 535 - 38
         for i in 1...btn_image.count {
             
             count += 1
             
-            
             let tempBtn = UIButton()
             tempBtn.tag = i
-            tempBtn.frame = CGRect(x: (i*width_ratio)-width_ratio, y: 0, width: width_ratio, height: height_ratio) // 105,136
+            tempBtn.frame = CGRect(x: (i*52)-52, y: 0, width: 52, height: 68) // 105,136
             tempBtn.backgroundColor = UIColor.black
             //tempBtn.setTitle("Hello \(i)", for: .normal)
             tempBtn.addTarget(self, action: #selector(a02MenuBtnAction), for: .touchUpInside)
             tempBtn.setImage(UIImage(named:btn_image[i-1]), for: UIControlState.normal )
             
-            px += width_ratio
+            px += 52
             a02_ScrollMenuView.scrollView.addSubview(tempBtn)
             //px = px + Int(scrollView.frame.width)/2 - 30
         }
         
-        
-        
-        a02_ScrollMenuView.scrollView.contentSize = CGSize(width: (px+width_ratio), height: height_ratio)
-        
-        a02_ScrollMenuView.frame = MainManager.shared.initLoadChangeFrame( frame: a02_ScrollMenuView.frame )
-        a02_ScrollMenuView.scrollView.frame = MainManager.shared.initLoadChangeFrame( frame: a02_ScrollMenuView.scrollView.frame )
-        //a02_ScrollMenuView.scrollView.resizeScrollViewContentSize()
-        
+        a02_ScrollMenuView.scrollView.contentSize = CGSize(width: (px), height: 68)        
     }
     
     func a02MenuBtnAction(_ sender: UIButton) {
@@ -3533,14 +3590,14 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         }
         else {
             
-            //database.php?Req=SetCarNo&No=등록번호 (번호판 번호)
-            MainManager.shared.member_info.str_car_dae_num = self.a01_01_info_mod_view.field_car_dae_num.text!
+            
+            MainManager.shared.member_info.str_car_vin_number = self.a01_01_info_mod_view.field_car_dae_num.text!
             
             let parameters = [
                 "Req": "SetVIN",
-                "No": MainManager.shared.member_info.str_car_dae_num]
+                "No": MainManager.shared.member_info.str_car_vin_number]
             
-            print(MainManager.shared.member_info.str_car_dae_num)
+            print(MainManager.shared.member_info.str_car_vin_number)
             
             ToastIndicatorView.shared.setup(self.view, txt_msg: "")
             
@@ -3569,7 +3626,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
                         if( Result == "SAVE_OK" ) {
                             
                             // 클라 저장
-                            UserDefaults.standard.set(MainManager.shared.member_info.str_car_dae_num, forKey: "str_car_dae_num")
+                            UserDefaults.standard.set(MainManager.shared.member_info.str_car_vin_number, forKey: "str_car_vin_number")
                             
                             MainManager.shared.str_certifi_notis = "차대가 성공적으로 수정되었습니다"
                             self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
@@ -4167,10 +4224,18 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     func userLogin() {
         
         // login.php?Req=Login&ID=아이디&Pass=패스워드
-        let parameters = [
+        var parameters = [
             "Req": "Login",
             "ID": MainManager.shared.member_info.str_id_nick,
-            "Pass": MainManager.shared.member_info.str_id_nick]
+            "Pass": MainManager.shared.member_info.str_id_phone_num]
+        
+        if( MainManager.shared.bAPP_TEST ) {
+            MainManager.shared.member_info.str_id_nick = "blue005"
+            parameters = [
+                "Req": "Login",
+                "ID": MainManager.shared.member_info.str_id_nick,
+                "Pass": MainManager.shared.member_info.str_id_nick]
+        }
 
         print(MainManager.shared.member_info.str_id_nick)
 
@@ -4545,7 +4610,6 @@ extension AViewController: CBPeripheralDelegate, CBCentralManagerDelegate {
         peripherals.removeAll()
         signalStrengthBle.removeAll()
         
-        
         // 추후에 바꿀려면 글로벌 변수로 컨트롤 하는게 쉽다. 블루투스 연결되는 객체도 마찬가지...
         // 블루투스 매니져 생성
         centralManager = CBCentralManager(delegate: self, queue: nil)
@@ -4578,10 +4642,9 @@ extension AViewController: CBPeripheralDelegate, CBCentralManagerDelegate {
         bleSerachDelayStopState = 3
         ToastIndicatorView.shared.close()
         
-        
-        // TEST 블투 접속 막기
+//        // TEST 카프렌즈 접속 막기
         return
-        //
+//        //
         
         
         // 카프렌즈 한개 그냥접속

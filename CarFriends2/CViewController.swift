@@ -15,14 +15,7 @@ import SwiftyJSON
 class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WKScriptMessageHandler, UIScrollViewDelegate {
     
     
-
-    
     @IBOutlet weak var menuScrollView: UIScrollView!
-    
-    
-    
-    
-    
     
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         
@@ -32,6 +25,8 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
             
         }
     }
+    
+    var btn_name:[String] = ["차량최신정보","지역별 게시판","차량전용 중고장터"]
     
 
     
@@ -64,6 +59,15 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
     
     override func loadView() {
         super.loadView()
+        
+        
+        btn_c01.setTitleColor(.white, for: .normal)
+        btn_c01.backgroundColor = UIColor(red: 11/256, green: 85/255, blue: 156/255, alpha: 1)
+        btn_c02.setTitleColor(.gray, for: .normal)
+        btn_c02.backgroundColor = UIColor(red: 11/256, green: 85/255, blue: 156/255, alpha: 1)
+        btn_c03.setTitleColor(.gray, for: .normal)
+        btn_c03.backgroundColor = UIColor(red: 11/256, green: 85/255, blue: 156/255, alpha: 1)
+        
         
         
         
@@ -224,10 +228,19 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
         
         ToastIndicatorView.shared.setup(self.view, txt_msg: "")
         // login.php?Req=Login&ID=아이디&Pass=패스워드
-        let parameters = [
+        var parameters = [
             "Req": "Login",
             "ID": MainManager.shared.member_info.str_id_nick,
-            "Pass": MainManager.shared.member_info.str_id_nick]        
+            "Pass": MainManager.shared.member_info.str_id_phone_num]
+        
+        if( MainManager.shared.bAPP_TEST ) {
+            
+            MainManager.shared.member_info.str_id_nick = "blue005"
+            parameters = [
+                "Req": "Login",
+                "ID": MainManager.shared.member_info.str_id_nick,
+                "Pass": MainManager.shared.member_info.str_id_nick]
+        }
        
         print(MainManager.shared.member_info.str_id_nick)
         
@@ -423,12 +436,12 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
             
             let tempBtn = UIButton()
             tempBtn.tag = i
-            tempBtn.frame = CGRect(x: (i*btn_width)-btn_width, y: 0, width: btn_width, height: 34)
+            tempBtn.frame = CGRect(x: (i*btn_width)-btn_width, y: 0, width: btn_width, height: 30)
             tempBtn.backgroundColor = UIColor.white
-            tempBtn.setTitleColor( UIColor.black, for: .normal )
+            tempBtn.setTitleColor( UIColor.lightGray, for: .normal )
             if(i == 1)  {
                 // select btn
-                tempBtn.setTitleColor( UIColor(red: 0/256, green: 75/255, blue: 144/255, alpha: 1), for: .normal )
+                tempBtn.setTitleColor( UIColor.black, for: .normal )
             }
             //tempBtn.setTitle("Hello \(i)", for: .normal)
             tempBtn.addTarget(self, action: #selector(c01MenuBtnAction), for: .touchUpInside)
@@ -439,7 +452,7 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
             menuScrollView.addSubview(tempBtn)
             //px = px + Int(scrollView.frame.width)/2 - 30
         }
-        menuScrollView.contentSize = CGSize(width: px+(btn_width/2), height: 34)
+        menuScrollView.contentSize = CGSize(width: px+(btn_width/2), height: 30)
     }
     
     
@@ -453,9 +466,9 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
             
             let tempBtn = menuScrollView.viewWithTag(i) as! UIButton
             //tempBtn.setImage(UIImage(named:btn_image[i-1]), for: UIControlState.normal )
-            tempBtn.setTitleColor( UIColor.black, for: .normal )
+            tempBtn.setTitleColor( UIColor.lightGray, for: .normal )
         }
-        sender.setTitleColor( UIColor(red: 0/256, green: 75/255, blue: 144/255, alpha: 1), for: .normal )
+        sender.setTitleColor( UIColor.black, for: .normal )
         
         let select_btn_tag = sender.tag
         
@@ -511,12 +524,12 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
             
             let tempBtn = UIButton()
             tempBtn.tag = i
-            tempBtn.frame = CGRect(x: (i*btn_width)-btn_width, y: 0, width: btn_width, height: 34)
+            tempBtn.frame = CGRect(x: (i*btn_width)-btn_width, y: 0, width: btn_width, height: 30)
             
-            tempBtn.setTitleColor( UIColor.black, for: .normal )
+            tempBtn.setTitleColor( UIColor.lightGray, for: .normal )
             if(i == 1)  {
                 // select btn
-                tempBtn.setTitleColor( UIColor(red: 0/256, green: 75/255, blue: 144/255, alpha: 1), for: .normal )
+                tempBtn.setTitleColor( UIColor.black, for: .normal )
             }
             //tempBtn.setTitle("Hello \(i)", for: .normal)
             tempBtn.addTarget(self, action: #selector(c02MenuBtnAction), for: .touchUpInside)
@@ -527,7 +540,7 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
             menuScrollView.addSubview(tempBtn)
             //px = px + Int(scrollView.frame.width)/2 - 30
         }
-        menuScrollView.contentSize = CGSize(width: px, height: 34)
+        menuScrollView.contentSize = CGSize(width: px, height: 30)
     }
     
     
@@ -539,7 +552,7 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
     func c02MenuBtnAction(_ sender: UIButton) {
         
         
-        if( iWebStart < 2 ) { return }
+        //if( iWebStart < 2 ) { return }
         
         
         ToastIndicatorView.shared.setup(self.view, txt_msg: "")
@@ -553,9 +566,9 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
             
             let tempBtn = menuScrollView.viewWithTag(i) as! UIButton
             //tempBtn.setImage(UIImage(named:btn_image[i-1]), for: UIControlState.normal )
-            tempBtn.setTitleColor( UIColor.black, for: .normal )
+            tempBtn.setTitleColor( UIColor.lightGray, for: .normal )
         }
-        sender.setTitleColor( UIColor(red: 0/256, green: 75/255, blue: 144/255, alpha: 1), for: .normal )
+        sender.setTitleColor( UIColor.black, for: .normal )
         
         
         
@@ -652,12 +665,12 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
             
             let tempBtn = UIButton()
             tempBtn.tag = i
-            tempBtn.frame = CGRect(x: (i*btn_width)-btn_width, y: 0, width: btn_width, height: 34)
+            tempBtn.frame = CGRect(x: (i*btn_width)-btn_width, y: 0, width: btn_width, height: 30)
             tempBtn.backgroundColor = UIColor.white
-            tempBtn.setTitleColor( UIColor.black, for: .normal )
+            tempBtn.setTitleColor( UIColor.lightGray, for: .normal )
             if(i == 1)  {
                 // select btn
-                tempBtn.setTitleColor( UIColor(red: 0/256, green: 75/255, blue: 144/255, alpha: 1), for: .normal )
+                tempBtn.setTitleColor( UIColor.black, for: .normal )
             }
             //tempBtn.setTitle("Hello \(i)", for: .normal)
             tempBtn.addTarget(self, action: #selector(c03MenuBtnAction), for: .touchUpInside)
@@ -668,7 +681,7 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
             menuScrollView.addSubview(tempBtn)
             //px = px + Int(scrollView.frame.width)/2 - 30
         }
-        menuScrollView.contentSize = CGSize(width: px, height: 34)
+        menuScrollView.contentSize = CGSize(width: px, height: 30)
     }
     
     func c03MenuBtnAction(_ sender: UIButton) {
@@ -681,9 +694,9 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
             
             let tempBtn = menuScrollView.viewWithTag(i) as! UIButton
             //tempBtn.setImage(UIImage(named:btn_image[i-1]), for: UIControlState.normal )
-            tempBtn.setTitleColor( UIColor.black, for: .normal )
+            tempBtn.setTitleColor( UIColor.lightGray, for: .normal )
         }
-        sender.setTitleColor( UIColor(red: 0/256, green: 75/255, blue: 144/255, alpha: 1), for: .normal )
+        sender.setTitleColor( UIColor.black, for: .normal )
         
         let select_btn_tag = sender.tag
         
@@ -735,6 +748,11 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
     
     @IBAction func pressed_C01(_ sender: UIButton) {
         
+        btn_c01.setTitleColor(.white, for: .normal)
+        btn_c02.setTitleColor(.gray, for: .normal)
+        btn_c03.setTitleColor(.gray, for: .normal)
+        
+        
         // 자식 버튼 삭제
         removeToScrollViewBtn()
         c01_BtnCreate()
@@ -748,12 +766,6 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
         // 자바 스크립트 호출
         //let userScript = WKUserScript(source: "alertMsg()", injectionTime: .atDocumentEnd, forMainFrameOnly: true)
         //contentController.addUserScript(userScript)
-        
-
-        
-        btn_c01.setBackgroundImage(UIImage(named:"frame-C-01-on"), for: UIControlState.normal )
-        btn_c02.setBackgroundImage(UIImage(named:"frame-C-02-off"), for: UIControlState.normal )
-        btn_c03.setBackgroundImage(UIImage(named:"frame-C-03-off"), for: UIControlState.normal )
 //        let url = URL(string: "https://google.co.kr/" )
 //        let request = URLRequest(url: url!)
 //        webView.load(request)
@@ -761,6 +773,10 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
     }
     
     @IBAction func pressed_C02(_ sender: UIButton) {
+        
+        btn_c01.setTitleColor(.gray, for: .normal)
+        btn_c02.setTitleColor(.white, for: .normal)
+        btn_c03.setTitleColor(.gray, for: .normal)
         
         // 자식 버튼 삭제
         removeToScrollViewBtn()
@@ -772,12 +788,6 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
         let request = URLRequest(url: url!)
         webView.load(request)
         
-
-        
-        btn_c01.setBackgroundImage(UIImage(named:"frame-C-01-off"), for: UIControlState.normal )
-        btn_c02.setBackgroundImage(UIImage(named:"frame-C-02-on"), for: UIControlState.normal )
-        btn_c03.setBackgroundImage(UIImage(named:"frame-C-03-off"), for: UIControlState.normal )
-        
 //        let url = URL(string: "https://m.naver.com/" )
 //        let request = URLRequest(url: url!)
 //        webView.load(request)
@@ -786,6 +796,9 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
   
     @IBAction func pressed_C03(_ sender: UIButton) {
         
+        btn_c01.setTitleColor(.gray, for: .normal)
+        btn_c02.setTitleColor(.gray, for: .normal)
+        btn_c03.setTitleColor(.white, for: .normal)
         
         // 자식 버튼 삭제
         removeToScrollViewBtn()
@@ -796,11 +809,6 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
         let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
         let request = URLRequest(url: url!)
         webView.load(request)
-
-        
-        btn_c01.setBackgroundImage(UIImage(named:"frame-C-01-off"), for: UIControlState.normal )
-        btn_c02.setBackgroundImage(UIImage(named:"frame-C-02-off"), for: UIControlState.normal )
-        btn_c03.setBackgroundImage(UIImage(named:"frame-C-02-on"), for: UIControlState.normal )
         
 //        let url = URL(string: "http://seraphm.cafe24.com/adm/" )
 //        let request = URLRequest(url: url!)
@@ -897,7 +905,7 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
         print( "subMenuViewHeight = \(subMenuViewHeight)" )
         
         // 웹뷰 딜리게이트 연결
-        self.webView = WKWebView(frame: CGRect( x: 0, y: 41+34, width: 375, height: 539 ), configuration: webViewConfig)
+        self.webView = WKWebView(frame: CGRect( x: 0, y: 80, width: 375, height: 534 ), configuration: webViewConfig)
 
         self.webView.navigationDelegate = self
         webView.uiDelegate         = self

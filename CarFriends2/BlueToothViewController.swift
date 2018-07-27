@@ -263,18 +263,7 @@ class BlueToothViewController: UIViewController {
         
         let defaults = UserDefaults.standard
         
-        /*
-         defaults.set(MainManager.shared.member_info.str_id_phone_num, forKey: "str_id_phone_num")
-         defaults.set(MainManager.shared.member_info.str_id_nick, forKey: "str_id_nick")
-         
-         defaults.set(MainManager.shared.member_info.str_car_kind, forKey:           "str_car_kind")
-         defaults.set(MainManager.shared.member_info.str_car_year, forKey:           "str_car_year")
-         defaults.set(MainManager.shared.member_info.str_car_dae_num, forKey: "str_car_dae_num")
-         defaults.set(MainManager.shared.member_info.str_car_fuel_type, forKey: "str_car_fuel_type")
-         defaults.set(MainManager.shared.member_info.str_car_plate_num, forKey: "str_car_plate_num")
-         defaults.set(MainManager.shared.member_info.str_car_year, forKey: "str_car_year")
-         defaults.set(MainManager.shared.member_info.str_car_fuel_eff, forKey: "str_car_fuel_eff")
-         */
+       
         
         
         
@@ -288,8 +277,8 @@ class BlueToothViewController: UIViewController {
         
         if UserDefaults.standard.object(forKey: "str_car_year") != nil
             { MainManager.shared.member_info.str_car_year = defaults.string(forKey: "str_car_year")! }
-        if UserDefaults.standard.object(forKey: "str_car_dae_num") != nil
-            { MainManager.shared.member_info.str_car_dae_num = defaults.string(forKey: "str_car_dae_num")! }
+        if UserDefaults.standard.object(forKey: "str_car_vin_number") != nil
+            { MainManager.shared.member_info.str_car_vin_number = defaults.string(forKey: "str_car_vin_number")! }
         if UserDefaults.standard.object(forKey: "str_car_fuel_type") != nil
             { MainManager.shared.member_info.str_car_fuel_type = defaults.string(forKey: "str_car_fuel_type")! }
         
@@ -338,7 +327,7 @@ class BlueToothViewController: UIViewController {
         print(MainManager.shared.member_info.str_id_phone_num)
         print(MainManager.shared.member_info.str_car_kind)
         print(MainManager.shared.member_info.str_car_year)
-        print(MainManager.shared.member_info.str_car_dae_num)
+        print(MainManager.shared.member_info.str_car_vin_number)
         print(MainManager.shared.member_info.str_car_fuel_type)
         print(MainManager.shared.member_info.str_car_plate_num)
         print(MainManager.shared.member_info.str_car_year)

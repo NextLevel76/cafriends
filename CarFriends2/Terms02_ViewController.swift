@@ -36,16 +36,14 @@ class Terms02_ViewController: UIViewController, WKNavigationDelegate {
             self.present(myView, animated: true, completion: nil)
             return
         }
-        
-        
-        
 
         isCheck01 = false
         btn_OK.backgroundColor = UIColor(red: 11/256, green: 85/255, blue: 156/255, alpha: 1)
         
         // 서비스 이용 약관
         // 웹뷰 딜리게이트 연결
-        webView = WKWebView(frame: CGRect( x: 18, y: 86, width: 340, height: 140 ), configuration:  WKWebViewConfiguration() )
+        webView = WKWebView(frame: CGRect( x: 18, y: 86, width: 340, height: 370 ), configuration:  WKWebViewConfiguration() )
+        webView.frame = MainManager.shared.initLoadChangeFrame( frame: self.webView.frame  )
         //webView.uiDelegate = self
         webView.navigationDelegate = self
         webView.translatesAutoresizingMaskIntoConstraints = false
@@ -55,7 +53,6 @@ class Terms02_ViewController: UIViewController, WKNavigationDelegate {
             let request:URLRequest = URLRequest(url: videoURL)
             webView.load(request)
         }
-        
     }
 
     override func didReceiveMemoryWarning() {
@@ -89,9 +86,6 @@ class Terms02_ViewController: UIViewController, WKNavigationDelegate {
         let myView = self.storyboard?.instantiateViewController(withIdentifier: "member_join") as! UIViewController
         self.present(myView, animated: true, completion: nil)        
     }
-    
-    
-    
     
     
     

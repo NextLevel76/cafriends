@@ -27,6 +27,8 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
         }
     }
     
+    var btn_name:[String] = ["카프렌즈 단말기","전문 대리점","차량전용품"]
+    
 
     var isScrollMenuUse = false // 서브 메뉴 사용중? b01 메뉴사용안함, b02~03 사용
     var bHideSubMenu = false
@@ -129,6 +131,14 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        btn_b01.setTitleColor(.white, for: .normal)
+        btn_b01.backgroundColor = UIColor(red: 11/256, green: 85/255, blue: 156/255, alpha: 1)
+        btn_b02.setTitleColor(.gray, for: .normal)
+        btn_b02.backgroundColor = UIColor(red: 11/256, green: 85/255, blue: 156/255, alpha: 1)
+        btn_b03.setTitleColor(.gray, for: .normal)
+        btn_b03.backgroundColor = UIColor(red: 11/256, green: 85/255, blue: 156/255, alpha: 1)
+        
+        
         // 인터넷 연결 체크
         if( MainManager.shared.isConnectCheck() == false ) {
             
@@ -156,10 +166,18 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
         ToastIndicatorView.shared.setup(self.view, txt_msg: "")
         
         // login.php?Req=Login&ID=아이디&Pass=패스워드
-        let parameters = [
+        var parameters = [
             "Req": "Login",
             "ID": MainManager.shared.member_info.str_id_nick,
-            "Pass": MainManager.shared.member_info.str_id_nick]
+            "Pass": MainManager.shared.member_info.str_id_phone_num]
+        
+        if( MainManager.shared.bAPP_TEST ) {
+            MainManager.shared.member_info.str_id_nick = "blue005"
+            parameters = [
+                "Req": "Login",
+                "ID": MainManager.shared.member_info.str_id_nick,
+                "Pass": MainManager.shared.member_info.str_id_nick]
+        }
         
         print(MainManager.shared.member_info.str_id_nick)
 
@@ -303,6 +321,12 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
     // 카프렌즈 단말기
     @IBAction func pressed_b_01(_ sender: UIButton) {
         
+        
+        btn_b01.setTitleColor(.white, for: .normal)
+        btn_b02.setTitleColor(.gray, for: .normal)
+        btn_b03.setTitleColor(.gray, for: .normal)
+
+        
         /*
         let url = URL(string: "https://m.naver.com/" )
         let request = URLRequest(url: url!)
@@ -329,6 +353,11 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
     
     // 실내용품,외장용품,오일류,튜닝,계절상품
     @IBAction func pressed_b_02(_ sender: UIButton) {
+        
+        btn_b01.setTitleColor(.gray, for: .normal)
+        btn_b02.setTitleColor(.white, for: .normal)
+        btn_b03.setTitleColor(.gray, for: .normal)
+        
         
         // 스크롤 메뉴 사용
         isScrollMenuUse = true
@@ -363,6 +392,10 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
     // 전문 대리점
     @IBAction func pressed_b_03(_ sender: UIButton) {
         
+        btn_b01.setTitleColor(.gray, for: .normal)
+        btn_b02.setTitleColor(.gray, for: .normal)
+        btn_b03.setTitleColor(.white, for: .normal)
+        
         // 스크롤 메뉴 사용
         isScrollMenuUse = true
         
@@ -394,7 +427,7 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
         var px = 0
         //var py = 0
         
-        let btn_width = 100
+        let btn_width = 80
         
         for i in 1...btn_image.count {
             
@@ -402,12 +435,12 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
             
             let tempBtn = UIButton()
             tempBtn.tag = i
-            tempBtn.frame = CGRect(x: (i*btn_width)-btn_width, y: 0, width: btn_width, height: 34)
+            tempBtn.frame = CGRect(x: (i*btn_width)-btn_width, y: 0, width: btn_width, height: 30)
             tempBtn.backgroundColor = UIColor.white
-            tempBtn.setTitleColor( UIColor.black, for: .normal )
+            tempBtn.setTitleColor( UIColor.lightGray, for: .normal )
             if(i == 1)  {
                 // select btn
-                tempBtn.setTitleColor( UIColor(red: 0/256, green: 75/255, blue: 144/255, alpha: 1), for: .normal )
+                tempBtn.setTitleColor( UIColor.black, for: .normal )
             }
             //tempBtn.setTitle("Hello \(i)", for: .normal)
             tempBtn.addTarget(self, action: #selector(b02MenuBtnAction), for: .touchUpInside)
@@ -418,7 +451,7 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
             menuScrollView.addSubview(tempBtn)
             //px = px + Int(scrollView.frame.width)/2 - 30
         }
-        menuScrollView.contentSize = CGSize(width: px+(btn_width/2), height: 34)
+        menuScrollView.contentSize = CGSize(width: px+(btn_width/2), height: 30)
     }
 
     
@@ -432,9 +465,9 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
             
             let tempBtn = menuScrollView.viewWithTag(i) as! UIButton
             //tempBtn.setImage(UIImage(named:btn_image[i-1]), for: UIControlState.normal )
-            tempBtn.setTitleColor( UIColor.black, for: .normal )
+            tempBtn.setTitleColor( UIColor.lightGray, for: .normal )
         }
-        sender.setTitleColor( UIColor(red: 0/256, green: 75/255, blue: 144/255, alpha: 1), for: .normal )
+        sender.setTitleColor( UIColor.black, for: .normal )
         
         let select_btn_tag = sender.tag
 
@@ -520,13 +553,13 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
             
             let tempBtn = UIButton()
             tempBtn.tag = i
-            tempBtn.frame = CGRect(x: (i*btn_width)-btn_width, y: 0, width: btn_width, height: 34)
+            tempBtn.frame = CGRect(x: (i*btn_width)-btn_width, y: 0, width: btn_width, height: 30)
             tempBtn.backgroundColor = UIColor.white
-            tempBtn.setTitleColor( UIColor.black, for: .normal )
+            tempBtn.setTitleColor( UIColor.lightGray, for: .normal )
             
             if(i == 1)  {
                 
-                tempBtn.setTitleColor( UIColor(red: 0/256, green: 75/255, blue: 144/255, alpha: 1), for: .normal )
+                tempBtn.setTitleColor( UIColor.black, for: .normal )
             }
             
             //tempBtn.setTitle("Hello \(i)", for: .normal)
@@ -538,7 +571,7 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
             //px = px + Int(scrollView.frame.width)/2 - 30
         }
         
-        menuScrollView.contentSize = CGSize(width: px+(btn_width/2), height: 34)
+        menuScrollView.contentSize = CGSize(width: px+(btn_width/2), height: 30)
     }
     
     
@@ -558,9 +591,9 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
 
             let tempBtn = menuScrollView.viewWithTag(i) as! UIButton
             //tempBtn.setImage(UIImage(named:btn_image[i-1]), for: UIControlState.normal )
-            tempBtn.setTitleColor( UIColor.black, for: .normal )
+            tempBtn.setTitleColor( UIColor.lightGray, for: .normal )
         }
-        sender.setTitleColor( UIColor(red: 0/256, green: 75/255, blue: 144/255, alpha: 1), for: .normal )
+        sender.setTitleColor( UIColor.black, for: .normal )
         
         let select_btn_tag = sender.tag
         
@@ -683,7 +716,8 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
         
         
         // 웹뷰 딜리게이트 연결
-        self.webView = WKWebView(frame: CGRect( x: 0, y: 41+34, width: 375, height: 539 ), configuration: webViewConfig)
+        //
+        self.webView = WKWebView(frame: CGRect( x: 0, y: 80, width: 375, height: 534 ), configuration: webViewConfig)
         
         self.webView.navigationDelegate = self
         webView.uiDelegate         = self
