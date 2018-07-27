@@ -50,6 +50,7 @@ class MainViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+
         
          // 싱글톤 생성 가장 먼저
         MainManager.shared.requestForMainManager()

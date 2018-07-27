@@ -1290,12 +1290,12 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         let tempFrame:CGRect = a01_02_view.round_view.frame
         a01_02_view.webView = WKWebView(frame: tempFrame, configuration: webConfiguration )
         a01_02_view.webView.navigationDelegate = self
-        a01_02_view.webView.translatesAutoresizingMaskIntoConstraints = false
+        //a01_02_view.webView.translatesAutoresizingMaskIntoConstraints = false
         
         a01_02_view.webView.frame.origin.y += (tempFrame.height+20)
         a01_02_view.scrollView.addSubview( a01_02_view.webView )
         
-        if let videoURL:URL = URL(string: "https://www.youtube.com/embed/IHNzOHi8sJs") {
+        if let videoURL:URL = URL(string: "www.google.co.kr") {
             let request:URLRequest = URLRequest(url: videoURL)
             a01_02_view.webView.load(request)
         }
@@ -1311,7 +1311,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         let tempFrame2:CGRect = a01_03_view.round_view.frame
         a01_03_view.webView = WKWebView(frame: tempFrame2, configuration: webConfiguration )
         a01_03_view.webView.navigationDelegate = self
-        a01_03_view.webView.translatesAutoresizingMaskIntoConstraints = false
+        //a01_03_view.webView.translatesAutoresizingMaskIntoConstraints = false
         
         a01_03_view.webView.frame.origin.y += (tempFrame2.height+20)
         a01_03_view.scrollView.addSubview( a01_03_view.webView )
@@ -1331,20 +1331,18 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         let tempFrame3:CGRect = a01_04_1_view.round_view.frame
         a01_04_1_view.webView = WKWebView(frame: tempFrame3, configuration: webConfiguration )
         a01_04_1_view.webView.navigationDelegate = self
-        a01_04_1_view.webView.translatesAutoresizingMaskIntoConstraints = false
+        //a01_04_1_view.webView.translatesAutoresizingMaskIntoConstraints = false
         
         a01_04_1_view.webView.frame.origin.y += (tempFrame3.height+20)
         a01_04_1_view.scrollView.addSubview( a01_04_1_view.webView )
         
-        if let videoURL:URL = URL(string: "https://www.youtube.com/embed/IHNzOHi8sJs") {
+        if let videoURL:URL = URL(string: "https://www.naver.com") {
             let request:URLRequest = URLRequest(url: videoURL)
             a01_04_1_view.webView.load(request)
         }
         a01_04_1_view.scrollView.resizeScrollViewContentSize()
         // 아래 여유 공간 추가
         a01_04_1_view.scrollView.contentSize.height += 20
-        
-        
     }
     
     
@@ -2518,7 +2516,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         else if sender.tag == 2 {
             
             
-            if let videoURL:URL = URL(string: "https://www.youtube.com/embed/F4oHuML9U2A") {
+            if let videoURL:URL = URL(string: "https://www.naver.com") {
                 let request:URLRequest = URLRequest(url: videoURL)
                 a01_02_view.webView.load(request)
             }
@@ -2528,7 +2526,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         }
         else if sender.tag == 3 {
             
-            if let videoURL:URL = URL(string: "https://www.youtube.com/embed/F4oHuML9U2A") {
+            if let videoURL:URL = URL(string: "https://www.daum.net") {
                 let request:URLRequest = URLRequest(url: videoURL)
                 a01_03_view.webView.load(request)
             }
