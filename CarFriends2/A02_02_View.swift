@@ -11,12 +11,15 @@ import WebKit
 
 class A02_02_View: UIView {
 
+        
+    @IBOutlet weak var switch_btn_07: UISwitch!
+    @IBOutlet weak var switch_btn_08: UISwitch!
+    @IBOutlet weak var switch_btn_09: UISwitch!
+    @IBOutlet weak var switch_btn_10: UISwitch!
+    @IBOutlet weak var switch_btn_11: UISwitch!
     
-    weak var webView: WKWebView!
-
-    
-    @IBOutlet weak var btn_on_off: UIButton!
-    
+    @IBOutlet weak var btn_rvs_time: UIButton!
+    @IBOutlet weak var label_rvs_time: UILabel!
     
     /*
     // Only override draw() if you perform custom drawing.
@@ -25,7 +28,5 @@ class A02_02_View: UIView {
         // Drawing code
     }
     */
-    
-    
 
 }

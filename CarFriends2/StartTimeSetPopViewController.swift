@@ -116,9 +116,9 @@ class StartTimeSetPopViewController: UIViewController, UITextFieldDelegate {
         }
         
         MainManager.shared.bStartPopTimeReserv = true
-        MainManager.shared.member_info.strCar_Status_ReservedRVSTime = strHours+":"+strMin+":00"
+        MainManager.shared.member_info.strCar_Check_ReservedRVSTime = strHours+":"+strMin+":00"
         
-        print( "__________ strCar_Status_ReservedRVSTime " + MainManager.shared.member_info.strCar_Status_ReservedRVSTime )
+        print( "__________ strCar_Check_ReservedRVSTime " + MainManager.shared.member_info.strCar_Check_ReservedRVSTime )
         
         // self close
         dismiss(animated: true)

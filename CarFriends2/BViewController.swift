@@ -27,7 +27,9 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
         }
     }
     
-    var btn_name:[String] = ["카프렌즈 단말기","전문 대리점","차량전용품"]
+    
+    
+    var btn_name:[String] = ["카프렌즈 단말기","차량전용품","전문 대리점"]
     
 
     var isScrollMenuUse = false // 서브 메뉴 사용중? b01 메뉴사용안함, b02~03 사용
@@ -45,6 +47,10 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
     
     let contentController = WKUserContentController()
     let config = WKWebViewConfiguration()
+    
+    
+    
+    
     
     @IBOutlet weak var btn_b01: UIButton!
     @IBOutlet weak var btn_b02: UIButton!
@@ -69,6 +75,7 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
     
    
     func loadViewDesign() {
+        
     }
     
     
@@ -107,7 +114,6 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
         
         //b02_ScrollBtnCreate()
         //b02_ScrollBtnCreate()
-        
         
 
 
@@ -716,7 +722,7 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
         
         
         // 웹뷰 딜리게이트 연결
-        //
+        // 높이y = 젤위 상태바 20 + 주서브메뉴 30 + 스크롤뷰 30 =  80
         self.webView = WKWebView(frame: CGRect( x: 0, y: 80, width: 375, height: 534 ), configuration: webViewConfig)
         
         self.webView.navigationDelegate = self
@@ -728,9 +734,7 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
         self.webView.scrollView.delegate = self
         
         //self.view.bringSubview(toFront: activityIndicator)
-        //activityIndicator.startAnimating()
-        
-        
+        //activityIndicator.startAnimating()        
         
         ToastIndicatorView.shared.setup(self.view, txt_msg: "")
         
@@ -740,17 +744,28 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
         webView.load(request)
         
         webView.frame = MainManager.shared.initLoadChangeFrame(frame: webView.frame )
-        
-        
-        
         webViewChangeOldRect = webView.frame
+        
+        
+        
         // 커진만큼 키우고 위치 올린다
-        let tempMenuHeight = subMenuViewHeight * MainManager.shared.ratio_Y
+        let tempMenuHeight = subMenuViewHeight
         webViewChangeBigRect = CGRect(x: webViewChangeOldRect.origin.x, y: webViewChangeOldRect.origin.y-tempMenuHeight, width: webViewChangeOldRect.width, height: webViewChangeOldRect.height+tempMenuHeight)
         
         isScrollMenuUse = false
         menuScrollView.isHidden = true
         self.webView.frame = webViewChangeBigRect
+        
+        
+        
+        
+        print("tempMenuHeight :: \(tempMenuHeight)")
+        
+        print("btn_b03.frame.height :: \(btn_b03.frame.height)")
+        
+        print(" ")
+        
+        
     }
     
     

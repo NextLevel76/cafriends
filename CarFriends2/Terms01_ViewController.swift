@@ -22,13 +22,10 @@ class Terms01_ViewController: UIViewController, WKNavigationDelegate {
     var isCheck02:Bool!
     
     
-
-    
     weak var webView01: WKWebView!
     weak var webView02: WKWebView!
     
     @IBOutlet weak var btn_OK: UIButton!
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -46,7 +43,7 @@ class Terms01_ViewController: UIViewController, WKNavigationDelegate {
         
         
         
-
+        
         isCheck01 = false
         isCheck02 = false
         btn_OK.backgroundColor = UIColor(red: 11/256, green: 85/255, blue: 156/255, alpha: 1)

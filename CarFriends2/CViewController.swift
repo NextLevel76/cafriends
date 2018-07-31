@@ -49,6 +49,7 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
     var webViewChangeBigRect:CGRect = CGRect(x:0, y:0, width:0, height:0)
     
     
+    
     @IBOutlet weak var btn_c01: UIButton!
     @IBOutlet weak var btn_c02: UIButton!
     @IBOutlet weak var btn_c03: UIButton!
@@ -927,11 +928,10 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
         
         
         webView.frame = MainManager.shared.initLoadChangeFrame(frame: webView.frame )
-        
-        
         webViewChangeOldRect = webView.frame
+        
         // 커진만큼 키우고 위치 올린다
-        let tempMenuHeight = subMenuViewHeight * MainManager.shared.ratio_Y
+        let tempMenuHeight = subMenuViewHeight
         webViewChangeBigRect = CGRect(x: webViewChangeOldRect.origin.x, y: webViewChangeOldRect.origin.y-tempMenuHeight, width: webViewChangeOldRect.width, height: webViewChangeOldRect.height+tempMenuHeight)
         
         // self.webView.frame = webViewChangeOldRect

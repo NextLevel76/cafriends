@@ -55,7 +55,7 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
     
     
     
-    var dataReadCount:Int = 0
+    var dataBleReadCount:Int = 0
     
     var OBD_isStart:Bool?
     var OBD_Count = 0
@@ -147,7 +147,17 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
     
     
     
-    
+    func stopTimer() {
+        
+        print("stopTimer")
+        
+        timer.invalidate()
+        timer2.invalidate()
+        timerBLE.invalidate()
+        timerDATETIME.invalidate()
+        timerCarFriendStart.invalidate()
+        timerStopScan.invalidate()
+    }
     
     
     
@@ -1000,6 +1010,8 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
     
     @IBAction func pressed_app_start(_ sender: UIButton) {
         
+        stopTimer()
+        
         let myView = self.storyboard?.instantiateViewController(withIdentifier: "a00") as! AViewController
         self.present(myView, animated: true, completion: nil)
     }
@@ -1202,8 +1214,7 @@ extension MemberJoinViewController: CBPeripheralDelegate, CBCentralManagerDelega
             peripheral.discoverCharacteristics( nil, for: service   )
         }
         
-//        // 카프렌즈 연결 되면 10초후   한번 실행
-//        timerDATETIME = Timer.scheduledTimer(timeInterval: 10, target: self, selector: #selector(timerActionDATETIME), userInfo: nil, repeats: false)
+
     }
     
     
@@ -1330,6 +1341,16 @@ extension MemberJoinViewController: CBPeripheralDelegate, CBCentralManagerDelega
     }
     
     
+    func isPeripheral_LIVE() -> Bool {
+        
+        if( carFriendsPeripheral != nil || myCharacteristic != nil )
+        {
+            return false
+        }
+        return true
+    }
+    
+    
     func initStartBLE() {
         
         // BLE init
@@ -1340,20 +1361,12 @@ extension MemberJoinViewController: CBPeripheralDelegate, CBCentralManagerDelega
         // 추후에 바꿀려면 글로벌 변수로 컨트롤 하는게 쉽다. 블루투스 연결되는 객체도 마찬가지...
         // 블루투스 매니져 생성
         centralManager = CBCentralManager(delegate: self, queue: nil)
-        
-        
-        // 블루투스 딜레이 변수 초기화
-        // 윈도우 10초 딜레이
-        MainManager.shared.member_info.bCarStatusWindowDelay = false
-        MainManager.shared.member_info.carStatusWindowDelayCount = 0
-        // 다른변수들 2초
-        MainManager.shared.member_info.bCarStatusDelay = false
-        MainManager.shared.member_info.carStatusDelayCount = 0
+
     }
     
     func setDataBLE(_ nsData:NSData ) {
         // 블루투스 연결시 데이타 전송 실행
-        if( isBLE_CAR_FRIENDS_CONNECT() ) {
+        if( isBLE_CAR_FRIENDS_CONNECT() && isPeripheral_LIVE() ) {
             
             self.carFriendsPeripheral?.writeValue( nsData as Data, for: self.myCharacteristic!, type: CBCharacteristicWriteType.withoutResponse)
         }
@@ -1464,7 +1477,7 @@ extension MemberJoinViewController: CBPeripheralDelegate, CBCentralManagerDelega
             }
         }
     }
-    //    MainManager.shared.getDateTimeSendBLE()
+
     
     
     
@@ -1473,11 +1486,13 @@ extension MemberJoinViewController: CBPeripheralDelegate, CBCentralManagerDelega
         
         if( self.isBLE_CAR_FRIENDS_CONNECT() == true ) {
             
-            if( dataReadCount < 3) {
+            if( dataBleReadCount < 3) {
                 
-                dataReadCount += 1
+                dataBleReadCount += 1
+                // 블루투스에서 1초마다 브로드캐스팅 되는 문자열 3번만 파싱
                 MainManager.shared.member_info.readDataCarFriendsBLE()
                 
+                // 회원 가입시 자동입력에 사용 차대번호, 총거리, 평균 연비
                 field_car_dae_num.text = MainManager.shared.member_info.str_car_vin_number
                 field_car_tot_km.text = MainManager.shared.member_info.str_TotalDriveMileage
                 field_car_km_L.text =   MainManager.shared.member_info.str_AvgFuelMileage

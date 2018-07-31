@@ -11,10 +11,7 @@ import WebKit
 
 class A02_03_View: UIView {
 
-    weak var webView: WKWebView!
-    
-    
-    @IBOutlet weak var btn_on_off: UIButton!
+
     
     
     /*

@@ -13,9 +13,7 @@
 // git config --global user.name "NextLevel76"
 // git config --global user.email "lcblue@naver.com"
 
-//
-// 카프렌즈 기기 2개이상, 다른블루도 2개이상.... 블루투스 접속 테스트, 신호강도 접속 테스트
-// 차량 연결 해서 테스트
+
 
   // DTC DATA 2018~1-1 ~ 2-27
 
@@ -26,6 +24,8 @@
 import Foundation
 import UIKit
 import Alamofire
+import SwiftyJSON
+import CoreBluetooth
 
 
 // 인터넷 연결 체크
@@ -85,6 +85,11 @@ struct Member_Info {
     
     var str_ThisWeekDtcCount = "00"   // 이번주 갯수
     var str_8WeekDtcCount = "00"       // 8주 합
+    
+    var str_dtcEcm = ""       // 8주 합
+    var str_dtcBcm = ""       // 8주 합
+    var str_dtcTcm = ""       // 8주 합
+    var str_dtcEbcm = ""       // 8주 합
 
     
     
@@ -104,24 +109,43 @@ struct Member_Info {
     
     // 모듈  Date/Time
     var str_Car_DateTime = "0"
+    var str_Phone_DateTime = "0"
     
-    var bCar_Status_DoorLock = false    // 도어락
-    var bCar_Status_Hatch = false       // 트렁크
-    var bCar_Status_Window = false
-    var bCar_Status_Sunroof = false
-    var bCar_Status_RVS = false         // 원격시동
-    var bCar_Car_Status_IGN = false     // 키온
+    
+//    var bCar_Status_DoorLock = false    // 도어락
+//    var bCar_Status_Hatch = false       // 트렁크
+//    var bCar_Status_Window = false
+//    var bCar_Status_Sunroof = false
+//    var bCar_Status_RVS = false         // 원격시동
+//    var bCar_Car_Status_IGN = false     // 키온
     
     var str_Car_Status_Seed = "0"
     var ser_Car_Status_Key = "0"
     var bCar_Status_Security = false
-    var bCar_Func_LockFolding = false
+    
+    var bCar_Func_AutoLockFolding = false
     var bCar_Func_AutoWindowClose = false
     var bCar_Func_AutoSunroofClose = false
     var bCar_Func_AutoWindowRevOpen = false
-    
     var bCar_Func_RVS = false
+    // BLE에서 가져온 시간
     var strCar_Status_ReservedRVSTime = "0"
+    
+    
+    
+    // 유저가 동작한 값을 가지고 위 auto 변수들 값과 다를 경우 BLE에 명령을 보내 같아지게 만든다.
+    var bCar_Btn_AutoLockFolding = false
+    var bCar_Btn_AutoWindowClose = false
+    var bCar_Btn_AutoSunroofClose = false
+    var bCar_Btn_AutoWindowRevOpen = false
+    var bCar_Btn_RVS = false
+    // 유저가 세팅한 시간
+    var strCar_Check_ReservedRVSTime = "0"
+    
+    
+    
+    
+    
     
     var str_BLE_PinCode = "1111"
     
@@ -133,18 +157,9 @@ struct Member_Info {
     var strTOTAL_MILEAGE:String = "0"
     
     
+
     
-    // 버튼 상태 실시간 끊기 딜레이.
-    // 버튼이벤트 발행시 딜레이준다 2초 후 딜레이후 값세팅되도록
     
-    // 창문만 10초
-    let carWindowDelaySec = 10
-    var bCarStatusWindowDelay = false
-    var carStatusWindowDelayCount = 0
-    // 다른변수들 2초
-    let carStatusDelay = 2
-    var bCarStatusDelay = false
-    var carStatusDelayCount = 0
     
     
     // identifier = A4992052-4B0D-3041-EABB-729B52C73924,
@@ -156,15 +171,13 @@ struct Member_Info {
     mutating func BLE_READ_ACC_DATA_PROC( _ READ_DATA: String ) {
         
         var arr = READ_DATA.components(separatedBy: "=")
-        // 배열 갯수 얻기
+        // 배열 갯수 얻기 배열이 2개가 아님 제대로 된 명령이 아니다.
         let count = arr.flatMap({$0}).count
         if( count < 2 ) {
             
             print("______BLE DATA ERR = \(READ_DATA)")
             return
         }
-        
-        
         // 공백 제거
         //let cleanedText = arr[1].filter { !" \n\t\r".characters.contains($0) }
         let cleanedText = arr[1].trimmingCharacters(in: .whitespacesAndNewlines)
@@ -174,8 +187,7 @@ struct Member_Info {
             print("______ BLE \(arr[0])   = [Empty Data]")
             return
         }
-            print( "_____ BLE READ_DATA = \(arr[0])  \(cleanedText)")
-        
+        print( "_____ BLE READ_DATA = \(arr[0])  \(cleanedText)")
         
         
         switch arr[0] {
@@ -219,43 +231,16 @@ struct Member_Info {
             str_Car_DateTime = String(cleanedText)
             break
         case "[DOORLOCK]":
-            // 딜레이 2초
-            if(bCarStatusDelay == false ) {
-                bCar_Status_DoorLock = false
-                if( cleanedText == "1" ) { bCar_Status_DoorLock = true }
-            }
             break
         case "[HATCH]":
-            if( bCarStatusDelay == false ) {
-                bCar_Status_Hatch = false
-                if( cleanedText == "1" ) { bCar_Status_Hatch = true }
-            }
             break
         case "[WINDOW]":
-            // 딜레이 타임일때 창문 10초동안 갱신안한다.
-            if( bCarStatusWindowDelay == false ) {
-                
-                bCar_Status_Window = false
-                if( cleanedText == "1" ) { bCar_Status_Window = true }
-            }
             break
         case "[SUNROOF]":
-            if( bCarStatusDelay == false ) {
-                bCar_Status_Sunroof = false
-                if( cleanedText == "1" ) { bCar_Status_Sunroof = true }
-            }
             break
         case "[RVS]":
-            if( bCarStatusDelay == false ) {
-                bCar_Status_RVS = false
-                if( cleanedText == "1" ) { bCar_Status_RVS = true }
-            }
             break
         case "[KEYON]":
-            if( bCarStatusDelay == false ) {
-                bCar_Car_Status_IGN = false
-                if( cleanedText == "1" ) { bCar_Car_Status_IGN = true }
-            }
             break
         case "[SEED]":
             str_Car_Status_Seed = String(cleanedText)
@@ -268,39 +253,36 @@ struct Member_Info {
                 if( cleanedText == "1" ) { bCar_Status_Security = true }
             break
         case "[LOCKFOLDING]":
-            if( bCarStatusDelay == false ) {
-                bCar_Func_LockFolding = false
-                if( cleanedText == "1" ) { bCar_Func_LockFolding = true }
-            }
+
+                bCar_Func_AutoLockFolding = false
+                if( cleanedText == "1" ) { bCar_Func_AutoLockFolding = true }
+
             break
         case "[AUTOWINDOWS]":
-            if( bCarStatusDelay == false ) {
+            
                 bCar_Func_AutoWindowClose = false
                 if( cleanedText == "1" ) { bCar_Func_AutoWindowClose = true }
-            }
+            
             break
         case "[AUTOSUNROOF]":
-            if( bCarStatusDelay == false ) {
+            
                 bCar_Func_AutoSunroofClose = false
                 if( cleanedText == "1" ) { bCar_Func_AutoSunroofClose = true }
-            }
+            
             break
         case "[REV_WINDOW]":
-            if( bCarStatusDelay == false ) {
+            
                 bCar_Func_AutoWindowRevOpen = false
                 if( cleanedText == "1" ) { bCar_Func_AutoWindowRevOpen = true }
-            }
+            
             break
         case "[RES_RVS_TIME]":
-            if( bCarStatusDelay == false ) {
                 strCar_Status_ReservedRVSTime = String(cleanedText)
-            }
             break
-        case "[RES_RVS]":
-            if( bCarStatusDelay == false ) {
+        case "[RES_RVS]":            
                 bCar_Func_RVS = false
                 if( cleanedText == "1" ) { bCar_Func_RVS = true }
-            }
+            
             break
         case "[PIN_CODE]":
             // 기기에서 올라온 핀코드
@@ -310,10 +292,76 @@ struct Member_Info {
         case "[VIN]":
             // 차대번호[klaj1231ksasakafsdkasdf]
             str_car_vin_number = String(cleanedText)
-
+            break
+            
+        case "[DTC_ECM]":
+            // [DTC_EBCM]=P0000-00 YYYY-MM-DD HH:MM:SS
+            let data:String = String(cleanedText)
+            let tempCode:String = String(data[..<data.index(data.startIndex, offsetBy: 8)])
+            setDTC_INFO_DB(tempCode)
+            break
+        case "[DTC_BCM]":
+            let data:String = String(cleanedText)
+            let tempCode:String = String(data[..<data.index(data.startIndex, offsetBy: 8)])
+            setDTC_INFO_DB(tempCode)
+            break
+        case "[DTC_TCM]":
+            let data:String = String(cleanedText)
+            let tempCode:String = String(data[..<data.index(data.startIndex, offsetBy: 8)])
+            setDTC_INFO_DB(tempCode)
+            break
+        case "[DTC_EBCM]":
+            let data:String = String(cleanedText)
+            let tempCode:String = String(data[..<data.index(data.startIndex, offsetBy: 8)])
+            setDTC_INFO_DB(tempCode)
             break
         default:
             print(String(cleanedText))
+        }
+    }
+
+    
+    
+    
+    
+    // database.php?Req=AddDTC&Diag_Date=&DTC=
+    // [DTC_EBCM]=P0000-00 YYYY-MM-DD HH:MM:SS
+    mutating func setDTC_INFO_DB(_ strDATA: String ) {
+        
+        let parameters = [
+            "Req": "AddDTC",
+            "Diag_Date": str_Phone_DateTime,
+            "DTC": strDATA]
+        
+        Alamofire.request("http://seraphm.cafe24.com/database.php", method: .post, parameters: parameters)
+            .responseJSON { response in
+
+                print(response)
+                //to get status code
+                if let status = response.response?.statusCode {
+                    switch(status){
+                    case 201:
+                        print("example success")
+                    default:
+                        print("error with response status: \(status)")
+                    }
+                }
+                
+                //to get JSON return value
+                if let json = try? JSON(response.result.value) {
+                    
+                    print(json["Result"])
+                    let Result = json["Result"].rawString()!
+                    if( Result == "SAVE_OK" ) {
+                        
+                        print( "DTC_저장 OK!" )
+                    }
+                    else {
+                        
+                        print( "DTC_저장 FAIL!" )
+                    }
+                    print( Result )
+                }
         }
     }
     
@@ -431,32 +479,40 @@ struct Member_Info {
         return writeData( str_Instruction )
     }
     // [READ_DTC_ECM]=1!
-    mutating func setREAD_DTC_ECM(_ strDATA: String ) -> NSData {
+    mutating func setREAD_DTC_ECM() -> NSData {
         
-        str_Instruction = "[READ_DTC_ECM]=" + strDATA + "!"
+        str_Instruction = "[READ_DTC_ECM]=1!"
         return writeData( str_Instruction )
     }
     // [READ_DTC_BCM]=1!
-    mutating func setREAD_DTC_BCM(_ strDATA: String ) -> NSData {
+    mutating func setREAD_DTC_BCM() -> NSData {
         
-        str_Instruction = "[READ_DTC_BCM]=" + strDATA + "!"
+        str_Instruction = "[READ_DTC_BCM]=1!"
         return writeData( str_Instruction )
     }
     // [READ_DTC_TCM]=1!
-    mutating func setREAD_DTC_TCM(_ strDATA: String ) -> NSData {
+    mutating func setREAD_DTC_TCM() -> NSData {
         
-        str_Instruction = "[READ_DTC_TCM]=" + strDATA + "!"
+        str_Instruction = "[READ_DTC_TCM]=1!"
         return writeData( str_Instruction )
     }
     // [READ_DTC_EBCM]=1!
-    mutating func setREAD_DTC_EBCM(_ strDATA: String ) -> NSData {
+    mutating func setREAD_DTC_EBCM() -> NSData {
         
-        str_Instruction = "[READ_DTC_EBCM]=" + strDATA + "!"
+        str_Instruction = "[READ_DTC_EBCM]=1!"
         return writeData( str_Instruction )
     }
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
     mutating func writeData(_ strDATA: String) -> NSData {
-        
         
         // myBluetoothPeripheral.writeValue(dataToSend as Data, for: myCharacteristic, type: CBCharacteristicWriteType.withoutResponse)
         
@@ -686,7 +742,10 @@ class MainManager   {
 
     
     // [DATETIME]=YYYY-MM-DD HH:MM:SS!
-    func getDateTimeSendBLE() {
+    func getDateTimeSetTimeBLE(_ carFriendsPeripheral:CBPeripheral, _ myCharacteristic: CBCharacteristic ) {
+        
+        if( carFriendsPeripheral == nil || myCharacteristic == nil )
+            { return }
         
         // 현재 시각 구하기
         let now = Date()
@@ -696,8 +755,10 @@ class MainManager   {
         dateFormatter.locale = Locale(identifier: "ko_KR")
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
         
-        member_info.str_Car_DateTime = dateFormatter.string(from: now)
-        member_info.setDATETIME( member_info.str_Car_DateTime )
+        member_info.str_Phone_DateTime = dateFormatter.string(from: now)
+        
+        let nsData:NSData = member_info.setDATETIME( member_info.str_Phone_DateTime )
+        carFriendsPeripheral.writeValue( nsData as Data, for: myCharacteristic, type: CBCharacteristicWriteType.withoutResponse)
         
 //        dateFormatter.dateFormat = "yyyy"
 //        let iNowYear:Int = Int(dateFormatter.string(from: now))!
@@ -709,6 +770,13 @@ class MainManager   {
 //        }
     }
 }
+
+
+
+
+
+
+
 
 
 extension String {

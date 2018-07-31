@@ -54,6 +54,23 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     //------------------------------------------------------------------------------------------------
     // CORE_BLUE_TOOTH
     
+    // 핸폰시간이랑 카프렌즈기기 시간이랑 체크
+    var isPhoneToBleTimeCheck:Bool = false
+    var phoneToBleTimeCheckCount = 0
+    
+    // DTC 정보 읽기 스타트
+    var isReadDtcStart:Bool = false
+    // 4가지 순차적으로 읽기 위해 사용하는 카운트
+    var readDtcCount = 0
+    
+    
+    var autoBtnDataSet:Bool = false
+    var autoBtnDataSetCount = 0
+    
+    
+    
+    
+    
     var isMoveSceneDisConnectBLE:Bool = false
     
     var centralManager: CBCentralManager!
@@ -75,9 +92,8 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     // 서브 메뉴 위치
     // 시간 상단 메뉴 20
     let subMenuView_y:CGFloat = (50)
-    let subSubView_y:CGFloat = (80)
-    
-    let subSubViewA02_y:CGFloat = (80+38)
+    let subSubView_y:CGFloat = (80)    
+
     
     
     
@@ -93,6 +109,12 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     
     @IBOutlet weak var viewContainer: UIView!
     
+    
+
+    @IBOutlet weak var mainMenuABC_view: UIView!
+    
+    
+    
     @IBOutlet weak var btn_a01_change: UIButton!
     @IBOutlet weak var btn_a02_change: UIButton!
     @IBOutlet weak var btn_a03_change: UIButton!
@@ -102,7 +124,8 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         
     // A01 XIB
     var a01_01_view: A01_01_View!
-    // A01 뷰 세로 스크롤
+    
+    // A01 정보 그래프 나오는 세로 스크롤
     @IBOutlet var a01_01_scroll_view: A01_01_ScrollView!
     @IBOutlet var a01_01_pin_view: A01_01_Pin_View!
     @IBOutlet var a01_01_info_mod_view: A01_01_InfoMod_View!
@@ -124,15 +147,6 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     @IBOutlet var a02_01_view: A02_01_View!
     @IBOutlet var a02_02_view: A02_02_View!
     @IBOutlet var a02_03_view: A02_03_View!
-    @IBOutlet var a02_04_view: A02_04_View!
-    @IBOutlet var a02_05_view: A02_05_View!
-    @IBOutlet var a02_06_view: A02_06_View!
-    @IBOutlet var a02_07_view: A02_07_View!
-    @IBOutlet var a02_08_view: A02_08_View!
-    @IBOutlet var a02_09_view: A02_09_View!
-    @IBOutlet var a02_10_view: A02_10_View!
-    @IBOutlet var a02_11_view: A02_11_View!
-    @IBOutlet var a02_12_view: A02_12_View!
     
     
     //A03
@@ -194,6 +208,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     
     
     let btn_a01_name = ["내 정보","주행거리","평균연비","진단정보","차량상태","주요부품"]
+    let btn_a02_name = ["차량제어","차량설정","도움말"]
     
     
     
@@ -206,13 +221,48 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     // test Alaram
     @IBAction func pressedA(_ sender: UIButton) {
         
+//        btn_a_change.setTitleColor(UIColor.black, for: .normal)
+//        btn_b_change.setTitleColor(UIColor.lightGray, for: .normal)
+//        btn_c_change.setTitleColor(UIColor.lightGray, for: .normal)
+//
         // 8주 데이타 읽기
         //self.getData8Week_Drive()
         
+        // [DTC_EBCM]=P0000-00 YYYY-MM-DD HH:MM:SS
+        // TEST
+        //MainManager.shared.member_info.setDTC_INFO_DB( "P0000-00" )
     }
     
     
     @IBAction func pressedB(_ sender: UIButton) {
+
+        
+        // 반복 타이머 정지
+        stopTimer()
+        // 화면 전환 위해 블투 객체 정리 안하면 메모리가비지가 남아 연결됨 방지, 블루투스 끊기, 끊김 딜리게이트 호출
+        bleDisConnect()
+        
+        
+        let myView = self.storyboard?.instantiateViewController(withIdentifier: "b00") as! BViewController
+        self.present(myView, animated: true, completion: nil)
+    }
+    
+    
+    
+    
+    @IBAction func pressedC(_ sender: UIButton) {
+        
+        // 반복 타이머 정지
+        stopTimer()
+        // 화면 전환 위해 블투 객체 정리 안하면 메모리가비지가 남아 연결됨 방지, 블루투스 끊기, 끊김 딜리게이트 호출
+        bleDisConnect()
+        
+        let myView = self.storyboard?.instantiateViewController(withIdentifier: "c00") as! CViewController
+        self.present(myView, animated: true, completion: nil)
+    }
+    
+    
+    func bleDisConnect() {
         
         if( MainManager.shared.member_info.isCAR_FRIENDS_CONNECT == true ) {
             
@@ -227,36 +277,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             
             isMoveSceneDisConnectBLE = true
         }
-
-
-        
-        let myView = self.storyboard?.instantiateViewController(withIdentifier: "b00") as! BViewController
-        self.present(myView, animated: true, completion: nil)
     }
-    
-    
-    
-    
-    @IBAction func pressedC(_ sender: UIButton) {
-        
-        if( MainManager.shared.member_info.isCAR_FRIENDS_CONNECT == true ) {
-            
-            // 블루투스 끊기 위해, 끊김 딜리게이트 호출
-            centralManager.cancelPeripheralConnection(self.carFriendsPeripheral!)
-            self.carFriendsPeripheral = nil
-            self.myCharacteristic = nil
-            //self.mySerview = nil
-            bleSerachDelayStopState = 0
-            
-            isMoveSceneDisConnectBLE = true
-        }
-        
-        let myView = self.storyboard?.instantiateViewController(withIdentifier: "c00") as! CViewController
-        self.present(myView, animated: true, completion: nil)
-    }
-    
-    
-    
     
     
     
@@ -760,32 +781,30 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             }
         }
         
-        // 예약시동 설정 성공
+        // 예약시간 설정 성공
         if( MainManager.shared.bStartPopTimeReserv == true ) {
-            
-            let tempTag = 10 // 스토리보드 예약시동 버튼 태그번호
+
             MainManager.shared.bStartPopTimeReserv = false
             
             if( isBLE_CAR_FRIENDS_CONNECT() == false ) { return }
             
-            // 변수 갱신 딜레이 함수
-            bleStatusCheckDelay()
-            MainManager.shared.member_info.bCar_Func_RVS = true
-            ToastView.shared.short(self.view, txt_msg: "예약 시동 활성 모드입니다.")
-            a02_12_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_on[tempTag]), for: UIControlState.normal )
-            // 시간 세팅
-            let nsDataT:NSData = MainManager.shared.member_info.setRES_RVS_TIME( MainManager.shared.member_info.strCar_Status_ReservedRVSTime )
-            
-            setDataBLE( nsDataT )
-            sleep(1)
-            // 예약설정
-            let nsData:NSData = MainManager.shared.member_info.setRES_RVS( "1" )
-            setDataBLE( nsData )
+//            ToastView.shared.short(self.view, txt_msg: "예약 시동 활성 모드입니다.")
+//            // 시간 세팅
+//            let nsDataT:NSData = MainManager.shared.member_info.setRES_RVS_TIME( MainManager.shared.member_info.strCar_Check_ReservedRVSTime )
+//            setDataBLE( nsDataT )
         }
         
         
-        
+        // 날짜 세팅 후 날짜 비교 3번 한다. 그 다음 DTC 명령 실행
+        phoneToBleTimeCheck()
+        // DTC 정보 달라 명령 보내기
+        readDtcStart()
     }
+    
+    
+    
+    
+    
     
     // 반복호출 스케줄러 0.1
     func timerAction2() {
@@ -814,8 +833,6 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             }
         }
         
-        
-        
         // 카프렌즈 찾았다
         if( bleSerachDelayStopState == 1 ) {
             
@@ -823,7 +840,6 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             timerCarFriendStart = Timer.scheduledTimer(timeInterval: 3, target: self, selector: #selector(timerActionSelectCarFriendBLE_Start), userInfo: nil, repeats: false)
             bleSerachDelayStopState = 2
         }
-        
     }
     
     
@@ -832,30 +848,271 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             
         if( self.isBLE_CAR_FRIENDS_CONNECT() == true ) {
             
+            // 블루투스에서 1초마다 브로드캐스팅 되는 문자열 계속 파싱
             MainManager.shared.member_info.readDataCarFriendsBLE()
+            
+            // 유저가 동작한 값을 가지고 위 auto 변수들 값과 다를 경우 BLE에 명령을 계속 보내 같아지게 만든다.
+            autoBtnStateBleSetting()
+            
         }
         
         // 블루 투스 켜짐 연결 꺼짐 UI 표시 체크
         connectCheckBLE()
-        // 온오프 버튼 이미지 상태변경
-        carOnOffSetting()
     }
     
-    // 10초후 한번 실행
-    func timerActionDATETIME() {
+    
+    
+    
+    // 유저가 동작한 값을 가지고 위 auto 변수들 값과 다를 경우 BLE에 명령을 계속 보내 같아지게 만든다.
+    func autoBtnStateBleSetting() {
         
-        if( isBLE_CAR_FRIENDS_CONNECT() == true ) {
+        // 블루 투스가 연결 되면 파싱 3번만 해서 초기값 세팅
+        if( autoBtnDataSet == false ) {
             
-            // 핸드폰 현재 시간 BLE 기기에 명령 보내 저장
-            MainManager.shared.getDateTimeSendBLE()
+            if( autoBtnDataSetCount > 2) {
+                
+                autoBtnDataSet = true
+            }
+            else {
+                
+                autoBtnDataSetCount += 1
+            }
+            
+            MainManager.shared.member_info.bCar_Btn_AutoLockFolding = MainManager.shared.member_info.bCar_Func_AutoLockFolding
+            MainManager.shared.member_info.bCar_Btn_AutoWindowClose = MainManager.shared.member_info.bCar_Func_AutoWindowClose
+            MainManager.shared.member_info.bCar_Btn_AutoSunroofClose = MainManager.shared.member_info.bCar_Func_AutoSunroofClose
+            MainManager.shared.member_info.bCar_Btn_AutoWindowRevOpen = MainManager.shared.member_info.bCar_Func_AutoWindowRevOpen
+            MainManager.shared.member_info.bCar_Btn_RVS = MainManager.shared.member_info.bCar_Func_RVS
+            MainManager.shared.member_info.strCar_Check_ReservedRVSTime = MainManager.shared.member_info.strCar_Status_ReservedRVSTime
+            
+            carOnOffSetting()
+            
+        }
+        // 유저가 동작한 값을 가지고 위 auto 변수들 값과 다를 경우 BLE에 명령을 계속 보내 같아지게 만든다.
+        else {
+            
+            
+            if( MainManager.shared.member_info.bCar_Btn_AutoLockFolding != MainManager.shared.member_info.bCar_Func_AutoLockFolding ) {
+                
+                if( MainManager.shared.member_info.bCar_Btn_AutoLockFolding == true ) {
+                    
+                    let nsData:NSData = MainManager.shared.member_info.setLOCKFOLDING( "1" )
+                    setDataBLE( nsData )
+                }
+                else {
+                    
+                    let nsData:NSData = MainManager.shared.member_info.setLOCKFOLDING( "0" )
+                    setDataBLE( nsData )
+                }
+            }
+            else if( MainManager.shared.member_info.bCar_Btn_AutoWindowClose != MainManager.shared.member_info.bCar_Func_AutoWindowClose ) {
+                
+                if( MainManager.shared.member_info.bCar_Btn_AutoWindowClose == true ) {
+                    
+                    let nsData:NSData = MainManager.shared.member_info.setAUTOWINDOWS( "1" )
+                    setDataBLE( nsData )
+                }
+                else {
+                    
+                    let nsData:NSData = MainManager.shared.member_info.setAUTOWINDOWS( "0" )
+                    setDataBLE( nsData )
+                }
+            }
+            else if( MainManager.shared.member_info.bCar_Btn_AutoSunroofClose != MainManager.shared.member_info.bCar_Func_AutoSunroofClose ) {
+                
+                if( MainManager.shared.member_info.bCar_Btn_AutoSunroofClose == true ) {
+                    
+                    let nsData:NSData = MainManager.shared.member_info.setAUTOSUNROOF( "1" )
+                    setDataBLE( nsData )
+                }
+                else {
+                    
+                    let nsData:NSData = MainManager.shared.member_info.setAUTOSUNROOF( "0" )
+                    setDataBLE( nsData )
+                }
+            }
+            else if( MainManager.shared.member_info.bCar_Btn_AutoWindowRevOpen != MainManager.shared.member_info.bCar_Func_AutoWindowRevOpen ) {
+                
+                if( MainManager.shared.member_info.bCar_Btn_AutoWindowRevOpen == true ) {
+                    
+                    let nsData:NSData = MainManager.shared.member_info.setREVWINDOW( "1" )
+                    setDataBLE( nsData )
+                }
+                else {
+                    
+                    let nsData:NSData = MainManager.shared.member_info.setREVWINDOW( "0" )
+                    setDataBLE( nsData )
+                }
+            }
+            else if( MainManager.shared.member_info.bCar_Btn_RVS != MainManager.shared.member_info.bCar_Func_RVS ) {
+                
+                if( MainManager.shared.member_info.bCar_Btn_RVS == true ) {
+                    
+                    // 예약설정
+                    let nsData:NSData = MainManager.shared.member_info.setRES_RVS( "1" )
+                    setDataBLE( nsData )
+                }
+                else {
+                    
+                    let nsData:NSData = MainManager.shared.member_info.setRES_RVS( "0" )
+                    setDataBLE( nsData )
+                }
+            }
+            else if( MainManager.shared.member_info.strCar_Check_ReservedRVSTime != MainManager.shared.member_info.strCar_Status_ReservedRVSTime ) {
+                
+                // 시간 세팅
+                let nsDataT:NSData = MainManager.shared.member_info.setRES_RVS_TIME( MainManager.shared.member_info.strCar_Check_ReservedRVSTime )
+                setDataBLE( nsDataT )
+            }
+            
+            // -> "UVWXYZ" 지정한 인덱스에서 끝까지
+            //print(txt[txt.index(txt.startIndex, offsetBy: 20)...])
+            // String(str_1[..<str_1.index(str_1.startIndex, offsetBy: 10)])
+            
+            
+            if( MainManager.shared.member_info.strCar_Check_ReservedRVSTime.count > 10  ) {
+                // 1900-01-00
+                // 00:00:00
+                // 뒤 6자리 자르기
+                let str_1:String = MainManager.shared.member_info.strCar_Check_ReservedRVSTime
+                // String(str_1[..<str_1.index(str_1.startIndex, offsetBy: 10)])
+                // 앞 5자리 자르기
+                let str_2:String = String(str_1[str_1.index(str_1.startIndex, offsetBy: 11)...])
+                // "예약 시동 시간 [13:00]"
+                a02_02_view.label_rvs_time.text = "예약 시동 시간 [\(String(str_2[..<str_2.index(str_2.startIndex, offsetBy: 5)]) )]"
+            }
+                
+                
+        }
+    }
+    
+    
+    // 10초후 한번 실행
+    func timerActionSetDATETIME() {
+        
+        if( isBLE_CAR_FRIENDS_CONNECT() == true && isPeripheral_LIVE() == true ) {
+
+            // 핸드폰 현재 시간, BLE 기기에 명령 보내 저장
+            
+            if( carFriendsPeripheral != nil && myCharacteristic != nil)
+                { MainManager.shared.getDateTimeSetTimeBLE( carFriendsPeripheral!, myCharacteristic! ) }
             initCarDataSaveDB()
+            
+            // 핸드폰이랑 기기 날짜가 같은가 비교 시작
+            isPhoneToBleTimeCheck = true
+            phoneToBleTimeCheckCount = 0
         }
         else {
             
             initCarDataReadDB()
-            
         }
     }
+    
+    
+    // 1초 스케줄러에 돌림
+    // 날짜 세팅 후 날짜 비교 3번 한다. 그 다음 DTC 읽기 명령 실행
+    // [DATETIME]=YYYY-MM-DD HH:MM:SS!
+    func phoneToBleTimeCheck() {
+
+        if( isPhoneToBleTimeCheck == true && isBLE_CAR_FRIENDS_CONNECT() == true && isPeripheral_LIVE() == true) {
+            
+            let str_1:String = MainManager.shared.member_info.str_Phone_DateTime
+            let str_2:String = MainManager.shared.member_info.str_Car_DateTime
+            
+            
+            // 아래 날짜 비교 때문에 초기화 다른값으로
+            var tempPhoneTime = "0"
+            var tempCarTime = "1"
+            
+            // 날짜 데이타가 있을때 파싱
+            if( str_1.count > 10 && str_2.count > 10 ) {
+
+                // 날짜 자르기 YYYY-MM-DD
+                tempPhoneTime = String(str_1[..<str_1.index(str_1.startIndex, offsetBy: 10)])
+                tempCarTime = String(str_2[..<str_2.index(str_2.startIndex, offsetBy: 10)])
+            }
+            
+            // 날짜비교
+            if( tempPhoneTime == tempCarTime ) {
+                
+                phoneToBleTimeCheckCount = 0
+                isPhoneToBleTimeCheck = false
+                isReadDtcStart = true
+            }
+//            print(tempPhoneTime)
+//            print(tempCarTime)
+//            print("_____________________________ phoneToBleTimeCheck")
+            
+            phoneToBleTimeCheckCount += 1
+            // 메세지 경고 메세지 보여준다. 같은걸 못찾고 횟수 오바 일때
+            if( phoneToBleTimeCheckCount >= 3 && isReadDtcStart == false  ) {
+                
+                phoneToBleTimeCheckCount = 0
+                isPhoneToBleTimeCheck = false
+                isReadDtcStart = true
+                // 경고
+                var alert = UIAlertView(title: "DATE Err...", message: "[DATETIME] 단말 시간 설정이 실패하였습니다.", delegate: nil, cancelButtonTitle: "OK")
+                alert.show()
+            }
+            else {
+                // 시간 다시 세팅
+                if( carFriendsPeripheral != nil && myCharacteristic != nil)
+                    { MainManager.shared.getDateTimeSetTimeBLE( carFriendsPeripheral!, myCharacteristic! ) }
+            }
+            
+        }
+        // 블루 투스 꺼지거나 연결 안됨
+        else {
+            
+            phoneToBleTimeCheckCount = 0
+            isPhoneToBleTimeCheck = false
+            isReadDtcStart = false
+        }
+    }
+    
+    
+    // DTC 정보 달라 명령 보내기
+    func readDtcStart() {
+        
+        if( isReadDtcStart == true && isBLE_CAR_FRIENDS_CONNECT() == true) {
+            
+            // 1초 마다 순차적으로
+            if( readDtcCount == 0 ) {
+                
+                let nsData:NSData = MainManager.shared.member_info.setREAD_DTC_ECM()
+                setDataBLE( nsData )
+            }
+            else if( readDtcCount == 1 ) {
+                
+                let nsData:NSData = MainManager.shared.member_info.setREAD_DTC_BCM()
+                setDataBLE( nsData )
+            }
+            else if( readDtcCount == 2 ) {
+                
+                let nsData:NSData = MainManager.shared.member_info.setREAD_DTC_TCM()
+                setDataBLE( nsData )
+            }
+            else if( readDtcCount == 3 ) {
+                
+                let nsData:NSData = MainManager.shared.member_info.setREAD_DTC_EBCM()
+                setDataBLE( nsData )
+            }
+            
+            readDtcCount += 1
+            if( readDtcCount >= 4 ) {
+                // DTC 정보 달라 명령 보내기
+                isReadDtcStart = false
+                // 4가지 순차적으로 읽기 위해 사용하는 카운트
+                readDtcCount = 0
+            }
+        }
+    }
+    
+    
+
+    
+
+    
     
     
     
@@ -1239,32 +1496,6 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     
     
     
-    // 변수 체크 딜레이 함수
-    func bleStatusCheckDelay() {
-    
-        // 윈도우 10초
-        if( MainManager.shared.member_info.bCarStatusWindowDelay ) {
-            
-            MainManager.shared.member_info.carStatusWindowDelayCount += 1
-            
-            if( MainManager.shared.member_info.carStatusWindowDelayCount > MainManager.shared.member_info.carWindowDelaySec ) {
-                // 변수 갱신시작
-                MainManager.shared.member_info.bCarStatusWindowDelay = false
-            }
-        }
-        
-        // 다른 변수들 윈도우 2초
-        if( MainManager.shared.member_info.bCarStatusDelay ) {
-            
-            MainManager.shared.member_info.carStatusDelayCount += 1
-            
-            if( MainManager.shared.member_info.carStatusDelayCount > MainManager.shared.member_info.carStatusDelay ) {
-                // 변수 갱신시작
-                MainManager.shared.member_info.bCarStatusDelay = false
-            }
-        }
-    }
-    
     
     
 //    let sz_car_name = ["쉐보레","AE86","니차똥차","란에보","임프레자","람보르기니","부가티","포니2","엑셀런트","프라이드","벤츠"]
@@ -1348,142 +1579,9 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     
     func createWkWebViewA02() {
         
-        let webConfiguration = WKWebViewConfiguration()
-        webConfiguration.allowsInlineMediaPlayback = true
-        webConfiguration.mediaTypesRequiringUserActionForPlayback = []
-        
-        // 웹뷰 딜리게이트 연결
-        a02_02_view.webView = WKWebView(frame: CGRect( x: 10, y: 10, width: 355, height: 220 ), configuration: webConfiguration )
-        //webView.uiDelegate = self
-        a02_02_view.webView.navigationDelegate = self
-        a02_02_view.webView.translatesAutoresizingMaskIntoConstraints = false
-        a02_02_view.addSubview( a02_02_view.webView )
-        
-        if let videoURL:URL = URL(string: "https://www.youtube.com/embed/IHNzOHi8sJs") {
-            let request:URLRequest = URLRequest(url: videoURL)
-            a02_02_view.webView.load(request)
-        }
-        
-        // 웹뷰 딜리게이트 연결
-        a02_03_view.webView = WKWebView(frame: CGRect( x: 10, y: 10, width: 355, height: 220 ), configuration: webConfiguration )
-        //webView.uiDelegate = self
-        a02_03_view.webView.navigationDelegate = self
-        a02_03_view.webView.translatesAutoresizingMaskIntoConstraints = false
-        a02_03_view.addSubview( a02_03_view.webView )
-        
-        if let videoURL:URL = URL(string: "https://www.youtube.com/embed/IHNzOHi8sJs") {
-            let request:URLRequest = URLRequest(url: videoURL)
-            a02_03_view.webView.load(request)
-        }
-        
-        // 웹뷰 딜리게이트 연결
-        a02_04_view.webView = WKWebView(frame: CGRect( x: 10, y: 10, width: 355, height: 220 ), configuration: webConfiguration )
-        //webView.uiDelegate = self
-        a02_04_view.webView.navigationDelegate = self
-        a02_04_view.webView.translatesAutoresizingMaskIntoConstraints = false
-        a02_04_view.addSubview( a02_04_view.webView )
-        
-        if let videoURL:URL = URL(string: "https://www.youtube.com/embed/IHNzOHi8sJs") {
-            let request:URLRequest = URLRequest(url: videoURL)
-            a02_04_view.webView.load(request)
-        }
-        
-        // 웹뷰 딜리게이트 연결
-        a02_05_view.webView = WKWebView(frame: CGRect( x: 10, y: 10, width: 355, height: 220 ), configuration: webConfiguration )
-        //webView.uiDelegate = self
-        a02_05_view.webView.navigationDelegate = self
-        a02_05_view.webView.translatesAutoresizingMaskIntoConstraints = false
-        a02_05_view.addSubview( a02_05_view.webView )
-        
-        if let videoURL:URL = URL(string: "https://www.youtube.com/embed/IHNzOHi8sJs") {
-            let request:URLRequest = URLRequest(url: videoURL)
-            a02_05_view.webView.load(request)
-        }
-        
-        // 웹뷰 딜리게이트 연결
-        a02_06_view.webView = WKWebView(frame: CGRect( x: 10, y: 10, width: 355, height: 220 ), configuration: webConfiguration )
-        //webView.uiDelegate = self
-        a02_06_view.webView.navigationDelegate = self
-        a02_06_view.webView.translatesAutoresizingMaskIntoConstraints = false
-        a02_06_view.addSubview( a02_06_view.webView )
-        
-        if let videoURL:URL = URL(string: "https://www.youtube.com/embed/IHNzOHi8sJs") {
-            let request:URLRequest = URLRequest(url: videoURL)
-            a02_06_view.webView.load(request)
-        }
-        
-        // 웹뷰 딜리게이트 연결
-        a02_07_view.webView = WKWebView(frame: CGRect( x: 10, y: 10, width: 355, height: 220 ), configuration: webConfiguration )
-        //webView.uiDelegate = self
-        a02_07_view.webView.navigationDelegate = self
-        a02_07_view.webView.translatesAutoresizingMaskIntoConstraints = false
-        a02_07_view.addSubview( a02_07_view.webView )
-        
-        if let videoURL:URL = URL(string: "https://www.youtube.com/embed/IHNzOHi8sJs") {
-            let request:URLRequest = URLRequest(url: videoURL)
-            a02_07_view.webView.load(request)
-        }
-        
-        // 웹뷰 딜리게이트 연결
-        a02_08_view.webView = WKWebView(frame: CGRect( x: 10, y: 10, width: 355, height: 220 ), configuration: webConfiguration )
-        //webView.uiDelegate = self
-        a02_08_view.webView.navigationDelegate = self
-        a02_08_view.webView.translatesAutoresizingMaskIntoConstraints = false
-        a02_08_view.addSubview( a02_08_view.webView )
-        
-        if let videoURL:URL = URL(string: "https://www.youtube.com/embed/IHNzOHi8sJs") {
-            let request:URLRequest = URLRequest(url: videoURL)
-            a02_08_view.webView.load(request)
-        }
-        
-        // 웹뷰 딜리게이트 연결
-        a02_09_view.webView = WKWebView(frame: CGRect( x: 10, y: 10, width: 355, height: 220 ), configuration: webConfiguration )
-        //webView.uiDelegate = self
-        a02_09_view.webView.navigationDelegate = self
-        a02_09_view.webView.translatesAutoresizingMaskIntoConstraints = false
-        a02_09_view.addSubview( a02_09_view.webView )
-        
-        if let videoURL:URL = URL(string: "https://www.youtube.com/embed/IHNzOHi8sJs") {
-            let request:URLRequest = URLRequest(url: videoURL)
-            a02_09_view.webView.load(request)
-        }
-        
-        // 웹뷰 딜리게이트 연결
-        a02_10_view.webView = WKWebView(frame: CGRect( x: 10, y: 10, width: 355, height: 220 ), configuration: webConfiguration )
-        //webView.uiDelegate = self
-        a02_10_view.webView.navigationDelegate = self
-        a02_10_view.webView.translatesAutoresizingMaskIntoConstraints = false
-        a02_10_view.addSubview( a02_10_view.webView )
-        
-        if let videoURL:URL = URL(string: "https://www.youtube.com/embed/IHNzOHi8sJs") {
-            let request:URLRequest = URLRequest(url: videoURL)
-            a02_10_view.webView.load(request)
-        }
-        
-        // 웹뷰 딜리게이트 연결
-        a02_11_view.webView = WKWebView(frame: CGRect( x: 10, y: 10, width: 355, height: 220 ), configuration: webConfiguration )
-        //webView.uiDelegate = self
-        a02_11_view.webView.navigationDelegate = self
-        a02_11_view.webView.translatesAutoresizingMaskIntoConstraints = false
-        a02_11_view.addSubview( a02_11_view.webView )
-        
-        if let videoURL:URL = URL(string: "https://www.youtube.com/embed/IHNzOHi8sJs") {
-            let request:URLRequest = URLRequest(url: videoURL)
-            a02_11_view.webView.load(request)
-        }
-        
-        
-        // 웹뷰 딜리게이트 연결
-        a02_12_view.webView = WKWebView(frame: CGRect( x: 10, y: 10, width: 355, height: 220 ), configuration: webConfiguration )
-        //webView.uiDelegate = self
-        a02_12_view.webView.navigationDelegate = self
-        a02_12_view.webView.translatesAutoresizingMaskIntoConstraints = false
-        a02_12_view.addSubview( a02_12_view.webView )
-        
-        if let videoURL:URL = URL(string: "https://www.youtube.com/embed/IHNzOHi8sJs") {
-            let request:URLRequest = URLRequest(url: videoURL)
-            a02_12_view.webView.load(request)
-        }
+//        let webConfiguration = WKWebViewConfiguration()
+//        webConfiguration.allowsInlineMediaPlayback = true
+//        webConfiguration.mediaTypesRequiringUserActionForPlayback = []
         
         
         //let temp = "https://www.youtube.com/embed/IHNzOHi8sJs?playsinline=1"
@@ -1495,62 +1593,55 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     
     // A02 ON OFF 세팅
     
-    func carOnOffIsHiddenSet() {
+    func carOnOffIsHiddenSetA02_01() {
         
         if( MainManager.shared.member_info.isBLE_ON == false ||
             MainManager.shared.member_info.isCAR_FRIENDS_CONNECT == false ) {
             
-            a02_01_view.switch_btn_01.isEnabled = false
-            a02_01_view.switch_btn_02.isEnabled = false
-            a02_01_view.switch_btn_03.isEnabled = false
-            a02_01_view.switch_btn_04.isEnabled = false
-            a02_01_view.switch_btn_05.isEnabled = false
-            a02_01_view.switch_btn_06.isEnabled = false
-            a02_01_view.switch_btn_07.isEnabled = false
-            a02_01_view.switch_btn_08.isEnabled = false
-            a02_01_view.switch_btn_09.isEnabled = false
-            a02_01_view.switch_btn_10.isEnabled = false
-            a02_01_view.switch_btn_11.isEnabled = false
             
-            // 각각의 뷰 개별 버튼들
-            self.a02_02_view.btn_on_off.isEnabled = false
-            self.a02_03_view.btn_on_off.isEnabled = false
-            self.a02_04_view.btn_on_off.isEnabled = false
-            self.a02_05_view.btn_on_off.isEnabled = false
-            self.a02_06_view.btn_on_off.isEnabled = false
-            self.a02_07_view.btn_on_off.isEnabled = false
-            self.a02_08_view.btn_on_off.isEnabled = false
-            self.a02_09_view.btn_on_off.isEnabled = false
-            self.a02_10_view.btn_on_off.isEnabled = false
-            self.a02_11_view.btn_on_off.isEnabled = false
-            self.a02_12_view.btn_on_off.isEnabled = false
+            a02_01_view.btn_01_on.isEnabled = false
+            a02_01_view.btn_02_on.isEnabled = false
+            a02_01_view.btn_03_on.isEnabled = false
+            a02_01_view.btn_04_on.isEnabled = false
+            a02_01_view.btn_05_on.isEnabled = false
+            a02_01_view.btn_06_on.isEnabled = false
+            
+            a02_01_view.btn_01_off.isEnabled = false
+            a02_01_view.btn_02_off.isEnabled = false
+            a02_01_view.btn_03_off.isEnabled = false
+            a02_01_view.btn_04_off.isEnabled = false
+            a02_01_view.btn_05_off.isEnabled = false
+            a02_01_view.btn_06_off.isEnabled = false
+            
+            a02_02_view.switch_btn_07.isEnabled = false
+            a02_02_view.switch_btn_08.isEnabled = false
+            a02_02_view.switch_btn_09.isEnabled = false
+            a02_02_view.switch_btn_10.isEnabled = false
+            a02_02_view.switch_btn_11.isEnabled = false
         }
         else if( MainManager.shared.member_info.isCAR_FRIENDS_CONNECT == true ) {
             
-            a02_01_view.switch_btn_01.isEnabled = true
-            a02_01_view.switch_btn_02.isEnabled = true
-            a02_01_view.switch_btn_03.isEnabled = true
-            a02_01_view.switch_btn_04.isEnabled = true
-            a02_01_view.switch_btn_05.isEnabled = true
-            a02_01_view.switch_btn_06.isEnabled = true
-            a02_01_view.switch_btn_07.isEnabled = true
-            a02_01_view.switch_btn_08.isEnabled = true
-            a02_01_view.switch_btn_09.isEnabled = true
-            a02_01_view.switch_btn_10.isEnabled = true
-            a02_01_view.switch_btn_11.isEnabled = true
             
-            // 각각의 뷰 개별 버튼들
-            self.a02_02_view.btn_on_off.isEnabled = true
-            self.a02_03_view.btn_on_off.isEnabled = true
-            self.a02_04_view.btn_on_off.isEnabled = true
-            self.a02_05_view.btn_on_off.isEnabled = true
-            self.a02_06_view.btn_on_off.isEnabled = true
-            self.a02_07_view.btn_on_off.isEnabled = true
-            self.a02_08_view.btn_on_off.isEnabled = true
-            self.a02_09_view.btn_on_off.isEnabled = true
-            self.a02_10_view.btn_on_off.isEnabled = true
-            self.a02_11_view.btn_on_off.isEnabled = true
-            self.a02_12_view.btn_on_off.isEnabled = true
+            a02_01_view.btn_01_on.isEnabled = true
+            a02_01_view.btn_02_on.isEnabled = true
+            a02_01_view.btn_03_on.isEnabled = true
+            a02_01_view.btn_04_on.isEnabled = true
+            a02_01_view.btn_05_on.isEnabled = true
+            a02_01_view.btn_06_on.isEnabled = true
+            
+            a02_01_view.btn_01_off.isEnabled = true
+            a02_01_view.btn_02_off.isEnabled = true
+            a02_01_view.btn_03_off.isEnabled = true
+            a02_01_view.btn_04_off.isEnabled = true
+            a02_01_view.btn_05_off.isEnabled = true
+            a02_01_view.btn_06_off.isEnabled = true
+
+            a02_02_view.switch_btn_07.isEnabled = true
+            a02_02_view.switch_btn_08.isEnabled = true
+            a02_02_view.switch_btn_09.isEnabled = true
+            a02_02_view.switch_btn_10.isEnabled = true
+            a02_02_view.switch_btn_11.isEnabled = true
+            
         }
     }
         
@@ -1568,64 +1659,57 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
 //        let DF_AUTO_WINDOW_REV_OPEN = 9
 //        let DF_RES_RVS_TIME = 10
         
-        
 
-        a02_01_view.switch_btn_01.isOn = MainManager.shared.member_info.bCar_Status_DoorLock
-        a02_01_view.switch_btn_02.isOn = MainManager.shared.member_info.bCar_Status_Hatch
-        a02_01_view.switch_btn_03.isOn = MainManager.shared.member_info.bCar_Status_Window
-        a02_01_view.switch_btn_04.isOn = MainManager.shared.member_info.bCar_Status_Sunroof
-        // 원격 시동
-        a02_01_view.switch_btn_05.isOn = MainManager.shared.member_info.bCar_Status_RVS
-        // 키리스 온
-        a02_01_view.switch_btn_06.isOn = MainManager.shared.member_info.bCar_Car_Status_IGN
+//        a02_01_view.switch_btn_01.isOn = MainManager.shared.member_info.bCar_Status_DoorLock
+//        a02_01_view.switch_btn_02.isOn = MainManager.shared.member_info.bCar_Status_Hatch
+//        a02_01_view.switch_btn_03.isOn = MainManager.shared.member_info.bCar_Status_Window
+//        a02_01_view.switch_btn_04.isOn = MainManager.shared.member_info.bCar_Status_Sunroof
+//        // 원격 시동
+//        a02_01_view.switch_btn_05.isOn = MainManager.shared.member_info.bCar_Status_RVS
+//        // 키리스 온
+//        a02_01_view.switch_btn_06.isOn = MainManager.shared.member_info.bCar_Car_Status_IGN
+        
         
         // 여기부터 AUTO
-        a02_01_view.switch_btn_07.isOn = MainManager.shared.member_info.bCar_Func_LockFolding
-        a02_01_view.switch_btn_08.isOn = MainManager.shared.member_info.bCar_Func_AutoWindowClose
-        a02_01_view.switch_btn_09.isOn = MainManager.shared.member_info.bCar_Func_AutoSunroofClose
+        a02_02_view.switch_btn_07.isOn = MainManager.shared.member_info.bCar_Btn_AutoLockFolding
+        a02_02_view.switch_btn_08.isOn = MainManager.shared.member_info.bCar_Btn_AutoWindowClose
+        a02_02_view.switch_btn_09.isOn = MainManager.shared.member_info.bCar_Btn_AutoSunroofClose
         // 후진시 창문
-        a02_01_view.switch_btn_10.isOn = MainManager.shared.member_info.bCar_Func_AutoWindowRevOpen
+        a02_02_view.switch_btn_10.isOn = MainManager.shared.member_info.bCar_Btn_AutoWindowRevOpen
         // 예약 시동
-        a02_01_view.switch_btn_11.isOn = MainManager.shared.member_info.bCar_Func_RVS
+        a02_02_view.switch_btn_11.isOn = MainManager.shared.member_info.bCar_Btn_RVS
         
-        
-        if( MainManager.shared.member_info.bCar_Status_DoorLock == true ) { self.a02_02_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_on[0]), for: UIControlState.normal ) }
-        else                                                              { self.a02_02_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_off[0]), for: UIControlState.normal ) }
-        
-        if( MainManager.shared.member_info.bCar_Status_Hatch == true )  { self.a02_03_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_on[1]), for: UIControlState.normal ) }
-        else                                                            { self.a02_03_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_off[1]), for: UIControlState.normal ) }
-        
-        if( MainManager.shared.member_info.bCar_Status_Window == true ) { self.a02_04_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_on[2]), for: UIControlState.normal ) }
-        else                                                            { self.a02_04_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_off[2]), for: UIControlState.normal ) }
-        
-        if( MainManager.shared.member_info.bCar_Status_Sunroof == true ) { self.a02_05_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_on[3]), for: UIControlState.normal ) }
-        else                                                             { self.a02_05_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_off[3]), for: UIControlState.normal ) }
-        
-        if( MainManager.shared.member_info.bCar_Status_RVS == true ) { self.a02_06_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_on[4]), for: UIControlState.normal ) }
-        else                                                         { self.a02_06_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_off[4]), for: UIControlState.normal ) }
-        
-        if( MainManager.shared.member_info.bCar_Car_Status_IGN == true ) { self.a02_07_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_on[5]), for: UIControlState.normal ) }
-        else                                                             { self.a02_07_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_off[5]), for: UIControlState.normal ) }
-        
-        if( MainManager.shared.member_info.bCar_Func_LockFolding == true ) { self.a02_08_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_on[6]), for: UIControlState.normal ) }
-        else                                                                { self.a02_08_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_off[6]), for: UIControlState.normal ) }
-        
-        if( MainManager.shared.member_info.bCar_Func_AutoWindowClose == true ) { self.a02_09_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_on[7]), for: UIControlState.normal ) }
-        else                                                                   { self.a02_09_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_off[7]), for: UIControlState.normal ) }
-        
-        if( MainManager.shared.member_info.bCar_Func_AutoSunroofClose == true ) { self.a02_10_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_on[8]), for: UIControlState.normal ) }
-        else                                                                    { self.a02_10_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_off[8]), for: UIControlState.normal ) }
-        
-        if( MainManager.shared.member_info.bCar_Func_AutoWindowRevOpen == true ) { self.a02_11_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_on[9]), for: UIControlState.normal ) }
-        else                                                                    { self.a02_11_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_off[9]), for: UIControlState.normal ) }
-        
-        if( MainManager.shared.member_info.bCar_Func_RVS == true ) { self.a02_12_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_on[10]), for: UIControlState.normal ) }
-        else                                                                      { self.a02_12_view.btn_on_off.setBackgroundImage(UIImage(named:btn_image_off[10]), for: UIControlState.normal ) }
+        // 버튼 히든 처리
+        if( autoBtnDataSet == false ) {
+            
+            a02_02_view.switch_btn_07.isEnabled = false
+            a02_02_view.switch_btn_08.isEnabled = false
+            a02_02_view.switch_btn_09.isEnabled = false
+            a02_02_view.switch_btn_10.isEnabled = false
+            a02_02_view.switch_btn_11.isEnabled = false
+        }
+        else {
+            
+            a02_02_view.switch_btn_07.isEnabled = true
+            a02_02_view.switch_btn_08.isEnabled = true
+            a02_02_view.switch_btn_09.isEnabled = true
+            a02_02_view.switch_btn_10.isEnabled = true
+            a02_02_view.switch_btn_11.isEnabled = true
+        }
     }
     
     
     
-    
+    func stopTimer() {
+        
+        print("stopTimer")
+        
+        timer.invalidate()
+        timer2.invalidate()
+        timerBLE.invalidate()
+        timerDATETIME.invalidate()
+        timerCarFriendStart.invalidate()
+    }
     
     
     var timer = Timer()
@@ -1659,6 +1743,8 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         ////////////////////////////////////////////////// main btn init
         //
         
+     
+        
         btn_a01_change.setTitleColor(.white, for: .normal)
         btn_a01_change.backgroundColor = UIColor(red: 11/256, green: 85/255, blue: 156/255, alpha: 1)
         btn_a02_change.setTitleColor(.gray, for: .normal)
@@ -1682,13 +1768,46 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         
         
         
+        
+        
+//        MainManager.shared.member_info.str_8WeekDriveMileage
+//        print(MainManager.shared.member_info.str_8WeekAvgFuelMileage
+//        print(MainManager.shared.member_info.str_8WeekDtcCount
+        
+        
+        
+        
         // 콤마
-        let tempTotKm:Int = Int(Double(MainManager.shared.member_info.str_TotalDriveMileage)!)
-        let temp8WeekKm:Int = Int(Double(MainManager.shared.member_info.str_8WeekDriveMileage)!)
+        // 전체 거리
+        var tempTotKm:Int = 0
+        
+        if( MainManager.shared.member_info.str_TotalDriveMileage.isNumber ) {
+            
+            tempTotKm = Int(Double(MainManager.shared.member_info.str_TotalDriveMileage)!)
+        }
+        
+        var temp8WeekKm:Int = 0
+        if( MainManager.shared.member_info.str_8WeekDriveMileage.isNumber ) {
+            
+            temp8WeekKm = Int(Double(MainManager.shared.member_info.str_8WeekDriveMileage)!)
+        }
         
         // 소수점 한자리 남게 rounded()
-        let tempTotAvgFuel:Double = Double(MainManager.shared.member_info.str_AvgFuelMileage)!.rounded( toPlaces: 1)
-        let temp8WeekAvgFuel:Double = Double(MainManager.shared.member_info.str_8WeekAvgFuelMileage)!.rounded( toPlaces: 1)
+        // 전체 평균
+        var tempTotAvgFuel:Double = 0.0
+        if( MainManager.shared.member_info.str_AvgFuelMileage.isNumber ) {
+            
+           tempTotAvgFuel = Double(MainManager.shared.member_info.str_AvgFuelMileage)!.rounded( toPlaces: 1)
+        }
+        
+        var temp8WeekAvgFuel:Double = 0.0
+        if( MainManager.shared.member_info.str_8WeekAvgFuelMileage.isNumber ) {
+            
+            temp8WeekAvgFuel = Double(MainManager.shared.member_info.str_8WeekAvgFuelMileage)!.rounded( toPlaces: 1)
+        }
+        
+        
+        
         
         
         
@@ -1714,7 +1833,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             
             // 스크롤뷰 세로 스크롤 영역 설정
             a01_01_view.addSubview(a01_01_scroll_view)
-            a01_01_scroll_view.frame = CGRect(x: 15, y: 0, width: 345, height: 438+47)
+            a01_01_scroll_view.frame = CGRect(x: 15, y: 0, width: 345, height: 438+52)
             a01_01_scroll_view.frame = MainManager.shared.initLoadChangeFrame( frame: a01_01_scroll_view.frame )
             a01_01_scroll_view.delegate = self
             
@@ -2015,40 +2134,13 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         a02_ScrollMenuView.frame.origin.y = CGFloat(subMenuView_y)
         
         self.view.addSubview(a02_01_view)
-        a02_01_view.frame.origin.y = subSubViewA02_y
+        a02_01_view.frame.origin.y = subSubView_y
         
         self.view.addSubview(a02_02_view)
-        a02_02_view.frame.origin.y = subSubViewA02_y
+        a02_02_view.frame.origin.y = subSubView_y
         
         self.view.addSubview(a02_03_view)
-        a02_03_view.frame.origin.y = subSubViewA02_y
-        
-        self.view.addSubview(a02_04_view)
-        a02_04_view.frame.origin.y = subSubViewA02_y
-        
-        self.view.addSubview(a02_05_view)
-        a02_05_view.frame.origin.y = subSubViewA02_y
-        
-        self.view.addSubview(a02_06_view)
-        a02_06_view.frame.origin.y = subSubViewA02_y
-        
-        self.view.addSubview(a02_07_view)
-        a02_07_view.frame.origin.y = subSubViewA02_y
-        
-        self.view.addSubview(a02_08_view)
-        a02_08_view.frame.origin.y = subSubViewA02_y
-        
-        self.view.addSubview(a02_09_view)
-        a02_09_view.frame.origin.y = subSubViewA02_y
-        
-        self.view.addSubview(a02_10_view)
-        a02_10_view.frame.origin.y = subSubViewA02_y
-        
-        self.view.addSubview(a02_11_view)
-        a02_11_view.frame.origin.y = subSubViewA02_y
-        
-        self.view.addSubview(a02_12_view)
-        a02_12_view.frame.origin.y = subSubViewA02_y
+        a02_03_view.frame.origin.y = subSubView_y
         
         
         
@@ -2070,32 +2162,17 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         activityIndicator.hidesWhenStopped = true
         activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.white
         self.view.addSubview(activityIndicator)
-        //self.activityIndicator.startAnimating()
+
         
-        //self.view.bringSubview(toFront: a02_ScrollMenuView)
+
         
-        
-        //A02
-        createWkWebViewA02()
+
         
         userLogin()
         
         a01_05_tableViewSet()
         
-        
-        
-        /*
-         if let featView3 = Bundle.main.loadNibNamed("A01_View", owner: self, options: nil)?.first as? A01_View
-         {
-         featView3.myButton.addTarget(self, action: #selector(AViewController.pressed01(sender:)), for: .touchUpInside)
-         featView3.backgroundColor = UIColor.gray
-         featView3.myButton.tag = 1
-         //featView3.frame.origin.x = 10
-         featView3.frame.origin.y = 41
-         self.view.addSubview(featView3)
-         featView22 = featView3
-         }
-         */
+
         
        
        
@@ -2134,46 +2211,16 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         a02_01_view.frame = MainManager.shared.initLoadChangeFrame(frame: a02_01_view.frame)
         
         a02_02_view.frame = MainManager.shared.initLoadChangeFrame(frame: a02_02_view.frame)
-        a02_02_view.webView.frame = MainManager.shared.initLoadChangeFrame(frame: a02_02_view.webView.frame)
         
         a02_03_view.frame = MainManager.shared.initLoadChangeFrame(frame: a02_03_view.frame)
-        a02_03_view.webView.frame = MainManager.shared.initLoadChangeFrame(frame: a02_03_view.webView.frame)
         
-        a02_04_view.frame = MainManager.shared.initLoadChangeFrame(frame: a02_04_view.frame)
-        a02_04_view.webView.frame = MainManager.shared.initLoadChangeFrame(frame: a02_04_view.webView.frame)
         
-        a02_05_view.frame = MainManager.shared.initLoadChangeFrame(frame: a02_05_view.frame)
-        a02_05_view.webView.frame = MainManager.shared.initLoadChangeFrame(frame: a02_05_view.webView.frame)
-        
-        a02_06_view.frame = MainManager.shared.initLoadChangeFrame(frame: a02_06_view.frame)
-        a02_06_view.webView.frame = MainManager.shared.initLoadChangeFrame(frame: a02_06_view.webView.frame)
-        
-        a02_07_view.frame = MainManager.shared.initLoadChangeFrame(frame: a02_07_view.frame)
-        a02_07_view.webView.frame = MainManager.shared.initLoadChangeFrame(frame: a02_07_view.webView.frame)
-        
-        a02_08_view.frame = MainManager.shared.initLoadChangeFrame(frame: a02_08_view.frame)
-        a02_08_view.webView.frame = MainManager.shared.initLoadChangeFrame(frame: a02_08_view.webView.frame)
-        
-        a02_09_view.frame = MainManager.shared.initLoadChangeFrame(frame: a02_09_view.frame)
-        a02_09_view.webView.frame = MainManager.shared.initLoadChangeFrame(frame: a02_09_view.webView.frame)
-        
-        a02_10_view.frame = MainManager.shared.initLoadChangeFrame(frame: a02_10_view.frame)
-        a02_10_view.webView.frame = MainManager.shared.initLoadChangeFrame(frame: a02_10_view.webView.frame)
-        
-        a02_11_view.frame = MainManager.shared.initLoadChangeFrame(frame: a02_11_view.frame)
-        a02_11_view.webView.frame = MainManager.shared.initLoadChangeFrame(frame: a02_11_view.webView.frame)
-        
-        a02_12_view.frame = MainManager.shared.initLoadChangeFrame(frame: a02_12_view.frame)
-        a02_12_view.webView.frame = MainManager.shared.initLoadChangeFrame(frame: a02_12_view.webView.frame)
+       
         
         
         a03_01_view.frame = MainManager.shared.initLoadChangeFrame(frame: a03_01_view.frame)
         a03_02_view.frame = MainManager.shared.initLoadChangeFrame(frame: a03_02_view.frame)
         a03_03_view.frame = MainManager.shared.initLoadChangeFrame(frame: a03_03_view.frame)
-        
-        
-        
-
         
         
         
@@ -2185,7 +2232,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         // 1 뷰 젤 앞으로
         self.view.bringSubview(toFront: a01_01_view)
         self.view.bringSubview(toFront: a01_ScrollMenuView)
-        
+        self.view.bringSubview(toFront: mainMenuABC_view)
         
         
         // 블루투스 시작
@@ -2392,6 +2439,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         print("%d",sender.tag)
         
         self.view.bringSubview(toFront: a01_06_view)
+        self.view.bringSubview(toFront: mainMenuABC_view)
         
     }
     
@@ -2401,6 +2449,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         print("%d",sender.tag)
         
         self.view.bringSubview(toFront: a03_03_view)
+        self.view.bringSubview(toFront: mainMenuABC_view)
         
     }
     
@@ -2409,6 +2458,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     @IBAction func pressed_A01_06_close(_ sender: UIButton) {
         
         self.view.bringSubview(toFront: a01_05_1_view)
+        self.view.bringSubview(toFront: mainMenuABC_view)
     }
     //
     /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2511,6 +2561,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         if sender.tag == 1 {
             
             self.view.bringSubview(toFront: a01_01_view)
+            self.view.bringSubview(toFront: mainMenuABC_view)
             print("A01_01")
         }
         else if sender.tag == 2 {
@@ -2522,6 +2573,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             }
             
             self.view.bringSubview(toFront: a01_02_view)
+            self.view.bringSubview(toFront: mainMenuABC_view)
             print("A01_02")
         }
         else if sender.tag == 3 {
@@ -2531,6 +2583,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
                 a01_03_view.webView.load(request)
             }
             self.view.bringSubview(toFront: a01_03_view)
+            self.view.bringSubview(toFront: mainMenuABC_view)
             print("A01_03")
         }
         else if sender.tag == 4 {
@@ -2541,28 +2594,28 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             }
             
             self.view.bringSubview(toFront: a01_04_1_view) // 진단정보
+            self.view.bringSubview(toFront: mainMenuABC_view)
             print("A01_04_1")
         }
         else if sender.tag == 5 {
             
             self.view.bringSubview(toFront: a01_04_view)   // 차량상태
+            self.view.bringSubview(toFront: mainMenuABC_view)
             print("A01_04")
         }
         else if sender.tag == 6 {
             
             self.view.bringSubview(toFront: a01_05_1_view)  // 주요 부품
+            self.view.bringSubview(toFront: mainMenuABC_view)
             print("A01_05")
         }
-            
-            
-            
-            
             
             
             // 핀번호 화면으로
         else if sender.tag == 11 {
             
             self.view.bringSubview(toFront: a01_01_pin_view)
+            self.view.bringSubview(toFront: mainMenuABC_view)
             a01_01_pin_view.label_pin_num_notis.text = "핀번호를 입력 하세요.!"
             a01_01_pin_view.pin_input_repeat_conut = 0
             
@@ -2590,6 +2643,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             
             a01_01_info_mod_view.field_phone01.text = MainManager.shared.member_info.str_id_phone_num
             self.view.bringSubview(toFront: a01_01_info_mod_view)
+            self.view.bringSubview(toFront: mainMenuABC_view)
             print("btn_car_info_mod")
             
             userLogin()
@@ -2657,6 +2711,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         
         self.view.bringSubview(toFront: a01_01_view)
         self.view.bringSubview(toFront: a01_ScrollMenuView)
+        self.view.bringSubview(toFront: mainMenuABC_view)
         
         print("A01")
         
@@ -2665,7 +2720,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     
     @IBAction func pressedA02(_ sender: UIButton) {
         
-        //        viewContainer.bringSubview(toFront: a02_view)
+
        
         
         btn_a01_change.setTitleColor(.gray, for: .normal)
@@ -2673,10 +2728,11 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         btn_a03_change.setTitleColor(.gray, for: .normal)
         
         
-        //carOnOffSetting()
-        carOnOffIsHiddenSet()
+        carOnOffSetting()
+        carOnOffIsHiddenSetA02_01()
         self.view.bringSubview(toFront: a02_01_view)
         self.view.bringSubview(toFront: a02_ScrollMenuView)
+        self.view.bringSubview(toFront: mainMenuABC_view)
         
         
 //        a02_01_view.switch_btn_01.isOn = MainManager.shared.member_info.bCar_Status_DoorLock
@@ -2690,7 +2746,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
 //
 //
 //        // 여기부터 AUTO
-//        a02_01_view.switch_btn_07.isOn = MainManager.shared.member_info.bCar_Func_LockFolding
+//        a02_01_view.switch_btn_07.isOn = MainManager.shared.member_info.bCar_Func_AutoLockFolding
 //        a02_01_view.switch_btn_08.isOn = MainManager.shared.member_info.bCar_Func_AutoWindowClose
 //
 //        a02_01_view.switch_btn_09.isOn = MainManager.shared.member_info.bCar_Func_AutoSunroofClose
@@ -2705,7 +2761,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     
     @IBAction func pressedA03(_ sender: UIButton) {
         
-        //        viewContainer.bringSubview(toFront: a03_view)
+
         
         
         btn_a01_change.setTitleColor(.gray, for: .normal)
@@ -2713,12 +2769,9 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         btn_a03_change.setTitleColor(.white, for: .normal)
         
         
-        
-        
         self.view.bringSubview(toFront: a03_01_view)
-        
-        //self.view.bringSubview(toFront: a02_ScrollMenuView)
-        //self.view.bringSubview(toFront: a02_01_view)
+        self.view.bringSubview(toFront: mainMenuABC_view)
+
         
         print("A03")
     }
@@ -2756,7 +2809,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             //tempBtn.setImage(UIImage(named:btn_image[i-1]), for: UIControlState.normal )
             tempBtn.setTitle( btn_a01_name[i], for: .normal)
             // 글자 크기
-            tempBtn.titleLabel?.font = .systemFont(ofSize: 17)
+            tempBtn.titleLabel?.font = .systemFont(ofSize: 15)
             //SystemFont(ofSize: 17)
             
             px += btn_width
@@ -2773,137 +2826,73 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     // 스크롤뷰에 버튼 만들기
     func a02_ScrollBtnCreate() {
         
-        let btn_image = ["frame_a_02_01_on","frame_a_02_02_off",
-                         "frame_a_02_03_off","frame_a_02_04_off",
-                         "frame_a_02_05_off","frame_a_02_06_off",
-                         "frame_a_02_07_off","frame_a_02_08_off",
-                         "frame_a_02_09_off","frame_a_02_10_off",
-                         "frame_a_02_11_off","frame_a_02_12_off"]
-        
         var count = 0
         var px = 0
         //var py = 0
-
-        
-        //var width_ratio:Int = Int(52 * MainManager.shared.ratio_X)
-        //var height_ratio:Int = Int(68 * MainManager.shared.ratio_Y)
-        // 535 - 38
-        for i in 1...btn_image.count {
+        let btn_height = Int(a02_ScrollMenuView.scrollView.frame.height)
+        let btn_width = Int(a02_ScrollMenuView.scrollView.frame.width/3)
+        for i in 0..<btn_a02_name.count {
             
             count += 1
             
             let tempBtn = UIButton()
-            tempBtn.tag = i
-            tempBtn.frame = CGRect(x: (i*52)-52, y: 0, width: 52, height: 68) // 105,136
-            tempBtn.backgroundColor = UIColor.black
+            tempBtn.tag = i+1
+            tempBtn.frame = CGRect(x: ((i+1)*btn_width)-btn_width, y: 0, width: btn_width, height: btn_height)
+            
+            tempBtn.setTitleColor( UIColor.lightGray, for: .normal )
+            tempBtn.backgroundColor = UIColor.white
+            
+            
+            if(i == 0)  {
+                //tempBtn.setTitleColor( UIColor(red: 0/256, green: 75/255, blue: 144/255, alpha: 1), for: .normal )
+                tempBtn.setTitleColor(.black, for: .normal )
+            }
             //tempBtn.setTitle("Hello \(i)", for: .normal)
             tempBtn.addTarget(self, action: #selector(a02MenuBtnAction), for: .touchUpInside)
-            tempBtn.setImage(UIImage(named:btn_image[i-1]), for: UIControlState.normal )
+            //tempBtn.setImage(UIImage(named:btn_image[i-1]), for: UIControlState.normal )
+            tempBtn.setTitle( btn_a02_name[i], for: .normal)
+            // 글자 크기
+            tempBtn.titleLabel?.font = .systemFont(ofSize: 15)
+            //SystemFont(ofSize: 17)
             
-            px += 52
+            px += btn_width
             a02_ScrollMenuView.scrollView.addSubview(tempBtn)
             //px = px + Int(scrollView.frame.width)/2 - 30
         }
         
-        a02_ScrollMenuView.scrollView.contentSize = CGSize(width: (px), height: 68)        
+        a02_ScrollMenuView.scrollView.contentSize = CGSize(width: px, height: btn_height)
     }
     
     func a02MenuBtnAction(_ sender: UIButton) {
         
-        let btn_image = ["frame_a_02_01_off","frame_a_02_02_off",
-                         "frame_a_02_03_off","frame_a_02_04_off",
-                         "frame_a_02_05_off","frame_a_02_06_off",
-                         "frame_a_02_07_off","frame_a_02_08_off",
-                         "frame_a_02_09_off","frame_a_02_10_off",
-                         "frame_a_02_11_off","frame_a_02_12_off"]
         
-        for i in 1...btn_image.count {
+        for i in 0..<btn_a02_name.count  {
             
-            let tempBtn = a02_ScrollMenuView.scrollView.viewWithTag(i) as! UIButton
-            tempBtn.setImage(UIImage(named:btn_image[i-1]), for: UIControlState.normal )
+            let tempBtn = a02_ScrollMenuView.scrollView.viewWithTag(i+1) as! UIButton
+            tempBtn.setTitleColor( UIColor.lightGray, for: .normal )
         }
         
-        
-        //
-        let s = String(format: "frame_a_02_%02d_on", sender.tag)
-        sender.setImage(UIImage(named:s), for: UIControlState.normal )
-        
-        
+        sender.setTitleColor( .black, for: .normal )
         
         //--------------------------------------------- sub view change
         if( sender.tag == 1 )       {
             
-            //carOnOffSetting()
-            carOnOffIsHiddenSet()
+            carOnOffSetting()
+            carOnOffIsHiddenSetA02_01()
             self.view.bringSubview(toFront: a02_01_view)
+            self.view.bringSubview(toFront: mainMenuABC_view)
         }
         else if( sender.tag == 2 )  {
             
             self.view.bringSubview(toFront: a02_02_view)
-            
-            if( MainManager.shared.member_info.bCar_Status_DoorLock == true )   { ToastView.shared.short(self.view, txt_msg: set_notis_on[sender.tag-2]) }
-            else                                                    { ToastView.shared.short(self.view, txt_msg: set_notis_off[sender.tag-2]) }
+            self.view.bringSubview(toFront: mainMenuABC_view)
         }
         else if( sender.tag == 3 )  {
             
             self.view.bringSubview(toFront: a02_03_view)
-            if( MainManager.shared.member_info.bCar_Status_Hatch == true )   { ToastView.shared.short(self.view, txt_msg: set_notis_on[sender.tag-2]) }
-            else                                                    { ToastView.shared.short(self.view, txt_msg: set_notis_off[sender.tag-2]) }
+            self.view.bringSubview(toFront: mainMenuABC_view)
         }
-        else if( sender.tag == 4 )  {
-            
-            self.view.bringSubview(toFront: a02_04_view)
-            if( MainManager.shared.member_info.bCar_Status_Window == true )   { ToastView.shared.short(self.view, txt_msg: set_notis_on[sender.tag-2]) }
-            else                                                    { ToastView.shared.short(self.view, txt_msg: set_notis_off[sender.tag-2]) }
-        }
-        else if( sender.tag == 5 )  {
-            
-            self.view.bringSubview(toFront: a02_05_view)
-            if( MainManager.shared.member_info.bCar_Status_Sunroof == true )   { ToastView.shared.short(self.view, txt_msg: set_notis_on[sender.tag-2]) }
-            else                                                    { ToastView.shared.short(self.view, txt_msg: set_notis_off[sender.tag-2]) }
-        }
-        else if( sender.tag == 6 )  {
-            
-            self.view.bringSubview(toFront: a02_06_view)
-            if( MainManager.shared.member_info.bCar_Status_RVS == true )   { ToastView.shared.short(self.view, txt_msg: set_notis_on[sender.tag-2]) }
-            else                                                    { ToastView.shared.short(self.view, txt_msg: set_notis_off[sender.tag-2]) }
-        }
-        else if( sender.tag == 7 )  {
-            
-            self.view.bringSubview(toFront: a02_07_view)
-            if( MainManager.shared.member_info.bCar_Car_Status_IGN == true )   { ToastView.shared.short(self.view, txt_msg: set_notis_on[sender.tag-2]) }
-            else                                                    { ToastView.shared.short(self.view, txt_msg: set_notis_off[sender.tag-2]) }
-        }
-        else if( sender.tag == 8 )  {
-            
-            self.view.bringSubview(toFront: a02_08_view)
-            if( MainManager.shared.member_info.bCar_Func_LockFolding == true )   { ToastView.shared.short(self.view, txt_msg: set_notis_on[sender.tag-2]) }
-            else                                                    { ToastView.shared.short(self.view, txt_msg: set_notis_off[sender.tag-2]) }
-        }
-        else if( sender.tag == 9 )  {
-            
-            self.view.bringSubview(toFront: a02_09_view)
-            if( MainManager.shared.member_info.bCar_Func_AutoWindowClose == true )   { ToastView.shared.short(self.view, txt_msg: set_notis_on[sender.tag-2]) }
-            else                                                    { ToastView.shared.short(self.view, txt_msg: set_notis_off[sender.tag-2]) }
-        }
-        else if( sender.tag == 10 ) {
-            
-            self.view.bringSubview(toFront: a02_10_view)
-            if( MainManager.shared.member_info.bCar_Func_AutoSunroofClose == true )   { ToastView.shared.short(self.view, txt_msg: set_notis_on[sender.tag-2]) }
-            else                                                    { ToastView.shared.short(self.view, txt_msg: set_notis_off[sender.tag-2]) }
-        }
-        else if( sender.tag == 11 ) {
-            
-            self.view.bringSubview(toFront: a02_11_view)
-            if( MainManager.shared.member_info.bCar_Func_AutoWindowRevOpen == true )   { ToastView.shared.short(self.view, txt_msg: set_notis_on[sender.tag-2]) }
-            else                                                    { ToastView.shared.short(self.view, txt_msg: set_notis_off[sender.tag-2]) }
-        }
-        else if( sender.tag == 12 ) {
-            
-            self.view.bringSubview(toFront: a02_12_view)
-            if( MainManager.shared.member_info.bCar_Func_RVS == true )   { ToastView.shared.short(self.view, txt_msg: set_notis_on[sender.tag-2]) }
-            else                                                    { ToastView.shared.short(self.view, txt_msg: set_notis_off[sender.tag-2]) }
-        }
+       
         
         print("A02_", sender.tag)
         
@@ -2922,11 +2911,13 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     @IBAction func pressed_a03_01(_ sender: UIButton) {
         
         self.view.bringSubview(toFront: a03_02_view)
+        self.view.bringSubview(toFront: mainMenuABC_view)
     }
     
     @IBAction func pressed_a03_03(_ sender: UIButton) {
         
         self.view.bringSubview(toFront: a03_01_view)
+        self.view.bringSubview(toFront: mainMenuABC_view)
     }
     
     
@@ -3023,6 +3014,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         a01_01_pin_view.field_pin04.resignFirstResponder()
         
         self.view.bringSubview(toFront: a01_01_view)
+        self.view.bringSubview(toFront: mainMenuABC_view)
         print("pin cancel")
         
         
@@ -3128,6 +3120,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
                                     
                                     // pin ok 핀번호 다시 저장
                                     self.view.bringSubview(toFront: self.a01_01_view)
+                                    self.view.bringSubview(toFront: self.mainMenuABC_view)
                                     
                                     //pop up
                                     MainManager.shared.str_certifi_notis = "핀번호가 성공적으로 변경되었습니다."
@@ -3289,6 +3282,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     @IBAction func pressed_info_mod_cancel(_ sender: UIButton) {
         
         self.view.bringSubview(toFront: a01_01_view)
+        self.view.bringSubview(toFront: mainMenuABC_view)
         print("mod cancel")
     }
     
@@ -3465,44 +3459,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         
         
         
-        /*
-         //차량등록번호 (번호판)
-         MainManager.shared.member_info.str_car_plate_num = self.a01_01_info_mod_view.field_plate_num.text!
-         MainManager.shared.member_info.str_car_dae_num = self.a01_01_info_mod_view.field_car_dae_num.text!
-         MainManager.shared.member_info.str_car_kind = self.a01_01_info_mod_view.field_car_kind.text!
-         MainManager.shared.member_info.str_car_year = self.a01_01_info_mod_view.field_car_year.text!
-         // 연료 타입
-         MainManager.shared.member_info.str_car_fuel_type = self.a01_01_info_mod_view.field_car_fuel.text!
-         
-         
-         
-         // 차 정보
-         if( self.a01_01_info_mod_view.field_plate_num.text!.count == 0 ||
-         self.a01_01_info_mod_view.field_car_dae_num.text!.count == 0 ||
-         self.a01_01_info_mod_view.field_car_kind.text!.count == 0 ||
-         self.a01_01_info_mod_view.field_car_year.text!.count == 0 ||
-         self.a01_01_info_mod_view.field_car_fuel.text!.count == 0 ) {
-         
-         self.a01_01_info_mod_view.label_notis.text = "차 정보를 모두 입력 해주세요 ~!"
-         
-         return
-         }
-         else {
-         
-         print(MainManager.shared.member_info.str_car_plate_num)
-         print(MainManager.shared.member_info.str_car_dae_num)
-         print(MainManager.shared.member_info.str_car_kind)
-         print(MainManager.shared.member_info.str_car_year)
-         print(MainManager.shared.member_info.str_car_fuel_type)
-         
-         self.view.bringSubview(toFront: a01_01_view)
-         print("mod save")
-         }
-         */
-        
-        // Segue -> 사용 팝업뷰컨트롤러 띠우기
-        // self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
-        // print( MainManager.shared.str_certifi_notis )
+       
         
     }
     
@@ -3851,44 +3808,94 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         }
     }
     
+   
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    func setStatusWindowDelayStart() {
-        // 창문만 딜레이 10초
-        MainManager.shared.member_info.bCarStatusWindowDelay = true
-        MainManager.shared.member_info.carStatusWindowDelayCount = 0
+    @IBAction func a02_btnAction(_ sender: UIButton) {
         
-        print( "___ setStatusWindowDelayStart ___" )
+        switch sender.tag {
+        case 1:
+            let nsData:NSData = MainManager.shared.member_info.setDOORLOCK( "1" )
+            setDataBLE( nsData )
+            ToastView.shared.short(self.view, txt_msg: set_notis_on[sender.tag-1])
+            break
+        case 2:
+            let nsData:NSData = MainManager.shared.member_info.setHATCH( "1" )
+            setDataBLE( nsData )
+            ToastView.shared.short(self.view, txt_msg: set_notis_on[sender.tag-1])
+            break
+        case 3:
+            let nsData:NSData = MainManager.shared.member_info.setWINDOW( "1" )
+            setDataBLE( nsData )
+            ToastView.shared.short(self.view, txt_msg: set_notis_on[sender.tag-1])
+            break
+        case 4:
+            let nsData:NSData = MainManager.shared.member_info.setSUNROOF( "1" )
+            setDataBLE( nsData )
+            ToastView.shared.short(self.view, txt_msg: set_notis_on[sender.tag-1])
+            break
+        case 5:
+            let nsData:NSData = MainManager.shared.member_info.setRVS( "1" )
+            setDataBLE( nsData )
+            ToastView.shared.short(self.view, txt_msg: set_notis_on[sender.tag-1])
+            break
+        case 6:
+            let nsData:NSData = MainManager.shared.member_info.setKEYON( "1" )
+            setDataBLE( nsData )
+            ToastView.shared.short(self.view, txt_msg: set_notis_on[sender.tag-1])
+            break
+            
+            
+        case 7:
+            let nsData:NSData = MainManager.shared.member_info.setDOORLOCK( "0" )
+            setDataBLE( nsData )
+            ToastView.shared.short(self.view, txt_msg: set_notis_off[sender.tag-7])
+            break
+        case 8:
+            let nsData:NSData = MainManager.shared.member_info.setHATCH( "0" )
+            setDataBLE( nsData )
+            ToastView.shared.short(self.view, txt_msg: set_notis_off[sender.tag-7])
+            break
+        case 9:
+            let nsData:NSData = MainManager.shared.member_info.setWINDOW( "0" )
+            setDataBLE( nsData )
+            ToastView.shared.short(self.view, txt_msg: set_notis_off[sender.tag-7])
+            break
+        case 10:
+            let nsData:NSData = MainManager.shared.member_info.setSUNROOF( "0" )
+            setDataBLE( nsData )
+            ToastView.shared.short(self.view, txt_msg: set_notis_off[sender.tag-7])
+            break
+        case 11:
+            let nsData:NSData = MainManager.shared.member_info.setRVS( "0" )
+            setDataBLE( nsData )
+            ToastView.shared.short(self.view, txt_msg: set_notis_off[sender.tag-7])
+            break
+        case 12:
+            let nsData:NSData = MainManager.shared.member_info.setKEYON( "0" )
+            setDataBLE( nsData )
+            ToastView.shared.short(self.view, txt_msg: set_notis_off[sender.tag-7])
+            break
+        // 예약 시간 설정 팝업
+        case 100:
+            self.performSegue(withIdentifier: "ReservTimePopSegue", sender: self)
+            print("_____ ReservTimePopSegue")
+            break
+            
+        default:
+            break
+        }
+        
     }
     
-    func setStatusOtherDelayStart() {
-        
-        // 나머지 변수 딜레이 2초
-        MainManager.shared.member_info.bCarStatusDelay = true
-        MainManager.shared.member_info.carStatusDelayCount = 0
-        
-        print( "___ setStatusOtherDelayStart ___" )
-    }
+    
+    
+    
     
     
     
     // a02_01 view
     @IBAction func a02_SwitchButton(_ sender: UISwitch) {
-        
-        
         
         
         if( self.isBLE_CAR_FRIENDS_CONNECT() == false )
@@ -3899,113 +3906,43 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         var setData:String = "0"
         if( sender.isOn == true ) { setData = "1" }
         
-        //let data:NSData = MainManager.shared.member_info.setRES_RVS_TIME("2019-09-09 09:99:99")
-//        let data:NSData = MainManager.shared.member_info.setAUTOSUNROOF(setData)
-//        self.carFriendsPeripheral?.writeValue( data as Data, for: self.myCharacteristic!, type: CBCharacteristicWriteType.withoutResponse)
-//        print( "____ sender.isOn \(setData)" )
-        
         
         switch sender.tag {
-        case 0:
-
-            let nsData:NSData = MainManager.shared.member_info.setDOORLOCK( setData )
-            setDataBLE( nsData )
-            MainManager.shared.member_info.bCar_Status_DoorLock = sender.isOn
-            break
-            
-        case 1:
-
-            let nsData:NSData = MainManager.shared.member_info.setHATCH( setData )
-            setDataBLE( nsData )
-            MainManager.shared.member_info.bCar_Status_Hatch = sender.isOn
-            break
-            
-        case 2:
-            
-            let nsData:NSData = MainManager.shared.member_info.setWINDOW( setData )
-            setDataBLE( nsData )
-            MainManager.shared.member_info.bCar_Status_Window = sender.isOn
-            break
-            
-        case 3:
-            
-
-
-            let nsData:NSData = MainManager.shared.member_info.setSUNROOF( setData )
-            setDataBLE( nsData )
-            MainManager.shared.member_info.bCar_Status_Sunroof = sender.isOn
-            break
-            
-        case 4:
-           
-            let nsData:NSData = MainManager.shared.member_info.setRVS( setData )
-            setDataBLE( nsData )
-            MainManager.shared.member_info.bCar_Status_RVS = sender.isOn
-            break
-            
-        case 5:
-            
-
-            
-            let nsData:NSData = MainManager.shared.member_info.setKEYON( setData )
-            setDataBLE( nsData )
-            MainManager.shared.member_info.bCar_Car_Status_IGN = sender.isOn
-            break
             
         case 6:
-
             let nsData:NSData = MainManager.shared.member_info.setLOCKFOLDING( setData )
             setDataBLE( nsData )
-            MainManager.shared.member_info.bCar_Func_LockFolding = sender.isOn
+            MainManager.shared.member_info.bCar_Btn_AutoLockFolding = sender.isOn
             break
             
         case 7:
-
             let nsData:NSData = MainManager.shared.member_info.setAUTOWINDOWS( setData )
             setDataBLE( nsData )
-            MainManager.shared.member_info.bCar_Func_AutoWindowClose = sender.isOn
+            MainManager.shared.member_info.bCar_Btn_AutoWindowClose = sender.isOn
             break
             
         case 8:
-
             let nsData:NSData = MainManager.shared.member_info.setAUTOSUNROOF( setData )
             setDataBLE( nsData )
-            MainManager.shared.member_info.bCar_Func_AutoSunroofClose = sender.isOn
+            MainManager.shared.member_info.bCar_Btn_AutoSunroofClose = sender.isOn
             break
             
         case 9:
-           
             let nsData:NSData = MainManager.shared.member_info.setREVWINDOW( setData )
             setDataBLE( nsData )
-            MainManager.shared.member_info.bCar_Func_AutoWindowRevOpen = sender.isOn
+            MainManager.shared.member_info.bCar_Btn_AutoWindowRevOpen = sender.isOn
             break
             
         case 10:
-            
-            MainManager.shared.member_info.bCar_Func_RVS = sender.isOn
-            // 예약 시동 오프일때만 여기서, On 은 시간설정 팝업창에서
-            if( MainManager.shared.member_info.bCar_Func_RVS == false ) {
-           
-                // 예약 시동 On/OFF
-                let nsData:NSData = MainManager.shared.member_info.setRES_RVS( "0" )
-                setDataBLE( nsData )
-            }
-            
+            // 예약 시동 On/OFF
+            let nsData:NSData = MainManager.shared.member_info.setRES_RVS( "0" )
+            setDataBLE( nsData )
+            MainManager.shared.member_info.bCar_Btn_RVS = sender.isOn
             break
         default:
             break
         }
         
-        // 버튼 상태 실시간 끊기처리. 버튼이벤트 발행시 딜레이준다 2초 후 딜레이후 값세팅되도록
-        // 창문만 10초
-        // 윈도우 10초
-        if( sender.tag == 2 ) {
-            
-            setStatusWindowDelayStart()
-        }
-        else {
-            setStatusOtherDelayStart()
-        }
         
         
         // 토스트 알람 메세지
@@ -4026,190 +3963,133 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     
     
     
-    // a02_02~12 view
+    // a02_02~12 view 개별 화면
     @IBAction func a02BtnOnOff(_ sender: UIButton) {
         
         if( self.isBLE_CAR_FRIENDS_CONNECT() == false )
         {
             return
         }
+
         
         var isON = false
         var setData:String = "0"
         
         switch sender.tag {
         case 0:
-            if( MainManager.shared.member_info.bCar_Status_DoorLock ) {
-                MainManager.shared.member_info.bCar_Status_DoorLock = false
-                setData = "0"
-            }
-            else {
-                MainManager.shared.member_info.bCar_Status_DoorLock = true
-                setData = "1"
-            }
-            isON = MainManager.shared.member_info.bCar_Status_DoorLock
-            
-            let nsData:NSData = MainManager.shared.member_info.setDOORLOCK( setData )
-            self.carFriendsPeripheral?.writeValue( nsData as Data, for: self.myCharacteristic!, type: CBCharacteristicWriteType.withoutResponse)
             break
             
         case 1:
-            if( MainManager.shared.member_info.bCar_Status_Hatch ) {
-                MainManager.shared.member_info.bCar_Status_Hatch = false
-                setData = "0"
-            }
-            else {
-                MainManager.shared.member_info.bCar_Status_Hatch = true
-                setData = "1"
-            }
-            isON = MainManager.shared.member_info.bCar_Status_Hatch
             break
             
         case 2:
-            if( MainManager.shared.member_info.bCar_Status_Window ) {
-                MainManager.shared.member_info.bCar_Status_Window = false
-                setData = "0"
-            }
-            else {
-                MainManager.shared.member_info.bCar_Status_Window = true
-                setData = "1"
-            }
-            isON = MainManager.shared.member_info.bCar_Status_Window
             break
             
         case 3:
-            if( MainManager.shared.member_info.bCar_Status_Sunroof ) {
-                MainManager.shared.member_info.bCar_Status_Sunroof = false
-                setData = "0"
-            }
-            else {
-                MainManager.shared.member_info.bCar_Status_Sunroof = true
-                setData = "1"
-            }
-            isON = MainManager.shared.member_info.bCar_Status_Sunroof
             break
             
         case 4:
-            if( MainManager.shared.member_info.bCar_Status_RVS ) {
-                MainManager.shared.member_info.bCar_Status_RVS = false
-                setData = "0"
-            }
-            else {
-                MainManager.shared.member_info.bCar_Status_RVS = true
-                setData = "1"
-            }
-            isON = MainManager.shared.member_info.bCar_Status_RVS
             break
             
         case 5:
-            if( MainManager.shared.member_info.bCar_Car_Status_IGN ) {
-                MainManager.shared.member_info.bCar_Car_Status_IGN = false
-                setData = "0"
-            }
-            else {
-                MainManager.shared.member_info.bCar_Car_Status_IGN = true
-                setData = "1"
-            }
-            isON = MainManager.shared.member_info.bCar_Car_Status_IGN
             break
             
         case 6:
-            if( MainManager.shared.member_info.bCar_Func_LockFolding ) {
-                MainManager.shared.member_info.bCar_Func_LockFolding = false
+            if( MainManager.shared.member_info.bCar_Btn_AutoLockFolding ) {
+                MainManager.shared.member_info.bCar_Btn_AutoLockFolding = false
                 setData = "0"
             }
             else {
-                MainManager.shared.member_info.bCar_Func_LockFolding = true
+                MainManager.shared.member_info.bCar_Btn_AutoLockFolding = true
                 setData = "1"
             }
-            isON = MainManager.shared.member_info.bCar_Func_LockFolding
-            break
+            isON = MainManager.shared.member_info.bCar_Btn_AutoLockFolding
             
+            let nsData:NSData = MainManager.shared.member_info.setLOCKFOLDING( setData )
+            setDataBLE( nsData )
+            break
         case 7:
-            if( MainManager.shared.member_info.bCar_Func_AutoWindowClose ) {
-                MainManager.shared.member_info.bCar_Func_AutoWindowClose = false
+            if( MainManager.shared.member_info.bCar_Btn_AutoWindowClose ) {
+                MainManager.shared.member_info.bCar_Btn_AutoWindowClose = false
                 setData = "0"
             }
             else {
-                MainManager.shared.member_info.bCar_Func_AutoWindowClose = true
+                MainManager.shared.member_info.bCar_Btn_AutoWindowClose = true
                 setData = "1"
             }
-            isON = MainManager.shared.member_info.bCar_Func_AutoWindowClose
+            isON = MainManager.shared.member_info.bCar_Btn_AutoWindowClose
+            let nsData:NSData = MainManager.shared.member_info.setAUTOWINDOWS( setData )
+            setDataBLE( nsData )
             break
             
         case 8:
-            if( MainManager.shared.member_info.bCar_Func_AutoSunroofClose ) {
-                MainManager.shared.member_info.bCar_Func_AutoSunroofClose = false
+            if( MainManager.shared.member_info.bCar_Btn_AutoSunroofClose ) {
+                MainManager.shared.member_info.bCar_Btn_AutoSunroofClose = false
                 setData = "0"
             }
             else {
-                MainManager.shared.member_info.bCar_Func_AutoSunroofClose = true
+                MainManager.shared.member_info.bCar_Btn_AutoSunroofClose = true
                 setData = "1"
             }
-            isON = MainManager.shared.member_info.bCar_Func_AutoSunroofClose
+            isON = MainManager.shared.member_info.bCar_Btn_AutoSunroofClose
+            let nsData:NSData = MainManager.shared.member_info.setAUTOSUNROOF( setData )
+            setDataBLE( nsData )
             break
             
         case 9:
-            if( MainManager.shared.member_info.bCar_Func_AutoWindowRevOpen ) {
-                MainManager.shared.member_info.bCar_Func_AutoWindowRevOpen = false
+            if( MainManager.shared.member_info.bCar_Btn_AutoWindowRevOpen ) {
+                MainManager.shared.member_info.bCar_Btn_AutoWindowRevOpen = false
                 setData = "0"
             }
             else {
-                MainManager.shared.member_info.bCar_Func_AutoWindowRevOpen = true
+                MainManager.shared.member_info.bCar_Btn_AutoWindowRevOpen = true
                 setData = "1"
             }
-            isON = MainManager.shared.member_info.bCar_Func_AutoWindowRevOpen
+            isON = MainManager.shared.member_info.bCar_Btn_AutoWindowRevOpen
+            let nsData:NSData = MainManager.shared.member_info.setREVWINDOW( setData )
+            setDataBLE( nsData )
             break
             
         case 10:
-            if( MainManager.shared.member_info.bCar_Func_RVS ) {
-                MainManager.shared.member_info.bCar_Func_RVS = false
-                ToastView.shared.short(self.view, txt_msg: set_notis_off[sender.tag])
+            
+            if( MainManager.shared.member_info.bCar_Btn_RVS ) {
+                MainManager.shared.member_info.bCar_Btn_RVS = false
                 setData = "0"
             }
             else {
-                
-                // 예약시동 시간 설정
-                // Segue -> 사용 팝업뷰컨트롤러 띠우기
-                // MainManager.shared.member_info.bCar_Func_RVS = true <---- 팝업창에서 세팅 되고 설정한다
-                self.performSegue(withIdentifier: "ReservTimePopSegue", sender: self)
-                print("ReservTimePopSegue")
+                MainManager.shared.member_info.bCar_Btn_RVS = true
+                setData = "1"
             }
+            isON = MainManager.shared.member_info.bCar_Btn_RVS
+            let nsData:NSData = MainManager.shared.member_info.setRES_RVS( setData )
+            setDataBLE( nsData )
             
-            isON = MainManager.shared.member_info.bCar_Func_RVS
+            
+            //            // 예약시동 시간 설정
+//            // Segue -> 사용 팝업뷰컨트롤러 띠우기
+//            // MainManager.shared.member_info.bCar_Func_RVS = true <---- 팝업창에서 세팅 되고 설정한다
+//            self.performSegue(withIdentifier: "ReservTimePopSegue", sender: self)
+//            print("ReservTimePopSegue")
+            
             break
-            
         default:
             break
         }
-        // 버튼 상태 실시간 끊기처리. 버튼이벤트 발행시 딜레이준다 2초 후 딜레이후 값세팅되도록
-        // 창문만 10초
-        if( sender.tag == 2 ) {
-            
-            setStatusWindowDelayStart()
-        }
-        else {
-            setStatusOtherDelayStart()
-        }
+        
         
         // 토스트 알람 메세지
         if( isON == true ) {
             
             // 예약시동은 팝업창 시간 세팅 후 결과에 따라 띠운다
-            if( sender.tag != 10 ) {
-                ToastView.shared.short(self.view, txt_msg: set_notis_on[sender.tag])
-            }
+            ToastView.shared.short(self.view, txt_msg: set_notis_on[sender.tag])
         }
         else {
-
-            if( sender.tag != 10 ) {
-                ToastView.shared.short(self.view, txt_msg: set_notis_off[sender.tag])
-            }
+            
+            ToastView.shared.short(self.view, txt_msg: set_notis_off[sender.tag])
         }
         
         // UI ON/Off 버튼  a02 각각의 뷰 버튼 이미지 세팅
         carOnOffSetting()
-       
     }
     
     
@@ -4473,8 +4353,8 @@ extension AViewController: CBPeripheralDelegate, CBCentralManagerDelegate {
             peripheral.discoverCharacteristics( nil, for: service   )
         }
         
-        // 카프렌즈 연결 되면 10초후   한번 실행
-        timerDATETIME = Timer.scheduledTimer(timeInterval: 10, target: self, selector: #selector(timerActionDATETIME), userInfo: nil, repeats: false)
+        // 카프렌즈 연결 되면 7초후   한번 실행
+        timerDATETIME = Timer.scheduledTimer(timeInterval: 7, target: self, selector: #selector(timerActionSetDATETIME), userInfo: nil, repeats: false)
     }
     
     
@@ -4580,7 +4460,7 @@ extension AViewController: CBPeripheralDelegate, CBCentralManagerDelegate {
         if peripheral.state == .connected {
             
             print("didDiscoverPeripheral 대리자 메서드가 다시 호출됩니다")
-            //            self.peripherals.append(carFriendsPeripheral!)
+
             peripheral.delegate = self
             centralManager.connect(peripheral , options: nil)
         }
@@ -4591,7 +4471,7 @@ extension AViewController: CBPeripheralDelegate, CBCentralManagerDelegate {
     
     // 블루 투스 카프렌즈 연결 체크
     func isBLE_CAR_FRIENDS_CONNECT() -> Bool {
-    
+
         if( MainManager.shared.member_info.isBLE_ON == false || MainManager.shared.member_info.isCAR_FRIENDS_CONNECT == false )
         {
             return false
@@ -4599,6 +4479,19 @@ extension AViewController: CBPeripheralDelegate, CBCentralManagerDelegate {
         
         return true
     }
+    
+    func isPeripheral_LIVE() -> Bool {
+        
+        if( carFriendsPeripheral == nil || myCharacteristic == nil )
+        {
+            return false
+        }
+        return true
+    }
+    
+    
+    
+    
     
     
     func initStartBLE() {
@@ -4611,20 +4504,11 @@ extension AViewController: CBPeripheralDelegate, CBCentralManagerDelegate {
         // 추후에 바꿀려면 글로벌 변수로 컨트롤 하는게 쉽다. 블루투스 연결되는 객체도 마찬가지...
         // 블루투스 매니져 생성
         centralManager = CBCentralManager(delegate: self, queue: nil)
-        
-        
-        // 블루투스 딜레이 변수 초기화
-        // 윈도우 10초 딜레이
-        MainManager.shared.member_info.bCarStatusWindowDelay = false
-        MainManager.shared.member_info.carStatusWindowDelayCount = 0
-        // 다른변수들 2초
-        MainManager.shared.member_info.bCarStatusDelay = false
-        MainManager.shared.member_info.carStatusDelayCount = 0
     }
     
     func setDataBLE(_ nsData:NSData ) {
         // 블루투스 연결시 데이타 전송 실행
-        if( isBLE_CAR_FRIENDS_CONNECT() ) {
+        if( isBLE_CAR_FRIENDS_CONNECT() == true && isPeripheral_LIVE() == true) {
             
             self.carFriendsPeripheral?.writeValue( nsData as Data, for: self.myCharacteristic!, type: CBCharacteristicWriteType.withoutResponse)
         }
@@ -4640,8 +4524,8 @@ extension AViewController: CBPeripheralDelegate, CBCentralManagerDelegate {
         bleSerachDelayStopState = 3
         ToastIndicatorView.shared.close()
         
-//        // TEST 카프렌즈 접속 막기
-        return
+//        // TEST BLE 접속 막기
+//        return
 //        //
         
         
@@ -4742,6 +4626,24 @@ extension Double {
     
 
 
+// 숫자 인지 아닌지
+extension String {
+    
+    var doubleValue:Double? {
+        return NumberFormatter().number(from:self)?.doubleValue
+    }
+    
+    var integerValue:Int? {
+        return NumberFormatter().number(from:self)?.intValue
+    }
+    
+    var isNumber:Bool {
+        get {
+            let badCharacters = NSCharacterSet.decimalDigits.inverted
+            return (self.rangeOfCharacter(from: badCharacters) == nil)
+        }
+    }
+}
 
 
 

@@ -18,6 +18,8 @@ class MainViewController: UIViewController {
     
     @IBOutlet weak var imageView: UIImageView!
     
+    @IBOutlet weak var label_alert_01: UILabel!
+    @IBOutlet weak var label_alert_02: UILabel!
     
     var isLogin:Bool = false
     
@@ -37,52 +39,56 @@ class MainViewController: UIViewController {
     override func loadView() {
         
         super.loadView()
-        
-        
-        // self.imageView.autoresizingMask = [.flexibleWidth, .flexibleHeight,.flexibleTopMargin, .flexibleLeftMargin, .flexibleRightMargin, .flexibleBottomMargin]
-        
-        //self.frame = CGRectMake(0, 0, width, height)
-        //imageView.removeFromSuperview()
-        
-        //self.view.addSubview(self.imageView)
     }
+    
+    
+    var timer = Timer()
+
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        if #available(iOS 11, *) {
+            
+            label_alert_01.isHidden = true
+            label_alert_02.isHidden = true
+            
+            //iOS 11+ code here.
+            print( "  iOS 11 이상" )            
+        }
+        else {
+           
+            print( " iOS 11 미만" )
+            return
+        }
 
         
          // 싱글톤 생성 가장 먼저
         MainManager.shared.requestForMainManager()
         MainManager.shared.getDeviceRatio(view: self.view )
-        
+
         // 클라에 저장해둔 회원가입정보 읽어오기
         // 키값이 없으면 0 을 반환
         MainManager.shared.iMemberJoinState = UserDefaults.standard.integer(forKey: "iMemberJoinState")
-        
+
         // TEST // 0:비회원    1:차정보없이 가입     2:차정보입력 가입
         // MainManager.shared.iMemberJoinState = 0
 
 
-        
         // 가입된 회원 아니면 정보 안 읽는다.
         if( MainManager.shared.iMemberJoinState > 0 ) {
             // 회원정보 로컬 데이타 읽기
             readMyLocalData()
         }
-        
-        
 
         let sz_car_fuel = ["휘발유","경유","가스(GAS)","전기차"]
-        
-        
-        
-        
+
         // 피커뷰 리스트 초기화
         MainManager.shared.str_select_carList.removeAll()
         MainManager.shared.str_select_yearList.removeAll()
         MainManager.shared.str_select_fuelList.removeAll()
-        
+
         // 8주 데이타 초기화
         MainManager.shared.str_My8WeeksDriveMileage.removeAll()
         MainManager.shared.str_All8WeeksDriveMileage.removeAll()
@@ -90,19 +96,17 @@ class MainViewController: UIViewController {
         MainManager.shared.str_All8weeksFuelMileage.removeAll()
         MainManager.shared.str_My8WeeksDTCCount.removeAll()
         MainManager.shared.str_All8WeeksDTCCount.removeAll()
-        
-        
+
+
         MainManager.shared.str_select_fuelList.append(sz_car_fuel[0])
         MainManager.shared.str_select_fuelList.append(sz_car_fuel[1])
         MainManager.shared.str_select_fuelList.append(sz_car_fuel[2])
         MainManager.shared.str_select_fuelList.append(sz_car_fuel[3])
-        
+
         // 인터넷 연결 체크
         MainManager.shared.isConnectCheck()
-        
         // 8주 데이타에 쓸 날짜 얻기
         getDateDay()
-        
         // 피커뷰 2000~ 2018 년 리스트를 만든다.
         getTimeYearList()
         // 피커뷰 car 리스트
@@ -114,23 +118,92 @@ class MainViewController: UIViewController {
         }
         // 전체 회원정보만 읽는다
         else {
-            
+
             self.getData8Week_AllMemberDrive()
             self.getData8Week_AllMemberFuel()
             self.getData8Week_AllMemberDTC()
         }
+
+
+
+
+        timer = Timer.scheduledTimer(timeInterval: 2, target: self, selector: #selector(appStart), userInfo: nil, repeats: true)
         
     }
+    
+    
+    
+//    func appAlert() {
+//
+//        var alert = UIAlertView(title: "OS 버전이 낮습니다.!", message: "OS 최신버전으로 업데이트 후 사용가능합니다.", delegate: nil, cancelButtonTitle: "OK")
+//    }
+
+    func appStart() {
+        
+
+        // 자동차 목록 못받았다. 대기
+        if( MainManager.shared.bCarListRequest == false ) { return }
+        
+        
+        // 회원이면 DB 통신완료 까지 대기 체크
+        if( MainManager.shared.iMemberJoinState > 0 ) {
+            
+            if( !isLogin || !getMyDrive || !getAllDrive || !getMyFuel || !getAllFuel || !getMyDTC || !getAllDTC || !getWeekDTC) {
+                
+                return
+            }
+        }
+        else {
+            // 전체 회원 정보 8주치만 읽는다.
+            if( !getAllDrive || !getAllFuel || !getAllDTC ) {
+
+                return
+            }
+        }
+        
+        
+        
+        // 비회원 회원가입
+        if( MainManager.shared.iMemberJoinState == 0 ) {
+            
+            timer.invalidate() //
+            
+            let myView = self.storyboard?.instantiateViewController(withIdentifier: "bluetoothmain") as! BlueToothViewController
+            self.present(myView, animated: true, completion: nil)
+        }
+            // 회원
+        else {
+            
+            timer.invalidate() //
+            carInfoCal()
+            
+            let myView = self.storyboard?.instantiateViewController(withIdentifier: "a00") as! AViewController
+            self.present(myView, animated: true, completion: nil)
+        }
+        
+        
+        
+    }
+    
+
+    
+    
+    
+    
+    
+    
+    
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
     
+    
+    
 
     @IBAction func pressed(_ sender: UIButton) {
         
-        if( MainManager.shared.isConnectCheck() == false ) { return }
         
         // 자동차 목록 못받았다. 대기
         if( MainManager.shared.bCarListRequest == false ) {
@@ -158,7 +231,6 @@ class MainViewController: UIViewController {
                 alert.show()
                 return
             }
-            
         }
         
         
@@ -342,9 +414,8 @@ class MainViewController: UIViewController {
         dateFormatter.dateFormat = "yyyy-MM-dd"
         nowDateDay = dateFormatter.string(from: now)
         
-        
-        // test
-        nowDateDay = "2018-03-01"
+//        // test
+//        nowDateDay = "2018-03-01"
         
         print( "_____ DATE = "+nowDateDay )
         
@@ -626,8 +697,6 @@ class MainViewController: UIViewController {
                 }
                 
         }
-        
-        
     }
     
     
@@ -851,7 +920,7 @@ class MainViewController: UIViewController {
         }
         MainManager.shared.member_info.str_8WeekDtcCount = String( temp8WeekDtcCount )
         
-        
+        // 내꺼 
         print(MainManager.shared.member_info.str_8WeekDriveMileage)
         print(MainManager.shared.member_info.str_8WeekAvgFuelMileage)
         print(MainManager.shared.member_info.str_8WeekDtcCount)

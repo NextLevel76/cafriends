@@ -8,24 +8,24 @@
 
 import UIKit
 
+
+// 차량제어, 차량설정, 도움말
+// 인공지능진단, 도움말
 class A02_01_View: UIView {
-
-
     
-    @IBOutlet weak var switch_btn_01: UISwitch!
-    @IBOutlet weak var switch_btn_02: UISwitch!
-    @IBOutlet weak var switch_btn_03: UISwitch!
-    @IBOutlet weak var switch_btn_04: UISwitch!
-    @IBOutlet weak var switch_btn_05: UISwitch!
-    @IBOutlet weak var switch_btn_06: UISwitch!
-    @IBOutlet weak var switch_btn_07: UISwitch!
-    @IBOutlet weak var switch_btn_08: UISwitch!
-    @IBOutlet weak var switch_btn_09: UISwitch!
-    @IBOutlet weak var switch_btn_10: UISwitch!
-    @IBOutlet weak var switch_btn_11: UISwitch!
+    @IBOutlet weak var btn_01_on: UIButton!
+    @IBOutlet weak var btn_02_on: UIButton!
+    @IBOutlet weak var btn_03_on: UIButton!
+    @IBOutlet weak var btn_04_on: UIButton!
+    @IBOutlet weak var btn_05_on: UIButton!
+    @IBOutlet weak var btn_06_on: UIButton!
     
-    
-    
+    @IBOutlet weak var btn_01_off: UIButton!
+    @IBOutlet weak var btn_02_off: UIButton!
+    @IBOutlet weak var btn_03_off: UIButton!
+    @IBOutlet weak var btn_04_off: UIButton!
+    @IBOutlet weak var btn_05_off: UIButton!
+    @IBOutlet weak var btn_06_off: UIButton!
     
     
     
