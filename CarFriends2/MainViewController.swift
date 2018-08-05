@@ -49,6 +49,7 @@ class MainViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        
         if #available(iOS 11, *) {
             
             label_alert_01.isHidden = true
@@ -72,8 +73,20 @@ class MainViewController: UIViewController {
         // 키값이 없으면 0 을 반환
         MainManager.shared.iMemberJoinState = UserDefaults.standard.integer(forKey: "iMemberJoinState")
 
+        
+        
+        
+        
+        //__________________________________________________________________________
         // TEST // 0:비회원    1:차정보없이 가입     2:차정보입력 가입
-        // MainManager.shared.iMemberJoinState = 0
+        //  MainManager.shared.iMemberJoinState = 0
+        //___________________________________________________________________________
+        
+        
+        
+        
+        
+        
 
 
         // 가입된 회원 아니면 정보 안 읽는다.
@@ -88,7 +101,7 @@ class MainViewController: UIViewController {
         MainManager.shared.str_select_carList.removeAll()
         MainManager.shared.str_select_yearList.removeAll()
         MainManager.shared.str_select_fuelList.removeAll()
-
+        
         // 8주 데이타 초기화
         MainManager.shared.str_My8WeeksDriveMileage.removeAll()
         MainManager.shared.str_All8WeeksDriveMileage.removeAll()
@@ -148,15 +161,8 @@ class MainViewController: UIViewController {
         // 회원이면 DB 통신완료 까지 대기 체크
         if( MainManager.shared.iMemberJoinState > 0 ) {
             
-            if( !isLogin || !getMyDrive || !getAllDrive || !getMyFuel || !getAllFuel || !getMyDTC || !getAllDTC || !getWeekDTC) {
+            if( !isLogin ) {
                 
-                return
-            }
-        }
-        else {
-            // 전체 회원 정보 8주치만 읽는다.
-            if( !getAllDrive || !getAllFuel || !getAllDTC ) {
-
                 return
             }
         }
@@ -179,10 +185,7 @@ class MainViewController: UIViewController {
             
             let myView = self.storyboard?.instantiateViewController(withIdentifier: "a00") as! AViewController
             self.present(myView, animated: true, completion: nil)
-        }
-        
-        
-        
+        }        
     }
     
 
@@ -216,7 +219,7 @@ class MainViewController: UIViewController {
         // 회원이면 DB 통신완료 까지 대기 체크
         if( MainManager.shared.iMemberJoinState > 0 ) {
         
-            if( !isLogin || !getMyDrive || !getAllDrive || !getMyFuel || !getAllFuel || !getMyDTC || !getAllDTC || !getWeekDTC) {
+            if( !isLogin ) {
                 
                 var alert = UIAlertView(title: "No Internet Connection2", message: "서버와의 연결이 지연되고 있습니다. 잠시후에 다시 사용해 주세요.", delegate: nil, cancelButtonTitle: "OK")
                 alert.show()
@@ -290,7 +293,6 @@ class MainViewController: UIViewController {
         }
         
         
-        
         print(MainManager.shared.member_info.str_id_nick)
         
         ToastIndicatorView.shared.setup(self.view, txt_msg: "")
@@ -324,17 +326,17 @@ class MainViewController: UIViewController {
                         
                         self.isLogin = true
                         
-                        // 8주치 데이타 읽어오기
-                        self.getData8Week_myDrive()
-                        self.getData8Week_AllMemberDrive()
-                        
-                        self.getData8Week_myFuel()
-                        self.getData8Week_AllMemberFuel()
-                        
-                        self.getData8Week_myDTC()
-                        self.getData8Week_AllMemberDTC()
-                        
-                        self.getDataWeekDTCCount()
+//                        // 8주치 데이타 읽어오기
+//                        self.getData8Week_myDrive()
+//                        self.getData8Week_AllMemberDrive()
+//
+//                        self.getData8Week_myFuel()
+//                        self.getData8Week_AllMemberFuel()
+//
+//                        self.getData8Week_myDTC()
+//                        self.getData8Week_AllMemberDTC()
+//
+//                        self.getDataWeekDTCCount()
                         
                     }
                     else {
@@ -518,9 +520,7 @@ class MainViewController: UIViewController {
                 
                 //to get JSON return value
                 // "Res":"Get8WeeksDrivelMileage",[ {"이번주":"10.1"}, {"1주전":"5.8"}, {"2주전":"3.8"}, {"3주전":"5.8"}, {"4주전":"9.8"}, {"5주전":"9.8"}, {"6주전":"3.8"}, {"7주전":"2.8"} ];
-                
                 self.getAllDrive = true
-
                 
                 if let json = try? JSON(response.result.value) {
                     
@@ -839,9 +839,6 @@ class MainViewController: UIViewController {
                 
         }
     }
-    
-    
-    
     
     
     

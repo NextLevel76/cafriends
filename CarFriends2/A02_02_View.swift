@@ -18,8 +18,19 @@ class A02_02_View: UIView {
     @IBOutlet weak var switch_btn_10: UISwitch!
     @IBOutlet weak var switch_btn_11: UISwitch!
     
+    
+    @IBOutlet weak var label_btn_use01: UILabel!
+    @IBOutlet weak var label_btn_use02: UILabel!
+    @IBOutlet weak var label_btn_use03: UILabel!
+    @IBOutlet weak var label_btn_use04: UILabel!
+    @IBOutlet weak var label_btn_use05: UILabel!
+    
+    
+    
     @IBOutlet weak var btn_rvs_time: UIButton!
     @IBOutlet weak var label_rvs_time: UILabel!
+    
+    
     
     /*
     // Only override draw() if you perform custom drawing.

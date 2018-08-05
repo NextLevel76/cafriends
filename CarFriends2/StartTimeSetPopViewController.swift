@@ -13,14 +13,13 @@ class StartTimeSetPopViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var btn_cancel: UIButton!
     @IBOutlet weak var btn_OK: UIButton!
 
-
     
     @IBOutlet weak var field_hours: UITextField!
     @IBOutlet weak var field_min: UITextField!
     
-    
-    
     var bIsAm:Bool = true
+    
+    
     
     //var checkBoxImg = UIImage(named: "D-04-CheckBoxOn")
    // var unCheckBoxImg = UIImage(named: "D-04-CheckBoxOff")

@@ -134,7 +134,7 @@
     </objects>
     <resources>
         <image name="a_01_01_iconcode" width="29" height="19"/>
-        <image name="a_01_04_bg" width="375" height="549"/>
+        <image name="a_01_04_bg" width="375" height="740"/>
         <image name="a_01_04_icon" width="37" height="25"/>
     </resources>
 </document>

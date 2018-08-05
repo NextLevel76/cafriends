@@ -42,7 +42,7 @@ class Terms02_ViewController: UIViewController, WKNavigationDelegate {
         
         // 서비스 이용 약관
         // 웹뷰 딜리게이트 연결
-        webView = WKWebView(frame: CGRect( x: 18, y: 86, width: 340, height: 370 ), configuration:  WKWebViewConfiguration() )
+        webView = WKWebView(frame: CGRect( x: 18, y: 86+20, width: 340, height: 370 ), configuration:  WKWebViewConfiguration() )
         webView.frame = MainManager.shared.initLoadChangeFrame( frame: self.webView.frame  )
         //webView.uiDelegate = self
         webView.navigationDelegate = self

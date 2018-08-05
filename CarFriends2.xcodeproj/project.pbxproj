@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		1B704892C0AE35B83B6076D7 /* Pods_CarFriends2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2B18F4C52A0844427610EB5 /* Pods_CarFriends2.framework */; };
 		CF0B087E20B98ED60056A87E /* CustomA0105TableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0B087D20B98ED60056A87E /* CustomA0105TableViewCell.swift */; };
+		CF15081D21106BDC001A24FC /* BluetoothOffPopViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF15081C21106BDC001A24FC /* BluetoothOffPopViewController.swift */; };
 		CF2CCC2320B90F1E00AA97D9 /* A01_01_View.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2CCC1920B90F1E00AA97D9 /* A01_01_View.swift */; };
 		CF2CCC2520B90F1E00AA97D9 /* A01_02_View.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2CCC1B20B90F1E00AA97D9 /* A01_02_View.swift */; };
 		CF2CCC2620B90F1E00AA97D9 /* A01_02_View.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF2CCC1C20B90F1E00AA97D9 /* A01_02_View.xib */; };
@@ -41,6 +42,8 @@
 		CF7D8E7820E0E79C008263A9 /* XLPagerTabStrip.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CF54CB6E20C7E272002DF28F /* XLPagerTabStrip.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CF7D8E8020E10F7B008263A9 /* StartTimeSetPopViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF7D8E7F20E10F7B008263A9 /* StartTimeSetPopViewController.swift */; };
 		CF7D8E8220E1149C008263A9 /* ToastView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF7D8E8120E1149C008263A9 /* ToastView.swift */; };
+		CF89E5C1211679DE00EE44AB /* A03_ScrollMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF89E5C0211679DE00EE44AB /* A03_ScrollMenu.swift */; };
+		CF89E5C32116840000EE44AB /* A03_Help_View.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF89E5C22116840000EE44AB /* A03_Help_View.swift */; };
 		CF8A8B5D20D8E7020083010E /* GraphView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF8A8B5620D8E7020083010E /* GraphView.swift */; };
 		CF8DAF7320CCC53F00D6FF00 /* Terms01_ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF8DAF7220CCC53F00D6FF00 /* Terms01_ViewController.swift */; };
 		CF8DAF7520CCC55700D6FF00 /* Terms02_ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF8DAF7420CCC55700D6FF00 /* Terms02_ViewController.swift */; };
@@ -218,6 +221,7 @@
 		164EEC2455911BC453FA071B /* Pods-CarFriends2.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CarFriends2.debug.xcconfig"; path = "Pods/Target Support Files/Pods-CarFriends2/Pods-CarFriends2.debug.xcconfig"; sourceTree = "<group>"; };
 		489AC366EBC89051FA1278A6 /* Pods-CarFriends2.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CarFriends2.release.xcconfig"; path = "Pods/Target Support Files/Pods-CarFriends2/Pods-CarFriends2.release.xcconfig"; sourceTree = "<group>"; };
 		CF0B087D20B98ED60056A87E /* CustomA0105TableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomA0105TableViewCell.swift; sourceTree = "<group>"; };
+		CF15081C21106BDC001A24FC /* BluetoothOffPopViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothOffPopViewController.swift; sourceTree = "<group>"; };
 		CF2CCC1920B90F1E00AA97D9 /* A01_01_View.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = A01_01_View.swift; sourceTree = "<group>"; };
 		CF2CCC1B20B90F1E00AA97D9 /* A01_02_View.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = A01_02_View.swift; sourceTree = "<group>"; };
 		CF2CCC1C20B90F1E00AA97D9 /* A01_02_View.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = A01_02_View.xib; sourceTree = "<group>"; };
@@ -243,6 +247,8 @@
 		CF746C4020CAAB9D0080C1C0 /* C03_Menu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = C03_Menu.swift; sourceTree = "<group>"; };
 		CF7D8E7F20E10F7B008263A9 /* StartTimeSetPopViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartTimeSetPopViewController.swift; sourceTree = "<group>"; };
 		CF7D8E8120E1149C008263A9 /* ToastView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastView.swift; sourceTree = "<group>"; };
+		CF89E5C0211679DE00EE44AB /* A03_ScrollMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = A03_ScrollMenu.swift; sourceTree = "<group>"; };
+		CF89E5C22116840000EE44AB /* A03_Help_View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = A03_Help_View.swift; sourceTree = "<group>"; };
 		CF8A8B5620D8E7020083010E /* GraphView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GraphView.swift; sourceTree = "<group>"; };
 		CF8DAF7220CCC53F00D6FF00 /* Terms01_ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Terms01_ViewController.swift; sourceTree = "<group>"; };
 		CF8DAF7420CCC55700D6FF00 /* Terms02_ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Terms02_ViewController.swift; sourceTree = "<group>"; };
@@ -378,6 +384,8 @@
 				CF8DAF7420CCC55700D6FF00 /* Terms02_ViewController.swift */,
 				CF8DAF7620CCE02100D6FF00 /* MemberJoinViewController.swift */,
 				CF8DAF7820CCE45000D6FF00 /* JoinPopViewController.swift */,
+				CF7D8E7F20E10F7B008263A9 /* StartTimeSetPopViewController.swift */,
+				CF15081C21106BDC001A24FC /* BluetoothOffPopViewController.swift */,
 				CFA67F7F20B4044E00E089D4 /* AViewController.swift */,
 				CF2CCC1920B90F1E00AA97D9 /* A01_01_View.swift */,
 				CF9809F520DB914500973A15 /* A01_01_View.xib */,
@@ -396,10 +404,11 @@
 				CF2CCC2220B90F1E00AA97D9 /* A01_05_View.xib */,
 				CF5C77B220FB655E008BADEB /* A01_ScrollMenu.swift */,
 				CF3BA48B20BA3FC600419770 /* A02_ScrollMenu.swift */,
+				CF89E5C0211679DE00EE44AB /* A03_ScrollMenu.swift */,
 				CF3BA48D20BA5D9000419770 /* A02_01_View.swift */,
 				CF3BA49420BA5E3600419770 /* A02_02_View.swift */,
 				CF3BA49720BA5E3700419770 /* A02_03_View.swift */,
-				CF7D8E7F20E10F7B008263A9 /* StartTimeSetPopViewController.swift */,
+				CF89E5C22116840000EE44AB /* A03_Help_View.swift */,
 				CFA67FAB20B4062900E089D4 /* BViewController.swift */,
 				CFB73EA720C9409A005FD29C /* B01_ScrollMenu.swift */,
 				CFB73EA920C94169005FD29C /* B02_ScrollMenu.swift */,
@@ -700,6 +709,7 @@
 				CFEF79F420DE081C0060EC5E /* A01_01_ScrollView.swift in Sources */,
 				CF3BA4A420BA79D200419770 /* CustomA03TableViewCell.swift in Sources */,
 				CF5C77B320FB655E008BADEB /* A01_ScrollMenu.swift in Sources */,
+				CF89E5C1211679DE00EE44AB /* A03_ScrollMenu.swift in Sources */,
 				CF8DAF7720CCE02100D6FF00 /* MemberJoinViewController.swift in Sources */,
 				CF2CCC2320B90F1E00AA97D9 /* A01_01_View.swift in Sources */,
 				CFA67FB020B4429C00E089D4 /* MainViewController.swift in Sources */,
@@ -710,6 +720,7 @@
 				CFCBF69E2104588F00E3A71D /* ToastIndicatorView.swift in Sources */,
 				CF8DAF7B20CCF29200D6FF00 /* MainManager.swift in Sources */,
 				CFC2627620FDD748008527C9 /* ScannerViewController.swift in Sources */,
+				CF89E5C32116840000EE44AB /* A03_Help_View.swift in Sources */,
 				CF7D8E8020E10F7B008263A9 /* StartTimeSetPopViewController.swift in Sources */,
 				CF7D8E8220E1149C008263A9 /* ToastView.swift in Sources */,
 				CF3BA48C20BA3FC600419770 /* A02_ScrollMenu.swift in Sources */,
@@ -721,6 +732,7 @@
 				CF746C3F20CAAB7E0080C1C0 /* C02_Menu.swift in Sources */,
 				CF3BA4A120BA5E3700419770 /* A02_03_View.swift in Sources */,
 				CF3BA48A20BA307000419770 /* CustomA0106TableViewCell.swift in Sources */,
+				CF15081D21106BDC001A24FC /* BluetoothOffPopViewController.swift in Sources */,
 				CFB73EAA20C94169005FD29C /* B02_ScrollMenu.swift in Sources */,
 				CF8A8B5D20D8E7020083010E /* GraphView.swift in Sources */,
 			);
@@ -860,7 +872,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -903,7 +915,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";

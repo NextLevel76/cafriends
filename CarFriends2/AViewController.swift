@@ -113,6 +113,8 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
 
     @IBOutlet weak var mainMenuABC_view: UIView!
     
+    @IBOutlet weak var btn_B_change: UIButton!
+    @IBOutlet weak var btn_C_change: UIButton!
     
     
     @IBOutlet weak var btn_a01_change: UIButton!
@@ -149,11 +151,15 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     @IBOutlet var a02_03_view: A02_03_View!
     
     
+    
     //A03
+
+    @IBOutlet var a03_ScrollMenuView: A03_ScrollMenu!
     @IBOutlet var a03_01_view: UIView!
     @IBOutlet var a03_02_view: UIView!
     @IBOutlet var a03_03_view: UIView!
     
+    @IBOutlet var a03_help_view: A03_Help_View!
     
     @IBOutlet weak var table_A03_02: UITableView!
     
@@ -173,7 +179,20 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     @IBOutlet var a01_05_1_view: UIView!
     @IBOutlet weak var tableView_A01_05: UITableView!
     
-  
+    
+
+    
+    var getMyDrive:Bool = false
+    var getAllDrive:Bool = false
+    
+    var getMyFuel:Bool = false
+    var getAllFuel:Bool = false
+    
+    var getMyDTC:Bool = false
+    var getAllDTC:Bool = false
+    
+    var getWeekDTC:Bool = false
+    
     
     
     
@@ -221,6 +240,10 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     // test Alaram
     @IBAction func pressedA(_ sender: UIButton) {
         
+        
+        // 블루투스 켜라 팝업
+        // self.performSegue(withIdentifier: "blueToothOffPopSegue02", sender: self)
+        
 //        btn_a_change.setTitleColor(UIColor.black, for: .normal)
 //        btn_b_change.setTitleColor(UIColor.lightGray, for: .normal)
 //        btn_c_change.setTitleColor(UIColor.lightGray, for: .normal)
@@ -235,6 +258,14 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     
     
     @IBAction func pressedB(_ sender: UIButton) {
+        
+        // 인터넷 연결 체크, 연결 안됬으면 버튼 비활성
+        if( MainManager.shared.isConnectCheck() == false ) {
+            
+            btn_B_change.isEnabled = false
+            btn_C_change.isEnabled = false
+            return
+        }
 
         
         // 반복 타이머 정지
@@ -251,6 +282,14 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     
     
     @IBAction func pressedC(_ sender: UIButton) {
+        
+        // 인터넷 연결 체크, 연결 안됬으면 버튼 비활성
+        if( MainManager.shared.isConnectCheck() == false ) {
+            
+            btn_B_change.isEnabled = false
+            btn_C_change.isEnabled = false
+            return
+        }        
         
         // 반복 타이머 정지
         stopTimer()
@@ -285,34 +324,27 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     
     
     
-    // 8주 데이타 초기화
 
-//    MainManager.shared.str_My8WeeksDriveMileage.removeAll()
-//    MainManager.shared.str_All8WeeksDriveMileage.removeAll()
     
     // 회원 처음 가입시
     func setChartInit() {
         
-        if( MainManager.shared.str_My8WeeksDriveMileage.count == 0 ) {
+        // 8주 데이타 초기화
+        MainManager.shared.str_My8WeeksDriveMileage.removeAll()
+        MainManager.shared.str_All8WeeksDriveMileage.removeAll()
+        MainManager.shared.str_My8weeksFuelMileage.removeAll()
+        MainManager.shared.str_All8weeksFuelMileage.removeAll()
+        MainManager.shared.str_My8WeeksDTCCount.removeAll()
+        MainManager.shared.str_All8WeeksDTCCount.removeAll()
             
-            for i in 0..<8 {
-                
-                MainManager.shared.str_My8WeeksDriveMileage.append("0")
-            }
-        }
-        
-        if( MainManager.shared.str_My8weeksFuelMileage.count == 0 ) {
+        for i in 0..<8 {
             
-            for i in 0..<8 {
-                MainManager.shared.str_My8weeksFuelMileage.append("0")
-            }
-        }
-        
-        if( MainManager.shared.str_My8WeeksDTCCount.count == 0 ) {
-            
-            for i in 0..<8 {
-                MainManager.shared.str_My8WeeksDTCCount.append("0")
-            }
+            MainManager.shared.str_My8WeeksDriveMileage.append("0")
+            MainManager.shared.str_All8WeeksDriveMileage.append("0")
+            MainManager.shared.str_My8weeksFuelMileage.append("0")
+            MainManager.shared.str_All8weeksFuelMileage.append("0")
+            MainManager.shared.str_My8WeeksDTCCount.append("0")
+            MainManager.shared.str_All8WeeksDTCCount.append("0")
         }
     }
 
@@ -799,6 +831,11 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         phoneToBleTimeCheck()
         // DTC 정보 달라 명령 보내기
         readDtcStart()
+        
+        
+        // 차트 받은 데이타로 다시 그리기
+        getDataChartsDraw()
+        
     }
     
     
@@ -859,6 +896,35 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         // 블루 투스 켜짐 연결 꺼짐 UI 표시 체크
         connectCheckBLE()
     }
+    
+    
+    func getDataChartsDraw() {
+        
+        if( getMyDrive && getAllDrive && getMyFuel && getAllFuel && getMyDTC && getAllDTC && getWeekDTC ) {
+            
+            getMyDrive = false
+            getAllDrive = false
+            getMyFuel = false
+            getAllFuel = false
+            getMyDTC = false
+            getAllDTC = false
+            getWeekDTC = false // 금주 DTC 갯수
+            
+           // A01 스크롤뷰 차트 3개
+            setChartValues()
+            setChartValues2()
+            setChartValues3()
+            
+            // 다음 뷰 차트 3개
+            setChartValues_a02()
+            setChartValues_a03()
+            setChartValues_a04()
+        }
+    }
+    
+    
+    
+    
     
     
     
@@ -979,7 +1045,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
                 // 앞 5자리 자르기
                 let str_2:String = String(str_1[str_1.index(str_1.startIndex, offsetBy: 11)...])
                 // "예약 시동 시간 [13:00]"
-                a02_02_view.label_rvs_time.text = "예약 시동 시간 [\(String(str_2[..<str_2.index(str_2.startIndex, offsetBy: 5)]) )]"
+                a02_02_view.label_rvs_time.text = "\(String(str_2[..<str_2.index(str_2.startIndex, offsetBy: 5)]) ) 예약 되었습니다. "
             }
                 
                 
@@ -1122,19 +1188,21 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         // 인터넷 연결 체크
         if( MainManager.shared.isConnectCheck() == false ) {
             
-            let myView = self.storyboard?.instantiateViewController(withIdentifier: "MainView") as! MainViewController
-            self.present(myView, animated: true, completion: nil)
-            return
+            btn_B_change.isEnabled = false
+            btn_C_change.isEnabled = false
+        }
+        else {
+            
+            setTotalDriveMileageDB()
+            setWeekDriveMileageDB()
+            
+            setAvgFuelMileageDB()
+            setWeekFuelMileageDB()
+            
+            setSeedDB()
+            getKeyDB()
         }
         
-        setTotalDriveMileageDB()
-        setWeekDriveMileageDB()
-        
-        setAvgFuelMileageDB()
-        setWeekFuelMileageDB()
-        
-        setSeedDB()
-        getKeyDB()
     }
     
     func setTotalDriveMileageDB() {
@@ -1613,11 +1681,16 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             a02_01_view.btn_05_off.isEnabled = false
             a02_01_view.btn_06_off.isEnabled = false
             
+            // 시간 설정 버튼
+            a02_02_view.btn_rvs_time.isEnabled = false
+            
             a02_02_view.switch_btn_07.isEnabled = false
             a02_02_view.switch_btn_08.isEnabled = false
             a02_02_view.switch_btn_09.isEnabled = false
             a02_02_view.switch_btn_10.isEnabled = false
             a02_02_view.switch_btn_11.isEnabled = false
+            
+            
         }
         else if( MainManager.shared.member_info.isCAR_FRIENDS_CONNECT == true ) {
             
@@ -1635,12 +1708,16 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             a02_01_view.btn_04_off.isEnabled = true
             a02_01_view.btn_05_off.isEnabled = true
             a02_01_view.btn_06_off.isEnabled = true
+            
+            // 시간 설정 버튼
+            a02_02_view.btn_rvs_time.isEnabled = true
 
             a02_02_view.switch_btn_07.isEnabled = true
             a02_02_view.switch_btn_08.isEnabled = true
             a02_02_view.switch_btn_09.isEnabled = true
             a02_02_view.switch_btn_10.isEnabled = true
             a02_02_view.switch_btn_11.isEnabled = true
+            
             
         }
     }
@@ -1678,6 +1755,67 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         a02_02_view.switch_btn_10.isOn = MainManager.shared.member_info.bCar_Btn_AutoWindowRevOpen
         // 예약 시동
         a02_02_view.switch_btn_11.isOn = MainManager.shared.member_info.bCar_Btn_RVS
+        
+        
+        if( a02_02_view.switch_btn_07.isOn == true ) {
+            
+            a02_02_view.label_btn_use01.text =  "• 사용"
+            a02_02_view.label_btn_use01.textColor = UIColor(red: 67/255, green:210/255, blue: 89/255, alpha: 1.0)
+        }
+        else {
+            
+            a02_02_view.label_btn_use01.text =  "• 미사용"
+            a02_02_view.label_btn_use01.textColor = UIColor.lightGray
+        }
+        
+        if( a02_02_view.switch_btn_08.isOn == true ) {
+            
+            a02_02_view.label_btn_use02.text =  "• 사용"
+            a02_02_view.label_btn_use02.textColor = UIColor(red: 67/255, green:210/255, blue: 89/255, alpha: 1.0)
+        }
+        else {
+            
+            a02_02_view.label_btn_use02.text =  "• 미사용"
+            a02_02_view.label_btn_use02.textColor = UIColor.lightGray
+        }
+        
+        if( a02_02_view.switch_btn_09.isOn == true ) {
+            
+            a02_02_view.label_btn_use03.text =  "• 사용"
+            a02_02_view.label_btn_use03.textColor = UIColor(red: 67/255, green:210/255, blue: 89/255, alpha: 1.0)
+        }
+        else {
+            
+            a02_02_view.label_btn_use03.text =  "• 미사용"
+            a02_02_view.label_btn_use03.textColor = UIColor.lightGray
+        }
+        
+        if( a02_02_view.switch_btn_10.isOn == true ) {
+            
+            a02_02_view.label_btn_use04.text =  "• 사용"
+            a02_02_view.label_btn_use04.textColor = UIColor(red: 67/255, green:210/255, blue: 89/255, alpha: 1.0)
+        }
+        else {
+            
+            a02_02_view.label_btn_use04.text =  "• 미사용"
+            a02_02_view.label_btn_use04.textColor = UIColor.lightGray
+        }
+        
+        if( a02_02_view.switch_btn_11.isOn == true ) {
+            
+            a02_02_view.label_btn_use05.text =  "• 사용"
+            a02_02_view.label_btn_use05.textColor = UIColor(red: 67/255, green:210/255, blue: 89/255, alpha: 1.0)
+        }
+        else {
+            
+            a02_02_view.label_btn_use05.text =  "• 미사용"
+            a02_02_view.label_btn_use05.textColor = UIColor.lightGray
+        }
+        
+        
+        
+        
+        
         
         // 버튼 히든 처리
         if( autoBtnDataSet == false ) {
@@ -1723,12 +1861,14 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // 8주 데이타에 쓸 날짜 얻기
+        getDateDay()
+        
         // 인터넷 연결 체크, 연결 안됬으면 젤 첨 화면으로
         if( MainManager.shared.isConnectCheck() == false ) {
-            
-            let myView = self.storyboard?.instantiateViewController(withIdentifier: "MainView") as! MainViewController
-            self.present(myView, animated: true, completion: nil)
-            return
+
+            btn_B_change.isEnabled = false
+            btn_C_change.isEnabled = false
         }
         
 
@@ -2097,6 +2237,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         //
         // 회원가입 직후 초기화
         setChartInit()
+        
         // A01 스크롤뷰 차트 3개
         setChartValues()
         setChartValues2()
@@ -2139,21 +2280,64 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         self.view.addSubview(a02_02_view)
         a02_02_view.frame.origin.y = subSubView_y
         
+        a02_02_view.btn_rvs_time.layer.cornerRadius = 5;
+        
+        
+        
+        
         self.view.addSubview(a02_03_view)
         a02_03_view.frame.origin.y = subSubView_y
         
         
         
+        if let videoURL:URL = URL(string: "http://www.naver.com") {
+            let request:URLRequest = URLRequest(url: videoURL)
+            a02_03_view.webView.load(request)
+        }
+        
+        
+        
+        a02_01_view.btn_01_on.layer.cornerRadius = 5;
+        a02_01_view.btn_02_on.layer.cornerRadius = 5;
+        a02_01_view.btn_03_on.layer.cornerRadius = 5;
+        a02_01_view.btn_04_on.layer.cornerRadius = 5;
+        a02_01_view.btn_05_on.layer.cornerRadius = 5;
+        a02_01_view.btn_06_on.layer.cornerRadius = 5;
+        
+        a02_01_view.btn_01_off.layer.cornerRadius = 5;
+        a02_01_view.btn_02_off.layer.cornerRadius = 5;
+        a02_01_view.btn_03_off.layer.cornerRadius = 5;
+        a02_01_view.btn_04_off.layer.cornerRadius = 5;
+        a02_01_view.btn_05_off.layer.cornerRadius = 5;
+        a02_01_view.btn_06_off.layer.cornerRadius = 5;
+        
+        
+        
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        // A03        
+        // A03
+        
+        self.view.addSubview(a03_ScrollMenuView)
+        a03_ScrollMenuView.frame.origin.y = CGFloat(subMenuView_y)
+        
         self.view.addSubview(a03_01_view)
-        a03_01_view.frame.origin.y = CGFloat(subMenuView_y)
+        a03_01_view.frame.origin.y = CGFloat(subSubView_y)
         
         self.view.addSubview(a03_02_view)
-        a03_02_view.frame.origin.y = CGFloat(subMenuView_y)
+        a03_02_view.frame.origin.y = CGFloat(subSubView_y)
         
         self.view.addSubview(a03_03_view)
-        a03_03_view.frame.origin.y = CGFloat(subMenuView_y)
+        a03_03_view.frame.origin.y = CGFloat(subSubView_y)
+        
+        self.view.addSubview(a03_help_view)
+        a03_help_view.frame.origin.y = CGFloat(subSubView_y)
+        
+        
+        if let videoURL:URL = URL(string: "http://www.naver.com") {
+            let request:URLRequest = URLRequest(url: videoURL)
+            a03_help_view.webView.load(request)
+        }
+        
+        
         
         
         
@@ -2217,10 +2401,15 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         
        
         
+        a03_ScrollMenuView.frame = MainManager.shared.initLoadChangeFrame(frame: a03_ScrollMenuView.frame)
         
         a03_01_view.frame = MainManager.shared.initLoadChangeFrame(frame: a03_01_view.frame)
         a03_02_view.frame = MainManager.shared.initLoadChangeFrame(frame: a03_02_view.frame)
         a03_03_view.frame = MainManager.shared.initLoadChangeFrame(frame: a03_03_view.frame)
+        
+        a03_help_view.frame = MainManager.shared.initLoadChangeFrame(frame: a03_help_view.frame)
+        
+        
         
         
         
@@ -2706,12 +2895,25 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
 //        btn_a02_change.setBackgroundImage(UIImage(named:"frame-A-02-off"), for: UIControlState.normal )
 //        btn_a03_change.setBackgroundImage(UIImage(named:"frame-A-03-off"), for: UIControlState.normal )
         
-        
-       
-        
         self.view.bringSubview(toFront: a01_01_view)
         self.view.bringSubview(toFront: a01_ScrollMenuView)
         self.view.bringSubview(toFront: mainMenuABC_view)
+        
+        
+        // 버튼색 처음거 선택으로 색바꾸기
+        for i in 0..<btn_a01_name.count  {
+            
+            let tempBtn = a01_ScrollMenuView.scrollView.viewWithTag(i+1) as! UIButton
+            
+            if( i == 0) {
+                
+                tempBtn.setTitleColor( UIColor.black, for: .normal )
+            }
+            else {
+                
+                tempBtn.setTitleColor( UIColor.lightGray, for: .normal )
+            }
+        }
         
         print("A01")
         
@@ -2732,45 +2934,41 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         carOnOffIsHiddenSetA02_01()
         self.view.bringSubview(toFront: a02_01_view)
         self.view.bringSubview(toFront: a02_ScrollMenuView)
-        self.view.bringSubview(toFront: mainMenuABC_view)
+        self.view.bringSubview(toFront: mainMenuABC_view) // 하단 메인 메뉴
         
         
-//        a02_01_view.switch_btn_01.isOn = MainManager.shared.member_info.bCar_Status_DoorLock
-//        a02_01_view.switch_btn_02.isOn = MainManager.shared.member_info.bCar_Status_Hatch
-//        a02_01_view.switch_btn_03.isOn = MainManager.shared.member_info.bCar_Status_Window
-//        a02_01_view.switch_btn_04.isOn = MainManager.shared.member_info.bCar_Status_Sunroof
-//        // 원격 시동
-//        a02_01_view.switch_btn_05.isOn = MainManager.shared.member_info.bCar_Status_RVS
-//        // 키리스 온
-//        a02_01_view.switch_btn_06.isOn = MainManager.shared.member_info.bCar_Car_Status_IGN
-//
-//
-//        // 여기부터 AUTO
-//        a02_01_view.switch_btn_07.isOn = MainManager.shared.member_info.bCar_Func_AutoLockFolding
-//        a02_01_view.switch_btn_08.isOn = MainManager.shared.member_info.bCar_Func_AutoWindowClose
-//
-//        a02_01_view.switch_btn_09.isOn = MainManager.shared.member_info.bCar_Func_AutoSunroofClose
-//        // 후진시 창문
-//        a02_01_view.switch_btn_10.isOn = MainManager.shared.member_info.bCar_Func_AutoWindowRevOpen
-//        // 예약 시동
-//        a02_01_view.switch_btn_11.isOn = MainManager.shared.member_info.bCar_Status_ReservedRVSTime
-        
+        // 버튼색 처음거 선택으로 색바꾸기
+        for i in 0..<btn_a02_name.count  {
+            
+            let tempBtn = a02_ScrollMenuView.scrollView.viewWithTag(i+1) as! UIButton
+            
+            if( i == 0) {
+                
+                tempBtn.setTitleColor( UIColor.black, for: .normal )
+            }
+            else {
+                
+                tempBtn.setTitleColor( UIColor.lightGray, for: .normal )
+            }
+        }
         
         print("A02")
     }
     
     @IBAction func pressedA03(_ sender: UIButton) {
         
-
-        
         
         btn_a01_change.setTitleColor(.gray, for: .normal)
         btn_a02_change.setTitleColor(.gray, for: .normal)
         btn_a03_change.setTitleColor(.white, for: .normal)
         
+        a03_ScrollMenuView.btn_01.setTitleColor( .black, for: .normal )
+        a03_ScrollMenuView.btn_02.setTitleColor( .lightGray, for: .normal )
+        
         
         self.view.bringSubview(toFront: a03_01_view)
-        self.view.bringSubview(toFront: mainMenuABC_view)
+        self.view.bringSubview(toFront: a03_ScrollMenuView)
+        self.view.bringSubview(toFront: mainMenuABC_view) // 하단 메인 메뉴
 
         
         print("A03")
@@ -2829,15 +3027,19 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
         var count = 0
         var px = 0
         //var py = 0
-        let btn_height = Int(a02_ScrollMenuView.scrollView.frame.height)
-        let btn_width = Int(a02_ScrollMenuView.scrollView.frame.width/3)
+        let btn_width:CGFloat = (a02_ScrollMenuView.scrollView.frame.width * MainManager.shared.ratio_X)/3
+        let btn_height:CGFloat = a02_ScrollMenuView.scrollView.frame.height * MainManager.shared.ratio_Y
+        
+        
+        print(" a02_ScrollMenuView.frame :: \(a02_ScrollMenuView.frame)")
+        
         for i in 0..<btn_a02_name.count {
             
             count += 1
             
             let tempBtn = UIButton()
             tempBtn.tag = i+1
-            tempBtn.frame = CGRect(x: ((i+1)*btn_width)-btn_width, y: 0, width: btn_width, height: btn_height)
+            tempBtn.frame = CGRect(x: ((i+1) * Int(btn_width) ) - Int(btn_width), y: 0, width: Int(btn_width), height: Int(btn_height))
             
             tempBtn.setTitleColor( UIColor.lightGray, for: .normal )
             tempBtn.backgroundColor = UIColor.white
@@ -2855,12 +3057,12 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
             tempBtn.titleLabel?.font = .systemFont(ofSize: 15)
             //SystemFont(ofSize: 17)
             
-            px += btn_width
+            px += Int(btn_width)
             a02_ScrollMenuView.scrollView.addSubview(tempBtn)
             //px = px + Int(scrollView.frame.width)/2 - 30
         }
         
-        a02_ScrollMenuView.scrollView.contentSize = CGSize(width: px, height: btn_height)
+        a02_ScrollMenuView.scrollView.contentSize = CGSize(width: px, height: Int(btn_height))
     }
     
     func a02MenuBtnAction(_ sender: UIButton) {
@@ -2907,6 +3109,31 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // A03 ACTION
+    
+    
+    @IBAction func pressed_a03_Menu(_ sender: UIButton) {
+        
+        
+        a03_ScrollMenuView.btn_01.setTitleColor( UIColor.lightGray, for: .normal )
+        a03_ScrollMenuView.btn_02.setTitleColor( UIColor.lightGray, for: .normal )
+        sender.setTitleColor( .black, for: .normal )
+        
+        if( sender.tag == 1 )       {
+
+            self.view.bringSubview(toFront: a03_01_view)
+            self.view.bringSubview(toFront: mainMenuABC_view)
+        }
+        else if( sender.tag == 2 )       {
+            
+            self.view.bringSubview(toFront: a03_help_view)
+            self.view.bringSubview(toFront: mainMenuABC_view)
+        }
+        
+        
+        self.view.bringSubview(toFront: mainMenuABC_view)
+    }
+    
+    
     
     @IBAction func pressed_a03_01(_ sender: UIButton) {
         
@@ -3810,7 +4037,7 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
     
    
     
-    
+    //a02_01
     @IBAction func a02_btnAction(_ sender: UIButton) {
         
         switch sender.tag {
@@ -4146,15 +4373,17 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
                         // 쿠키저장
                         HTTPCookieStorage.save()
                         
-//                        // 8주치 데이타 읽어오기
-//                        self.getData8Week_myDrive()
-//                        self.getData8Week_AllMemberDrive()
-//
-//                        self.getData8Week_myFuel()
-//                        self.getData8Week_AllMemberFuel()
-//
-//                        self.getData8Week_myDTC()
-//                        self.getData8Week_AllMemberDTC()
+                        // 8주치 데이타 읽어오기
+                        self.getData8Week_myDrive()
+                        self.getData8Week_AllMemberDrive()
+                        
+                        self.getData8Week_myFuel()
+                        self.getData8Week_AllMemberFuel()
+                        
+                        self.getData8Week_myDTC()
+                        self.getData8Week_AllMemberDTC()
+                        
+                        self.getDataWeekDTCCount()
                     }
                     else {
                         
@@ -4164,6 +4393,580 @@ class AViewController: UIViewController, UITableViewDelegate, UITableViewDataSou
                 }
         }
     }
+    
+    
+    
+    
+    func getData8Week_myDrive() {
+        
+        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
+        // database.php?Req=CarList
+        // "Res":"CarList","CarList":["스파크","크루즈",…..]
+        let parameters = [
+            "Req": "Get8WeeksDriveMileage",
+            "CheckDate": nowDateDay]
+        
+        print(parameters)
+        Alamofire.request("http://seraphm.cafe24.com/database.php", method: .post, parameters: parameters)
+            .responseJSON { response in
+                
+                ToastIndicatorView.shared.close()
+                print(response)
+                
+                if let status = response.response?.statusCode {
+                    switch(status){
+                    case 201:
+                        print("example success")
+                    default:
+                        print("error with response status: \(status)")
+                    }
+                }
+                
+                self.getMyDrive = true
+                //to get JSON return value
+                // "Res":"Get8WeeksDrivelMileage",[ {"이번주":"10.1"}, {"1주전":"5.8"}, {"2주전":"3.8"}, {"3주전":"5.8"}, {"4주전":"9.8"}, {"5주전":"9.8"}, {"6주전":"3.8"}, {"7주전":"2.8"} ];
+                
+                if let json = try? JSON(response.result.value) {
+                    
+                    var tempResult0 = JSON(json["Result"][0])
+                    var tempResult1 = JSON(json["Result"][1])
+                    var tempResult2 = JSON(json["Result"][2])
+                    var tempResult3 = JSON(json["Result"][3])
+                    var tempResult4 = JSON(json["Result"][4])
+                    var tempResult5 = JSON(json["Result"][5])
+                    var tempResult6 = JSON(json["Result"][6])
+                    var tempResult7 = JSON(json["Result"][7])
+                    
+                    //                    print( tempResult0["이번주"].stringValue )
+                    //                    print( tempResult1["1주전"].stringValue )
+                    //                    print( tempResult2["2주전"].stringValue )
+                    //                    print( tempResult3["3주전"].stringValue )
+                    //                    print( tempResult4["4주전"].stringValue )
+                    //                    print( tempResult5["5주전"].stringValue )
+                    //                    print( tempResult6["6주전"].stringValue )
+                    //                    print( tempResult7["7주전"].stringValue )
+                    
+                    MainManager.shared.str_My8WeeksDriveMileage.removeAll()
+                    
+                    MainManager.shared.str_My8WeeksDriveMileage.append(tempResult0["이번주"].stringValue)
+                    MainManager.shared.str_My8WeeksDriveMileage.append(tempResult1["1주전"].stringValue)
+                    MainManager.shared.str_My8WeeksDriveMileage.append(tempResult2["2주전"].stringValue)
+                    MainManager.shared.str_My8WeeksDriveMileage.append(tempResult3["3주전"].stringValue)
+                    MainManager.shared.str_My8WeeksDriveMileage.append(tempResult4["4주전"].stringValue)
+                    MainManager.shared.str_My8WeeksDriveMileage.append(tempResult5["5주전"].stringValue)
+                    MainManager.shared.str_My8WeeksDriveMileage.append(tempResult6["6주전"].stringValue)
+                    MainManager.shared.str_My8WeeksDriveMileage.append(tempResult7["7주전"].stringValue)
+                    
+                    // 데이타 없다 0
+                    if( MainManager.shared.str_My8WeeksDriveMileage[0].count == 0 ) {
+                        
+                        MainManager.shared.str_My8WeeksDriveMileage[0] = "0"
+                        MainManager.shared.str_My8WeeksDriveMileage[1] = "0"
+                        MainManager.shared.str_My8WeeksDriveMileage[2] = "0"
+                        MainManager.shared.str_My8WeeksDriveMileage[3] = "0"
+                        MainManager.shared.str_My8WeeksDriveMileage[4] = "0"
+                        MainManager.shared.str_My8WeeksDriveMileage[5] = "0"
+                        MainManager.shared.str_My8WeeksDriveMileage[6] = "0"
+                        MainManager.shared.str_My8WeeksDriveMileage[7] = "0"
+                    }
+                    
+                    print("")
+                }
+              
+                
+                
+                
+        }
+    }
+    
+    func getData8Week_AllMemberDrive() {
+        
+        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
+        // database.php?Req=CarList
+        // "Res":"CarList","CarList":["스파크","크루즈",…..]
+        let parameters = [
+            "Req": "Get8WeeksDriveMileageAllMember",
+            "CheckDate": nowDateDay]
+        
+        print(parameters)
+        Alamofire.request("http://seraphm.cafe24.com/database.php", method: .post, parameters: parameters)
+            .responseJSON { response in
+                
+                ToastIndicatorView.shared.close()
+                print(response)
+                
+                if let status = response.response?.statusCode {
+                    switch(status){
+                    case 201:
+                        print("example success")
+                    default:
+                        print("error with response status: \(status)")
+                    }
+                }
+                
+                //to get JSON return value
+                // "Res":"Get8WeeksDrivelMileage",[ {"이번주":"10.1"}, {"1주전":"5.8"}, {"2주전":"3.8"}, {"3주전":"5.8"}, {"4주전":"9.8"}, {"5주전":"9.8"}, {"6주전":"3.8"}, {"7주전":"2.8"} ];
+                self.getAllDrive = true
+                
+                if let json = try? JSON(response.result.value) {
+                    
+                    var tempResult0 = JSON(json["Result"][0])
+                    var tempResult1 = JSON(json["Result"][1])
+                    var tempResult2 = JSON(json["Result"][2])
+                    var tempResult3 = JSON(json["Result"][3])
+                    var tempResult4 = JSON(json["Result"][4])
+                    var tempResult5 = JSON(json["Result"][5])
+                    var tempResult6 = JSON(json["Result"][6])
+                    var tempResult7 = JSON(json["Result"][7])
+                    
+                    //                    print( tempResult0["이번주"].stringValue )
+                    //                    print( tempResult1["1주전"].stringValue )
+                    //                    print( tempResult2["2주전"].stringValue )
+                    //                    print( tempResult3["3주전"].stringValue )
+                    //                    print( tempResult4["4주전"].stringValue )
+                    //                    print( tempResult5["5주전"].stringValue )
+                    //                    print( tempResult6["6주전"].stringValue )
+                    //                    print( tempResult7["7주전"].stringValue )
+                    
+                    MainManager.shared.str_All8WeeksDriveMileage.removeAll()
+                    
+                    MainManager.shared.str_All8WeeksDriveMileage.append(tempResult0["이번주"].stringValue)
+                    MainManager.shared.str_All8WeeksDriveMileage.append(tempResult1["1주전"].stringValue)
+                    MainManager.shared.str_All8WeeksDriveMileage.append(tempResult2["2주전"].stringValue)
+                    MainManager.shared.str_All8WeeksDriveMileage.append(tempResult3["3주전"].stringValue)
+                    MainManager.shared.str_All8WeeksDriveMileage.append(tempResult4["4주전"].stringValue)
+                    MainManager.shared.str_All8WeeksDriveMileage.append(tempResult5["5주전"].stringValue)
+                    MainManager.shared.str_All8WeeksDriveMileage.append(tempResult6["6주전"].stringValue)
+                    MainManager.shared.str_All8WeeksDriveMileage.append(tempResult7["7주전"].stringValue)
+                    
+                    
+                    // 데이타 없다 0
+                    if( MainManager.shared.str_All8WeeksDriveMileage[0].count == 0 ) {
+                        
+                        MainManager.shared.str_All8WeeksDriveMileage[0] = "0"
+                        MainManager.shared.str_All8WeeksDriveMileage[1] = "0"
+                        MainManager.shared.str_All8WeeksDriveMileage[2] = "0"
+                        MainManager.shared.str_All8WeeksDriveMileage[3] = "0"
+                        MainManager.shared.str_All8WeeksDriveMileage[4] = "0"
+                        MainManager.shared.str_All8WeeksDriveMileage[5] = "0"
+                        MainManager.shared.str_All8WeeksDriveMileage[6] = "0"
+                        MainManager.shared.str_All8WeeksDriveMileage[7] = "0"
+                    }
+                    
+                    print("")
+                }
+                
+        }
+        
+    }
+    
+    
+    
+    func getData8Week_myFuel() {
+        
+        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
+        // database.php?Req=CarList
+        // "Res":"CarList","CarList":["스파크","크루즈",…..]
+        let parameters = [
+            "Req": "Get8WeeksFuelMileage",
+            "CheckDate": nowDateDay]
+        
+        print(parameters)
+        Alamofire.request("http://seraphm.cafe24.com/database.php", method: .post, parameters: parameters)
+            .responseJSON { response in
+                
+                ToastIndicatorView.shared.close()
+                print(response)
+                
+                if let status = response.response?.statusCode {
+                    switch(status){
+                    case 201:
+                        print("example success")
+                    default:
+                        print("error with response status: \(status)")
+                    }
+                }
+                
+                self.getMyFuel = true
+                
+                
+                //to get JSON return value
+                // "Res":"Get8WeeksDrivelMileage",[ {"이번주":"10.1"}, {"1주전":"5.8"}, {"2주전":"3.8"}, {"3주전":"5.8"}, {"4주전":"9.8"}, {"5주전":"9.8"}, {"6주전":"3.8"}, {"7주전":"2.8"} ];
+                
+                if let json = try? JSON(response.result.value) {
+                    
+                    var tempResult0 = JSON(json["Result"][0])
+                    var tempResult1 = JSON(json["Result"][1])
+                    var tempResult2 = JSON(json["Result"][2])
+                    var tempResult3 = JSON(json["Result"][3])
+                    var tempResult4 = JSON(json["Result"][4])
+                    var tempResult5 = JSON(json["Result"][5])
+                    var tempResult6 = JSON(json["Result"][6])
+                    var tempResult7 = JSON(json["Result"][7])
+                    
+                    //                    print( tempResult0["이번주"].stringValue )
+                    //                    print( tempResult1["1주전"].stringValue )
+                    //                    print( tempResult2["2주전"].stringValue )
+                    //                    print( tempResult3["3주전"].stringValue )
+                    //                    print( tempResult4["4주전"].stringValue )
+                    //                    print( tempResult5["5주전"].stringValue )
+                    //                    print( tempResult6["6주전"].stringValue )
+                    //                    print( tempResult7["7주전"].stringValue )
+                    
+                    MainManager.shared.str_My8weeksFuelMileage.removeAll()
+                    
+                    MainManager.shared.str_My8weeksFuelMileage.append(tempResult0["이번주"].stringValue)
+                    MainManager.shared.str_My8weeksFuelMileage.append(tempResult1["1주전"].stringValue)
+                    MainManager.shared.str_My8weeksFuelMileage.append(tempResult2["2주전"].stringValue)
+                    MainManager.shared.str_My8weeksFuelMileage.append(tempResult3["3주전"].stringValue)
+                    MainManager.shared.str_My8weeksFuelMileage.append(tempResult4["4주전"].stringValue)
+                    MainManager.shared.str_My8weeksFuelMileage.append(tempResult5["5주전"].stringValue)
+                    MainManager.shared.str_My8weeksFuelMileage.append(tempResult6["6주전"].stringValue)
+                    MainManager.shared.str_My8weeksFuelMileage.append(tempResult7["7주전"].stringValue)
+                    
+                    // 데이타 없다 0
+                    if( MainManager.shared.str_My8weeksFuelMileage[0].count == 0 ) {
+                        
+                        MainManager.shared.str_My8weeksFuelMileage[0] = "0"
+                        MainManager.shared.str_My8weeksFuelMileage[1] = "0"
+                        MainManager.shared.str_My8weeksFuelMileage[2] = "0"
+                        MainManager.shared.str_My8weeksFuelMileage[3] = "0"
+                        MainManager.shared.str_My8weeksFuelMileage[4] = "0"
+                        MainManager.shared.str_My8weeksFuelMileage[5] = "0"
+                        MainManager.shared.str_My8weeksFuelMileage[6] = "0"
+                        MainManager.shared.str_My8weeksFuelMileage[7] = "0"
+                    }
+                    
+                    print("")
+                }
+                
+                
+                
+        }
+        
+        
+    }
+    
+    func getData8Week_AllMemberFuel() {
+        
+        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
+        // database.php?Req=CarList
+        // "Res":"CarList","CarList":["스파크","크루즈",…..]
+        let parameters = [
+            "Req": "Get8WeeksFuelMileageAllMember",
+            "CheckDate": nowDateDay]
+        
+        print(parameters)
+        Alamofire.request("http://seraphm.cafe24.com/database.php", method: .post, parameters: parameters)
+            .responseJSON { response in
+                
+                ToastIndicatorView.shared.close()
+                print(response)
+                //to get status code
+                
+                if let status = response.response?.statusCode {
+                    switch(status){
+                    case 201:
+                        print("example success")
+                    default:
+                        print("error with response status: \(status)")
+                    }
+                }
+                
+                //to get JSON return value
+                // "Res":"Get8WeeksDrivelMileage",[ {"이번주":"10.1"}, {"1주전":"5.8"}, {"2주전":"3.8"}, {"3주전":"5.8"}, {"4주전":"9.8"}, {"5주전":"9.8"}, {"6주전":"3.8"}, {"7주전":"2.8"} ];
+                
+                
+                self.getAllFuel = true
+                
+                
+                
+                if let json = try? JSON(response.result.value) {
+                    
+                    var tempResult0 = JSON(json["Result"][0])
+                    var tempResult1 = JSON(json["Result"][1])
+                    var tempResult2 = JSON(json["Result"][2])
+                    var tempResult3 = JSON(json["Result"][3])
+                    var tempResult4 = JSON(json["Result"][4])
+                    var tempResult5 = JSON(json["Result"][5])
+                    var tempResult6 = JSON(json["Result"][6])
+                    var tempResult7 = JSON(json["Result"][7])
+                    
+                    print( tempResult0["이번주"].stringValue )
+                    print( tempResult1["1주전"].stringValue )
+                    print( tempResult2["2주전"].stringValue )
+                    print( tempResult3["3주전"].stringValue )
+                    print( tempResult4["4주전"].stringValue )
+                    print( tempResult5["5주전"].stringValue )
+                    print( tempResult6["6주전"].stringValue )
+                    print( tempResult7["7주전"].stringValue )
+                    
+                    MainManager.shared.str_All8weeksFuelMileage.removeAll()
+                    
+                    MainManager.shared.str_All8weeksFuelMileage.append(tempResult0["이번주"].stringValue)
+                    MainManager.shared.str_All8weeksFuelMileage.append(tempResult1["1주전"].stringValue)
+                    MainManager.shared.str_All8weeksFuelMileage.append(tempResult2["2주전"].stringValue)
+                    MainManager.shared.str_All8weeksFuelMileage.append(tempResult3["3주전"].stringValue)
+                    MainManager.shared.str_All8weeksFuelMileage.append(tempResult4["4주전"].stringValue)
+                    MainManager.shared.str_All8weeksFuelMileage.append(tempResult5["5주전"].stringValue)
+                    MainManager.shared.str_All8weeksFuelMileage.append(tempResult6["6주전"].stringValue)
+                    MainManager.shared.str_All8weeksFuelMileage.append(tempResult7["7주전"].stringValue)
+                    
+                    // 데이타 없다 0
+                    if( MainManager.shared.str_All8weeksFuelMileage[0].count == 0 ) {
+                        
+                        MainManager.shared.str_All8weeksFuelMileage[0] = "0"
+                        MainManager.shared.str_All8weeksFuelMileage[1] = "0"
+                        MainManager.shared.str_All8weeksFuelMileage[2] = "0"
+                        MainManager.shared.str_All8weeksFuelMileage[3] = "0"
+                        MainManager.shared.str_All8weeksFuelMileage[4] = "0"
+                        MainManager.shared.str_All8weeksFuelMileage[5] = "0"
+                        MainManager.shared.str_All8weeksFuelMileage[6] = "0"
+                        MainManager.shared.str_All8weeksFuelMileage[7] = "0"
+                    }
+                    print("")
+                }
+                
+        }
+    }
+    
+    
+    
+    func getData8Week_myDTC() {
+        
+        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
+        // database.php?Req=CarList
+        // "Res":"CarList","CarList":["스파크","크루즈",…..]
+        let parameters = [
+            "Req": "Get8WeeksDTCCount",
+            "CheckDate": nowDateDay]
+        
+        print(parameters)
+        Alamofire.request("http://seraphm.cafe24.com/database.php", method: .post, parameters: parameters)
+            .responseJSON { response in
+                
+                ToastIndicatorView.shared.close()
+                print(response)
+                //to get status code
+                
+                if let status = response.response?.statusCode {
+                    switch(status){
+                    case 201:
+                        print("example success")
+                    default:
+                        print("error with response status: \(status)")
+                    }
+                }
+                
+                
+                self.getMyDTC = true
+                
+                
+                
+                
+                //to get JSON return value
+                // "Res":"Get8WeeksDrivelMileage",[ {"이번주":"10.1"}, {"1주전":"5.8"}, {"2주전":"3.8"}, {"3주전":"5.8"}, {"4주전":"9.8"}, {"5주전":"9.8"}, {"6주전":"3.8"}, {"7주전":"2.8"} ];
+                
+                if let json = try? JSON(response.result.value) {
+                    
+                    var tempResult0 = JSON(json["Result"][0])
+                    var tempResult1 = JSON(json["Result"][1])
+                    var tempResult2 = JSON(json["Result"][2])
+                    var tempResult3 = JSON(json["Result"][3])
+                    var tempResult4 = JSON(json["Result"][4])
+                    var tempResult5 = JSON(json["Result"][5])
+                    var tempResult6 = JSON(json["Result"][6])
+                    var tempResult7 = JSON(json["Result"][7])
+                    
+                    //                    print( tempResult0["이번주"].stringValue )
+                    //                    print( tempResult1["1주전"].stringValue )
+                    //                    print( tempResult2["2주전"].stringValue )
+                    //                    print( tempResult3["3주전"].stringValue )
+                    //                    print( tempResult4["4주전"].stringValue )
+                    //                    print( tempResult5["5주전"].stringValue )
+                    //                    print( tempResult6["6주전"].stringValue )
+                    //                    print( tempResult7["7주전"].stringValue )
+                    
+                    MainManager.shared.str_My8WeeksDTCCount.removeAll()
+                    
+                    MainManager.shared.str_My8WeeksDTCCount.append(tempResult0["이번주"].stringValue)
+                    MainManager.shared.str_My8WeeksDTCCount.append(tempResult1["1주전"].stringValue)
+                    MainManager.shared.str_My8WeeksDTCCount.append(tempResult2["2주전"].stringValue)
+                    MainManager.shared.str_My8WeeksDTCCount.append(tempResult3["3주전"].stringValue)
+                    MainManager.shared.str_My8WeeksDTCCount.append(tempResult4["4주전"].stringValue)
+                    MainManager.shared.str_My8WeeksDTCCount.append(tempResult5["5주전"].stringValue)
+                    MainManager.shared.str_My8WeeksDTCCount.append(tempResult6["6주전"].stringValue)
+                    MainManager.shared.str_My8WeeksDTCCount.append(tempResult7["7주전"].stringValue)
+                    
+                    // 데이타 없다 0
+                    if( MainManager.shared.str_My8WeeksDTCCount[0].count == 0 ) {
+                        
+                        MainManager.shared.str_My8WeeksDTCCount[0] = "0"
+                        MainManager.shared.str_My8WeeksDTCCount[1] = "0"
+                        MainManager.shared.str_My8WeeksDTCCount[2] = "0"
+                        MainManager.shared.str_My8WeeksDTCCount[3] = "0"
+                        MainManager.shared.str_My8WeeksDTCCount[4] = "0"
+                        MainManager.shared.str_My8WeeksDTCCount[5] = "0"
+                        MainManager.shared.str_My8WeeksDTCCount[6] = "0"
+                        MainManager.shared.str_My8WeeksDTCCount[7] = "0"
+                    }
+                    
+                    print("")
+                }
+        }
+        
+        
+    }
+    
+    
+    var nowDateDay = ""
+    func getDateDay() {
+        
+        // 현재 시각 구하기
+        let now = Date()
+        // 데이터 포맷터
+        let dateFormatter = DateFormatter()
+        // 한국 Locale
+        dateFormatter.locale = Locale(identifier: "ko_KR")
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        nowDateDay = dateFormatter.string(from: now)
+        
+        //        // test
+        //        nowDateDay = "2018-03-01"
+        
+        print( "_____ DATE = "+nowDateDay )
+        
+    }
+    
+    
+    func getData8Week_AllMemberDTC() {
+        
+        
+        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
+        // database.php?Req=CarList
+        // "Res":"CarList","CarList":["스파크","크루즈",…..]
+        let parameters = [
+            "Req": "Get8WeeksDTCCountAllMember",
+            "CheckDate": nowDateDay]
+        
+        print(parameters)
+        Alamofire.request("http://seraphm.cafe24.com/database.php", method: .post, parameters: parameters)
+            .responseJSON { response in
+                
+                ToastIndicatorView.shared.close()
+                print(response)
+                //to get status code
+                
+                if let status = response.response?.statusCode {
+                    switch(status){
+                    case 201:
+                        print("example success")
+                    default:
+                        print("error with response status: \(status)")
+                    }
+                }
+                
+                //to get JSON return value
+                // "Res":"Get8WeeksDrivelMileage",[ {"이번주":"10.1"}, {"1주전":"5.8"}, {"2주전":"3.8"}, {"3주전":"5.8"}, {"4주전":"9.8"}, {"5주전":"9.8"}, {"6주전":"3.8"}, {"7주전":"2.8"} ];
+                
+                
+                self.getAllDTC = true
+                
+                if let json = try? JSON(response.result.value) {
+                    
+                    var tempResult0 = JSON(json["Result"][0])
+                    var tempResult1 = JSON(json["Result"][1])
+                    var tempResult2 = JSON(json["Result"][2])
+                    var tempResult3 = JSON(json["Result"][3])
+                    var tempResult4 = JSON(json["Result"][4])
+                    var tempResult5 = JSON(json["Result"][5])
+                    var tempResult6 = JSON(json["Result"][6])
+                    var tempResult7 = JSON(json["Result"][7])
+                    
+                    //                    print( tempResult0["이번주"].stringValue )
+                    //                    print( tempResult1["1주전"].stringValue )
+                    //                    print( tempResult2["2주전"].stringValue )
+                    //                    print( tempResult3["3주전"].stringValue )
+                    //                    print( tempResult4["4주전"].stringValue )
+                    //                    print( tempResult5["5주전"].stringValue )
+                    //                    print( tempResult6["6주전"].stringValue )
+                    //                    print( tempResult7["7주전"].stringValue )
+                    
+                    MainManager.shared.str_All8WeeksDTCCount.removeAll()
+                    
+                    MainManager.shared.str_All8WeeksDTCCount.append(tempResult0["이번주"].stringValue)
+                    MainManager.shared.str_All8WeeksDTCCount.append(tempResult1["1주전"].stringValue)
+                    MainManager.shared.str_All8WeeksDTCCount.append(tempResult2["2주전"].stringValue)
+                    MainManager.shared.str_All8WeeksDTCCount.append(tempResult3["3주전"].stringValue)
+                    MainManager.shared.str_All8WeeksDTCCount.append(tempResult4["4주전"].stringValue)
+                    MainManager.shared.str_All8WeeksDTCCount.append(tempResult5["5주전"].stringValue)
+                    MainManager.shared.str_All8WeeksDTCCount.append(tempResult6["6주전"].stringValue)
+                    MainManager.shared.str_All8WeeksDTCCount.append(tempResult7["7주전"].stringValue)
+                    
+
+                    // 데이타 없다 0
+                    if( MainManager.shared.str_All8WeeksDTCCount[0].count == 0 ) {
+                        
+                        MainManager.shared.str_All8WeeksDTCCount[0] = "0"
+                        MainManager.shared.str_All8WeeksDTCCount[1] = "0"
+                        MainManager.shared.str_All8WeeksDTCCount[2] = "0"
+                        MainManager.shared.str_All8WeeksDTCCount[3] = "0"
+                        MainManager.shared.str_All8WeeksDTCCount[4] = "0"
+                        MainManager.shared.str_All8WeeksDTCCount[5] = "0"
+                        MainManager.shared.str_All8WeeksDTCCount[6] = "0"
+                        MainManager.shared.str_All8WeeksDTCCount[7] = "0"
+                    }
+                    
+                    print("")
+                }
+                
+        }
+    }
+    
+    
+    
+    
+    // 금주 DTC
+    func getDataWeekDTCCount() {
+        
+        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
+        // database.php?Req=CarList
+        // "Res":"CarList","CarList":["스파크","크루즈",…..]
+        let parameters = [
+            "Req": "GetDTCCount",
+            "CheckDate": nowDateDay]
+        
+        print(parameters)
+        Alamofire.request("http://seraphm.cafe24.com/database.php", method: .post, parameters: parameters)
+            .responseJSON { response in
+                
+                ToastIndicatorView.shared.close()
+                print(response)
+                //to get status code
+                
+                if let status = response.response?.statusCode {
+                    switch(status){
+                    case 201:
+                        print("example success")
+                    default:
+                        print("error with response status: \(status)")
+                    }
+                }
+                
+                //to get JSON return value
+                // "Res":"Get8WeeksDrivelMileage",[ {"이번주":"10.1"}, {"1주전":"5.8"}, {"2주전":"3.8"}, {"3주전":"5.8"}, {"4주전":"9.8"}, {"5주전":"9.8"}, {"6주전":"3.8"}, {"7주전":"2.8"} ];
+                
+                self.getWeekDTC = true
+                
+                if let json = try? JSON(response.result.value) {
+                    
+                    MainManager.shared.member_info.str_ThisWeekDtcCount = json["Result"].stringValue
+                    
+                    print("")
+                }
+        }
+    }
+    
     
     
     
@@ -4275,6 +5078,10 @@ extension AViewController: CBPeripheralDelegate, CBCentralManagerDelegate {
             MainManager.shared.member_info.isCAR_FRIENDS_CONNECT = false;
             bleSerachDelayStopState = 0
         case .poweredOff:
+            
+            // 블루투스 켜라 팝업
+            self.performSegue(withIdentifier: "blueToothOffPopSegue02", sender: self)
+            
             print("central.state is .poweredOff")
             MainManager.shared.member_info.isBLE_ON = false
             MainManager.shared.member_info.isCAR_FRIENDS_CONNECT = false;

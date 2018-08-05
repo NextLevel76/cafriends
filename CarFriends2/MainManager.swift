@@ -140,7 +140,7 @@ struct Member_Info {
     var bCar_Btn_AutoWindowRevOpen = false
     var bCar_Btn_RVS = false
     // 유저가 세팅한 시간
-    var strCar_Check_ReservedRVSTime = "0"
+    var strCar_Check_ReservedRVSTime = "00:00:00"
     
     
     
@@ -149,14 +149,15 @@ struct Member_Info {
     
     var str_BLE_PinCode = "1111"
     
+    
+    var isBLE_OFF:Bool = false
     var isCAR_FRIENDS_CONNECT:Bool = false
     var isBLE_ON:Bool = false
+    
     
     var TOTAL_BLE_READ_ACC_DATA:String = "0"
     
     var strTOTAL_MILEAGE:String = "0"
-    
-    
 
     
     
@@ -502,6 +503,12 @@ struct Member_Info {
         str_Instruction = "[READ_DTC_EBCM]=1!"
         return writeData( str_Instruction )
     }
+    // [READ_DTC_EBCM]=1!
+    mutating func setREAD_DTC_ALL() -> NSData {
+        
+        str_Instruction = "[READ_DTC_ALL]=1!"
+        return writeData( str_Instruction )
+    }
     
     
     
@@ -557,7 +564,6 @@ struct Member_Info {
                     
                     // 읽은 데이타 변수에 세팅
                     
-                    
                     if( addHeadDataString.contains("=") == true ) {
                     
                         BLE_READ_ACC_DATA_PROC(addHeadDataString)
@@ -580,7 +586,6 @@ struct Member_Info {
         
         // print("BLE 처리한 숫자 = \(addCount)")
         //
-        
     }
     
     //    var str =  "Hello Zedd!"
@@ -598,7 +603,6 @@ class MainManager   {
     static let shared = MainManager()
     
     var bAPP_TEST = true
-    
     
     
     

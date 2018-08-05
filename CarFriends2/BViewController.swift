@@ -148,7 +148,7 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
         // 인터넷 연결 체크
         if( MainManager.shared.isConnectCheck() == false ) {
             
-            let myView = self.storyboard?.instantiateViewController(withIdentifier: "MainView") as! MainViewController
+            let myView = self.storyboard?.instantiateViewController(withIdentifier: "a00") as! AViewController
             self.present(myView, animated: true, completion: nil)
             return
         }

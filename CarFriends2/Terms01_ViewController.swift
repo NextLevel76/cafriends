@@ -51,7 +51,7 @@ class Terms01_ViewController: UIViewController, WKNavigationDelegate {
         
         let webConfiguration = WKWebViewConfiguration()
         // 웹뷰 딜리게이트 연결
-        webView01 = WKWebView(frame: CGRect( x: 18, y: 86, width: 340, height: 140 ), configuration: webConfiguration )
+        webView01 = WKWebView(frame: CGRect( x: 18, y: 86+20, width: 340, height: 140 ), configuration: webConfiguration )
         webView01.frame = MainManager.shared.initLoadChangeFrame( frame: self.webView01.frame  )
         //webView.uiDelegate = self
         webView01.navigationDelegate = self
@@ -68,7 +68,7 @@ class Terms01_ViewController: UIViewController, WKNavigationDelegate {
         
         
         // 웹뷰 딜리게이트 연결
-        webView02 = WKWebView(frame: CGRect( x: 18, y: 330, width: 340, height: 140 ), configuration: webConfiguration )
+        webView02 = WKWebView(frame: CGRect( x: 18, y: 330+20, width: 340, height: 140 ), configuration: webConfiguration )
         webView02.frame = MainManager.shared.initLoadChangeFrame( frame: self.webView02.frame  )
         //webView.uiDelegate = self
         webView02.navigationDelegate = self

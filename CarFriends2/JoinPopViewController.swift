@@ -14,8 +14,15 @@ class JoinPopViewController: UIViewController {
     @IBOutlet weak var btn_OK: UIButton!
     @IBOutlet weak var label_notis: UILabel!
     
+    
+    @IBOutlet weak var image_ble_on_notis: UIImageView!
+    
+    
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+
         
         label_notis.text = MainManager.shared.str_certifi_notis
         btn_OK.backgroundColor = UIColor(red: 11/256, green: 85/255, blue: 156/255, alpha: 1)
@@ -28,8 +35,7 @@ class JoinPopViewController: UIViewController {
     }
     
 
-    @IBAction func pressed_OK(_ sender: UIButton) {
-        
+    @IBAction func pressed_OK(_ sender: UIButton) {        
         
         if( MainManager.shared.str_certifi_notis == "인증 되었습니다." ) {
             

@@ -3,6 +3,14 @@
    version = "1.0">
    <ContextStates>
       <ContextState
+         contextName = "AViewController.getDataChartsDraw():AViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "MainManager.shared.str_My8WeeksDriveMileage">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "AViewController.centralManager(_:didDiscover:advertisementData:rssi:):AViewController.swift">
          <PersistentStrings>
             <PersistentString
@@ -15,6 +23,17 @@
          <PersistentStrings>
             <PersistentString
                value = "MainManager.shared.member_info.str_AvgFuelMileage">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "closure #2 in AViewController.setChartValues(_:):AViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "MainManager.shared.str_All8WeeksDriveMileage">
+            </PersistentString>
+            <PersistentString
+               value = " MainManager.shared.str_My8WeeksDriveMileage">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -65,6 +84,14 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
+         contextName = "MainViewController.pressed(_:):MainViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "MainManager.shared.iMemberJoinState">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "MainViewController.viewDidLoad():MainViewController.swift">
          <PersistentStrings>
             <PersistentString
@@ -89,10 +116,10 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "MainViewController.pressed(_:):MainViewController.swift">
+         contextName = "closure #1 in MainViewController.getData8Week_AllMemberDrive():MainViewController.swift">
          <PersistentStrings>
             <PersistentString
-               value = "MainManager.shared.iMemberJoinState">
+               value = "MainManager.shared.str_All8WeeksDriveMileage">
             </PersistentString>
          </PersistentStrings>
       </ContextState>

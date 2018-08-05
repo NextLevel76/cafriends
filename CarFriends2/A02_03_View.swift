@@ -10,10 +10,9 @@ import UIKit
 import WebKit
 
 class A02_03_View: UIView {
-
-
     
-    
+    @IBOutlet weak var webView: WKWebView!
+        
     /*
     // Only override draw() if you perform custom drawing.
     // An empty implementation adversely affects performance during animation.
