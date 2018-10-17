@@ -29,7 +29,7 @@ class A01_01_InfoMod_View: UIView {
     
     
     @IBOutlet weak var field_plate_num: UITextField!
-    @IBOutlet weak var field_car_dae_num: UITextField!
+    @IBOutlet weak var field_car_vin_num: UITextField!
     @IBOutlet weak var field_car_kind: UITextField!
     @IBOutlet weak var field_car_fuel: UITextField!
     @IBOutlet weak var field_car_year: UITextField!

@@ -23,6 +23,10 @@ class JoinPopViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        // 레이블 자동 줄바꿈
+        label_notis.numberOfLines = 0
+        label_notis.lineBreakMode = .byWordWrapping
+     
         
         label_notis.text = MainManager.shared.str_certifi_notis
         btn_OK.backgroundColor = UIColor(red: 11/256, green: 85/255, blue: 156/255, alpha: 1)
@@ -41,6 +45,16 @@ class JoinPopViewController: UIViewController {
             
             MainManager.shared.bMemberPhoneCertifi = true
         }
+        else if( MainManager.shared.str_certifi_notis == "인터넷 연결을 확인해 주세요." ) {
+            
+            MainManager.shared.isPopupStartNeteorkCheck = false
+        }
+        else if( MainManager.shared.str_certifi_notis == "단말기 비밀번호가 다릅니다.비밀번호 설정을 해주세요" ) {
+
+            MainManager.shared.member_info.bPinCodeViewGO = true            
+        }
+        
+        
         
         // self close
         dismiss(animated: true)

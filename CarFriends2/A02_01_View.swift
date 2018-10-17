@@ -18,14 +18,14 @@ class A02_01_View: UIView {
     @IBOutlet weak var btn_03_on: UIButton!
     @IBOutlet weak var btn_04_on: UIButton!
     @IBOutlet weak var btn_05_on: UIButton!
-    @IBOutlet weak var btn_06_on: UIButton!
+    
     
     @IBOutlet weak var btn_01_off: UIButton!
     @IBOutlet weak var btn_02_off: UIButton!
     @IBOutlet weak var btn_03_off: UIButton!
     @IBOutlet weak var btn_04_off: UIButton!
     @IBOutlet weak var btn_05_off: UIButton!
-    @IBOutlet weak var btn_06_off: UIButton!
+    
     
     
     

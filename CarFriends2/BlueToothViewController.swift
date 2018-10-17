@@ -31,7 +31,7 @@ class BlueToothViewController: UIViewController {
     @IBOutlet var view_ble01: UIView!
     @IBOutlet var view_ble02: UIView!
     @IBOutlet var view_ble03: UIView!
-    @IBOutlet var view_ble04: UIView!
+//    @IBOutlet var view_ble04: UIView!
     
     
     override func viewDidLoad() {
@@ -56,15 +56,15 @@ class BlueToothViewController: UIViewController {
         btn_ble04_select.backgroundColor = UIColor(red: 11/256, green: 85/255, blue: 156/255, alpha: 1)
         
         
-        self.view.addSubview(view_ble04)
+        //self.view.addSubview(view_ble04)
         self.view.addSubview(view_ble03)
         self.view.addSubview(view_ble02)
         self.view.addSubview(view_ble01)
         
         
         
-        view_ble04.translatesAutoresizingMaskIntoConstraints = false
-        view_ble04.frame = (view_ble04.superview?.bounds)!
+//        view_ble04.translatesAutoresizingMaskIntoConstraints = false
+//        view_ble04.frame = (view_ble04.superview?.bounds)!
         
         view_ble03.translatesAutoresizingMaskIntoConstraints = false
         view_ble03.frame = (view_ble03.superview?.bounds)!
@@ -95,11 +95,15 @@ class BlueToothViewController: UIViewController {
     
     // 01 기기없음
     @IBAction func pressed_kit_not(_ sender: UIButton) {
+
+        print("_____ 기기없음 _____")
         
         // 카 리스트 서버에서 받지 못했으면 버튼동작 중지
         if( MainManager.shared.bCarListRequest == false ) { return }
         
-        print("_____ 기기없음 _____")
+        // 인터넷 연결 확인
+        if( MainManager.shared.isConnectCheck() == false ) { return }
+
         
         // 회원가입한사람
         if( MainManager.shared.iMemberJoinState >= 1 ) {
@@ -154,7 +158,6 @@ class BlueToothViewController: UIViewController {
             
             
             // 디바이스 구매 -> 메인 메뉴 B 화면
-            // let myView = self.storyboard?.instantiateViewController(withIdentifier: "b00") as! BViewController
             let myView = self.storyboard?.instantiateViewController(withIdentifier: "a00") as! AViewController
             self.present(myView, animated: true, completion: nil)
             
@@ -180,7 +183,7 @@ class BlueToothViewController: UIViewController {
             "Req": "CarList"
             ]  // 차종
 
-        Alamofire.request("http://seraphm.cafe24.com/database.php", method: .post, parameters: parameters)
+        Alamofire.request(MainManager.shared.SeverURL+"database.php", method: .post, parameters: parameters)
             .responseJSON { response in
                 
                 ToastIndicatorView.shared.close()
@@ -219,8 +222,16 @@ class BlueToothViewController: UIViewController {
     }
     
     
+    @IBAction func pressed_ble02(_ sender: UIButton) {
+        
+        self.view.bringSubview(toFront: view_ble01)
+    }
     
-
+    @IBAction func pressed_ble03(_ sender: UIButton) {
+        
+        self.view.bringSubview(toFront: view_ble01)
+    }
+    
     
     
     
@@ -230,7 +241,10 @@ class BlueToothViewController: UIViewController {
     @IBAction func pressed_next_page(_ sender: UIButton) {
         
         // 가이드보기 -> 가이드화면 03
-        self.view.bringSubview(toFront: view_ble04)
+//        self.view.bringSubview(toFront: view_ble04)
+        
+        let myView = self.storyboard?.instantiateViewController(withIdentifier: "terms01") as! Terms01_ViewController
+        self.present(myView, animated: true, completion: nil)
     }
     
     //04
@@ -263,9 +277,6 @@ class BlueToothViewController: UIViewController {
         
         let defaults = UserDefaults.standard
         
-       
-        
-        
         
         // 클라에 저장된 유저 데이타 불러오기
         if UserDefaults.standard.object(forKey: "str_id_nick") != nil
@@ -286,8 +297,8 @@ class BlueToothViewController: UIViewController {
             { MainManager.shared.member_info.str_car_plate_num = defaults.string(forKey: "str_car_plate_num")! }
         if UserDefaults.standard.object(forKey: "str_car_year") != nil
             { MainManager.shared.member_info.str_car_year = defaults.string(forKey: "str_car_year")! }
-        if UserDefaults.standard.object(forKey: "str_AvgFuelMileage") != nil
-            { MainManager.shared.member_info.str_AvgFuelMileage = defaults.string(forKey: "str_AvgFuelMileage")! }
+        if UserDefaults.standard.object(forKey: "str_TotalAvgFuelMileage") != nil
+            { MainManager.shared.member_info.str_TotalAvgFuelMileage = defaults.string(forKey: "str_TotalAvgFuelMileage")! }
         
         
         if UserDefaults.standard.object(forKey: "i_car_piker_select") != nil
@@ -300,23 +311,27 @@ class BlueToothViewController: UIViewController {
         //총 주행거리, 당주 주행거리, 누적 연비, 당주 연비-----------------------------------------------------------------
         if UserDefaults.standard.object(forKey: "str_TotalDriveMileage") != nil
             { MainManager.shared.member_info.str_TotalDriveMileage = defaults.string(forKey: "str_TotalDriveMileage")! }
-        if UserDefaults.standard.object(forKey: "str_ThisWeekDriveMileage") != nil
-            { MainManager.shared.member_info.str_ThisWeekDriveMileage = defaults.string(forKey: "str_ThisWeekDriveMileage")! }
-        if UserDefaults.standard.object(forKey: "str_AvgFuelMileage") != nil
-            { MainManager.shared.member_info.str_AvgFuelMileage = defaults.string(forKey: "str_AvgFuelMileage")! }
+        
+//        if UserDefaults.standard.object(forKey: "str_ThisWeekDriveMileage") != nil
+//            { MainManager.shared.member_info.str_ThisWeekDriveMileage = defaults.string(forKey: "str_ThisWeekDriveMileage")! }
+        
+        if UserDefaults.standard.object(forKey: "str_TotalAvgFuelMileage") != nil
+            { MainManager.shared.member_info.str_TotalAvgFuelMileage = defaults.string(forKey: "str_TotalAvgFuelMileage")! }
+        
         if UserDefaults.standard.object(forKey: "str_Car_Status_Seed") != nil
             { MainManager.shared.member_info.str_Car_Status_Seed = defaults.string(forKey: "str_Car_Status_Seed")! }
         
         // PIN CODE
-        if UserDefaults.standard.object(forKey: "str_BLE_PinCode") != nil
-            { MainManager.shared.member_info.str_BLE_PinCode = defaults.string(forKey: "str_BLE_PinCode")! }
+        if UserDefaults.standard.object(forKey: "str_LocalPinCode") != nil
+        {
+            MainManager.shared.member_info.str_LocalPinCode = defaults.string(forKey: "str_LocalPinCode")!
+            MainManager.shared.member_info.str_SetPinCode = "aaaa"
+        }
 
         // BLE_MAC_ADDRESS
         if UserDefaults.standard.object(forKey: "carFriendsMacAdd") != nil
             { MainManager.shared.member_info.carFriendsMacAdd = defaults.string(forKey: "carFriendsMacAdd")! }
-
         
-
         
         
 
@@ -331,7 +346,7 @@ class BlueToothViewController: UIViewController {
         print(MainManager.shared.member_info.str_car_fuel_type)
         print(MainManager.shared.member_info.str_car_plate_num)
         print(MainManager.shared.member_info.str_car_year)
-        print(MainManager.shared.member_info.str_AvgFuelMileage)
+        print(MainManager.shared.member_info.str_TotalAvgFuelMileage)
     }
     
     

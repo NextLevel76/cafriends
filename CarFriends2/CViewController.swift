@@ -26,9 +26,83 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
         }
     }
     
+    
+    // alert 웹뷰에서 자바 스크립트 실행가능하게
+    public func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping () -> Void) {
+        
+        let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
+        let otherAction = UIAlertAction(title: "OK", style: .default, handler: {action in completionHandler()})
+        alert.addAction(otherAction)
+        
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    func webView(_ webView: WKWebView, runJavaScriptConfirmPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo,
+                 completionHandler: @escaping (Bool) -> Void) {
+        let alertController = UIAlertController(title: "", message: message, preferredStyle: .alert)
+        alertController.addAction(UIAlertAction(title: "확인", style: .default, handler: { (action) in
+            completionHandler(true)
+        }))
+        alertController.addAction(UIAlertAction(title: "취소", style: .default, handler: { (action) in
+            completionHandler(false)
+        }))
+        
+        self.present(alertController, animated: true, completion: nil)
+    }
+    
+    func webView(_ webView: WKWebView, runJavaScriptTextInputPanelWithPrompt prompt: String, defaultText: String?, initiatedByFrame frame: WKFrameInfo,
+                 completionHandler: @escaping (String?) -> Void) {
+        let alertController = UIAlertController(title: "", message: prompt, preferredStyle: .alert)
+        alertController.addTextField { (textField) in
+            textField.text = defaultText
+        }
+        alertController.addAction(UIAlertAction(title: "확인", style: .default, handler: { (action) in
+            if let text = alertController.textFields?.first?.text {
+                completionHandler(text)
+            } else {
+                completionHandler(defaultText)
+            }
+        }))
+        
+        alertController.addAction(UIAlertAction(title: "취소", style: .default, handler: { (action) in
+            completionHandler(nil)
+        }))
+        
+        self.present(alertController, animated: true, completion: nil)
+    }
+    
+    public func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
+        // 중복적으로 리로드가 일어나지 않도록 처리 필요.
+        webView.reload()
+    }
+    
+    func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
+        if navigationAction.targetFrame == nil {
+            
+//            webView.load(navigationAction.request)
+//            webView.goBack()
+            
+             UIApplication.shared.open(navigationAction.request.url!, options: [:])
+        }
+        return nil
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     var btn_name:[String] = ["차량최신정보","지역별 게시판","차량전용 중고장터"]
+    let btn_car_trade_name = ["차량 직거래","용품 직거래"]
     
 
+    // 처음 시작일때 메뉴를 보이게
+    var bFirstSubMenuLoadShow = true
     
     
     var iWebStart:Int = 0
@@ -101,14 +175,15 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
 //        menuView_c01.frame.origin.y = 40
         
         subMenuViewHeight = menuScrollView.frame.height
+        print( menuScrollView.frame )
         
         c01_BtnCreate()
 
 
         // 첫번째 웹 로드
         
-//        //let temp = "http://seraphm.cafe24.com/bbs/write.php?bo_table=B_2_4"
-//        let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=C_1_1&sca=스파크"
+//        //let temp = MainManager.shared.SeverURL+"bbs/write.php?bo_table=B_2_4"
+//        let temp = MainManager.shared.SeverURL+"bbs/board.php?bo_table=C_1_1&sca=스파크"
 //        let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
 //        let request = URLRequest(url: url! )
 //        webView.load(request)
@@ -120,23 +195,14 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // webView.frame = MainManager.shared.initLoadChangeFrame(frame: webView.frame)
-        // 인터넷 연결 체크
-        if( MainManager.shared.isConnectCheck() == false ) {
-            
-            let myView = self.storyboard?.instantiateViewController(withIdentifier: "a00") as! AViewController
-            self.present(myView, animated: true, completion: nil)
-            return
-        }
                 
         
         // 저장된 쿠키 불러오기
         HTTPCookieStorage.restore()
-        print("____________ 유저 로그인")
-        userLogin()
-        
-        menuScrollView.frame = MainManager.shared.initLoadChangeFrame(frame: menuScrollView.frame)
+        // 웹뷰 세팅
+        self.setupWebView()
+//        print("____________ 유저 로그인")
+//        userLogin()
 
     }
     
@@ -162,41 +228,60 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
         }
     }
     
+    
+    // 웹뷰 투 핑거 확대 축소 안되게
+//    func scrollViewWillBeginZooming(_ scrollView: UIScrollView, with view: UIView?) {
+//        scrollView.pinchGestureRecognizer?.isEnabled = false
+//    }
+    
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        
 
         
         if scrollView == webView.scrollView {
+            
+            // 가로 스크롤 막기
+            webView.scrollView.contentOffset = CGPoint(x: 0, y: webView.scrollView.contentOffset.y)
+            
+            
+            
+            
             let contentOffset = scrollView.contentOffset.y
            // print("contentOffset: ", contentOffset)
-            
             
             if( bHideSubMenu == false && contentOffset > 30 ) {
              
                 bHideSubMenu = true
-                
-                menuScrollView.isHidden = bHideSubMenu;
-                //                b01_ScrollMenuView.isHidden = bHideSubMenu;
-                //                b02_ScrollMenuView.isHidden = bHideSubMenu;
+                menuScrollView.isHidden = bHideSubMenu
+                self.webView.frame = webViewChangeBigRect
                 
                 print("NEW: ", contentOffset)
                 
-                self.webView.frame = webViewChangeBigRect
                 
+                
+                // 제일 처음 한번 보이게 처리
+                if( bFirstSubMenuLoadShow == true ) {
+                    
+                    bFirstSubMenuLoadShow = false
+                    
+                    
+                    bHideSubMenu = false
+                    menuScrollView.isHidden = bHideSubMenu;
+                    // 원래의 크기대로
+                    self.webView.frame = webViewChangeOldRect
+                }
             }
             else if( bHideSubMenu == true && contentOffset < -30 ) {
                 
                 bHideSubMenu = false
-                menuScrollView.isHidden = bHideSubMenu;
-                
-                //                b01_ScrollMenuView.isHidden = bHideSubMenu;
-                //                b02_ScrollMenuView.isHidden = bHideSubMenu;
-                
+                menuScrollView.isHidden = bHideSubMenu
                 // 원래의 크기대로
                 self.webView.frame = webViewChangeOldRect
                 
                 print("OLD: ", contentOffset)
             }
+            
+            
+           
             
 //            if (contentOffset > self.lastKnowContentOfsset) {
 //                print("scrolling Down")
@@ -232,20 +317,21 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
         var parameters = [
             "Req": "Login",
             "ID": MainManager.shared.member_info.str_id_nick,
-            "Pass": MainManager.shared.member_info.str_id_phone_num]
+            "Pass": MainManager.shared.member_info.str_password]
         
-        if( MainManager.shared.bAPP_TEST ) {
-            
-            MainManager.shared.member_info.str_id_nick = "blue005"
-            parameters = [
-                "Req": "Login",
-                "ID": MainManager.shared.member_info.str_id_nick,
-                "Pass": MainManager.shared.member_info.str_id_nick]
-        }
+        
+//        if( MainManager.shared.bAPP_TEST ) {
+//            MainManager.shared.member_info.str_id_nick = "blue009"
+//            parameters = [
+//                "Req": "Login",
+//                "ID": MainManager.shared.member_info.str_id_nick,
+//                "Pass": MainManager.shared.member_info.str_id_nick]
+//        }
+        
        
         print(MainManager.shared.member_info.str_id_nick)
         
-        Alamofire.request("http://seraphm.cafe24.com/login.php", method: .post, parameters: parameters)
+        Alamofire.request(MainManager.shared.SeverURL+"login.php", method: .post, parameters: parameters)
             .responseJSON { response in
 
                 ToastIndicatorView.shared.close()
@@ -294,7 +380,7 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
         
         
         
-//        let myUrl = URL(string: "http://seraphm.cafe24.com/login.php/");
+//        let myUrl = URL(string: MainManager.shared.SeverURL+"login.php/");
 //        var request = URLRequest(url:myUrl!)
 //        var cookies = HTTPCookie.requestHeaderFields(with: HTTPCookieStorage.shared.cookies(for: request.url!)!)
 //        if let value = cookies["Cookie"] {
@@ -342,7 +428,7 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
         
 //        activityIndicator.startAnimating()
 //
-//        var request = URLRequest(url: URL(string: "http://seraphm.cafe24.com/login.php/")!)
+//        var request = URLRequest(url: URL(string: MainManager.shared.SeverURL+"login.php/")!)
 //
 //        /*
 //        var cookies = HTTPCookie.requestHeaderFields(with: HTTPCookieStorage.shared.cookies(for: request.url!)!)
@@ -375,7 +461,7 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
 //
 //        print(MainManager.shared.member_info.str_id_nick)
 //        print(MainManager.shared.member_info.str_id_phone_num)
-//        Alamofire.request("http://seraphm.cafe24.com/login.php", method: .post, parameters: parameters)
+//        Alamofire.request(MainManager.shared.SeverURL+"login.php", method: .post, parameters: parameters)
 //            .responseJSON { response in
 //
 //                self.activityIndicator.stopAnimating()
@@ -429,7 +515,8 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
         var px = 0
         //var py = 0
         
-        let btn_width = 100
+        let btn_width = Int(75 * MainManager.shared.ratio_X)
+        let btn_height = Int(menuScrollView.frame.height)
         
         for i in 1...btn_image.count {
             
@@ -437,7 +524,7 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
             
             let tempBtn = UIButton()
             tempBtn.tag = i
-            tempBtn.frame = CGRect(x: (i*btn_width)-btn_width, y: 0, width: btn_width, height: 30)
+            tempBtn.frame = CGRect(x: (i*btn_width)-btn_width, y: 0, width: btn_width, height: btn_height)
             tempBtn.backgroundColor = UIColor.white
             tempBtn.setTitleColor( UIColor.lightGray, for: .normal )
             if(i == 1)  {
@@ -447,17 +534,29 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
             //tempBtn.setTitle("Hello \(i)", for: .normal)
             tempBtn.addTarget(self, action: #selector(c01MenuBtnAction), for: .touchUpInside)
             tempBtn.setTitle( btn_image[i-1], for: .normal)
+            tempBtn.titleLabel?.font = .systemFont(ofSize: 15)
             //tempBtn.setImage(UIImage(named:btn_image[i-1]), for: UIControlState.normal )
             
             px += btn_width
             menuScrollView.addSubview(tempBtn)
             //px = px + Int(scrollView.frame.width)/2 - 30
         }
-        menuScrollView.contentSize = CGSize(width: px+(btn_width/2), height: 30)
+        menuScrollView.contentSize = CGSize(width: px+(btn_width/2), height: btn_height)
     }
     
     
     func c01MenuBtnAction(_ sender: UIButton) {
+        
+        
+        // 인터넷 연결 확인
+        if( MainManager.shared.isConnectCheck() == false ) {
+            
+            let myView = self.storyboard?.instantiateViewController(withIdentifier: "a00") as! AViewController
+            self.present(myView, animated: true, completion: nil)
+            return
+        }
+        
+        
         
         ToastIndicatorView.shared.setup(self.view, txt_msg: "")
         
@@ -474,37 +573,34 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
         let select_btn_tag = sender.tag
         
         if( select_btn_tag == 1 ) {
-            let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=C_1_1"
-            let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
-            let request = URLRequest(url: url! )
-            webView.load(request)
+            
+//            let temp = MainManager.shared.SeverURL+"bbs/board.php?bo_table=C_1_1"
+//            let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
+//            let request = URLRequest(url: url! )
+//            webView.load(request)
+            
+            restartWebView( MainManager.shared.SeverURL+"bbs/board.php?bo_table=C_1_1" )
         }
         else if( select_btn_tag == 2 ) {
-            let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=C_1_2"
-            let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
-            let request = URLRequest(url: url!)
-            webView.load(request)
+            
+            restartWebView( MainManager.shared.SeverURL+"bbs/board.php?bo_table=C_1_2" )
         }
         else if( select_btn_tag == 3 ) {
             
-            let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=C_1_3"
-            let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
-            let request = URLRequest(url: url!)
-            webView.load(request)
+            restartWebView( MainManager.shared.SeverURL+"bbs/board.php?bo_table=C_1_3" )
         }
         else if( select_btn_tag == 4 ) {
             
-            let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=C_1_4"
-            let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
-            let request = URLRequest(url: url!)
-            webView.load(request)
+            restartWebView( MainManager.shared.SeverURL+"bbs/board.php?bo_table=C_1_4" )
         }
         else if( select_btn_tag == 5 ) {
             
-            let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=C_1_5"
-            let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
-            let request = URLRequest(url: url!)
-            webView.load(request)
+            restartWebView( MainManager.shared.SeverURL+"bbs/board.php?bo_table=C_1_5" )
+            
+//            let temp = MainManager.shared.SeverURL+"bbs/board.php?bo_table=C_1_5"
+//            let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
+//            let request = URLRequest(url: url!)
+//            webView.load(request)
         }
     }
     
@@ -517,7 +613,8 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
         var count = 0
         var px = 0
         //var py = 0
-        let btn_width = 100
+        let btn_width = Int(75 * MainManager.shared.ratio_X)
+        let btn_height = Int(menuScrollView.frame.height)
         
         for i in 1...btn_image.count {
             
@@ -525,7 +622,7 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
             
             let tempBtn = UIButton()
             tempBtn.tag = i
-            tempBtn.frame = CGRect(x: (i*btn_width)-btn_width, y: 0, width: btn_width, height: 30)
+            tempBtn.frame = CGRect(x: (i*btn_width)-btn_width, y: 0, width: btn_width, height: btn_height)
             
             tempBtn.setTitleColor( UIColor.lightGray, for: .normal )
             if(i == 1)  {
@@ -536,12 +633,13 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
             tempBtn.addTarget(self, action: #selector(c02MenuBtnAction), for: .touchUpInside)
             //tempBtn.setImage(UIImage(named:btn_image[i-1]), for: UIControlState.normal )
             tempBtn.setTitle( btn_image[i-1], for: .normal)
+            tempBtn.titleLabel?.font = .systemFont(ofSize: 15)
 
             px += btn_width
             menuScrollView.addSubview(tempBtn)
             //px = px + Int(scrollView.frame.width)/2 - 30
         }
-        menuScrollView.contentSize = CGSize(width: px, height: 30)
+        menuScrollView.contentSize = CGSize(width: px, height: btn_height)
     }
     
     
@@ -551,6 +649,14 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
     
     
     func c02MenuBtnAction(_ sender: UIButton) {
+        
+        // 인터넷 연결 확인
+        if( MainManager.shared.isConnectCheck() == false ) {
+            
+            let myView = self.storyboard?.instantiateViewController(withIdentifier: "a00") as! AViewController
+            self.present(myView, animated: true, completion: nil)
+            return
+        }
         
         
         //if( iWebStart < 2 ) { return }
@@ -576,65 +682,40 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
         let select_btn_tag = sender.tag
         
         if( select_btn_tag == 1 ) {
-            let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=C_2_1&sca=스파크"
-            let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
-            let request = URLRequest(url: url! )
-            webView.load(request)
+            
+            restartWebView( MainManager.shared.SeverURL+"bbs/board.php?bo_table=C_2_1&sca=스파크" )
         }
         else if( select_btn_tag == 2 ) {
-            let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=C_2_2&sca=스파크"
-            let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
-            let request = URLRequest(url: url!)
-            webView.load(request)
+            
+            restartWebView( MainManager.shared.SeverURL+"bbs/board.php?bo_table=C_2_2&sca=스파크" )
         }
         else if( select_btn_tag == 3 ) {
             
-            let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=C_2_3&sca=스파크"
-            let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
-            let request = URLRequest(url: url!)
-            webView.load(request)
+            restartWebView( MainManager.shared.SeverURL+"bbs/board.php?bo_table=C_2_3&sca=스파크" )
         }
         else if( select_btn_tag == 4 ) {
             
-            let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=C_2_4&sca=스파크"
-            let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
-            let request = URLRequest(url: url!)
-            webView.load(request)
+            restartWebView( MainManager.shared.SeverURL+"bbs/board.php?bo_table=C_2_4&sca=스파크" )
         }
         else if( select_btn_tag == 5 ) {
             
-            let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=C_2_5&sca=스파크"
-            let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
-            let request = URLRequest(url: url!)
-            webView.load(request)
+            restartWebView( MainManager.shared.SeverURL+"bbs/board.php?bo_table=C_2_5&sca=스파크" )
         }
         else if( select_btn_tag == 6 ) {
             
-            let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=C_2_6&sca=스파크"
-            let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
-            let request = URLRequest(url: url!)
-            webView.load(request)
+            restartWebView( MainManager.shared.SeverURL+"bbs/board.php?bo_table=C_2_6&sca=스파크" )
         }
         else if( select_btn_tag == 7 ) {
             
-            let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=C_2_7&sca=스파크"
-            let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
-            let request = URLRequest(url: url!)
-            webView.load(request)
+            restartWebView( MainManager.shared.SeverURL+"bbs/board.php?bo_table=C_2_7&sca=스파크" )
         }
         else if( select_btn_tag == 8 ) {
             
-            let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=C_2_8&sca=스파크"
-            let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
-            let request = URLRequest(url: url!)
-            webView.load(request)
+            restartWebView( MainManager.shared.SeverURL+"bbs/board.php?bo_table=C_2_8&sca=스파크" )
         }
         else if( select_btn_tag == 9 ) {
             
-            let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=C_2_9&sca=스파크"
-            let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
-            let request = URLRequest(url: url!)
-            webView.load(request)
+            restartWebView( MainManager.shared.SeverURL+"bbs/board.php?bo_table=C_2_9&sca=스파크" )
         }
         
         //        let s = String(format: "frame-A-02-%02d-on", sender.tag)
@@ -650,23 +731,23 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
     func c03_BtnCreate() {
         
         //let btnNum = 11
-        // 실내용품,외장용품,오일류,튜닝,계절상품
-        
-        let btn_image = ["차량 직거래","차량용품 직거래"]
+        // let btn_image = ["차량 직거래","차량용품 직거래"]
+
         
         var count = 0
         var px = 0
         //var py = 0
         
-        let btn_width = 375/2
+        let btn_width = Int((375/2) * MainManager.shared.ratio_Y)
+        let btn_height = Int(menuScrollView.frame.height)
         
-        for i in 1...btn_image.count {
+        for i in 1...btn_car_trade_name.count {
             
             count += 1
             
             let tempBtn = UIButton()
             tempBtn.tag = i
-            tempBtn.frame = CGRect(x: (i*btn_width)-btn_width, y: 0, width: btn_width, height: 30)
+            tempBtn.frame = CGRect(x: (i*btn_width)-btn_width, y: 0, width: btn_width, height: btn_height)
             tempBtn.backgroundColor = UIColor.white
             tempBtn.setTitleColor( UIColor.lightGray, for: .normal )
             if(i == 1)  {
@@ -675,43 +756,53 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
             }
             //tempBtn.setTitle("Hello \(i)", for: .normal)
             tempBtn.addTarget(self, action: #selector(c03MenuBtnAction), for: .touchUpInside)
-            tempBtn.setTitle( btn_image[i-1], for: .normal)
+            tempBtn.setTitle( btn_car_trade_name[i-1], for: .normal)
+            tempBtn.titleLabel?.font = .systemFont(ofSize: 15)
             //tempBtn.setImage(UIImage(named:btn_image[i-1]), for: UIControlState.normal )
             
             px += btn_width
             menuScrollView.addSubview(tempBtn)
             //px = px + Int(scrollView.frame.width)/2 - 30
         }
-        menuScrollView.contentSize = CGSize(width: px, height: 30)
+        menuScrollView.contentSize = CGSize(width: px, height: btn_height)
     }
     
     func c03MenuBtnAction(_ sender: UIButton) {
         
+        
+        // 인터넷 연결 확인
+        if( MainManager.shared.isConnectCheck() == false ) {
+            
+            let myView = self.storyboard?.instantiateViewController(withIdentifier: "a00") as! AViewController
+            self.present(myView, animated: true, completion: nil)
+            return
+        }
+        
+        
+        
         ToastIndicatorView.shared.setup(self.view, txt_msg: "")
         
-        let btn_image = ["차량 직거래","차량용품 직거래"]
+        // let btn_image = ["차량 직거래","차량용품 직거래"]
         
-        for i in 1...btn_image.count {
+        for i in 1...btn_car_trade_name.count {
             
             let tempBtn = menuScrollView.viewWithTag(i) as! UIButton
             //tempBtn.setImage(UIImage(named:btn_image[i-1]), for: UIControlState.normal )
             tempBtn.setTitleColor( UIColor.lightGray, for: .normal )
+            tempBtn.titleLabel?.font = .systemFont(ofSize: 15)
         }
         sender.setTitleColor( UIColor.black, for: .normal )
+        
         
         let select_btn_tag = sender.tag
         
         if( select_btn_tag == 1 ) {
-            let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=C_3_1"
-            let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
-            let request = URLRequest(url: url! )
-            webView.load(request)
+            
+            restartWebView( MainManager.shared.SeverURL+"bbs/board.php?bo_table=C_3_1" )
         }
         else if( select_btn_tag == 2 ) {
-            let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=C_3_2"
-            let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
-            let request = URLRequest(url: url!)
-            webView.load(request)
+            
+            restartWebView( MainManager.shared.SeverURL+"bbs/board.php?bo_table=C_3_2" )
         }
     }
     
@@ -739,6 +830,14 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
     
     @IBAction func pressedB(_ sender: UIButton) {
         
+        // 인터넷 연결 확인
+        if( MainManager.shared.isConnectCheck() == false ) {
+            
+            let myView = self.storyboard?.instantiateViewController(withIdentifier: "a00") as! AViewController
+            self.present(myView, animated: true, completion: nil)
+            return
+        }
+        
         let myView = self.storyboard?.instantiateViewController(withIdentifier: "b00") as! BViewController
         self.present(myView, animated: true, completion: nil)
     }
@@ -749,6 +848,14 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
     
     @IBAction func pressed_C01(_ sender: UIButton) {
         
+        // 인터넷 연결 확인
+        if( MainManager.shared.isConnectCheck() == false ) {
+            
+            let myView = self.storyboard?.instantiateViewController(withIdentifier: "a00") as! AViewController
+            self.present(myView, animated: true, completion: nil)
+            return
+        }
+        
         btn_c01.setTitleColor(.white, for: .normal)
         btn_c02.setTitleColor(.gray, for: .normal)
         btn_c03.setTitleColor(.gray, for: .normal)
@@ -758,11 +865,7 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
         removeToScrollViewBtn()
         c01_BtnCreate()
         
-        let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=C_1_1"
-        let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
-        let request = URLRequest(url: url!)
-        webView.load(request)
-        
+        restartWebView( MainManager.shared.SeverURL+"bbs/board.php?bo_table=C_1_1" )
         
         // 자바 스크립트 호출
         //let userScript = WKUserScript(source: "alertMsg()", injectionTime: .atDocumentEnd, forMainFrameOnly: true)
@@ -775,6 +878,14 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
     
     @IBAction func pressed_C02(_ sender: UIButton) {
         
+        // 인터넷 연결 확인
+        if( MainManager.shared.isConnectCheck() == false ) {
+            
+            let myView = self.storyboard?.instantiateViewController(withIdentifier: "a00") as! AViewController
+            self.present(myView, animated: true, completion: nil)
+            return
+        }
+        
         btn_c01.setTitleColor(.gray, for: .normal)
         btn_c02.setTitleColor(.white, for: .normal)
         btn_c03.setTitleColor(.gray, for: .normal)
@@ -784,10 +895,8 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
         c02_BtnCreate()
         
         
-        let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=C_2_1"
-        let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
-        let request = URLRequest(url: url!)
-        webView.load(request)
+        restartWebView( MainManager.shared.SeverURL+"bbs/board.php?bo_table=C_2_1" )
+
         
 //        let url = URL(string: "https://m.naver.com/" )
 //        let request = URLRequest(url: url!)
@@ -797,6 +906,14 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
   
     @IBAction func pressed_C03(_ sender: UIButton) {
         
+        // 인터넷 연결 확인
+        if( MainManager.shared.isConnectCheck() == false ) {
+            
+            let myView = self.storyboard?.instantiateViewController(withIdentifier: "a00") as! AViewController
+            self.present(myView, animated: true, completion: nil)
+            return
+        }
+        
         btn_c01.setTitleColor(.gray, for: .normal)
         btn_c02.setTitleColor(.gray, for: .normal)
         btn_c03.setTitleColor(.white, for: .normal)
@@ -805,13 +922,10 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
         removeToScrollViewBtn()
         c03_BtnCreate()
         
+        restartWebView( MainManager.shared.SeverURL+"bbs/board.php?bo_table=C_3_1" )
+
         
-        let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=C_3_1"
-        let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
-        let request = URLRequest(url: url!)
-        webView.load(request)
-        
-//        let url = URL(string: "http://seraphm.cafe24.com/adm/" )
+//        let url = URL(string: MainManager.shared.SeverURL+"adm/" )
 //        let request = URLRequest(url: url!)
 //        webView.load(request)
     }
@@ -819,15 +933,12 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
     
     
     
-    // 웹 
-    public func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping () -> Void) {
-        
-        let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
-        let otherAction = UIAlertAction(title: "OK", style: .default, handler: {action in completionHandler()})
-        alert.addAction(otherAction)
-        
-        self.present(alert, animated: true, completion: nil)
-    }
+    
+    
+    
+    
+    
+    
     
     
     override func dismiss(animated flag: Bool, completion: (() -> Void)?)
@@ -921,7 +1032,7 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
         
         //self.view.bringSubview(toFront: activityIndicator)
         //activityIndicator.startAnimating()
-        let temp = "http://seraphm.cafe24.com/bbs/board.php?bo_table=C_1_1&sca=스파크"
+        let temp = MainManager.shared.SeverURL+"bbs/board.php?bo_table=C_1_1&sca=스파크"
         let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
         let request = URLRequest(url: url! )
         webView.load(request)
@@ -934,7 +1045,62 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
         let tempMenuHeight = subMenuViewHeight
         webViewChangeBigRect = CGRect(x: webViewChangeOldRect.origin.x, y: webViewChangeOldRect.origin.y-tempMenuHeight, width: webViewChangeOldRect.width, height: webViewChangeOldRect.height+tempMenuHeight)
         
+        print( "self.view.frame = \(self.view.frame)" )
+        
+        print( "webViewChangeOldRect = \(webViewChangeOldRect)" )
+        print( "webViewChangeBigRect = \(webViewChangeBigRect)" )
+        
+        print("subMenuViewHeight :: \(subMenuViewHeight)")
         // self.webView.frame = webViewChangeOldRect
+    }
+    
+    
+    public func restartWebView(_ loadUrl: String ) {
+        
+        print("restartWebView :: \(loadUrl)")
+        
+        // 이전 웹뷰 제거 후 다시 웹뷰 만들기 시작
+        webView.removeFromSuperview()
+        
+        // 다음은 NSHTTPCookieStorage의 모든 쿠키를 주입하기위한 Swift의 Mattrs 솔루션 버전입니다.
+        // 이것은 주로 사용자 세션을 만들기 위해 인증 쿠키를 주입하기 위해 수행되었습니다.
+        let userContentController = WKUserContentController()
+        if let cookies = HTTPCookieStorage.shared.cookies {
+            let script = getJSCookiesString(for: cookies)
+            let cookieScript = WKUserScript(source: script, injectionTime: .atDocumentStart, forMainFrameOnly: false)
+            userContentController.addUserScript(cookieScript)
+        }
+        let webViewConfig = WKWebViewConfiguration()
+        webViewConfig.userContentController = userContentController
+        
+        // 웹뷰 딜리게이트 연결
+        self.webView = WKWebView(frame: webViewChangeOldRect, configuration: webViewConfig)
+        
+        self.webView.navigationDelegate = self
+        webView.uiDelegate         = self
+        self.webView.translatesAutoresizingMaskIntoConstraints = false
+        self.view.addSubview(webView)
+        
+        // 스크롤 딜리게이트 연결
+        self.webView.scrollView.delegate = self
+        
+        
+        // ToastIndicatorView.shared.setup(self.view, txt_msg: "")
+        
+        //self.view.bringSubview(toFront: activityIndicator)
+        //activityIndicator.startAnimating()
+        
+        let url = URL(string: loadUrl.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
+        let request = URLRequest(url: url! )
+        webView.load(request)
+        
+        // 처음 시작일때 메뉴를 보이게
+        bFirstSubMenuLoadShow = true
+        
+//        bHideSubMenu = false
+//        menuScrollView.isHidden = bHideSubMenu
+//        // 원래의 크기대로
+//        self.webView.frame = webViewChangeOldRect
     }
     
     
@@ -971,7 +1137,7 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
 //        // blue001 / 01012345678
 //
 //
-//        let url = URL(string: "http://seraphm.cafe24.com/login.php")!
+//        let url = URL(string: MainManager.shared.SeverURL+"login.php")!
 //        let request = NSMutableURLRequest(url: url as URL,
 //                                          cachePolicy: NSURLRequest.CachePolicy.reloadIgnoringLocalAndRemoteCacheData,
 //                                          timeoutInterval: 30.0)

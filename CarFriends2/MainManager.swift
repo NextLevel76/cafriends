@@ -39,6 +39,15 @@ struct Connectivity {
 
 
 
+
+struct Batt_dynamic {
+    
+    var volt:Float = 0;
+    var level:Float = 0;
+    var gain:Float = 0;
+}
+
+
 struct Member_Info {
     
     let DF_DOOR_LOCK = 0
@@ -54,7 +63,7 @@ struct Member_Info {
     let DF_RES_RVS_TIME = 10
     
     // mem_join
-    var str_password = "불러오기안됨"
+    var str_password = "1111"
     var str_id_nick = "파랑오빠(회원가입데이타없다.)"
     var str_id_email = "blue@naver.com"
     var str_id_phone_num = "99922229999"
@@ -71,28 +80,33 @@ struct Member_Info {
     var str_car_vin_number = ""
     var str_car_plate_num = "서울가1234"
     
-    var str_TotalDriveMileage = "00"    // 총 주행거리
-    var str_ThisWeekDriveMileage = "0"    // 당주 주행거리
+    var str_TotalDriveMileage = "0"    // 총 주행거리
+    
+    var str_ThisWeekDriveMileage = "0"         // 서버 DB에서 읽은 첫번째주 데이타 넣는다.
+    var str_ThisWeekDriveMileageSetDB = "0"    // 단말기에서 올라오는 주 데이타 DB에 접속할때마다 저장
+    
     var str_ThisMonthDriveMileage = "0"    // 월 주행거리
+    var str_8WeekDriveMileage = "0"    // 8주 총 주행거리
     
-    var str_8WeekDriveMileage = "10000"    // 8주 총 주행거리
     
-    var str_AvgFuelMileage = "00"       // 총 평균 연비
-    var str_ThisWeekFuelMileage = "00"   // 주 평균 연비
-    var str_ThisMonthFuelMileage = "00"   // 연비
     
-    var str_8WeekAvgFuelMileage = "00"   // 8주 평균 연비
+    var str_TotalAvgFuelMileage = "0"       // 총 누적 평균 연비
     
-    var str_ThisWeekDtcCount = "00"   // 이번주 갯수
-    var str_8WeekDtcCount = "00"       // 8주 합
+    var str_ThisWeekFuelMileage = "0"        // 서버 DB에서 읽은 첫번째주 데이타 넣는다.
+    var str_ThisWeekFuelMileageSetDB = "0"   // 단말기에서 올라오는 주 데이타 DB에 접속할때마다 저장
+    
+    var str_ThisMonthFuelMileage = "0"   // 연비
+    
+    var str_8WeekAvgFuelMileage = "0"   // 8주 평균 연비
+    
+    var str_ThisWeekDtcCount = "0"   // 이번주 갯수
+    var str_8WeekDtcCount = "0"       // 8주 합
     
     var str_dtcEcm = ""       // 8주 합
     var str_dtcBcm = ""       // 8주 합
     var str_dtcTcm = ""       // 8주 합
     var str_dtcEbcm = ""       // 8주 합
-
-    
-    
+    var bAddDtcOK_8WeekReadDtc = false      // DTC 코드를 읽었을때 AddDTC 하고 나면 8weekDTC 다시 읽어와야함.
     
     
     
@@ -105,19 +119,19 @@ struct Member_Info {
     // 배터리 전압
     var str_BattVoltage = "0"
     // 연료탱크 잔량
-    var str_FuelTank = "0"
+    var str_FuelTank = "10"
     
     // 모듈  Date/Time
     var str_Car_DateTime = "0"
     var str_Phone_DateTime = "0"
     
     
-//    var bCar_Status_DoorLock = false    // 도어락
-//    var bCar_Status_Hatch = false       // 트렁크
-//    var bCar_Status_Window = false
-//    var bCar_Status_Sunroof = false
-//    var bCar_Status_RVS = false         // 원격시동
-//    var bCar_Car_Status_IGN = false     // 키온
+    var bCar_Status_DoorLock = false    // 도어락
+    var bCar_Status_Hatch = false       // 트렁크
+    var bCar_Status_Window = false
+    var bCar_Status_Sunroof = false
+    var bCar_Status_RVS = false         // 원격시동
+    var bCar_Car_Status_IGN = false     // 키온
     
     var str_Car_Status_Seed = "0"
     var ser_Car_Status_Key = "0"
@@ -140,35 +154,89 @@ struct Member_Info {
     var bCar_Btn_AutoWindowRevOpen = false
     var bCar_Btn_RVS = false
     // 유저가 세팅한 시간
-    var strCar_Check_ReservedRVSTime = "00:00:00"
+    var strCar_Check_ReservedRVSTime = "11:22:33"
+    
+    
+    var str_SetPinCode = "aaaa"    // 유저 입력 핀코드
+    var str_GetPinCode = ""        // 단말기 핀코드
+    var str_LocalPinCode = "0000"  // 핀코드 처음 사용 기본 세팅 0000
+    
+    var bPinCodeViewGO:Bool = false
+    
+    
+    var str_DRIVEABLE = "0.0"
+    var str_IN_TEMP = "0.0"
+    var bENGINE_RUN = false
     
     
     
     
     
-    
-    var str_BLE_PinCode = "1111"
     
     
     var isBLE_OFF:Bool = false
     var isCAR_FRIENDS_CONNECT:Bool = false
     var isBLE_ON:Bool = false
+    // 블루투스 꺼져 있을때 켜라는 팝업창 체크 플래그
+    var isBLE_ON_POPUP_CHECK:Bool = false
+    
     
     
     var TOTAL_BLE_READ_ACC_DATA:String = "0"
     
     var strTOTAL_MILEAGE:String = "0"
-
-    
-    
-    
     
     // identifier = A4992052-4B0D-3041-EABB-729B52C73924,
     var carFriendsMacAdd = ""
     
     
+    mutating func AddStr( _ READ_DATA: String ) {
+        
+//        var tempStr = READ_DATA
+//        tempStr = String(tempStr.filter { !"\n\r".contains($0) })
+        
+        var stringValue = READ_DATA;
+        
+        //print ("______ str value : \(stringValue)")
+        
+        for 	i in 0..<stringValue.count {
+            // 한글자 빼기
+            var tempString:String = String( stringValue[ stringValue.index( stringValue.startIndex, offsetBy: i)] )
+                    
+            if(tempString == "ÿ" ) {
+                print("_________________________decode \(TOTAL_BLE_READ_ACC_DATA)")
+                Decode(TOTAL_BLE_READ_ACC_DATA)
+                TOTAL_BLE_READ_ACC_DATA = ""
+            }
+            else {
+                
+                TOTAL_BLE_READ_ACC_DATA += tempString
+            }
+        }
+    }
+    
+    //TOTAL_BLE_READ_ACC_DATA    String    "\u{1b}[1;1H\u{1b}[2J[TOTAL_MILEAGE]=0\r\n["
+    mutating func Decode( _ Packet: String ) {
+        
+        var tempPacket1:String = Packet
+        
+        tempPacket1 = tempPacket1.replacingOccurrences(of: "\u{1b}", with: "", options: .literal, range: nil)
+        tempPacket1 = tempPacket1.replacingOccurrences(of: "ÿ", with: "", options: .literal, range: nil)
+        tempPacket1 = tempPacket1.replacingOccurrences(of: "\r", with: "", options: .literal, range: nil)
+        tempPacket1 = tempPacket1.replacingOccurrences(of: "[1;1H", with: "", options: .literal, range: nil)
+        tempPacket1 = tempPacket1.replacingOccurrences(of: "[2J", with: "", options: .literal, range: nil)
+        
+        BLE_READ_ACC_DATA_PROC( tempPacket1 )
+        
+//        let aString = "This is my string"
+//        let newString = aString.replacingOccurrences(of: " ", with: "", options: .literal, range: nil)
+    }
+    
+    
+    
+    // door 2:open  hatch: 1:open
 
-    // 카프렌즈 블루투스를 통해 올라오는 문자열 명령 처리
+    // 카프랜드 블루투스를 통해 올라오는 문자열 명령 처리
     mutating func BLE_READ_ACC_DATA_PROC( _ READ_DATA: String ) {
         
         var arr = READ_DATA.components(separatedBy: "=")
@@ -181,141 +249,209 @@ struct Member_Info {
         }
         // 공백 제거
         //let cleanedText = arr[1].filter { !" \n\t\r".characters.contains($0) }
-        let cleanedText = arr[1].trimmingCharacters(in: .whitespacesAndNewlines)
+        var cleanedText = arr[1].trimmingCharacters(in: .whitespacesAndNewlines)
         // 데이타 없다 처리 안함
         if( cleanedText.count == 0 ) {
-            
-            print("______ BLE \(arr[0])   = [Empty Data]")
-            return
+//            print("______ BLE \(arr[0])   = [Empty Data]")
+//            return
+            cleanedText = "unknown"
         }
-        print( "_____ BLE READ_DATA = \(arr[0])  \(cleanedText)")
+//        print( "_____ BLE READ_DATA = \(arr[0])  \(cleanedText)")
         
         
         switch arr[0] {
         case "[TOTAL_MILEAGE]":
+            if( cleanedText == "unknown" ) { cleanedText = "0" }
             str_TotalDriveMileage = String(cleanedText)
+            // 클라 저장
+            UserDefaults.standard.set(str_TotalDriveMileage, forKey: "str_TotalDriveMileage")
             break
         case "[WEEK_MILEAGE]":
-            str_ThisWeekDriveMileage = String(cleanedText)
+            if( cleanedText == "unknown" ) { cleanedText = "0" }
+            str_ThisWeekDriveMileageSetDB = String(cleanedText) // 접속할때마다 DB 저장
             break
         case "[MONTH_MILEAGE]":
+            if( cleanedText == "unknown" ) { cleanedText = "0" }
             str_ThisMonthDriveMileage = String(cleanedText)
             break
         case "[TOTAL_MPG]":
-            str_AvgFuelMileage = String(cleanedText)
+            if( cleanedText == "unknown" ) { cleanedText = "0" }
+            str_TotalAvgFuelMileage = String(cleanedText)            
+            UserDefaults.standard.set(str_TotalAvgFuelMileage, forKey: "str_TotalAvgFuelMileage")
             break
         case "[WEEK_MPG]":
-            str_ThisWeekFuelMileage = String(cleanedText)
+            if( cleanedText == "unknown" ) { cleanedText = "0" }
+            str_ThisWeekFuelMileageSetDB = String(cleanedText)            
             break
         case "[MONTH_MPG]":
+            if( cleanedText == "unknown" ) { cleanedText = "0" }
             str_ThisMonthFuelMileage = String(cleanedText)
             break
         case "[TPMS-FL]":
+            if( cleanedText == "unknown" ) { cleanedText = "0" }
             str_TPMS_FL = String(cleanedText)
             break
         case "[TPMS-FR]":
+            if( cleanedText == "unknown" ) { cleanedText = "0" }
             str_TPMS_FR = String(cleanedText)
             break
         case "[TPMS-RL]":
+            if( cleanedText == "unknown" ) { cleanedText = "0" }
             str_TPMS_RL = String(cleanedText)
             break
         case "[TPMS-RR]":
+            if( cleanedText == "unknown" ) { cleanedText = "0" }
             str_TPMS_RR = String(cleanedText)
             break
         case "[BATT]":
+            if( cleanedText == "unknown" ) { cleanedText = "0" }
             str_BattVoltage = String(cleanedText)
             break
         case "[FUEL]":
+            if( cleanedText == "unknown" ) { cleanedText = "0" }
             str_FuelTank = String(cleanedText)
             break
         case "[DATETIME]":
             str_Car_DateTime = String(cleanedText)
             break
         case "[DOORLOCK]":
+            if( cleanedText == "unknown" ) { cleanedText = "0" }
+            bCar_Status_DoorLock = false
+            if( cleanedText == "2" ) { bCar_Status_DoorLock = true }
             break
         case "[HATCH]":
+            if( cleanedText == "unknown" ) { cleanedText = "0" }
+            bCar_Status_Hatch = false
+            if( cleanedText == "1" ) { bCar_Status_Hatch = true }
             break
         case "[WINDOW]":
+            if( cleanedText == "unknown" ) { cleanedText = "0" }
+            bCar_Status_Window = false
+            if( cleanedText == "1" ) { bCar_Status_Window = true }
             break
         case "[SUNROOF]":
+            if( cleanedText == "unknown" ) { cleanedText = "0" }
+            bCar_Status_Sunroof = false
+            if( cleanedText == "1" ) { bCar_Status_Sunroof = true }
             break
         case "[RVS]":
+            if( cleanedText == "unknown" ) { cleanedText = "0" }
+            bCar_Status_RVS = false
+            if( cleanedText == "1" ) { bCar_Status_RVS = true }
             break
         case "[KEYON]":
+            if( cleanedText == "unknown" ) { cleanedText = "0" }
+            bCar_Car_Status_IGN = false
+            if( cleanedText == "1" ) { bCar_Car_Status_IGN = true }
             break
         case "[SEED]":
             str_Car_Status_Seed = String(cleanedText)
+            // 클라 저장
+            UserDefaults.standard.set(str_Car_Status_Seed, forKey: "str_Car_Status_Seed")
             break
         case "[KEY]":
             ser_Car_Status_Key = String(cleanedText)
             break
         case "[SEC]":
-                bCar_Status_Security = false
-                if( cleanedText == "1" ) { bCar_Status_Security = true }
+            if( cleanedText == "unknown" ) { cleanedText = "0" }
+            bCar_Status_Security = false
+            if( cleanedText == "1" ) { bCar_Status_Security = true }
             break
         case "[LOCKFOLDING]":
-
-                bCar_Func_AutoLockFolding = false
-                if( cleanedText == "1" ) { bCar_Func_AutoLockFolding = true }
+            if( cleanedText == "unknown" ) { cleanedText = "0" }
+            bCar_Func_AutoLockFolding = false
+            if( cleanedText == "1" ) { bCar_Func_AutoLockFolding = true }
 
             break
         case "[AUTOWINDOWS]":
-            
-                bCar_Func_AutoWindowClose = false
-                if( cleanedText == "1" ) { bCar_Func_AutoWindowClose = true }
+            if( cleanedText == "unknown" ) { cleanedText = "0" }
+            bCar_Func_AutoWindowClose = false
+            if( cleanedText == "1" ) { bCar_Func_AutoWindowClose = true }
             
             break
         case "[AUTOSUNROOF]":
-            
-                bCar_Func_AutoSunroofClose = false
-                if( cleanedText == "1" ) { bCar_Func_AutoSunroofClose = true }
+            if( cleanedText == "unknown" ) { cleanedText = "0" }
+            bCar_Func_AutoSunroofClose = false
+            if( cleanedText == "1" ) { bCar_Func_AutoSunroofClose = true }
             
             break
         case "[REV_WINDOW]":
-            
-                bCar_Func_AutoWindowRevOpen = false
-                if( cleanedText == "1" ) { bCar_Func_AutoWindowRevOpen = true }
+            if( cleanedText == "unknown" ) { cleanedText = "0" }
+            bCar_Func_AutoWindowRevOpen = false
+            if( cleanedText == "1" ) { bCar_Func_AutoWindowRevOpen = true }
             
             break
         case "[RES_RVS_TIME]":
-                strCar_Status_ReservedRVSTime = String(cleanedText)
+            strCar_Status_ReservedRVSTime = String(cleanedText)
             break
-        case "[RES_RVS]":            
-                bCar_Func_RVS = false
-                if( cleanedText == "1" ) { bCar_Func_RVS = true }
+        case "[RES_RVS]":
+            if( cleanedText == "unknown" ) { cleanedText = "0" }
+            bCar_Func_RVS = false
+            if( cleanedText == "1" ) { bCar_Func_RVS = true }
+            break
             
-            break
         case "[PIN_CODE]":
             // 기기에서 올라온 핀코드
             //var tempPinCode = String(cleanedText)
-            str_BLE_PinCode = String(cleanedText)
+            if( cleanedText == "unknown" ) { cleanedText = "0000" }
+            str_GetPinCode = String(cleanedText)
             break
+            
         case "[VIN]":
             // 차대번호[klaj1231ksasakafsdkasdf]
             str_car_vin_number = String(cleanedText)
+            UserDefaults.standard.set(str_car_vin_number, forKey: "str_car_vin_number")
             break
             
-        case "[DTC_ECM]":
+        case "[DTC]":
             // [DTC_EBCM]=P0000-00 YYYY-MM-DD HH:MM:SS
             let data:String = String(cleanedText)
             let tempCode:String = String(data[..<data.index(data.startIndex, offsetBy: 8)])
-            setDTC_INFO_DB(tempCode)
+            
+            if( cleanedText == "unknown" ) { cleanedText = "0" }
+            else                           { setDTC_INFO_DB(tempCode) }
             break
-        case "[DTC_BCM]":
-            let data:String = String(cleanedText)
-            let tempCode:String = String(data[..<data.index(data.startIndex, offsetBy: 8)])
-            setDTC_INFO_DB(tempCode)
+            
+        case "[DRIVEABLE]":
+            str_DRIVEABLE = String(cleanedText)
             break
-        case "[DTC_TCM]":
-            let data:String = String(cleanedText)
-            let tempCode:String = String(data[..<data.index(data.startIndex, offsetBy: 8)])
-            setDTC_INFO_DB(tempCode)
+            
+        case "[IN_TEMP]":
+            str_IN_TEMP = String(cleanedText)
             break
-        case "[DTC_EBCM]":
-            let data:String = String(cleanedText)
-            let tempCode:String = String(data[..<data.index(data.startIndex, offsetBy: 8)])
-            setDTC_INFO_DB(tempCode)
+            
+        case "[ENGINE_RUN]":
+            bENGINE_RUN = false
+            if( cleanedText == "1" ) { bENGINE_RUN = true }
             break
+
+            
+            
+            
+            
+//        case "[DTC_ECM]":
+//            // [DTC_EBCM]=P0000-00 YYYY-MM-DD HH:MM:SS
+//            let data:String = String(cleanedText)
+//            let tempCode:String = String(data[..<data.index(data.startIndex, offsetBy: 8)])
+//            setDTC_INFO_DB(tempCode)
+//            break
+//        case "[DTC_BCM]":
+//            let data:String = String(cleanedText)
+//            let tempCode:String = String(data[..<data.index(data.startIndex, offsetBy: 8)])
+//            setDTC_INFO_DB(tempCode)
+//            break
+//        case "[DTC_TCM]":
+//            let data:String = String(cleanedText)
+//            let tempCode:String = String(data[..<data.index(data.startIndex, offsetBy: 8)])
+//            setDTC_INFO_DB(tempCode)
+//            break
+//        case "[DTC_EBCM]":
+//            let data:String = String(cleanedText)
+//            let tempCode:String = String(data[..<data.index(data.startIndex, offsetBy: 8)])
+//            setDTC_INFO_DB(tempCode)
+//            break
+            
+            
         default:
             print(String(cleanedText))
         }
@@ -332,9 +468,13 @@ struct Member_Info {
         let parameters = [
             "Req": "AddDTC",
             "Diag_Date": str_Phone_DateTime,
-            "DTC": strDATA]
+            "DTC": strDATA,
+            "Car_Model": MainManager.shared.member_info.str_car_kind,
+            "VIN": MainManager.shared.member_info.str_car_vin_number]
         
-        Alamofire.request("http://seraphm.cafe24.com/database.php", method: .post, parameters: parameters)
+        
+        
+        Alamofire.request(MainManager.shared.SeverURL+"database.php", method: .post, parameters: parameters)
             .responseJSON { response in
 
                 print(response)
@@ -356,6 +496,9 @@ struct Member_Info {
                     if( Result == "SAVE_OK" ) {
                         
                         print( "DTC_저장 OK!" )
+                        
+                        // 8주 DTC 다시 읽는 플래그
+                        MainManager.shared.member_info.bAddDtcOK_8WeekReadDtc = true
                     }
                     else {
                         
@@ -376,47 +519,52 @@ struct Member_Info {
     
     // [DATETIME]=YYYY-MM-DD HH:MM:SS!
     // mutating <----- 구조체안 func 에서 변수값을 변경가능하도록 해준다. 사용안하면 변경안됨
+    //
+    
+    
+
     
     mutating func setDATETIME(_ strDATA: String ) -> NSData {
         
-        str_Instruction = "[DATETIME]=" + strDATA + "!"
+        str_Instruction = "[DATETIME]=" + str_LocalPinCode + " " + strDATA + "!"
+        print(str_Instruction)
         return writeData( str_Instruction )
     }
     
     // [DOORLOCK]=1! (잠금) [DOORLOCK]=0! (열림)
     mutating func setDOORLOCK(_ strDATA: String ) -> NSData{
         
-        str_Instruction = "[DOORLOCK]=" + strDATA + "!"
+        str_Instruction = "[DOORLOCK]=" + str_LocalPinCode + " " + strDATA + "!"
         return writeData( str_Instruction )
     }
     // [HATCH]=1!
     mutating func setHATCH(_ strDATA: String ) -> NSData {
         
-        str_Instruction = "[HATCH]=" + strDATA + "!"
+        str_Instruction = "[HATCH]=" + str_LocalPinCode + " " + strDATA + "!"
         return writeData( str_Instruction )
     }
     // [WINDOW]=1!
     mutating func setWINDOW(_ strDATA: String ) -> NSData {
         
-        str_Instruction = "[WINDOW]=" + strDATA + "!"
+        str_Instruction = "[WINDOW]=" + str_LocalPinCode + " " + strDATA + "!"
         return writeData( str_Instruction )
     }
     // [SUNROOF]=1!
     mutating func setSUNROOF(_ strDATA: String ) -> NSData {
         
-        str_Instruction = "[SUNROOF]=" + strDATA + "!"
+        str_Instruction = "[SUNROOF]=" + str_LocalPinCode + " " + strDATA  + "!"
         return writeData( str_Instruction )
     }
     // [RVS]=1!
     mutating func setRVS(_ strDATA: String ) -> NSData {
         
-        str_Instruction = "[RVS]=" + strDATA + "!"
+        str_Instruction = "[RVS]=" + str_LocalPinCode + " " + strDATA  + "!"
         return writeData( str_Instruction )
     }
     // [KEYON]=1!
     mutating func setKEYON(_ strDATA: String ) -> NSData {
         
-        str_Instruction = "[KEYON]=" + strDATA + "!"
+        str_Instruction = "[KEYON]=" + str_LocalPinCode + " " + strDATA + "!"
         return writeData( str_Instruction )
     }
     // [KEY]=00000000!
@@ -458,21 +606,28 @@ struct Member_Info {
     // [RES_RVS_TIME]=2011-11-11 11:22:33!
     mutating func setRES_RVS_TIME(_ strDATA: String ) -> NSData {
         
-        str_Instruction = "[RES_RVS_TIME]=1900-01-01 " + strDATA + "!"
+        str_Instruction = "[RES_RVS_TIME]=" + strDATA + "!"
         return writeData( str_Instruction )
     }
     // [RES_RVS]=1!
     mutating func setRES_RVS(_ strDATA: String ) -> NSData {
         
-        str_Instruction = "[RVS]=" + strDATA + "!"
+        str_Instruction = "[RES_RVS]=" + strDATA + "!"
         return writeData( str_Instruction )
     }
-    // [PIN_CODE]=0000!
+    // [SET_PIN_CODE]=0000!
     mutating func setPIN_CODE(_ strDATA: String ) -> NSData {
         
-        str_Instruction = "[PIN_CODE]=" + strDATA + "!"
+        str_Instruction = "[SET_PIN_CODE]=" + strDATA + "!"
         return writeData( str_Instruction )
     }
+    // [SET_PIN_CODE]=0000!
+    mutating func getPIN_CODE() -> NSData {
+        
+        str_Instruction = "[GET_PIN_CODE]=1!"
+        return writeData( str_Instruction )
+    }
+    
     // [RESET]=1!
     mutating func setRESET(_ strDATA: String ) -> NSData {
         
@@ -504,26 +659,17 @@ struct Member_Info {
         return writeData( str_Instruction )
     }
     // [READ_DTC_EBCM]=1!
-    mutating func setREAD_DTC_ALL() -> NSData {
+    mutating func getREAD_DTC_ALL() -> NSData {
         
         str_Instruction = "[READ_DTC_ALL]=1!"
         return writeData( str_Instruction )
     }
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
     mutating func writeData(_ strDATA: String) -> NSData {
         
         // myBluetoothPeripheral.writeValue(dataToSend as Data, for: myCharacteristic, type: CBCharacteristicWriteType.withoutResponse)
         
-        print( "____________ BLE SEND DATA = \(strDATA)  " )
+//        print( "____________ BLE SEND DATA = \(strDATA)  " )
         
         let buf: [UInt8] = Array(strDATA.utf8)
         dataWriteBLE = NSData(bytes: buf, length: buf.count)
@@ -568,7 +714,6 @@ struct Member_Info {
                     
                         BLE_READ_ACC_DATA_PROC(addHeadDataString)
                     }
-                    
                     // print("addHeadDataString = \(addHeadDataString) ")
                 }
                 
@@ -602,7 +747,27 @@ class MainManager   {
     
     static let shared = MainManager()
     
+    
+    // var SeverURL = "http://seraphm.cafe24.com/"
+    
+    var SeverURL = "http://carfriends.tunetech.co.kr/"
+    
+    let BEAN_NAME = "BT05"
+    
     var bAPP_TEST = true
+    
+    var isAPP_PAUSE = false
+    var isBLE_RESTART = false
+    
+    
+    // 앱 인테넷 체크 실행 팝업 플레그
+    var isPopupStartNeteorkCheck = false
+    
+    
+    var bUserLoginOK = false
+    var bLoginTry = false
+    var bLoginTryErr = false
+    var iLoginTryCount: Int = 0
     
     
     
@@ -669,10 +834,36 @@ class MainManager   {
         } else {
             
             print("No Internet")
-            var alert = UIAlertView(title: "No Internet Connection", message: "서버와의 연결이 지연되고 있습니다. 잠시후에 다시 사용해 주세요.", delegate: nil, cancelButtonTitle: "OK")
+            var alert = UIAlertView(title: "No Internet Connection", message: "서버와의 연결이 지연되고 있습니다. 인터넷 연결을 확인해 주세요.", delegate: nil, cancelButtonTitle: "OK")
             alert.show()
             return false
         }
+    }
+    
+    // 인터넷 연결 체크
+    func isConnectCheck2() -> Bool {
+        
+        if Connectivity.isConnectedToInternet {
+            print("Internet Connected")
+            return true
+        } else {
+            
+            print("No Internet")
+            return false
+        }
+    }
+    
+    // 인터넷 연결 체크
+    func isLoginErrMessage() -> Bool {
+        
+        if( bUserLoginOK == false ) {
+            
+            print("No Login")
+            let alert = UIAlertView(title: "No Login Connection", message: "로그인이 지연되고 있습니다. 잠시후 확인해 주세요.", delegate: nil, cancelButtonTitle: "OK")
+            alert.show()
+        }
+        
+        return bUserLoginOK
     }
     
     
@@ -699,33 +890,58 @@ class MainManager   {
         
         let deviceScreenSize : CGSize = view.bounds.size
         
-        if deviceScreenSize.height == DEVICE_WIDTH_5S {
-            
-            bDeviceOther = true
-            ratio_X = 320/375
-            ratio_Y = 568/667
-        }
-        else if deviceScreenSize.height == DEVICE_WIDTH_6 {
-            
-            bDeviceOther = false // 6 기준으로 했기때문에 변환 없음
-            print("DEVICE_WIDTH_5S")
+        
+        if deviceScreenSize.height == DEVICE_WIDTH_6 {
+
+            //bDeviceOther = false // 6 기준으로 했기때문에 변환 없음
+            print("DEVICE_WIDTH_6")
             ratio_X = 1.0
             ratio_Y = 1.0
         }
-        else if deviceScreenSize.height == DEVICE_WIDTH_6PLUS {
+        else {
             
-            bDeviceOther = true
-            ratio_X = 414/375
-            ratio_Y = 736/667
+            // 핫스팟 테더링 때문에... 직접 비율 전부 계산
             
-            print("DEVICE_WIDTH_6PLUS")
+            ratio_X = deviceScreenSize.width / 375
+            ratio_Y = deviceScreenSize.height / 667
         }
-        else if deviceScreenSize.height == DEVICE_WIDTH_X {
-            
-            bDeviceOther = true
-            ratio_X = 375/375
-            ratio_Y = 812/667
-        }
+        
+        
+        
+        
+//        if deviceScreenSize.height == DEVICE_WIDTH_5S {
+//
+//            bDeviceOther = true
+//            ratio_X = 320/375
+//            ratio_Y = 568/667
+//            print("DEVICE_WIDTH_5S")
+//        }
+//        else if deviceScreenSize.height == DEVICE_WIDTH_6 {
+//
+//            bDeviceOther = false // 6 기준으로 했기때문에 변환 없음
+//            print("DEVICE_WIDTH_6")
+//            ratio_X = 1.0
+//            ratio_Y = 1.0
+//        }
+//        else if deviceScreenSize.height == DEVICE_WIDTH_6PLUS {
+//
+//            bDeviceOther = true
+//            ratio_X = 414/375
+//            ratio_Y = 736/667
+//
+//            print("DEVICE_WIDTH_6PLUS")
+//        }
+//        else if deviceScreenSize.height == DEVICE_WIDTH_X {
+//
+//            bDeviceOther = true
+//            ratio_X = 375/375
+//            ratio_Y = 812/667
+//        }
+//            // 핫스팟 테더링
+//        else {
+//
+//            print("DEVICE_WIDTH_HOTSPOT")
+//        }
     }
     
     // 원래의 프레임을 넣으면 좌표와 크기 변환 객체 생성될때 한번만 변환
@@ -761,6 +977,10 @@ class MainManager   {
         
         member_info.str_Phone_DateTime = dateFormatter.string(from: now)
         
+//        var tempTime = "1111 " + member_info.str_Phone_DateTime
+        var tempTime = member_info.str_LocalPinCode + " " + member_info.str_Phone_DateTime
+        
+        
         let nsData:NSData = member_info.setDATETIME( member_info.str_Phone_DateTime )
         carFriendsPeripheral.writeValue( nsData as Data, for: myCharacteristic, type: CBCharacteristicWriteType.withoutResponse)
         
@@ -773,6 +993,123 @@ class MainManager   {
 //            print(i) // 4,3,2,1,0
 //        }
     }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    func Get_Batt_Level( volt:Float ) -> Float {
+        
+        var batt_Table:[Batt_dynamic] = []
+        // 배열 5개 초기화
+        for k in 0..<5 {
+            
+            var tamp_Batt_dynamic = Batt_dynamic.init()
+            batt_Table.append(tamp_Batt_dynamic)
+        }
+        
+        batt_Table[0].volt = 11.8
+        batt_Table[1].volt = 12.0
+        batt_Table[2].volt = 12.2
+        batt_Table[3].volt = 12.4
+        batt_Table[4].volt = 12.7
+        
+        batt_Table[0].level = 0.0;
+        batt_Table[1].level = 25.0;
+        batt_Table[2].level = 50.0;
+        batt_Table[3].level = 75.0;
+        batt_Table[4].level = 100.0;
+        
+        batt_Table[1].gain = (batt_Table[1].volt - batt_Table[0].volt) / 0.25
+        batt_Table[2].gain = (batt_Table[2].volt - batt_Table[1].volt) / 0.25
+        batt_Table[3].gain = (batt_Table[3].volt - batt_Table[2].volt) / 0.25
+        batt_Table[4].gain = (batt_Table[4].volt - batt_Table[3].volt) / 0.25
+        
+        for i in 0..<5
+        {
+            if (volt <= batt_Table[i].volt)
+            {
+                if (i == 0) {
+                    
+                    return 0.0;
+                }
+                
+                return batt_Table[i].level - ((batt_Table[i].volt - volt) * batt_Table[i].gain * 100);
+            }
+        }
+        
+        return 100.0
+    }
+    
+    
+    //
+    //private class Batt_dynamic {
+    //    public float volt = 0;
+    //    public float level = 0;
+    //    public float gain = 0;
+    //}
+    //
+    //// 전압을 입력하면 0~100% 의 레벨을 반환한다.
+    //float Get_Batt_Level(float volt)
+    //{
+    //    Batt_dynamic[] batt_Table = new Batt_dynamic[5];
+    //
+    //    batt_Table[0] = new Batt_dynamic();
+    //    batt_Table[1] = new Batt_dynamic();
+    //    batt_Table[2] = new Batt_dynamic();
+    //    batt_Table[3] = new Batt_dynamic();
+    //    batt_Table[4] = new Batt_dynamic();
+    //
+    //    batt_Table[0].volt = 11.8f;
+    //    batt_Table[1].volt = 12.0f;
+    //    batt_Table[2].volt = 12.2f;
+    //    batt_Table[3].volt = 12.4f;
+    //    batt_Table[4].volt = 12.7f;
+    //
+    //    batt_Table[0].level = 0f;
+    //    batt_Table[1].level = 25f;
+    //    batt_Table[2].level = 50f;
+    //    batt_Table[3].level = 75f;
+    //    batt_Table[4].level = 100f;
+    //
+    //    batt_Table[1].gain = (batt_Table[1].volt - batt_Table[0].volt) / 0.25f;
+    //    batt_Table[2].gain = (batt_Table[2].volt - batt_Table[1].volt) / 0.25f;
+    //    batt_Table[3].gain = (batt_Table[3].volt - batt_Table[2].volt) / 0.25f;
+    //    batt_Table[4].gain = (batt_Table[4].volt - batt_Table[3].volt) / 0.25f;
+    //
+    //    int i;
+    //
+    //    for (i = 0;i<5;i++)
+    //    {
+    //        if (volt <= batt_Table[i].volt)
+    //        {
+    //            if (i == 0)
+    //            return 0.0f;
+    //
+    //            return batt_Table[i].level - ((batt_Table[i].volt - volt) * batt_Table[i].gain * 100);
+    //        }
+    //    }
+    //
+    //    return 100.f;
+    //}
+    //
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 }
 
 
@@ -806,3 +1143,12 @@ extension String {
 //}
 //
 //hello("전수열", time: 3) // 'name:' 이 생략되었습니다.
+
+
+
+//let y: Int?
+//do {
+//    y = try someThrowingFunction()
+//} catch {
+//    y = nil
+//}

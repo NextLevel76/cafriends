@@ -9,30 +9,38 @@
 import UIKit
 
 class A01_04_View: UIView {
-    
-    
-
-
 
     @IBOutlet weak var progress_fuel: UIProgressView!
-    @IBOutlet weak var progress_battery: UIProgressView!
     
     
-    @IBOutlet weak var btn_fuel_state: UIButton!
+    @IBOutlet weak var label_battery_V: UILabel!
+    @IBOutlet weak var label_battery_per: UILabel!
+    @IBOutlet weak var image_battery_state: UIButton!
     
-    @IBOutlet weak var btn_battery_state: UIButton!
-    @IBOutlet weak var btn_battery_repair_find: UIButton!
+    @IBOutlet weak var label_DRIVEABLE: UILabel!
+    @IBOutlet weak var label_temp: UILabel!
+    @IBOutlet weak var label_FUEL_TANK: UILabel!
     
     
-    @IBOutlet weak var btn_fl: UIButton!
-    @IBOutlet weak var btn_fr: UIButton!
-    @IBOutlet weak var btn_rl: UIButton!
-    @IBOutlet weak var btn_rr: UIButton!
+    @IBOutlet weak var label_TPMS_FL: UILabel!
+    @IBOutlet weak var label_TPMS_FR: UILabel!
+    @IBOutlet weak var label_TPMS_RL: UILabel!
+    @IBOutlet weak var label_TPMS_RR: UILabel!
     
-    @IBOutlet weak var btn_fl_notis: UIButton!
-    @IBOutlet weak var btn_fr_notis: UIButton!
-    @IBOutlet weak var btn_rl_notis: UIButton!
-    @IBOutlet weak var btn_rr_notis: UIButton!
+    
+    @IBOutlet weak var btn_ENGINE_RUN: UIButton!
+    @IBOutlet weak var btn_DOOR_STATE: UIButton!
+    @IBOutlet weak var btn_SUNROOF_STATE: UIButton!
+    @IBOutlet weak var btn_HATCH_STATE: UIButton!
+    
+    
+    @IBOutlet weak var btn_bg_FL: UIButton!
+    @IBOutlet weak var btn_bg_FR: UIButton!
+    @IBOutlet weak var btn_bg_RL: UIButton!
+    @IBOutlet weak var btn_bg_RR: UIButton!
+    
+    
+    
     
     override init(frame: CGRect) {
         

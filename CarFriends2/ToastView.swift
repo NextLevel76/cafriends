@@ -53,13 +53,13 @@ open class ToastView: UILabel {
     open func short(_ view: UIView,txt_msg:String) {
         self.setup(view,txt_msg: txt_msg)
         //Animation
-        UIView.animate(withDuration:0.5, animations: {
+        UIView.animate(withDuration:1.5, animations: {
             self.overlayView.alpha = 1
         }) { (true) in
-            UIView.animate(withDuration: 0.5, animations: {
+            UIView.animate(withDuration: 1.5, animations: {
                 self.overlayView.alpha = 0
             }) { (true) in
-                UIView.animate(withDuration: 0.5, animations: {
+                UIView.animate(withDuration: 1.5, animations: {
                     DispatchQueue.main.async(execute: {
                         self.overlayView.alpha = 0
                         self.lbl.removeFromSuperview()

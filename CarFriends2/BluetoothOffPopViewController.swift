@@ -23,9 +23,29 @@ class BluetoothOffPopViewController: UIViewController {
     
     @IBAction func pressed_ok(_ sender: UIButton) {
         
-        let myView = self.storyboard?.instantiateViewController(withIdentifier: "MainView") as! MainViewController
-        self.present(myView, animated: true, completion: nil)
+        MainManager.shared.member_info.isBLE_ON_POPUP_CHECK = false
+        
+//        let myView = self.storyboard?.instantiateViewController(withIdentifier: "MainView") as! MainViewController
+//        self.present(myView, animated: true, completion: nil)
+        
+//        if( MainManager.shared.member_info.isBLE_ON == true ) {
+//            // 비회원 회원가입
+//            if( MainManager.shared.iMemberJoinState == 0 ) {
+//
+//                let myView = self.storyboard?.instantiateViewController(withIdentifier: "bluetoothmain") as! BlueToothViewController
+//                self.present(myView, animated: true, completion: nil)
+//            }
+//                // 회원
+//            else {
+//
+//                let myView = self.storyboard?.instantiateViewController(withIdentifier: "a00") as! AViewController
+//                self.present(myView, animated: true, completion: nil)
+//            }
+//        }        
+        // self close
+        dismiss(animated: true)
     }
+
     
     /*
     // MARK: - Navigation

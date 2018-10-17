@@ -43,7 +43,7 @@ class A01_01_ScrollView: UIScrollView {
     @IBOutlet weak var label_car_kind_year: UILabel!
     @IBOutlet weak var label_fuel_type: UILabel!
     @IBOutlet weak var label_car_plate_nem: UILabel!
-    @IBOutlet weak var label_car_dae_num: UILabel!
+    @IBOutlet weak var label_car_vin_num: UILabel!
     
     // 거리
     @IBOutlet weak var label_tot_km: UILabel!

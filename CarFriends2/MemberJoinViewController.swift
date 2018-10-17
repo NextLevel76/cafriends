@@ -22,17 +22,17 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
     
     
     var centralManager: CBCentralManager!
-    let BEAN_NAME = "BT05"
+    
     /// The peripheral the user has selected
     // 블루 투스 연결된 객체
     var carFriendsPeripheral: CBPeripheral? = nil
     var myCharacteristic: CBCharacteristic? = nil
     
-    // 카프렌즈 장치들 저장
+    // 카프랜드 장치들 저장
     var peripherals: [CBPeripheral?] = []
     // 신호 세기
     var signalStrengthBle: [NSNumber?] = []
-    // 3초 동안 카프렌즈 찾는다
+    // 3초 동안 카프랜드 찾는다
     var bleSerachDelayStopState:Int = 0
     
     // 블루투스 상태이상 예외 접속
@@ -52,6 +52,10 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
     
     @IBOutlet var Join_View: UIView!
     @IBOutlet var OBDLoad_View: UIView!
+    @IBOutlet var CarInfo_view: UIView!
+    @IBOutlet var JoinOkAppStart_view: UIView!
+    
+    
     
     @IBOutlet weak var OBD_indicator: UIActivityIndicatorView!
     
@@ -62,13 +66,13 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
     
     var dataBleReadCount:Int = 0
     
-    var OBD_isStart:Bool?
+    var OBD_isStart:Bool = false
     var OBD_Count = 0
         
     
-    @IBOutlet var CarInfo_view: UIView!
+
     
-    @IBOutlet var JoinOkAppStart_view: UIView!
+    
     
     @IBOutlet weak var label_join_ok_notis: UILabel!
     
@@ -83,6 +87,13 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
     @IBOutlet weak var field_phone_01: UITextField!
     
     @IBOutlet weak var field_certifi_input: UITextField!
+    
+    @IBOutlet weak var field_pwd01: UITextField!
+    
+    @IBOutlet weak var field_pwd02: UITextField!
+    
+    
+    @IBOutlet weak var btn_back: UIButton!
     
     
     // 중복체크
@@ -194,6 +205,9 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
         
         
         
+        btn_back.isHidden = true
+        
+        
         btn_uplicate_check.backgroundColor = UIColor(red: 116/256, green: 116/255, blue: 116/255, alpha: 1)
         btn_certification.backgroundColor = UIColor(red: 116/256, green: 116/255, blue: 116/255, alpha: 1)
         
@@ -258,6 +272,11 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
         
         field_phone_01.delegate = self
         field_certifi_input.delegate = self
+        
+        field_pwd01.delegate = self
+        field_pwd02.delegate = self
+        
+
         
         
         
@@ -435,8 +454,6 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
             
             return MainManager.shared.str_select_fuelList[row]
         }
-        
-        
     }
     
     
@@ -518,14 +535,14 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
             initStartBLE()
         }
         
-        
-        
         if( isConnectBLE_ERR == true ) {
             
             isConnectBLE_ERR = false
             OBD_Count = 0;
             OBD_isStart = false
         
+            // 버튼 보이기
+            btn_back.isHidden = false
             self.view.bringSubview(toFront: CarInfo_view) // 회원가입 정보 입력화면으로
         }
         else {
@@ -533,15 +550,41 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
             // 닉 중복체크
             if( OBD_isStart == true && bNickNameUplicateCheck == true ) {
                 
-                if( OBD_Count >= 2 ) { // 카프렌즈 정보 3번 읽어오기 다 읽어오면 회원가입 화면으로
+                if( OBD_Count >= 2 ) { // 카프랜드 정보 3번 읽어오기 다 읽어오면 회원가입 화면으로
                     
                     OBD_Count = 0;
                     OBD_isStart = false
+                    // 버튼 보이기
+                    btn_back.isHidden = false
                     self.view.bringSubview(toFront: CarInfo_view) // 회원가입 정보 입력화면으로
                 }
+                else {
+                    
+                    sleep(0)
+                }
+                
+                
             }
         }
         
+    }
+    
+    @IBAction func pressed_back(_ sender: UIButton) {
+
+        // 인증번호 요청 초기화
+        bTimeCheckStart = false
+        certifi_count = 0
+        
+        field_pwd01.text = ""
+        field_pwd02.text = ""
+        
+        field_nick_input.text = ""
+        field_phone_01.text = ""
+        field_certifi_input.text = ""
+        bNickNameUplicateCheck = false
+        // 버튼 감추기
+        btn_back.isHidden = true
+        self.view.bringSubview(toFront: Join_View) // 회원가입 정보 입력화면으로
     }
     
     
@@ -554,7 +597,7 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
         }
         
         connectCheckBLE()
-        // 카프렌즈 찾았다
+        // 카프랜드 찾았다
         if( bleSerachDelayStopState == 1 ) {
             
             // 3초 딜레이 시작 후 접속 여기서 timerActionSelectCarFriendBLE_Start, bleSerachDelayStopState
@@ -596,9 +639,9 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
             
             ToastIndicatorView.shared.setup(self.view, txt_msg: "")
             
-            //Alamofire.request("http://seraphm.cafe24.com/login.php", method: .post, parameters: ["ID": "admin", "Pass":"admin"])
+            //Alamofire.request(MainManager.shared.SeverURL+"login.php", method: .post, parameters: ["ID": "admin", "Pass":"admin"])
             
-            // var temp = String(format: "http://seraphm.cafe24.com/bbs/board.php?bo_table=B_3_1&sca=스파크", i)
+            // var temp = String(format: MainManager.shared.SeverURL+"bbs/board.php?bo_table=B_3_1&sca=스파크", i)
             // let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
             // let URL = temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
             
@@ -610,8 +653,8 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
                 "mb_nick": nick
             ]
             
-            Alamofire.request("http://seraphm.cafe24.com/login.php", method: .post, parameters: parameters)
-                //Alamofire.request("http://seraphm.cafe24.com/login.php", method: .post, parameters: ["Req": "DupCheck", "mb_nick": "admin" ])
+            Alamofire.request(MainManager.shared.SeverURL+"login.php", method: .post, parameters: parameters)
+                //Alamofire.request(MainManager.shared.SeverURL+"login.php", method: .post, parameters: ["Req": "DupCheck", "mb_nick": "admin" ])
                 
                 .responseJSON { response in
                     
@@ -694,7 +737,7 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
             
             // 시간 카운트 시작
             bTimeCheckStart = true
-            certifi_count = 60 // 3분
+            certifi_count = 120 // 2분
             
             MainManager.shared.str_certifi_notis = "휴대전화에 전송된 인증번호를 입력해 주세요."
             self.performSegue(withIdentifier: "joinPopSegue", sender: self)
@@ -708,7 +751,7 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
             
             ToastIndicatorView.shared.setup(self.view, txt_msg: "")
             
-            Alamofire.request("http://seraphm.cafe24.com/login.php", method: .post, parameters: parameters)
+            Alamofire.request(MainManager.shared.SeverURL+"login.php", method: .post, parameters: parameters)
                 .responseJSON { response in
                     
                     ToastIndicatorView.shared.close()
@@ -748,9 +791,6 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
     @IBAction func pressed_certifi_ok(_ sender: UIButton) {
         
         
-        
-        
-        
         MainManager.shared.str_certifi_notis = "인증번호가 맞지 않습니다."
         
         if( bNickNameUplicateCheck == false ) {
@@ -758,15 +798,24 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
             MainManager.shared.str_certifi_notis = "닉네임 중복체크를 먼저 해주세요."
             self.performSegue(withIdentifier: "joinPopSegue", sender: self)
         }
-        else if( field_certifi_input.text!.count == 0 ) {
+        else if (field_pwd01.text!.count == 0 || field_pwd02.text!.count == 0  ) {
             
+            MainManager.shared.str_certifi_notis = "비밀번호를 입력해 주세요."
+            self.performSegue(withIdentifier: "joinPopSegue", sender: self)
+        }
+        else if ( field_pwd01.text! != field_pwd02.text! ) {
+            
+            MainManager.shared.str_certifi_notis = "비밀번호가 동일하지 않습니다."
+            self.performSegue(withIdentifier: "joinPopSegue", sender: self)
+        }
+        else if( field_certifi_input.text!.count == 0 ) {
 
             MainManager.shared.str_certifi_notis = "인증번호를 입력 해주세요."
             self.performSegue(withIdentifier: "joinPopSegue", sender: self)
         }
         else if( (self.server_get_phone_certifi_num == field_certifi_input.text) ) {
             
-            // 인증번호
+            // 인증번호 -> 차정보 입력 화면으로 바뀐다
             MainManager.shared.str_certifi_notis = "인증 되었습니다."
         }
         else {
@@ -775,6 +824,8 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
             MainManager.shared.str_certifi_notis = "인증 번호가 맞지 않습니다."
             MainManager.shared.bMemberPhoneCertifi = false
         }
+        
+        MainManager.shared.member_info.str_password = field_pwd01.text!
         
         // Segue -> 사용 팝업뷰컨트롤러 띠우기
         self.performSegue(withIdentifier: "joinPopSegue", sender: self)
@@ -789,94 +840,96 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
     @IBAction func pressed_carInfo_No(_ sender: UIButton) {
         
         
-        MainManager.shared.member_info.str_car_kind = ""
-        MainManager.shared.member_info.str_car_year = ""
-        MainManager.shared.member_info.str_car_vin_number = ""
-        MainManager.shared.member_info.str_car_fuel_type = ""
-        MainManager.shared.member_info.str_car_plate_num = ""
-        MainManager.shared.member_info.str_TotalDriveMileage = ""
-        MainManager.shared.member_info.str_AvgFuelMileage = ""
-        
-        //        login.php?Req=Register
-        //        &mb_password=비번
-        //        &mb_nick=닉네임 (아이디랑 같이 사용)
-        //        &mb_email= 이메일 (admin@naver.com)
-        //        &mb_hp= 핸드폰 (010-1234-1234)
-        //        &mb_1= 차종 (크루즈,올란도, …)
-        //        &mb_2= 연식 (2016)
-        //        &mb_3= 차대번호 (KLAJA69SDGK309911)
-        //        &mb_4= 연료타입 (가솔린,디젤)
-        //        &mb_5= 번호판번호 (33 가 1234)
-        //        &mb_6= 총주행거리 (12345)
-        //        &mb_7= 누적연비 (10.11)
-        
-        let phone_num = MainManager.shared.member_info.str_id_phone_num // 문자열 타입 벗기기?
-        let nick_name = MainManager.shared.member_info.str_id_nick // 문자열 타입 벗기기?
-        
-        let parameters = [
-            "Req": "Register",
-            "mb_password": phone_num,
-            "mb_nick": nick_name,
-            "mb_email": "Register",
-            "mb_hp": phone_num,
-            "mb_1": "",
-            "mb_2": "",
-            "mb_3": "",
-            "mb_4": "",
-            "mb_5": "",
-            "mb_6": "",
-            "mb_7": ""
-        ]
-        
-        print(phone_num)
-        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
-        
-        Alamofire.request("http://seraphm.cafe24.com/login.php", method: .post, parameters: parameters)
-            .responseJSON { response in
-                
-                ToastIndicatorView.shared.close()
-                
-                print(response)
-                //to get status code
-                if let status = response.response?.statusCode {
-                    switch(status){
-                    case 201:
-                        print("example success")
-                    default:
-                        print("error with response status: \(status)")
-                    }
-                }
-                
-                //to get JSON return value
-                
-                // 서버 회원 가입 결과
-                //                "Res":"Register","Result":"MEM_REG_OK"
-                //                "Res":"Register","Result":"MEM_REG_FAIL"
-                if let json = try? JSON(response.result.value) {
-                    
-                    print(json["Result"])
-                    
-                    let Result = json["Result"].rawString()!
-                    
-                    if( Result == "MEM_REG_OK" ) {
-                        
-                        self.view.bringSubview(toFront: self.JoinOkAppStart_view) // 회원가입 성공
-                        self.label_join_ok_notis.text = "\(MainManager.shared.member_info.str_id_nick)님 카프렌즈에 가입하신것을 축하드립니다."
-                        print( "회원가입 성공" )
-                        
-                        let defaults = UserDefaults.standard
-                        defaults.set(1, forKey: "iMemberJoinState")
-                    }
-                    else {
-
-                        MainManager.shared.str_certifi_notis = "서버와의 연결이 지연되고 있습니다. 잠시후에 다시 사용해 주세요."
-                        self.performSegue(withIdentifier: "joinPopSegue", sender: self)
-                        print( "회원가입 실패" )
-                    }
-                    
-                    print( Result )
-                }
-        }
+//        MainManager.shared.member_info.str_car_kind = ""
+//        MainManager.shared.member_info.str_car_year = ""
+//        MainManager.shared.member_info.str_car_vin_number = ""
+//        MainManager.shared.member_info.str_car_fuel_type = ""
+//        MainManager.shared.member_info.str_car_plate_num = ""
+//        MainManager.shared.member_info.str_TotalDriveMileage = ""
+//        MainManager.shared.member_info.str_TotalAvgFuelMileage = ""
+//
+//        //        login.php?Req=Register
+//        //        &mb_password=비번
+//        //        &mb_nick=닉네임 (아이디랑 같이 사용)
+//        //        &mb_email= 이메일 (admin@naver.com)
+//        //        &mb_hp= 핸드폰 (010-1234-1234)
+//        //        &mb_1= 차종 (크루즈,올란도, …)
+//        //        &mb_2= 연식 (2016)
+//        //        &mb_3= 차대번호 (KLAJA69SDGK309911)
+//        //        &mb_4= 연료타입 (가솔린,디젤)
+//        //        &mb_5= 번호판번호 (33 가 1234)
+//        //        &mb_6= 총주행거리 (12345)
+//        //        &mb_7= 누적연비 (10.11)
+//
+//        let phone_num = MainManager.shared.member_info.str_id_phone_num // 문자열 타입 벗기기?
+//        let nick_name = MainManager.shared.member_info.str_id_nick // 문자열 타입 벗기기?
+//
+//        let parameters = [
+//            "Req": "Register",
+//            "mb_password": phone_num,
+//            "mb_nick": nick_name,
+//            "mb_email": "Register",
+//            "mb_hp": phone_num,
+//            "mb_1": "",
+//            "mb_2": "",
+//            "mb_3": "",
+//            "mb_4": "",
+//            "mb_5": "",
+//            "mb_6": "",
+//            "mb_7": ""
+//        ]
+//
+//        print(nick_name)
+//        print(phone_num)
+//
+//        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
+//
+//        Alamofire.request(MainManager.shared.SeverURL+"login.php", method: .post, parameters: parameters)
+//            .responseJSON { response in
+//
+//                ToastIndicatorView.shared.close()
+//
+//                print(response)
+//                //to get status code
+//                if let status = response.response?.statusCode {
+//                    switch(status){
+//                    case 201:
+//                        print("example success")
+//                    default:
+//                        print("error with response status: \(status)")
+//                    }
+//                }
+//
+//                //to get JSON return value
+//
+//                // 서버 회원 가입 결과
+//                //                "Res":"Register","Result":"MEM_REG_OK"
+//                //                "Res":"Register","Result":"MEM_REG_FAIL"
+//                if let json = try? JSON(response.result.value) {
+//
+//                    print(json["Result"])
+//
+//                    let Result = json["Result"].rawString()!
+//
+//                    if( Result == "MEM_REG_OK" ) {
+//
+//                        self.view.bringSubview(toFront: self.JoinOkAppStart_view) // 회원가입 성공
+//                        self.label_join_ok_notis.text = "\(MainManager.shared.member_info.str_id_nick)님 카프랜드에 가입하신것을 축하드립니다."
+//                        print( "회원가입 성공" )
+//
+//                        let defaults = UserDefaults.standard
+//                        defaults.set(1, forKey: "iMemberJoinState")
+//                    }
+//                    else {
+//
+//                        MainManager.shared.str_certifi_notis = "서버와의 연결이 지연되고 있습니다. 잠시후에 다시 사용해 주세요."
+//                        self.performSegue(withIdentifier: "joinPopSegue", sender: self)
+//                        print( "회원가입 실패" )
+//                    }
+//
+//                    print( Result )
+//                }
+//        }
         
     }
     
@@ -898,7 +951,7 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
         //총주행거리
         MainManager.shared.member_info.str_TotalDriveMileage = field_car_tot_km.text!
         // 연비
-        MainManager.shared.member_info.str_AvgFuelMileage = field_car_km_L.text!
+        MainManager.shared.member_info.str_TotalAvgFuelMileage = field_car_km_L.text!
         
         
         // 차 정보
@@ -932,7 +985,7 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
             
             let parameters = [
                 "Req": "Register",
-                "mb_password": nick_name,
+                "mb_password": MainManager.shared.member_info.str_password,
                 "mb_nick": nick_name,
                 "mb_email": "",
                 "mb_hp": phone_num,
@@ -942,13 +995,17 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
                 "mb_4": (MainManager.shared.member_info.str_car_fuel_type),
                 "mb_5": (MainManager.shared.member_info.str_car_plate_num),
                 "mb_6": (MainManager.shared.member_info.str_car_year),
-                "mb_7": (MainManager.shared.member_info.str_AvgFuelMileage)
-            ]
+                "mb_7": (MainManager.shared.member_info.str_TotalAvgFuelMileage),
+                "mb_8": (MainManager.shared.member_info.str_LocalPinCode)]
+            
+            // 핀코드 처음 사용 기본 세팅 0000
+            // str_LocalPinCode
+            
             print(phone_num)
             
             ToastIndicatorView.shared.setup(self.view, txt_msg: "")
             
-            Alamofire.request("http://seraphm.cafe24.com/login.php", method: .post, parameters: parameters)
+            Alamofire.request(MainManager.shared.SeverURL+"login.php", method: .post, parameters: parameters)
                 .responseJSON { response in
                     
                     ToastIndicatorView.shared.close()
@@ -977,8 +1034,9 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
                         
                         if( Result == "MEM_REG_OK" ) {
                             
+                            self.btn_back.isHidden = true
                             self.view.bringSubview(toFront: self.JoinOkAppStart_view) // 회원가입 정보 입력화면으로
-                            self.label_join_ok_notis.text = "\(MainManager.shared.member_info.str_id_nick)님 카프렌즈에 가입하신것을 축하드립니다."
+//                            self.label_join_ok_notis.text = "\(MainManager.shared.member_info.str_id_nick)님 카프랜드에 가입하신것을 축하드립니다."
                             print( "회원가입 성공2" )
                             
                             let defaults = UserDefaults.standard
@@ -987,6 +1045,8 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
                             // 클라이언트 저장
                             defaults.set(MainManager.shared.member_info.str_id_phone_num, forKey: "str_id_phone_num")
                             defaults.set(MainManager.shared.member_info.str_id_nick, forKey: "str_id_nick")
+                            defaults.set(MainManager.shared.member_info.str_password, forKey: "str_password")
+                            
                             
                             defaults.set(MainManager.shared.member_info.str_car_kind, forKey: "str_car_kind")
                             defaults.set(MainManager.shared.member_info.str_car_year, forKey: "str_car_year")
@@ -994,12 +1054,16 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
                             defaults.set(MainManager.shared.member_info.str_car_fuel_type, forKey: "str_car_fuel_type")
                             defaults.set(MainManager.shared.member_info.str_car_plate_num, forKey: "str_car_plate_num")
                             defaults.set(MainManager.shared.member_info.str_car_year, forKey: "str_car_year")
-                            defaults.set(MainManager.shared.member_info.str_AvgFuelMileage, forKey: "str_AvgFuelMileage")
+                            defaults.set(MainManager.shared.member_info.str_TotalAvgFuelMileage, forKey: "str_TotalAvgFuelMileage")
                             
                             // 피커뷰 선택번호 저장
                             defaults.set(MainManager.shared.member_info.i_car_piker_select, forKey: "i_car_piker_select")
                             defaults.set(MainManager.shared.member_info.i_year_piker_select, forKey: "i_year_piker_select")
                             defaults.set(MainManager.shared.member_info.i_fuel_piker_select, forKey: "i_fuel_piker_select")
+                            
+                            // 핀코드 처음 "0000"
+                            MainManager.shared.member_info.str_LocalPinCode = "0000"
+                            UserDefaults.standard.set(MainManager.shared.member_info.str_LocalPinCode, forKey: "str_LocalPinCode")
                             
                             
                             print("_____ 회원가입 성공 정보 _____")
@@ -1011,7 +1075,7 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
                             print(MainManager.shared.member_info.str_car_fuel_type)
                             print(MainManager.shared.member_info.str_car_plate_num)
                             print(MainManager.shared.member_info.str_car_year)
-                            print(MainManager.shared.member_info.str_AvgFuelMileage)
+                            print(MainManager.shared.member_info.str_TotalAvgFuelMileage)
                             
                         }
                         else {
@@ -1032,8 +1096,52 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
         
         stopTimer()
         
+        bleDisConnect()
+        
         let myView = self.storyboard?.instantiateViewController(withIdentifier: "a00") as! AViewController
         self.present(myView, animated: true, completion: nil)
+    }
+    
+    
+    
+    
+    func bleDisConnect() {
+        
+        if( MainManager.shared.member_info.isCAR_FRIENDS_CONNECT == true ) {
+            
+            if( carFriendsPeripheral != nil ) {
+                // 블루투스 끊기 위해, 끊김 딜리게이트 호출
+                centralManager.cancelPeripheralConnection(self.carFriendsPeripheral!)
+            }
+            self.carFriendsPeripheral = nil
+            self.myCharacteristic = nil
+            //self.mySerview = nil
+            bleSerachDelayStopState = 0
+            
+            isMoveSceneDisConnectBLE = true
+        }
+    }
+    
+    
+    
+    // 아이디, 패스워드 10자로 제한
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        
+        if( field_nick_input == textField ||
+            field_pwd01 == textField ||
+            field_pwd02 == textField ) {
+            
+            let currentText = textField.text ?? ""
+            guard let stringRange = Range(range, in: currentText) else { return false }
+            let updatedText = currentText.replacingCharacters(in: stringRange, with: string)
+            
+            return updatedText.count <= 10 // Change limit based on your requirement.
+        }
+        else {
+            
+            return true
+        }
+        
     }
     
     
@@ -1076,6 +1184,15 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
         else if (textField == field_certifi_input) {
             textField.text = ""
         }
+        else if (textField == field_pwd01) {
+            textField.text = ""
+        }
+        else if (textField == field_pwd02) {
+            textField.text = ""
+        }
+        
+        
+        
     }
     
     
@@ -1093,7 +1210,7 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
      self.view.bringSubview(toFront: activityIndicator)
      self.activityIndicator.startAnimating()
      
-     Alamofire.request("http://seraphm.cafe24.com/login.php", method: .post, parameters: ["ID": "admin", "Pass":"admin"], encoding: JSONEncoding.default)
+     Alamofire.request(MainManager.shared.SeverURL+"login.php", method: .post, parameters: ["ID": "admin", "Pass":"admin"], encoding: JSONEncoding.default)
      .responseJSON { response in
      
      self.activityIndicator.stopAnimating()
@@ -1156,8 +1273,11 @@ extension MemberJoinViewController: CBPeripheralDelegate, CBCentralManagerDelega
             bleSerachDelayStopState = 0
         case .poweredOff:
             print("central.state is .poweredOff")
-            // 블루투스 켜라 팝업
-            self.performSegue(withIdentifier: "blueToothOffPopSegue", sender: self)
+            
+//            // 스레드 정지
+//            stopTimer()
+//            // 블루투스 켜라 팝업
+//            self.performSegue(withIdentifier: "blueToothOffPopSegue", sender: self)
             
             MainManager.shared.member_info.isBLE_ON = false
             MainManager.shared.member_info.isCAR_FRIENDS_CONNECT = false;
@@ -1189,12 +1309,12 @@ extension MemberJoinViewController: CBPeripheralDelegate, CBCentralManagerDelega
         
         // print("BLE 기기 신호세기\(RSSI)  ::  \(peripheral)")
         
-        // 카프렌즈 찾는다.
-        if( peripheral.name == BEAN_NAME ) {
+        // 카프랜드 찾는다.
+        if( peripheral.name == MainManager.shared.BEAN_NAME ) {
             
             ToastIndicatorView.shared.setup(self.view, txt_msg: "")
             
-            // 카프렌즈를 하나 찾으면 3초 동안 다른 카프렌즈 기기를 찾아보고 연결 시작
+            // 카프랜드를 하나 찾으면 3초 동안 다른 카프랜드 기기를 찾아보고 연결 시작
             if( bleSerachDelayStopState == 0 ) {
                 
                 bleSerachDelayStopState = 1
@@ -1202,7 +1322,7 @@ extension MemberJoinViewController: CBPeripheralDelegate, CBCentralManagerDelega
             
             // 신호 세기 저장
             signalStrengthBle.append(RSSI)
-            // 카프렌즈 저장
+            // 카프랜드 저장
             peripherals.append(peripheral)
             
             //            peripherals.append(peripheral)
@@ -1212,21 +1332,20 @@ extension MemberJoinViewController: CBPeripheralDelegate, CBCentralManagerDelega
             //            centralManager.stopScan()
             //            centralManager.connect(carFriendsPeripheral!)
             
-            print("카프렌즈 BLE 기기 신호세기\(RSSI)  ::  \(peripheral)")
-            print("카프렌즈 찾음. 연결 시작")
+            print("###### 카프랜드 BLE 기기 신호세기\(RSSI)  ::  \(peripheral)")
+            print("###### 카프랜드 찾음. 연결 시작")
         }
         else {
             
             print("다른장치 BLE 기기 신호세기\(RSSI)  ::  \(peripheral)")
         }
     }
-        // 장치의 서비스 목록 가져올수 있다
     
+    // 장치의 서비스 목록 가져올수 있다
     func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
         
         MainManager.shared.member_info.isCAR_FRIENDS_CONNECT = true;
-        print("Connected! ")
-        print("____________ 서비스 목록 가져오기")
+        print("###### BLE Connected! 서비스 목록 가져오기 ")
         carFriendsPeripheral?.discoverServices(nil)
     }
     
@@ -1240,9 +1359,11 @@ extension MemberJoinViewController: CBPeripheralDelegate, CBCentralManagerDelega
         // service = <CBService: 0x145e7f950, isPrimary = YES, UUID = FFE0>
         for service in services {
             
-            print(" service = \(service)" )
+            print("###### service = \(service)" )
             // 서비스 등록?
             peripheral.discoverCharacteristics( nil, for: service   )
+            
+            print("###### BLE discoverCharacteristics! 서비스 발견 및 획득 ")
         }
         
 
@@ -1273,6 +1394,9 @@ extension MemberJoinViewController: CBPeripheralDelegate, CBCentralManagerDelega
                 
                 peripheral.setNotifyValue(true, for: characteristic)
                 peripheral.readValue(for: characteristic)
+                
+                print("###### BLE characteristic.uuid == FFE1 ")
+                
             }
         }
         
@@ -1297,11 +1421,18 @@ extension MemberJoinViewController: CBPeripheralDelegate, CBCentralManagerDelega
         //print(characteristic.value ?? "no value")
         
         let data = characteristic.value
-        var dataString = String(data: data!, encoding: String.Encoding.utf8)
+        var dataString = String(data: data!, encoding: String.Encoding.ascii)
+        
+        dataString = dataString?.replacingOccurrences(of: "\n", with: "ÿ", options: .literal, range: nil)
+        
+        
         //print( dataString! )
         
         // 데이타
-        MainManager.shared.member_info.TOTAL_BLE_READ_ACC_DATA += dataString!
+        if( dataString != nil ) {
+            MainManager.shared.member_info.AddStr( dataString! )
+        }
+        //MainManager.shared.member_info.TOTAL_BLE_READ_ACC_DATA += dataString!
         
         //        switch characteristic.uuid {
         //        case bodySensorLocationCharacteristicCBUUID:
@@ -1360,7 +1491,7 @@ extension MemberJoinViewController: CBPeripheralDelegate, CBCentralManagerDelega
     
     
     
-    // 블루 투스 카프렌즈 연결 체크
+    // 블루 투스 카프랜드 연결 체크
     func isBLE_CAR_FRIENDS_CONNECT() -> Bool {
         
         if( MainManager.shared.member_info.isBLE_ON == false || MainManager.shared.member_info.isCAR_FRIENDS_CONNECT == false )
@@ -1385,7 +1516,7 @@ extension MemberJoinViewController: CBPeripheralDelegate, CBCentralManagerDelega
     func initStartBLE() {
         
         // BLE init
-        // 블루투스 기기들(카프렌즈들) 찾아놓는 변수 초기화
+        // 블루투스 기기들(카프랜드들) 찾아놓는 변수 초기화
         peripherals.removeAll()
         signalStrengthBle.removeAll()
         
@@ -1405,7 +1536,7 @@ extension MemberJoinViewController: CBPeripheralDelegate, CBCentralManagerDelega
     
     
     
-    // 카프렌즈 여러개이면 선택 접속
+    // 카프랜드 여러개이면 선택 접속
     func timerActionSelectCarFriendBLE_Start() {
         
         //BLE 검색 중지
@@ -1418,13 +1549,13 @@ extension MemberJoinViewController: CBPeripheralDelegate, CBCentralManagerDelega
 //        //
         
         
-        // 카프렌즈 한개 그냥접속
+        // 카프랜드 한개 그냥접속
         if( peripherals.count == 1 ) {
             
             connectCarFriends(0)
-            print("_____ 카프렌즈 단일 Connect\(carFriendsPeripheral)")
+            print("_____ 카프랜드 단일 Connect\(carFriendsPeripheral)")
         }
-            // 카프렌즈 여러개
+            // 카프랜드 여러개
         else if( peripherals.count > 1 ) {
             
             var isMacFind:Bool = false
@@ -1436,7 +1567,7 @@ extension MemberJoinViewController: CBPeripheralDelegate, CBCentralManagerDelega
                 if( bleMacAdd == MainManager.shared.member_info.carFriendsMacAdd ) {
                     
                     connectCarFriends(i)
-                    print("_____ 카프렌즈 MAC FIND Connect\(carFriendsPeripheral)")
+                    print("_____ 카프랜드 MAC FIND Connect\(carFriendsPeripheral)")
                     isMacFind = true
                 }
             }
@@ -1459,7 +1590,7 @@ extension MemberJoinViewController: CBPeripheralDelegate, CBCentralManagerDelega
                 }
                 
                 connectCarFriends(tempIndex)
-                print("_____ 카프렌즈 SignalStrength Connect\(carFriendsPeripheral)")
+                print("_____ 카프랜드 SignalStrength Connect\(carFriendsPeripheral)")
             }
         }
         
@@ -1471,7 +1602,7 @@ extension MemberJoinViewController: CBPeripheralDelegate, CBCentralManagerDelega
     
     func connectCarFriends(_ index:Int) {
         
-        // 카프렌즈 저장
+        // 카프랜드 저장
         carFriendsPeripheral = peripherals[index]
         // 맥주소 저장
         MainManager.shared.member_info.carFriendsMacAdd = (carFriendsPeripheral?.identifier.uuidString)!
@@ -1503,7 +1634,7 @@ extension MemberJoinViewController: CBPeripheralDelegate, CBCentralManagerDelega
                 btn_kit_connect.setBackgroundImage(UIImage(named:"a_01_01_link"), for: .normal)
             }
             else {
-                // 카프렌즈 연결중
+                // 카프랜드 연결중
                 btn_kit_connect.setBackgroundImage(UIImage(named:"a_01_01_unlink"), for: .normal)
             }
         }
@@ -1521,15 +1652,14 @@ extension MemberJoinViewController: CBPeripheralDelegate, CBCentralManagerDelega
                 
                 dataBleReadCount += 1
                 // 블루투스에서 1초마다 브로드캐스팅 되는 문자열 3번만 파싱
-                MainManager.shared.member_info.readDataCarFriendsBLE()
+                //MainManager.shared.member_info.readDataCarFriendsBLE()
                 
                 // 회원 가입시 자동입력에 사용 차대번호, 총거리, 평균 연비
                 field_car_dae_num.text = MainManager.shared.member_info.str_car_vin_number
                 field_car_tot_km.text = MainManager.shared.member_info.str_TotalDriveMileage
-                field_car_km_L.text =   MainManager.shared.member_info.str_AvgFuelMileage
+                field_car_km_L.text =   MainManager.shared.member_info.str_TotalAvgFuelMileage
             }
         }
     }
-    
     
 }

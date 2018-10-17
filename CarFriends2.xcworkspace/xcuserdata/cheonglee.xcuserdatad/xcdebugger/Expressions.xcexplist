@@ -3,26 +3,100 @@
    version = "1.0">
    <ContextStates>
       <ContextState
-         contextName = "AViewController.getDataChartsDraw():AViewController.swift">
+         contextName = "Member_Info.Decode(_:):MainManager.swift">
          <PersistentStrings>
+            <PersistentString
+               value = "tempPacket1">
+            </PersistentString>
+            <PersistentString
+               value = "TOTAL_BLE_READ_ACC_DATA">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "MemberJoinViewController.bleDisConnect():MemberJoinViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "carFriendsPeripheral">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "AViewController.setValueLabel():AViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "MainManager.shared.member_info.str_AvgFuelMileage">
+            </PersistentString>
+            <PersistentString
+               value = "MainManager.shared.member_info.str_TotalAvgFuelMileage">
+            </PersistentString>
+            <PersistentString
+               value = "tempTotAvgFuel">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "MemberJoinViewController.viewDidLoad():MemberJoinViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "MainManager.shared.str_select_carList">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "MainViewController.carInfoCal():MainViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "MainManager.shared.str_My8WeeksDTCCount">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "Member_Info.AddStr(_:):MainManager.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "TOTAL_BLE_READ_ACC_DATA">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "MemberJoinViewController.pressed_certifi_ok(_:):MemberJoinViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "field_pwd01.text">
+            </PersistentString>
+            <PersistentString
+               value = "field_pwd02.text">
+            </PersistentString>
+            <PersistentString
+               value = "MainManager.shared.bMemberPhoneCertifi">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "closure #1 in AViewController.setChartValues(_:):AViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = " MainManager.shared.str_My8WeeksDriveMileage">
+            </PersistentString>
             <PersistentString
                value = "MainManager.shared.str_My8WeeksDriveMileage">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "AViewController.centralManager(_:didDiscover:advertisementData:rssi:):AViewController.swift">
+         contextName = "AViewController.car8WeekInfoCal():AViewController.swift">
          <PersistentStrings>
             <PersistentString
-               value = "bleSerachDelayStopState">
+               value = "MainManager.shared.member_info.str_8WeekAvgFuelMileage">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "MemberJoinViewController.timerActionBLE():MemberJoinViewController.swift">
+         contextName = "AViewController.setChartValues(_:):AViewController.swift">
          <PersistentStrings>
             <PersistentString
-               value = "MainManager.shared.member_info.str_AvgFuelMileage">
+               value = "MainManager.shared.str_My8WeeksDriveMileage">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -38,21 +112,95 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "Member_Info.BLE_READ_ACC_DATA_PROC(_:):MainManager.swift">
+         contextName = "AViewController.connectToBlePinCodeCheck():AViewController.swift">
          <PersistentStrings>
             <PersistentString
-               value = "cleanedText">
+               value = "MainManager.shared.member_info.str_Phone_DateTime">
+            </PersistentString>
+            <PersistentString
+               value = "MainManager.shared.member_info.str_Car_DateTime">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "AViewController.autoBtnStateBleSetting():AViewController.swift">
+         contextName = "MemberJoinViewController.timerActionBLE():MemberJoinViewController.swift">
          <PersistentStrings>
             <PersistentString
-               value = "MainManager.shared.member_info.bCar_Btn_AutoWindowClose">
+               value = "MainManager.shared.member_info.str_AvgFuelMileage">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "MainViewController.readMyLocalData():MainViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "MainManager.shared.member_info.str_ThisWeekDriveMileage">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "AViewController.btn_pin_ok(_:):AViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "a01_01_pin_view.str_pin_num01">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "BViewController.pressed_b_02(_:):BViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "webViewChangeOldRect">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "MemberJoinViewController.timerAction():MemberJoinViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "OBD_isStart">
             </PersistentString>
             <PersistentString
-               value = "MainManager.shared.member_info.bCar_Func_AutoWindowClose">
+               value = "bNickNameUplicateCheck">
+            </PersistentString>
+            <PersistentString
+               value = "OBD_Count">
+            </PersistentString>
+            <PersistentString
+               value = "isConnectBLE_ERR">
+            </PersistentString>
+            <PersistentString
+               value = "MainManager.shared.member_info.isBLE_ON">
+            </PersistentString>
+            <PersistentString
+               value = "MainManager.shared.bMemberPhoneCertifi">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "closure #1 in AViewController.setChartValues2(_:):AViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "MainManager.shared.str_My8weeksFuelMileage">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "AViewController.isPeripheral_LIVE():AViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "carFriendsPeripheral">
+            </PersistentString>
+            <PersistentString
+               value = "myCharacteristic">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "AViewController.setWeekDriveMileageDB():AViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "MainManager.shared.member_info.str_ThisWeekDriveMileage">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -60,7 +208,49 @@
          contextName = "AViewController.viewDidLoad():AViewController.swift">
          <PersistentStrings>
             <PersistentString
+               value = "myCharacteristic">
+            </PersistentString>
+            <PersistentString
+               value = "MainManager.shared.member_info.str_ThisWeekDriveMileage">
+            </PersistentString>
+            <PersistentString
+               value = "centralManager">
+            </PersistentString>
+            <PersistentString
+               value = "MainManager.shared.member_info.str_TotalDriveMileage">
+            </PersistentString>
+            <PersistentString
+               value = "carFriendsPeripheral">
+            </PersistentString>
+            <PersistentString
                value = "MainManager.shared.member_info.str_AvgFuelMileage">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "Terms01_ViewController.viewDidLoad():Terms01_ViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "webView01">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "MainViewController.appStart():MainViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "MainManager.shared.bCarListRequest">
+            </PersistentString>
+            <PersistentString
+               value = "isLogin">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "BViewController.b03_ScrollBtnCreate():BViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "btn_height">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -76,18 +266,60 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "Terms01_ViewController.viewDidLoad():Terms01_ViewController.swift">
+         contextName = "closure #1 in MainViewController.getData8Week_AllMemberDrive():MainViewController.swift">
          <PersistentStrings>
             <PersistentString
-               value = "webView01">
+               value = "MainManager.shared.str_All8WeeksDriveMileage">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "MainViewController.pressed(_:):MainViewController.swift">
+         contextName = "AViewController.centralManager(_:didDiscover:advertisementData:rssi:):AViewController.swift">
          <PersistentStrings>
             <PersistentString
-               value = "MainManager.shared.iMemberJoinState">
+               value = "bleSerachDelayStopState">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "AViewController.setAvgFuelMileageDB():AViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "MainManager.shared.member_info.str_AvgFuelMileage">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "AViewController.getDataChartsDraw():AViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "MainManager.shared.str_My8WeeksDriveMileage">
+            </PersistentString>
+            <PersistentString
+               value = "MainManager.shared.member_info.str_8WeekDriveMileage">
+            </PersistentString>
+            <PersistentString
+               value = "MainManager.shared.str_All8WeeksDriveMileage">
+            </PersistentString>
+            <PersistentString
+               value = "MainManager.shared.member_info.str_My8WeeksDriveMileage">
+            </PersistentString>
+            <PersistentString
+               value = "MainManager.shared.member_info.str_TotalDriveMileage">
+            </PersistentString>
+            <PersistentString
+               value = "MainManager.shared.str_My8weeksFuelMileage">
+            </PersistentString>
+            <PersistentString
+               value = "MainManager.shared.member_info.str_AvgFuelMileage">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "AppDelegate.applicationDidEnterBackground(_:):AppDelegate.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "MainManager.shared.isAPP_PAUSE">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -100,10 +332,37 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "closure #1 in AViewController.setChartValues2(_:):AViewController.swift">
+         contextName = "Member_Info.BLE_READ_ACC_DATA_PROC(_:):MainManager.swift">
          <PersistentStrings>
             <PersistentString
-               value = "MainManager.shared.str_My8weeksFuelMileage">
+               value = "str_TotalAvgFuelMileage">
+            </PersistentString>
+            <PersistentString
+               value = "cleanedText">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "AViewController.a01_04_viewInit():AViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "MainManager.shared.ratio_Y">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "closure #1 in AViewController.setWeekDriveMileageDB():AViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "MainManager.shared.member_info.str_ThisWeekDriveMileage">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "MainViewController.pressed(_:):MainViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "MainManager.shared.iMemberJoinState">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -116,26 +375,39 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "closure #1 in MainViewController.getData8Week_AllMemberDrive():MainViewController.swift">
+         contextName = "AViewController.autoBtnStateBleSetting():AViewController.swift">
          <PersistentStrings>
             <PersistentString
-               value = "MainManager.shared.str_All8WeeksDriveMileage">
+               value = "str_2">
+            </PersistentString>
+            <PersistentString
+               value = "str_3">
+            </PersistentString>
+            <PersistentString
+               value = "MainManager.shared.member_info.bCar_Btn_AutoWindowClose">
+            </PersistentString>
+            <PersistentString
+               value = "MainManager.shared.member_info.strCar_Check_ReservedRVSTime">
+            </PersistentString>
+            <PersistentString
+               value = "MainManager.shared.member_info.bCar_Func_AutoWindowClose">
+            </PersistentString>
+            <PersistentString
+               value = "MainManager.shared.member_info.strCar_Check_ReservedRVSTime.count">
+            </PersistentString>
+            <PersistentString
+               value = "str_1">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "closure #1 in AViewController.setChartValues(_:):AViewController.swift">
+         contextName = "AViewController.userLogin():AViewController.swift">
          <PersistentStrings>
             <PersistentString
-               value = " MainManager.shared.str_My8WeeksDriveMileage">
+               value = "MainManager.shared.member_info.str_password">
             </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "MainViewController.carInfoCal():MainViewController.swift">
-         <PersistentStrings>
             <PersistentString
-               value = "MainManager.shared.str_My8WeeksDTCCount">
+               value = "MainManager.shared.member_info.str_id_nick">
             </PersistentString>
          </PersistentStrings>
       </ContextState>

@@ -9,16 +9,16 @@
 import UIKit
 
 class StartTimeSetPopViewController: UIViewController, UITextFieldDelegate {
-
     @IBOutlet weak var btn_cancel: UIButton!
     @IBOutlet weak var btn_OK: UIButton!
 
+        
+    var strHours:String = "00"
+    var strMin:String = "00"
     
-    @IBOutlet weak var field_hours: UITextField!
-    @IBOutlet weak var field_min: UITextField!
-    
-    var bIsAm:Bool = true
-    
+    @IBOutlet weak var sub_time_view: UIView!
+    // 배경색 사용 이미지
+    @IBOutlet weak var image_bg: UIImageView!
     
     
     //var checkBoxImg = UIImage(named: "D-04-CheckBoxOn")
@@ -28,20 +28,39 @@ class StartTimeSetPopViewController: UIViewController, UITextFieldDelegate {
         super.viewDidLoad()
         
         MainManager.shared.bStartPopTimeReserv = false
-        field_hours.delegate = self
-        field_min.delegate = self
-        
-        field_hours.text = "00"
-        field_min.text = "00"
-
 
         btn_OK.backgroundColor = UIColor(red: 11/256, green: 85/255, blue: 156/255, alpha: 1)
         btn_cancel.backgroundColor = UIColor(red: 11/256, green: 85/255, blue: 156/255, alpha: 1)
+        
+        createTimePicker()
     }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    
+    
+    func createTimePicker() {
+        
+        let timePicker: UIPickerView = UIPickerView()
+        //assign delegate and datasoursce to its view controller
+        timePicker.delegate = self
+        timePicker.dataSource = self
+        
+        timePicker.frame = image_bg.frame
+        
+        // setting properties of the pickerView
+//        let tempWidth = self.view.frame.width/2
+//        let tempX = self.view.frame.width/2 - tempWidth/2
+//        timePicker.frame = CGRect(x: tempX, y: 250, width: tempWidth, height: 100)
+        
+        timePicker.backgroundColor = UIColor(red: 232/256, green: 232/255, blue: 232/255, alpha: 1)
+        
+        
+        // add pickerView to the view
+        self.sub_time_view.addSubview(timePicker)
     }
     
     
@@ -61,58 +80,7 @@ class StartTimeSetPopViewController: UIViewController, UITextFieldDelegate {
         
         self.view.endEditing(true)
         
-        print(field_hours.text!)
-        print(field_min.text!)
         
-        if (field_min.text!.count == 0 || field_hours.text!.count == 0 ) {
-            
-            ToastView.shared.short(self.view, txt_msg: "시간을 모두 입력해 주세요.!")
-            field_hours.text = "00"
-            field_min.text = "00"
-            return
-        }
-        
-        let tempHours:Int = Int(field_hours.text!)!
-        let tempMin:Int = Int(field_min.text!)!
-        
-        if (tempHours > 23) {
-            ToastView.shared.short(self.view, txt_msg: "시간을 잘못 입력 하였습니다.!")
-            field_hours.text = "00"
-            field_min.text = "00"
-            return
-        }
-        
-        if (tempMin > 59) {
-            ToastView.shared.short(self.view, txt_msg: "시간을 잘못 입력 하였습니다.!")
-            field_hours.text = "00"
-            field_min.text = "00"
-            return
-        }
-        
-        
-        
-        // var str2:String = String(format:"%02d",234)
-        
-        var strHours:String = ""
-        var strMin:String = ""
-        
-        if( field_hours.text!.count == 1 ) {
-            
-            strHours = "0"+field_hours.text!
-        }
-        else {
-            
-            strHours = field_hours.text!
-        }
-        
-        if( field_min.text!.count == 1 ) {
-            
-            strMin = "0"+field_min.text!
-        }
-        else {
-            
-            strMin = field_min.text!
-        }
         
         MainManager.shared.bStartPopTimeReserv = true
         MainManager.shared.member_info.strCar_Check_ReservedRVSTime = strHours+":"+strMin+":00"
@@ -123,8 +91,7 @@ class StartTimeSetPopViewController: UIViewController, UITextFieldDelegate {
         dismiss(animated: true)
     }
     
-    
-    
+        
     
     // 시간 입력창 글자수 제한 2자로
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
@@ -147,8 +114,54 @@ class StartTimeSetPopViewController: UIViewController, UITextFieldDelegate {
         self.view.endEditing(true)
     }
     
-    
-    
-    
 
 }
+
+
+
+
+extension StartTimeSetPopViewController: UIPickerViewDelegate, UIPickerViewDataSource{
+    
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        
+        return 2
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        
+        if component == 0{
+            return 24
+        }
+        else {
+            return 60
+        }
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        
+        if component == 0 {
+            return String(format: "%02d 시간", row)
+        }
+        else {
+            return String(format: "%02d 분", row)
+        }
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        if component == 0{
+            let hour = row
+            print("hour: \(hour)")
+            strHours = String(format: "%02d", row)
+        }else{
+            let minute = row
+            print("minute: \(minute)")
+            strMin = String(format: "%02d", row)
+        }
+    }
+}
+
+
+
+
+
+

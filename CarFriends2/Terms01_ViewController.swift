@@ -10,7 +10,7 @@ import UIKit
 import WebKit
 import Alamofire
 
-class Terms01_ViewController: UIViewController, WKNavigationDelegate {
+class Terms01_ViewController: UIViewController, WKNavigationDelegate, WKUIDelegate {
 
     @IBOutlet weak var uncheckbox: UIButton!
     @IBOutlet weak var uncheckbox02: UIButton!
@@ -27,6 +27,59 @@ class Terms01_ViewController: UIViewController, WKNavigationDelegate {
     
     @IBOutlet weak var btn_OK: UIButton!
     
+    
+    // alert 웹뷰에서 자바 스크립트 실행가능하게
+    public func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping () -> Void) {
+        
+        let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
+        let otherAction = UIAlertAction(title: "OK", style: .default, handler: {action in completionHandler()})
+        alert.addAction(otherAction)
+        
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    func webView(_ webView: WKWebView, runJavaScriptConfirmPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo,
+                 completionHandler: @escaping (Bool) -> Void) {
+        let alertController = UIAlertController(title: "", message: message, preferredStyle: .alert)
+        alertController.addAction(UIAlertAction(title: "확인", style: .default, handler: { (action) in
+            completionHandler(true)
+        }))
+        alertController.addAction(UIAlertAction(title: "취소", style: .default, handler: { (action) in
+            completionHandler(false)
+        }))
+        
+        self.present(alertController, animated: true, completion: nil)
+    }
+    
+    func webView(_ webView: WKWebView, runJavaScriptTextInputPanelWithPrompt prompt: String, defaultText: String?, initiatedByFrame frame: WKFrameInfo,
+                 completionHandler: @escaping (String?) -> Void) {
+        let alertController = UIAlertController(title: "", message: prompt, preferredStyle: .alert)
+        alertController.addTextField { (textField) in
+            textField.text = defaultText
+        }
+        alertController.addAction(UIAlertAction(title: "확인", style: .default, handler: { (action) in
+            if let text = alertController.textFields?.first?.text {
+                completionHandler(text)
+            } else {
+                completionHandler(defaultText)
+            }
+        }))
+        
+        alertController.addAction(UIAlertAction(title: "취소", style: .default, handler: { (action) in
+            completionHandler(nil)
+        }))
+        
+        self.present(alertController, animated: true, completion: nil)
+    }
+    
+    public func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
+        // 중복적으로 리로드가 일어나지 않도록 처리 필요.
+        webView.reload()
+    }
+    
+    
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -40,10 +93,6 @@ class Terms01_ViewController: UIViewController, WKNavigationDelegate {
         }
         
         
-        
-        
-        
-        
         isCheck01 = false
         isCheck02 = false
         btn_OK.backgroundColor = UIColor(red: 11/256, green: 85/255, blue: 156/255, alpha: 1)
@@ -51,31 +100,31 @@ class Terms01_ViewController: UIViewController, WKNavigationDelegate {
         
         let webConfiguration = WKWebViewConfiguration()
         // 웹뷰 딜리게이트 연결
-        webView01 = WKWebView(frame: CGRect( x: 18, y: 86+20, width: 340, height: 140 ), configuration: webConfiguration )
+        webView01 = WKWebView(frame: CGRect( x: 15, y: 86+20, width: 345, height: 180 ), configuration: webConfiguration )
         webView01.frame = MainManager.shared.initLoadChangeFrame( frame: self.webView01.frame  )
-        //webView.uiDelegate = self
+        webView01.uiDelegate = self
         webView01.navigationDelegate = self
         webView01.translatesAutoresizingMaskIntoConstraints = false
         self.view.addSubview( webView01 )
         
-        //if let videoURL:URL = URL(string: "http://seraphm.cafe24.com/app/contract1.html") {
+        //if let videoURL:URL = URL(string: MainManager.shared.SeverURL+"app/contract1.html") {
         
         
-        let temp = "http://seraphm.cafe24.com/app/contract02.html"
+        let temp = MainManager.shared.SeverURL+"app/contract03.html"
         let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
         let request = URLRequest(url: url! )
         webView01.load(request)
         
         
         // 웹뷰 딜리게이트 연결
-        webView02 = WKWebView(frame: CGRect( x: 18, y: 330+20, width: 340, height: 140 ), configuration: webConfiguration )
+        webView02 = WKWebView(frame: CGRect( x: 15, y: 330+40, width: 345, height: 185 ), configuration: webConfiguration )
         webView02.frame = MainManager.shared.initLoadChangeFrame( frame: self.webView02.frame  )
-        //webView.uiDelegate = self
+        webView02.uiDelegate = self
         webView02.navigationDelegate = self
         webView02.translatesAutoresizingMaskIntoConstraints = false
         self.view.addSubview( webView02 )
         
-        if let videoURL:URL = URL(string: "http://seraphm.cafe24.com/app/contract01.html") {
+        if let videoURL:URL = URL(string: MainManager.shared.SeverURL+"app/contract01.html") {
             let request:URLRequest = URLRequest(url: videoURL)
             webView02.load(request)
         }
@@ -148,7 +197,7 @@ class Terms01_ViewController: UIViewController, WKNavigationDelegate {
      self.view.bringSubview(toFront: activityIndicator)
      self.activityIndicator.startAnimating()
      
-     Alamofire.request("http://seraphm.cafe24.com/login.php", method: .post, parameters: ["ID": "admin", "Pass":"admin"], encoding: JSONEncoding.default)
+     Alamofire.request(MainManager.shared.SeverURL+"login.php", method: .post, parameters: ["ID": "admin", "Pass":"admin"], encoding: JSONEncoding.default)
      .responseJSON { response in
      
      self.activityIndicator.stopAnimating()

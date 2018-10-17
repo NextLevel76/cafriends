@@ -13,8 +13,7 @@ class A01_01_Pin_View: UIView {
     // 핀번호 입력체크
     var str_pin_num01:String = ""
     var str_pin_num02:String = ""
-    var str_pin_num03:String = ""
-    var str_pin_num04:String = ""
+
     var pin_input_repeat_conut:Int = 0
     
     var bPin_input_location = false     // 포커스 체크중
@@ -23,10 +22,9 @@ class A01_01_Pin_View: UIView {
     @IBOutlet weak var label_pin_num_notis: UILabel!
     
     
-    @IBOutlet weak var field_pin01: UITextField!
-    @IBOutlet weak var field_pin02: UITextField!
-    @IBOutlet weak var field_pin03: UITextField!
-    @IBOutlet weak var field_pin04: UITextField!
+    @IBOutlet weak var field_pin_now: UITextField!
+    @IBOutlet weak var field_pin_new: UITextField!
+
  
     @IBOutlet weak var btn_cancel: UIButton!
     @IBOutlet weak var btn_ok: UIButton!

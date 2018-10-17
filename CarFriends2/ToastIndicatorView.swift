@@ -73,7 +73,7 @@ open class ToastIndicatorView: UILabel {
         timerStartInit()
         
         // 아무진행이 안될걸 대비해서 10초 후 윈도우 무조건 닫는다.
-        secCount = 3
+        secCount = 10
         
         
         isUse = true
@@ -128,7 +128,11 @@ open class ToastIndicatorView: UILabel {
         
         // 뷰 중복 사용 횟수 카운트, 횟수가 다 사용되면 닫기용
         // 닫혀 있으면 그냥 리턴
-        if( isUse == false ) { return }
+        if( isUse == false )
+        {
+            isUseCount = 0
+            return
+        }
         
         isUseCount -= 1
         if( isUseCount <= 0 ) {
