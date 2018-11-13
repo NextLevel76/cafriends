@@ -51,40 +51,16 @@ class MainViewController: UIViewController, UITextFieldDelegate {
         
         if( field_ID.text?.count == 0 ) {
             
-            let alertController = UIAlertController(title: "", message: "닉네임를 입력해주세요.", preferredStyle: UIAlertControllerStyle.alert)
-            //                let DestructiveAction = UIAlertAction(title: "취소", style: UIAlertActionStyle.Destructive) { (result : UIAlertAction) -> Void in
-            //
-            //                    print("취소")
-            //                }
+            MainManager.shared.alertPopMessage(self,"아이디를 입력해주세요.")
             
-            let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-                
-                print("닉네임를 입력")
-            }
-            // alertController.addAction(DestructiveAction)
             
-            alertController.addAction(okAction)
-            self.present(alertController, animated: true, completion: nil)
             
             return            
         }
         
         if( field_PASSWORD.text?.count == 0 ) {
-
-            let alertController = UIAlertController(title: "", message: "패스워드를 입력해주세요.", preferredStyle: UIAlertControllerStyle.alert)
-            //                let DestructiveAction = UIAlertAction(title: "취소", style: UIAlertActionStyle.Destructive) { (result : UIAlertAction) -> Void in
-            //
-            //                    print("취소")
-            //                }
             
-            let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-                
-                print("패스워드를 입력")
-            }
-            // alertController.addAction(DestructiveAction)
-            
-            alertController.addAction(okAction)
-            self.present(alertController, animated: true, completion: nil)
+            MainManager.shared.alertPopMessage(self,"비밀번호를 입력해주세요.")
             
             return
         }
@@ -459,41 +435,15 @@ class MainViewController: UIViewController, UITextFieldDelegate {
                         self.isLogin = true
                     }
                     else {
-
-                        let alertController = UIAlertController(title: "", message: "닉네임 또는 패스워드가 틀렸습니다.", preferredStyle: UIAlertControllerStyle.alert)
-                        //                let DestructiveAction = UIAlertAction(title: "취소", style: UIAlertActionStyle.Destructive) { (result : UIAlertAction) -> Void in
-                        //
-                        //                    print("취소")
-                        //                }
                         
-                        let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-                            
-                            print("닉네임 또는 패스워드가 틀렸습니다.")
-                        }
-                        // alertController.addAction(DestructiveAction)
-                        
-                        alertController.addAction(okAction)
-                        self.present(alertController, animated: true, completion: nil)
+                        MainManager.shared.alertPopMessage(self,"아이디 또는 비밀번호가 틀렸습니다.아이디와 비밀번호를 확인하고 다시 시도해 주세요.")
 
                     }
                     print( Result )
                 }
                 else {
                     
-                    let alertController = UIAlertController(title: "", message: "닉네임 또는 패스워드가 틀렸습니다.", preferredStyle: UIAlertControllerStyle.alert)
-                    //                let DestructiveAction = UIAlertAction(title: "취소", style: UIAlertActionStyle.Destructive) { (result : UIAlertAction) -> Void in
-                    //
-                    //                    print("취소")
-                    //                }
-                    
-                    let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-                        
-                        print("닉네임 또는 패스워드가 틀렸습니다.")
-                    }
-                    // alertController.addAction(DestructiveAction)
-                    
-                    alertController.addAction(okAction)
-                    self.present(alertController, animated: true, completion: nil)
+                    MainManager.shared.alertPopMessage(self,"아이디 또는 비밀번호가 틀렸습니다.아이디와 비밀번호를 확인하고 다시 시도해 주세요.")
 
                 }
                 
@@ -575,21 +525,12 @@ class MainViewController: UIViewController, UITextFieldDelegate {
                     }
                     else {
                         
-                        let alertController = UIAlertController(title: "", message: "서버와의 연결이 지연되고 있습니다. 인터넷 연결을 확인해 주세요.", preferredStyle: UIAlertControllerStyle.alert)
-                        //                let DestructiveAction = UIAlertAction(title: "취소", style: UIAlertActionStyle.Destructive) { (result : UIAlertAction) -> Void in
-                        //
-                        //                    print("취소")
-                        //                }
-                        
-                        let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-                            
-                            print("닉네임 또는 패스워드가 틀렸습니다.")
-                        }
-                        // alertController.addAction(DestructiveAction)
-                        
-                        alertController.addAction(okAction)
-                        self.present(alertController, animated: true, completion: nil)                        
+                        MainManager.shared.alertPopMessage(self,"사용자 정보를 가져오는데 실패했습니다. 잠시후에 다시 사용해 주세요.")
                     }
+                }
+                else {
+                    
+                    MainManager.shared.alertPopMessage(self,"사용자 정보를 가져오는데 실패했습니다. 잠시후에 다시 사용해 주세요.")
                 }
                 
         }

@@ -126,77 +126,63 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = CF3F8FE820C12FEF00E22EC5 /* Pods.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 88E9EC28B8B46C3631E6B242B50F4442;
+			remoteGlobalIDString = E76458C58C9140B6A16D60547E68E80C;
 			remoteInfo = Alamofire;
 		};
 		CF7D8E7120E0E793008263A9 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CF3F8FE820C12FEF00E22EC5 /* Pods.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 1D416D5E8AAA52C62EECDEEAFED16087;
+			remoteGlobalIDString = EBFD1DA8DB9C5E9C282BBCAD1778A64A;
 			remoteInfo = Charts;
 		};
 		CF7D8E7520E0E798008263A9 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CF3F8FE820C12FEF00E22EC5 /* Pods.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 06C7FDAA92E76A2167198C6854F2490D;
+			remoteGlobalIDString = AB4E8B53AF2214EF5CADF5E71CF5A6AE;
 			remoteInfo = SwiftyJSON;
 		};
 		CF7D8E7920E0E79C008263A9 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CF3F8FE820C12FEF00E22EC5 /* Pods.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 22B91A0A9423ADAB235F04088A565E45;
+			remoteGlobalIDString = C3E47A61BFA9CAE962A9FC4714F31DF9;
 			remoteInfo = XLPagerTabStrip;
-		};
-		CFA67F8F20B4044F00E089D4 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CFA67F7220B4044E00E089D4 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = CFA67F7920B4044E00E089D4;
-			remoteInfo = CarFriends2;
-		};
-		CFA67F9A20B4044F00E089D4 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CFA67F7220B4044E00E089D4 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = CFA67F7920B4044E00E089D4;
-			remoteInfo = CarFriends2;
 		};
 		CFAB6D1720DCF1BA008F53FF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CF3F8FE820C12FEF00E22EC5 /* Pods.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 88E9EC28B8B46C3631E6B242B50F4442;
+			remoteGlobalIDString = E76458C58C9140B6A16D60547E68E80C;
 			remoteInfo = Alamofire;
 		};
 		CFAB6D1920DCF1BA008F53FF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CF3F8FE820C12FEF00E22EC5 /* Pods.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 1D416D5E8AAA52C62EECDEEAFED16087;
+			remoteGlobalIDString = EBFD1DA8DB9C5E9C282BBCAD1778A64A;
 			remoteInfo = Charts;
 		};
 		CFAB6D1B20DCF1BA008F53FF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CF3F8FE820C12FEF00E22EC5 /* Pods.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 67485B88F974A08426657B1E87FC1117;
+			remoteGlobalIDString = 3790EE93A20FCFEF299A80C900DE79B2;
 			remoteInfo = "Pods-CarFriends2";
 		};
 		CFAB6D1D20DCF1BA008F53FF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CF3F8FE820C12FEF00E22EC5 /* Pods.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 06C7FDAA92E76A2167198C6854F2490D;
+			remoteGlobalIDString = AB4E8B53AF2214EF5CADF5E71CF5A6AE;
 			remoteInfo = SwiftyJSON;
 		};
 		CFAB6D1F20DCF1BA008F53FF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CF3F8FE820C12FEF00E22EC5 /* Pods.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 22B91A0A9423ADAB235F04088A565E45;
+			remoteGlobalIDString = C3E47A61BFA9CAE962A9FC4714F31DF9;
 			remoteInfo = XLPagerTabStrip;
 		};
 /* End PBXContainerItemProxy section */
@@ -271,8 +257,6 @@
 		CFA67F8420B4044E00E089D4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CFA67F8720B4044E00E089D4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		CFA67F8920B4044E00E089D4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		CFA67F8E20B4044F00E089D4 /* CarFriends2Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CarFriends2Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		CFA67F9920B4044F00E089D4 /* CarFriends2UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CarFriends2UITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFA67FAB20B4062900E089D4 /* BViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BViewController.swift; sourceTree = "<group>"; };
 		CFA67FAD20B4064400E089D4 /* CViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CViewController.swift; sourceTree = "<group>"; };
 		CFA67FAF20B4429C00E089D4 /* MainViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
@@ -286,8 +270,6 @@
 		CFF258F220DD38FB00F543A1 /* A01_01_InfoMod_View.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = A01_01_InfoMod_View.swift; sourceTree = "<group>"; };
 		CFF8BF28213C0967004C91B6 /* A01_06_View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = A01_06_View.swift; sourceTree = "<group>"; };
 		D2B18F4C52A0844427610EB5 /* Pods_CarFriends2.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CarFriends2.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		EDE987B767F5EC0DB00BDC72 /* Pods_CarFriends2UITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CarFriends2UITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		F97622EC7540145F2B93ABF1 /* Pods_CarFriends2Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CarFriends2Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -305,20 +287,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		CFA67F8B20B4044F00E089D4 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		CFA67F9620B4044F00E089D4 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -328,8 +296,6 @@
 				CE62D330218C03E6006F84CA /* UserNotifications.framework */,
 				CE62D32E218C03D5006F84CA /* PushKit.framework */,
 				D2B18F4C52A0844427610EB5 /* Pods_CarFriends2.framework */,
-				F97622EC7540145F2B93ABF1 /* Pods_CarFriends2Tests.framework */,
-				EDE987B767F5EC0DB00BDC72 /* Pods_CarFriends2UITests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -372,8 +338,6 @@
 			isa = PBXGroup;
 			children = (
 				CFA67F7A20B4044E00E089D4 /* CarFriends2.app */,
-				CFA67F8E20B4044F00E089D4 /* CarFriends2Tests.xctest */,
-				CFA67F9920B4044F00E089D4 /* CarFriends2UITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -472,42 +436,6 @@
 			productReference = CFA67F7A20B4044E00E089D4 /* CarFriends2.app */;
 			productType = "com.apple.product-type.application";
 		};
-		CFA67F8D20B4044F00E089D4 /* CarFriends2Tests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = CFA67FA520B4044F00E089D4 /* Build configuration list for PBXNativeTarget "CarFriends2Tests" */;
-			buildPhases = (
-				CFA67F8A20B4044F00E089D4 /* Sources */,
-				CFA67F8B20B4044F00E089D4 /* Frameworks */,
-				CFA67F8C20B4044F00E089D4 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				CFA67F9020B4044F00E089D4 /* PBXTargetDependency */,
-			);
-			name = CarFriends2Tests;
-			productName = CarFriends2Tests;
-			productReference = CFA67F8E20B4044F00E089D4 /* CarFriends2Tests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		CFA67F9820B4044F00E089D4 /* CarFriends2UITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = CFA67FA820B4044F00E089D4 /* Build configuration list for PBXNativeTarget "CarFriends2UITests" */;
-			buildPhases = (
-				CFA67F9520B4044F00E089D4 /* Sources */,
-				CFA67F9620B4044F00E089D4 /* Frameworks */,
-				CFA67F9720B4044F00E089D4 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				CFA67F9B20B4044F00E089D4 /* PBXTargetDependency */,
-			);
-			name = CarFriends2UITests;
-			productName = CarFriends2UITests;
-			productReference = CFA67F9920B4044F00E089D4 /* CarFriends2UITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -532,16 +460,6 @@
 							};
 						};
 					};
-					CFA67F8D20B4044F00E089D4 = {
-						CreatedOnToolsVersion = 8.2.1;
-						ProvisioningStyle = Automatic;
-						TestTargetID = CFA67F7920B4044E00E089D4;
-					};
-					CFA67F9820B4044F00E089D4 = {
-						CreatedOnToolsVersion = 8.2.1;
-						ProvisioningStyle = Automatic;
-						TestTargetID = CFA67F7920B4044E00E089D4;
-					};
 				};
 			};
 			buildConfigurationList = CFA67F7520B4044E00E089D4 /* Build configuration list for PBXProject "CarFriends2" */;
@@ -565,8 +483,6 @@
 			projectRoot = "";
 			targets = (
 				CFA67F7920B4044E00E089D4 /* CarFriends2 */,
-				CFA67F8D20B4044F00E089D4 /* CarFriends2Tests */,
-				CFA67F9820B4044F00E089D4 /* CarFriends2UITests */,
 			);
 		};
 /* End PBXProject section */
@@ -638,20 +554,6 @@
 				CF2CCC2A20B90F1E00AA97D9 /* A01_04_View.xib in Resources */,
 				CFA67F8320B4044E00E089D4 /* Main.storyboard in Resources */,
 				CE2CDF612195128B003B86F8 /* InfoPlist.strings in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		CFA67F8C20B4044F00E089D4 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		CFA67F9720B4044F00E089D4 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -754,20 +656,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		CFA67F8A20B4044F00E089D4 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		CFA67F9520B4044F00E089D4 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -790,16 +678,6 @@
 			isa = PBXTargetDependency;
 			name = XLPagerTabStrip;
 			targetProxy = CF7D8E7920E0E79C008263A9 /* PBXContainerItemProxy */;
-		};
-		CFA67F9020B4044F00E089D4 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = CFA67F7920B4044E00E089D4 /* CarFriends2 */;
-			targetProxy = CFA67F8F20B4044F00E089D4 /* PBXContainerItemProxy */;
-		};
-		CFA67F9B20B4044F00E089D4 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = CFA67F7920B4044E00E089D4 /* CarFriends2 */;
-			targetProxy = CFA67F9A20B4044F00E089D4 /* PBXContainerItemProxy */;
 		};
 		CFAB6D1820DCF1BA008F53FF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -1011,60 +889,6 @@
 			};
 			name = Release;
 		};
-		CFA67FA620B4044F00E089D4 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				INFOPLIST_FILE = CarFriends2Tests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = test.blue.CarFriends2Tests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CarFriends2.app/CarFriends2";
-			};
-			name = Debug;
-		};
-		CFA67FA720B4044F00E089D4 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				INFOPLIST_FILE = CarFriends2Tests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = test.blue.CarFriends2Tests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CarFriends2.app/CarFriends2";
-			};
-			name = Release;
-		};
-		CFA67FA920B4044F00E089D4 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				INFOPLIST_FILE = CarFriends2UITests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = test.blue.CarFriends2UITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
-				TEST_TARGET_NAME = CarFriends2;
-			};
-			name = Debug;
-		};
-		CFA67FAA20B4044F00E089D4 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				INFOPLIST_FILE = CarFriends2UITests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = test.blue.CarFriends2UITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
-				TEST_TARGET_NAME = CarFriends2;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1082,24 +906,6 @@
 			buildConfigurations = (
 				CFA67FA320B4044F00E089D4 /* Debug */,
 				CFA67FA420B4044F00E089D4 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		CFA67FA520B4044F00E089D4 /* Build configuration list for PBXNativeTarget "CarFriends2Tests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				CFA67FA620B4044F00E089D4 /* Debug */,
-				CFA67FA720B4044F00E089D4 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		CFA67FA820B4044F00E089D4 /* Build configuration list for PBXNativeTarget "CarFriends2UITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				CFA67FA920B4044F00E089D4 /* Debug */,
-				CFA67FAA20B4044F00E089D4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

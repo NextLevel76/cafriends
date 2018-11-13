@@ -204,6 +204,11 @@ class Terms01_ViewController: UIViewController, WKNavigationDelegate, WKUIDelega
             let myView = self.storyboard?.instantiateViewController(withIdentifier: "member_join") as! MemberJoinViewController
             self.present(myView, animated: true, completion: nil)
         }
+        // 약관 동의 해라! 알림
+        else {
+            
+            MainManager.shared.alertPopMessage(self,"약관동의를 확인해주세요.")
+        }
     }
     
     

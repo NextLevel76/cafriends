@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VariablesViewState
+   version = "1.0">
+   <ContextStates>
+      <ContextState
+         contextName = "AViewController.setWeekFuelMileageDB():AViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "MainManager.shared.member_info.str_ThisWeekFuelMileage">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "AViewController.setChartValues_a02(_:):AViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "MainManager.shared.str_All8WeeksDTCCount[0]">
+            </PersistentString>
+            <PersistentString
+               value = "MainManager.shared.str_My8WeeksDriveMileage[0]">
+            </PersistentString>
+            <PersistentString
+               value = "MainManager.shared.str_My8WeeksDTCCount[0]">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "MainViewController.userLogin():MainViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "MainManager.shared.member_info.str_password">
+            </PersistentString>
+            <PersistentString
+               value = "MainManager.shared.member_info.str_id_nick">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "AViewController.bleParsingDataCheck():AViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "MainManager.shared.member_info.isCAR_FRIENDS_CONNECT">
+            </PersistentString>
+            <PersistentString
+               value = "MainManager.shared.member_info.parsingTimeCount">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "AViewController.getDataChartsDraw():AViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "getMy8DTC">
+            </PersistentString>
+            <PersistentString
+               value = "getWeekDTC">
+            </PersistentString>
+            <PersistentString
+               value = "getMy8Drive">
+            </PersistentString>
+            <PersistentString
+               value = "getMy8Fuel">
+            </PersistentString>
+            <PersistentString
+               value = "getAllDrive">
+            </PersistentString>
+            <PersistentString
+               value = "getAllFuel">
+            </PersistentString>
+            <PersistentString
+               value = "getAllDTC">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "AViewController.viewDidLoad():AViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "MainManager.shared.member_info.str_GetPinCode">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "closure #2 in AViewController.setChartValues3(_:):AViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "MainManager.shared.str_All8WeeksDTCCount[0]">
+            </PersistentString>
+            <PersistentString
+               value = "MainManager.shared.str_All8WeeksDTCCount[7]">
+            </PersistentString>
+            <PersistentString
+               value = "MainManager.shared.str_All8WeeksDTCCount[8]">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "MainManager.Get_Batt_Level(volt:):MainManager.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "batt_Table[0].volt">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "StartTimeSetPopViewController.pressed_OK(_:):StartTimeSetPopViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "MainManager.shared.member_info.strUserInputReservedRVSTime">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "Member_Info.setDOORLOCK(_:):MainManager.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "str_LocalPinCode">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "MainViewController.appStart():MainViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "MainManager.shared.member_info.isBLE_ON">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "Member_Info.setDTC_INFO_DB(_:):MainManager.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "str_Phone_DateTime">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "AViewController.timerAction2():AViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "MainManager.shared.member_info.isCAR_FRIENDS_CONNECT">
+            </PersistentString>
+            <PersistentString
+               value = "MainManager.shared.member_info.isBLE_ON">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "AViewController.setChartValues_a04(_:):AViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "MainManager.shared.str_All8WeeksDTCCount[0]">
+            </PersistentString>
+            <PersistentString
+               value = "MainManager.shared.str_My8WeeksDTCCount[0]">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "AViewController.timerActionBLE():AViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "MainManager.shared.member_info.str_LocalPinCode">
+            </PersistentString>
+            <PersistentString
+               value = "BLE_CONNECT_DELEY_START_COUNT">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "AViewController.userLogin():AViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "MainManager.shared.member_info.str_password">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "AViewController.setVinDataDB():AViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "MainManager.shared.member_info.str_car_vin_number">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "AViewController.a01_04_viewInit():AViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "MainManager.shared.member_info.str_DRIVEABLE">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "Member_Info.AddStr(_:):MainManager.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "TOTAL_BLE_READ_ACC_DATA">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "Member_Info.setRVS(_:):MainManager.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "str_Instruction">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "AViewController.connectToBlePinCodeCheck():AViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "str_GetPinCode">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "AViewController.setChartValues3(_:):AViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "MainManager.shared.str_My8WeeksDriveMileage[0]">
+            </PersistentString>
+            <PersistentString
+               value = "MainManager.shared.str_All8WeeksDriveMileage[0]">
+            </PersistentString>
+            <PersistentString
+               value = "MainManager.shared.str_All8WeeksDTCCount[0]">
+            </PersistentString>
+            <PersistentString
+               value = "MainManager.shared.str_My8WeeksDTCCount[0]">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "Member_Info.BLE_READ_ACC_DATA_PROC(_:):MainManager.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "str_GetPinCode">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+   </ContextStates>
+</VariablesViewState>

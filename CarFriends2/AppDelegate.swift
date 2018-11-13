@@ -18,7 +18,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 
     var window: UIWindow?
 
-
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
         
@@ -119,20 +118,25 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     func applicationWillResignActive(_ application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
         // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.
+        MainManager.shared.isAPP_PAUSE = true
+        print("_____ PAUSE applicationWillResignActive")
     }
 
     // 앱이 background 상태일 때 실행
+    // 이 방법을 사용하여 공유 리소스를 해제하고 사용자 데이터를 저장하며 타이머를 무효화하고
+    // 응용 프로그램 상태 정보를 충분히 저장하여 나중에 종료 될 경우를 대비하여 응용 프로그램을 현재 상태로 복원합니다.
     func applicationDidEnterBackground(_ application: UIApplication) {
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
         MainManager.shared.isAPP_PAUSE = true
+        print("_____ PAUSE applicationDidEnterBackground")
         sleep(0);
     }
     // 백그라운드에서 포그라운드로 살아날때
     func applicationWillEnterForeground(_ application: UIApplication) {
         // Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
         MainManager.shared.isAPP_PAUSE = false
-        MainManager.shared.isBLE_RESTART = true
+        MainManager.shared.isAPP_RESUME = true
         sleep(0);
     }
     
@@ -147,6 +151,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         // application.applicationIconBadgeNumber = 0
         
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+        
     }
     // 앱이 종료될 때 실행
     func applicationWillTerminate(_ application: UIApplication) {

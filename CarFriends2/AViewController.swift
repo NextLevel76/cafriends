@@ -885,28 +885,22 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
     
     // 반복호출 스케줄러 0.1초
     func timerAction() {
+        // 앱 pause 상태면 갱신 안한다.
+        if( MainManager.shared.isAPP_PAUSE == true ) { return }
+        
 
         
-        // PAUSE
-        if( MainManager.shared.isBLE_RESTART == true ) {
+        // resume
+        if( MainManager.shared.isAPP_RESUME == true ) {
             
-            MainManager.shared.isBLE_RESTART = false
+            MainManager.shared.isAPP_RESUME = false
             // 푸시가 있으면 A01_06 화면으로
             pushCheck_MoveToA0106View()
-            
             print("___________ PAUSE")
         }
         
-        
         //처음 차량 정보 DB 저장, DTC 코드 정보 모드 BLE 읽기
         initCarDataDB()
-        
-        
-        
-
-        
-
-        
         
         // 파싱 데이타가 5초 동안 제대로 들어오지 않으면 단말기 블루투스 재연결 한다.
         bleParsingDataCheck()
@@ -916,25 +910,6 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         a02_01_view.ble_state( MainManager.shared.info.isCAR_FRIENDS_CONNECT )
         // a02_02 카프렌즈 연결 상태
         a02_02_view.ble_state( MainManager.shared.info.isCAR_FRIENDS_CONNECT )
-        
-        
-        
-        if( a01_01_info_mod_view.bTimeCheckStart && (MainManager.shared.bMemberPhoneCertifi == false) ) {
-            
-            if( a01_01_info_mod_view.certifi_count > 0 ) {
-                
-                // 시간 -초
-                a01_01_info_mod_view.certifi_count -= 1
-                a01_01_info_mod_view.label_certifi_time_chenk.text = "( 남은시간 \(a01_01_info_mod_view.certifi_count/60)분 \(a01_01_info_mod_view.certifi_count%60)초 )"
-            }
-            else {
-                
-                a01_01_info_mod_view.bTimeCheckStart = false
-                a01_01_info_mod_view.label_certifi_time_chenk.text = "( 시간 초과 )"
-            }
-        }
-        
-        
         
         
         
@@ -995,6 +970,10 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
     
     // 2초
     func timerActionBLE() {
+        
+        // 앱 pause 상태면 갱신 안한다.
+        if( MainManager.shared.isAPP_PAUSE == true ) { return }
+        
             
         if( self.isBLE_CAR_FRIENDS_CONNECT() == true ) {
             
@@ -1004,9 +983,7 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
 //            let nsData1:NSData = MainManager.shared.info.getPIN_CODE()
 //            self.setDataBLE( nsData1 )
             
-            
-            
-            // 날짜 세팅 후 날짜 비교 3번 한다. 그 다음 DTC 명령 실행
+            // 날짜 세팅 후 날짜 비교 3번 한다.
             phoneToBleDateTimeCheck()
             
             // 핀코드 세팅 후 비교 3번 한다.
@@ -1019,6 +996,44 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         // 실시간 레이블 값 갱신
         setValueLabelRefreshUI()
     }
+    
+    
+    
+    
+    // 1초 반복 타이머
+    func timerActionCertipi() {
+        
+        // 전화 인증시간
+        phoneTimeSecCheck()
+    }
+    
+    
+    
+    // 전화 인증시간
+    func phoneTimeSecCheck() {
+        
+        // 앱 pause 상태면 갱신 안한다.
+        if( MainManager.shared.isAPP_PAUSE == true ) { return }
+        
+        
+        if( a01_01_info_mod_view.bTimeCheckStart && (MainManager.shared.bMemberPhoneCertifi == false) ) {
+            
+            if( a01_01_info_mod_view.certifi_count > 0 ) {
+                
+                // 시간 -초
+                a01_01_info_mod_view.certifi_count -= 1
+                a01_01_info_mod_view.label_certifi_time_chenk.text = "( 남은시간 \(a01_01_info_mod_view.certifi_count/60)분 \(a01_01_info_mod_view.certifi_count%60)초 )"
+            }
+            else {
+                
+                a01_01_info_mod_view.bTimeCheckStart = false
+                a01_01_info_mod_view.label_certifi_time_chenk.text = "( 시간 초과 )"
+            }
+        }
+    }
+    
+    
+    
     
     
     // 실시간 레이블 값 갱신
@@ -1303,14 +1318,7 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
                     else {
 
                         
-                        let alertController = UIAlertController(title: "", message: "단말기와 통신이 지연되고 있습니다. 잠시후에 다시 사용해 주세요.", preferredStyle: UIAlertControllerStyle.alert)
-                        let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-                            
-                            print("단말기 통신")
-                        }
-                        alertController.addAction(okAction)
-                        self.present(alertController, animated: true, completion: nil)
-                        
+                        MainManager.shared.alertPopMessage(self, "단말기와 통신이 지연되고 있습니다. 잠시후에 다시 사용해 주세요.")
                         
                         // 실패 했을때 버튼을 이전 값으로 되돌린다.
                         if( autoBtn == 0 ) {
@@ -1413,23 +1421,7 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
                 // 시간 다르다.
                 else {
                     
-                    
-                    let alertController = UIAlertController(title: "", message: "단말기와 통신이 지연되고 있습니다. 잠시후에 다시 사용해 주세요.", preferredStyle: UIAlertControllerStyle.alert)
-                    //                let DestructiveAction = UIAlertAction(title: "취소", style: UIAlertActionStyle.Destructive) { (result : UIAlertAction) -> Void in
-                    //
-                    //                    print("취소")
-                    //                }
-                    
-                    let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-                        
-                        print("로컬 단말기 시간 다르다.")
-                    }
-                    // alertController.addAction(DestructiveAction)
-                    
-                    alertController.addAction(okAction)
-                    self.present(alertController, animated: true, completion: nil)
-                    
-                    
+                    MainManager.shared.alertPopMessage(self, "단말기와 통신이 지연되고 있습니다. 잠시후에 다시 사용해 주세요.")
                     
                 }
                 
@@ -1579,26 +1571,9 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
                 phoneToBleTimeCheckCount = 0
                 isPhoneToBleTimeCheck = false
                 
-                let alertController = UIAlertController(title: "", message: "단말기 날짜 설정을 실패 하였습니다.", preferredStyle: UIAlertControllerStyle.alert)
-                //                let DestructiveAction = UIAlertAction(title: "취소", style: UIAlertActionStyle.Destructive) { (result : UIAlertAction) -> Void in
-                //
-                //                    print("취소")
-                //                }
                 
-                let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-                    
-                    print("단말기 시간 설정 실패 .")
-                }
-                // alertController.addAction(DestructiveAction)
-                
-                alertController.addAction(okAction)
-                self.present(alertController, animated: true, completion: nil)
-                
+                MainManager.shared.alertPopMessage(self, "단말기 시간설정에 실패하였습니다.단말기에 설정된 비밀번호가 다를경우 발생합니다.")
                 print("##### : 날짜 세팅 3번 실패 " + tempPhoneTime)
-                
-                
-                
-                
             }
             else {
                 // 시간 다시 세팅
@@ -1609,6 +1584,7 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
                 }
                 else {
                     
+                    MainManager.shared.alertPopMessage(self, "단말기를 찾을수 없습니다. 연결을 확인해 주세요")
                     print("##### : 블루투스 끊김 -> 날짜 세팅 못함  " + tempPhoneTime)
                 }
             }
@@ -1708,15 +1684,7 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
                     
                     // 핀코드 다르다 알림 팝업
                     //pop up
-                    let alertController = UIAlertController(title: "", message: "단말기 비밀번호가 다릅니다.비밀번호 설정을 해주세요", preferredStyle: UIAlertControllerStyle.alert)
-                    let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-                        
-                        print("단말기 비밀번호가 다릅니다")
-                        MainManager.shared.info.bPinCodeViewGO = true
-                    }
-                    alertController.addAction(okAction)
-                    self.present(alertController, animated: true, completion: nil)
-                    
+                    MainManager.shared.alertPopMessage(self, "단말기 비밀번호가 다릅니다.비밀번호 설정을 해주세요")
                     
                     // 핀코드 기존 변경 화면으로
                     print("##### 핀코드 다르다. 팝업 띠우기. ")
@@ -1733,14 +1701,7 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
                     timerPinCodeBleRead.invalidate()
                     //pop up
 
-                    
-                    let alertController = UIAlertController(title: "", message: "단말기 비밀번호를 응답받지 못했습니다.", preferredStyle: UIAlertControllerStyle.alert)
-                    let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-                        
-                        print("단말기 통신")
-                    }
-                    alertController.addAction(okAction)
-                    self.present(alertController, animated: true, completion: nil)
+                    MainManager.shared.alertPopMessage(self, "단말기 비밀번호를 응답받지 못했습니다.")
                     
                     // 핀코드 기존 변경 화면으로
                     print("##### 처음 핀코드 비교 타임아웃. 핀코드 데이타가 제대로 안 올라왔다 ")
@@ -1834,21 +1795,7 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
             // 메세지 경고 메세지 보여준다. 같은걸 못찾고 횟수 오바 일때
             else if( phoneToBlePinCodeCheckCount >= 4 ) {
                 
-                
-                let alertController = UIAlertController(title: "", message: "단말기 비밀번호 설정이 실패하였습니다.", preferredStyle: UIAlertControllerStyle.alert)
-                //                let DestructiveAction = UIAlertAction(title: "취소", style: UIAlertActionStyle.Destructive) { (result : UIAlertAction) -> Void in
-                //
-                //                    print("취소")
-                //                }
-                
-                let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-                    
-                    print("단말기 PIN_CODE 설정 실패 .")
-                }
-                // alertController.addAction(DestructiveAction)
-                
-                alertController.addAction(okAction)
-                self.present(alertController, animated: true, completion: nil)
+                MainManager.shared.alertPopMessage(self, "단말기 비밀번호 설정이 실패하였습니다.")
                 
                 
                 
@@ -1912,22 +1859,7 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
                 a02_02_view.ble_state( MainManager.shared.info.isCAR_FRIENDS_CONNECT )
                 
                 
-
-                
-                let alertController = UIAlertController(title: "", message: "단말기와 통신이 불안정하여 재 연결 합니다.", preferredStyle: UIAlertControllerStyle.alert)
-//                let DestructiveAction = UIAlertAction(title: "취소", style: UIAlertActionStyle.Destructive) { (result : UIAlertAction) -> Void in
-//
-//                    print("취소")
-//                }
-                
-                let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-                    
-                    print("연결 끊김 확인 확인")
-                }
-                // alertController.addAction(DestructiveAction)
-                
-                alertController.addAction(okAction)
-                self.present(alertController, animated: true, completion: nil)
+                MainManager.shared.alertPopMessage(self, "단말기와 통신이 불안정하여 재 연결 합니다.")
                 
 
             }
@@ -2070,8 +2002,7 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
                     }
                     
                     print( "##### DB 총 거리 저장 실패.!" )
-                }
-                
+                }                
             }
         }
     }
@@ -2850,7 +2781,8 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         
         print("stopTimer")
         
-        timer.invalidate()
+        timer01.invalidate()
+        timerCertipi.invalidate()
         timerBLE.invalidate()
         timerDATETIME.invalidate()
         timerCarFriendStart.invalidate()
@@ -2858,7 +2790,8 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
     }
     
     
-    var timer = Timer()
+    var timer01 = Timer()           // 0.1초 쓰레드
+    var timerCertipi = Timer()      // 1초 인증
     var timerBLE = Timer()
     var timerDATETIME = Timer()
     var timerCarFriendStart = Timer()
@@ -2888,7 +2821,7 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         isMoveSceneDisConnectBLE = false
 
         
-        MainManager.shared.isBLE_RESTART = false
+        MainManager.shared.isAPP_RESUME = false
         
         MainManager.shared.bUserLoginOK = false
         MainManager.shared.bLoginTry = false
@@ -2948,11 +2881,13 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         
 
         
-        // 반복 호출 스케줄러
-        timer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(timerAction), userInfo: nil, repeats: true)
+        // 반복 호출 스케줄러 0.1
+        timer01 = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(timerAction), userInfo: nil, repeats: true)
+        
+        // 1초
+        timerCertipi = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(timerActionCertipi), userInfo: nil, repeats: true)
         // 2초
         timerBLE = Timer.scheduledTimer(timeInterval: 2, target: self, selector: #selector(timerActionBLE), userInfo: nil, repeats: true)
-        
         
         
         ////////////////////////////////////////////////// main btn init
@@ -4374,20 +4309,7 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
             
             otherPinCodeAutoChangePinViewGO = false
             
-            let alertController = UIAlertController(title: "", message: "단말기 비밀번호가 다르면 정상적으로 앱을 사용할 수 없습니다.", preferredStyle: UIAlertControllerStyle.alert)
-            //                let DestructiveAction = UIAlertAction(title: "취소", style: UIAlertActionStyle.Destructive) { (result : UIAlertAction) -> Void in
-            //
-            //                    print("취소")
-            //                }
-            
-            let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-                
-                print("PIN_CODE가 다르면 정상적으로 앱을 사용할 수 없습니다.")
-            }
-            // alertController.addAction(DestructiveAction)
-            
-            alertController.addAction(okAction)
-            self.present(alertController, animated: true, completion: nil)            
+            MainManager.shared.alertPopMessage(self, "단말기 비밀번호가 다르면 정상적으로 앱을 사용할 수 없습니다.")
 
         }
         
@@ -4401,20 +4323,9 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         
         if( self.isBLE_CAR_FRIENDS_CONNECT() == false ) {
             
-            let alertController = UIAlertController(title: "", message: "단말기를 찾을수 없습니다. 연결을 확인해 주세요", preferredStyle: UIAlertControllerStyle.alert)
-            //                let DestructiveAction = UIAlertAction(title: "취소", style: UIAlertActionStyle.Destructive) { (result : UIAlertAction) -> Void in
-            //
-            //                    print("취소")
-            //                }
             
-            let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-                
-                print("단말기를 찾을수 없습니다. 연결을 확인해 주세요")
-            }
-            // alertController.addAction(DestructiveAction)
+            MainManager.shared.alertPopMessage(self, "단말기를 찾을수 없습니다. 연결을 확인해 주세요.")
             
-            alertController.addAction(okAction)
-            self.present(alertController, animated: true, completion: nil)
             
             return
         }
@@ -4430,13 +4341,7 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
             
             a01_01_pin_view.field_pin_now.becomeFirstResponder()
             
-            let alertController = UIAlertController(title: "", message: "단말기 비밀번호 4자리를 입력해주세요.", preferredStyle: UIAlertControllerStyle.alert)
-            let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-                
-                print("핀코드 입력")
-            }
-            alertController.addAction(okAction)
-            self.present(alertController, animated: true, completion: nil)
+            MainManager.shared.alertPopMessage(self, "단말기 비밀번호 4자리를 입력해주세요.")
                 // 포커스 이동
                 // a01_01_pin_view.field_pin_now.becomeFirstResponder()
          }
@@ -4467,31 +4372,15 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         if( self.isBLE_CAR_FRIENDS_CONNECT() == false ) {
             // 경고
             
-            let alertController = UIAlertController(title: "", message: "단말기를 찾을수 없습니다. 연결을 확인해 주세요", preferredStyle: UIAlertControllerStyle.alert)
-            //                let DestructiveAction = UIAlertAction(title: "취소", style: UIAlertActionStyle.Destructive) { (result : UIAlertAction) -> Void in
-            //
-            //                    print("취소")
-            //                }
+            MainManager.shared.alertPopMessage(self, "단말기를 찾을수 없습니다. 연결을 확인해 주세요")
             
-            let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-                
-                print("단말기를 찾을수 없습니다. 연결을 확인해 주세요")
-            }
-            
-            alertController.addAction(okAction)
-            self.present(alertController, animated: true, completion: nil)
             return
         }
         
         if( MainManager.shared.info.str_GetPinCode.count < 4 ) {
-
-            let alertController = UIAlertController(title: "", message: "단말기 비밀번호를 응답받지 못했습니다.", preferredStyle: UIAlertControllerStyle.alert)
-            let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-                
-                print("단말기 통신")
-            }
-            alertController.addAction(okAction)
-            self.present(alertController, animated: true, completion: nil)
+            
+            MainManager.shared.alertPopMessage(self, "단말기 비밀번호를 응답받지 못했습니다.")
+            
             return
         }
         
@@ -4545,13 +4434,9 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
             
             a01_01_pin_view.field_pin_now.becomeFirstResponder()
 
-            let alertController = UIAlertController(title: "", message: "단말기 비밀번호가 다릅니다. 다시 입력해주세요.", preferredStyle: UIAlertControllerStyle.alert)
-            let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-                
-                print("단말기 통신")
-            }
-            alertController.addAction(okAction)
-            self.present(alertController, animated: true, completion: nil)
+            
+            MainManager.shared.alertPopMessage(self, "기존 비밀번호와 다릅니다.올바른 기존 비밀번호를 입력해주세요")
+            
         }
     }
     
@@ -4597,26 +4482,14 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
                         // 클라 저장
                         // UserDefaults.standard.set(MainManager.shared.info.str_id_phone_num, forKey: "str_id_phone_num")
                         
+                        MainManager.shared.alertPopMessage(self, "단말기 비밀번호가 성공적으로 변경되었습니다.")
                         //pop up
-                        let alertController = UIAlertController(title: "", message: "단말기 비밀번호가 성공적으로 변경되었습니다.", preferredStyle: UIAlertControllerStyle.alert)
-                        let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-                            
-                            print("핀코드 변경")
-                        }
-                        alertController.addAction(okAction)
-                        self.present(alertController, animated: true, completion: nil)
                         
                         self.a01_01_pin_view.bPin_input_location = false
                     }
                     else {
                         
-                        let alertController = UIAlertController(title: "", message: "서버와의 연결이 지연되고 있습니다. 인터넷 연결을 확인해 주세요.", preferredStyle: UIAlertControllerStyle.alert)
-                        let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-                            
-                            print("서버 연결")
-                        }
-                        alertController.addAction(okAction)
-                        self.present(alertController, animated: true, completion: nil)
+                        MainManager.shared.alertPopMessage(self, "네트워크 연결에 문제가 있거나 서버에서 응답이 지연되고 있습니다.앱을 종료 했다가 다시 실행해 주세요.")
                         
                         
                         MainManager.shared.bMemberPhoneCertifi = false
@@ -4745,32 +4618,14 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
             if( a01_01_info_mod_view.field_phone01.text!.count == 0 ) {
                 
                 a01_01_info_mod_view.bTimeCheckStart = false
-                
 
-                let alertController = UIAlertController(title: "", message: "전화번호를 정확하게 입력해주세요.", preferredStyle: UIAlertControllerStyle.alert)
-                let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-                    
-                    print("전화번호 입력")
-                }
-                alertController.addAction(okAction)
-                self.present(alertController, animated: true, completion: nil)
-                
-                
+                MainManager.shared.alertPopMessage(self, "전화번호를 정확하게 입력해주세요.")
             
                 return
             }
             
-
-            let alertController = UIAlertController(title: "", message: "전송된 인증번호를 입력해 주세요.", preferredStyle: UIAlertControllerStyle.alert)
-            let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-                
-                print("인증번호 입력")
-            }
-            alertController.addAction(okAction)
-            self.present(alertController, animated: true, completion: nil)
             
-            
-            
+            MainManager.shared.alertPopMessage(self, "전송된 인증번호를 입력해 주세요.")
             
             // login.php?Req=PhoneCheck&PhoneNo=핸폰번호
             let phone_num = tempString01 // 문자열 타입 벗기기?
@@ -4823,13 +4678,7 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
             if( self.a01_01_info_mod_view.field_certifi_input.text!.count == 0 ) {                
 
 
-                let alertController = UIAlertController(title: "", message: "전송된 인증번호를 입력해 주세요.", preferredStyle: UIAlertControllerStyle.alert)
-                let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-                    
-                    print("인증번호 입력")
-                }
-                alertController.addAction(okAction)
-                self.present(alertController, animated: true, completion: nil)
+                MainManager.shared.alertPopMessage(self, "전송된 인증번호를 입력해 주세요.")
                 return
             }
             else if( (self.a01_01_info_mod_view.server_get_phone_certifi_num == self.a01_01_info_mod_view.field_certifi_input.text) ) {
@@ -4878,32 +4727,15 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
                                 
 
                                 MainManager.shared.bMemberPhoneCertifi = true
-                                
-                                let alertController = UIAlertController(title: "", message: "인증 되었습니다.", preferredStyle: UIAlertControllerStyle.alert)
-                                let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-                                    
-                                    print("인증성공")
-                                }
-                                alertController.addAction(okAction)
-                                self.present(alertController, animated: true, completion: nil)
-                                
+                                MainManager.shared.alertPopMessage(self, "인증 되었습니다.")
                                 // self.mainSubView.bringSubview(toFront: self.a01_01_view)
                                 print( "휴대폰번호 수정 성공2" )
                                 
                             }
                             else {
-                                
 
                                 MainManager.shared.bMemberPhoneCertifi = false
-                                let alertController = UIAlertController(title: "", message: "서버와의 연결이 지연되고 있습니다. 인터넷 연결을 확인해 주세요.", preferredStyle: UIAlertControllerStyle.alert)
-                                let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-                                    
-                                    print("서버통신")
-                                }
-                                alertController.addAction(okAction)
-                                self.present(alertController, animated: true, completion: nil)
-                                //self.a01_01_info_mod_view.label_notis.text = "휴대폰 번호 저장 실패.!"
-                                print( "휴대폰 번호 저장 실패.!" )
+                                MainManager.shared.alertPopMessage(self, "네트워크 연결에 문제가 있거나 서버에서 응답이 지연되고 있습니다.앱을 종료 했다가 다시 실행해 주세요.")
                             }
                             
                             print( Result )
@@ -4914,14 +4746,9 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
             else {
                 
                 // 인증번호가 틀렸다.
+                
                 MainManager.shared.bMemberPhoneCertifi = false
-                let alertController = UIAlertController(title: "", message: "인증 번호가 맞지 않습니다.", preferredStyle: UIAlertControllerStyle.alert)
-                let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-                    
-                    print("인증실패")
-                }
-                alertController.addAction(okAction)
-                self.present(alertController, animated: true, completion: nil)
+                MainManager.shared.alertPopMessage(self, "인증번호가 틀립니다.다시 입력해주세요.")
 
                 return
             }
@@ -4945,13 +4772,9 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         if( self.a01_01_info_mod_view.field_plate_num.text!.count == 0 ) {
 
 
-            let alertController = UIAlertController(title: "", message: "정보를 입력 해주세요.", preferredStyle: UIAlertControllerStyle.alert)
-            let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-                
-                print("정보변경")
-            }
-            alertController.addAction(okAction)
-            self.present(alertController, animated: true, completion: nil)
+
+            MainManager.shared.alertPopMessage(self, "정보를 입력 해주세요.")
+            
             return
         }
         else {
@@ -4995,37 +4818,18 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
                             // 클라 저장
                             UserDefaults.standard.set(MainManager.shared.info.str_car_plate_num, forKey: "str_car_plate_num")
 
-                            let alertController = UIAlertController(title: "", message: "차량번호가 성공적으로 변경되었습니다.", preferredStyle: UIAlertControllerStyle.alert)
-                            let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-                                
-                                print("정보변경")
-                            }
-                            alertController.addAction(okAction)
-                            self.present(alertController, animated: true, completion: nil)
-                            print( "차량등록 번호 수정 성공" )
+                            MainManager.shared.alertPopMessage(self, "차량번호가 성공적으로 변경되었습니다.")
                         }
                         else {
-
-                            let alertController = UIAlertController(title: "", message: "서버와의 연결이 지연되고 있습니다. 인터넷 연결을 확인해 주세요.", preferredStyle: UIAlertControllerStyle.alert)
-                            let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-                                
-                                print("정보변경")
-                            }
-                            alertController.addAction(okAction)
-                            self.present(alertController, animated: true, completion: nil)
+                            
+                            MainManager.shared.alertPopMessage(self, "네트워크 연결에 문제가 있거나 서버에서 응답이 지연되고 있습니다.앱을 종료 했다가 다시 실행해 주세요.")
                             print( "차량등록 번호 저장 실패." )
                         }
                         print( Result )
                     }
                     else {
-
-                        let alertController = UIAlertController(title: "", message: "서버와의 연결이 지연되고 있습니다. 인터넷 연결을 확인해 주세요.", preferredStyle: UIAlertControllerStyle.alert)
-                        let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-                            
-                            print("서버연결")
-                        }
-                        alertController.addAction(okAction)
-                        self.present(alertController, animated: true, completion: nil)
+                        
+                        MainManager.shared.alertPopMessage(self, "네트워크 연결에 문제가 있거나 서버에서 응답이 지연되고 있습니다.앱을 종료 했다가 다시 실행해 주세요.")
                         print( "차량등록 번호 저장 실패." )
                     }
                     
@@ -5067,14 +4871,8 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         
         if( self.a01_01_info_mod_view.field_car_kind.text!.count == 0 ) {
             
-
-            let alertController = UIAlertController(title: "", message: "정보를 입력 해주세요.", preferredStyle: UIAlertControllerStyle.alert)
-            let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-                
-                print("정보입력")
-            }
-            alertController.addAction(okAction)
-            self.present(alertController, animated: true, completion: nil)
+            MainManager.shared.alertPopMessage(self, "정보를 입력 해주세요.")
+            
             return
         }
         else {
@@ -5116,39 +4914,19 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
                             // 피커뷰 선택번호 저장
                             UserDefaults.standard.set(MainManager.shared.info.i_car_piker_select, forKey: "i_car_piker_select")
 
-
-                            let alertController = UIAlertController(title: "", message: "차량종류가 성공적으로 변경되었습니다.", preferredStyle: UIAlertControllerStyle.alert)
-                            let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-                                
-                                print("차량종류")
-                            }
-                            alertController.addAction(okAction)
-                            self.present(alertController, animated: true, completion: nil)
+                            MainManager.shared.alertPopMessage(self, "차량종류가 성공적으로 변경되었습니다.")
                             print( "차종 수정 성공" )
                         }
                         else {
 
-
-                            let alertController = UIAlertController(title: "", message: "서버와의 연결이 지연되고 있습니다. 인터넷 연결을 확인해 주세요.", preferredStyle: UIAlertControllerStyle.alert)
-                            let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-                                
-                                print("서버연결")
-                            }
-                            alertController.addAction(okAction)
-                            self.present(alertController, animated: true, completion: nil)
+                            MainManager.shared.alertPopMessage(self, "네트워크 연결에 문제가 있거나 서버에서 응답이 지연되고 있습니다.앱을 종료 했다가 다시 실행해 주세요.")
                             print( "차종 저장 실패.!" )
                         }
                         print( Result )
                     }
                     else  {
                         
-                        let alertController = UIAlertController(title: "", message: "서버와의 연결이 지연되고 있습니다. 인터넷 연결을 확인해 주세요.", preferredStyle: UIAlertControllerStyle.alert)
-                        let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-                            
-                            print("서버연결")
-                        }
-                        alertController.addAction(okAction)
-                        self.present(alertController, animated: true, completion: nil)
+                        MainManager.shared.alertPopMessage(self, "네트워크 연결에 문제가 있거나 서버에서 응답이 지연되고 있습니다.앱을 종료 했다가 다시 실행해 주세요.")
 
                         print( "차종 저장 실패.!" )
                     }
@@ -5172,14 +4950,7 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         
         if( self.a01_01_info_mod_view.field_car_fuel.text!.count == 0 ) {
 
-
-            let alertController = UIAlertController(title: "", message: "정보를 입력 해주세요.", preferredStyle: UIAlertControllerStyle.alert)
-            let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-                
-                print("정보입력")
-            }
-            alertController.addAction(okAction)
-            self.present(alertController, animated: true, completion: nil)
+            MainManager.shared.alertPopMessage(self, "정보를 입력 해주세요.")
             return
         }
         else {
@@ -5219,39 +4990,19 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
                             UserDefaults.standard.set(MainManager.shared.info.str_car_fuel_type, forKey: "str_car_fuel_type")
                             UserDefaults.standard.set(MainManager.shared.info.i_fuel_piker_select, forKey: "i_fuel_piker_select")
                             
-
-
-                            let alertController = UIAlertController(title: "", message: "연료타입이 성공적으로 변경되었습니다", preferredStyle: UIAlertControllerStyle.alert)
-                            let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-                                
-                                print("정보입력")
-                            }
-                            alertController.addAction(okAction)
-                            self.present(alertController, animated: true, completion: nil)
+                            MainManager.shared.alertPopMessage(self, "연료타입이 성공적으로 변경되었습니다")
                             print( "연료타입 수정 성공" )
                         }
                         else {
 
-                            let alertController = UIAlertController(title: "", message: "서버와의 연결이 지연되고 있습니다. 인터넷 연결을 확인해 주세요.", preferredStyle: UIAlertControllerStyle.alert)
-                            let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-                                
-                                print("서버연결")
-                            }
-                            alertController.addAction(okAction)
-                            self.present(alertController, animated: true, completion: nil)
+                            MainManager.shared.alertPopMessage(self, "네트워크 연결에 문제가 있거나 서버에서 응답이 지연되고 있습니다.앱을 종료 했다가 다시 실행해 주세요.")
                             print( "연료타입 수정 실패.!" )
                         }
                         print( Result )
                     }
                     else {
                         
-                        let alertController = UIAlertController(title: "", message: "서버와의 연결이 지연되고 있습니다. 인터넷 연결을 확인해 주세요.", preferredStyle: UIAlertControllerStyle.alert)
-                        let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-                            
-                            print("서버연결")
-                        }
-                        alertController.addAction(okAction)
-                        self.present(alertController, animated: true, completion: nil)
+                        MainManager.shared.alertPopMessage(self, "네트워크 연결에 문제가 있거나 서버에서 응답이 지연되고 있습니다.앱을 종료 했다가 다시 실행해 주세요.")
                         print( "연료타입 수정 실패.!" )
                     }
             }
@@ -5271,15 +5022,7 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         
         if( self.a01_01_info_mod_view.field_car_year.text!.count == 0 ) {
             
-
-
-            let alertController = UIAlertController(title: "", message: "정보를 입력 해주세요.", preferredStyle: UIAlertControllerStyle.alert)
-            let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-                
-                print("서버연결")
-            }
-            alertController.addAction(okAction)
-            self.present(alertController, animated: true, completion: nil)
+            MainManager.shared.alertPopMessage(self, "정보를 입력 해주세요.")
             return
         }
         else {
@@ -5320,39 +5063,20 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
                             // 클라 저장
                             UserDefaults.standard.set(MainManager.shared.info.str_car_year, forKey: "str_car_year")
                             UserDefaults.standard.set(MainManager.shared.info.i_year_piker_select, forKey: "i_year_piker_select")
-                            
 
-                            let alertController = UIAlertController(title: "", message: "차량연식이 성공적으로 변경되었습니다.", preferredStyle: UIAlertControllerStyle.alert)
-                            let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-                                
-                                print("서버연결")
-                            }
-                            alertController.addAction(okAction)
-                            self.present(alertController, animated: true, completion: nil)
+                            MainManager.shared.alertPopMessage(self, "차량연식이 성공적으로 변경되었습니다.")
                             print( "연식 수정 성공" )
                         }
                         else {
                             
-                            let alertController = UIAlertController(title: "", message: "서버와의 연결이 지연되고 있습니다. 인터넷 연결을 확인해 주세요.", preferredStyle: UIAlertControllerStyle.alert)
-                            let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-                                
-                                print("서버연결")
-                            }
-                            alertController.addAction(okAction)
-                            self.present(alertController, animated: true, completion: nil)
+                            MainManager.shared.alertPopMessage(self, "네트워크 연결에 문제가 있거나 서버에서 응답이 지연되고 있습니다.앱을 종료 했다가 다시 실행해 주세요.")
                             print( "연식 저장 실패.!" )
                         }
                         print( Result )
                     }
                     else {
                         
-                        let alertController = UIAlertController(title: "", message: "서버와의 연결이 지연되고 있습니다. 인터넷 연결을 확인해 주세요.", preferredStyle: UIAlertControllerStyle.alert)
-                        let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-                            
-                            print("서버연결")
-                        }
-                        alertController.addAction(okAction)
-                        self.present(alertController, animated: true, completion: nil)
+                        MainManager.shared.alertPopMessage(self, "네트워크 연결에 문제가 있거나 서버에서 응답이 지연되고 있습니다.앱을 종료 했다가 다시 실행해 주세요.")
                         print( "연식 저장 실패.!" )
                     }
             }
@@ -5649,21 +5373,8 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
                         }
                         else {
                             
-                            
-                            let alertController = UIAlertController(title: "", message: "로그인이 지연되고 있습니다. 인터넷 연결을 확인해 주세요.", preferredStyle: UIAlertControllerStyle.alert)
-                            //                let DestructiveAction = UIAlertAction(title: "취소", style: UIAlertActionStyle.Destructive) { (result : UIAlertAction) -> Void in
-                            //
-                            //                    print("취소")
-                            //                }
-                            
-                            let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-                                
-                                print("단말기를 찾을수 없습니다. 연결을 확인해 주세요")
-                            }
-                            // alertController.addAction(DestructiveAction)
-                            
-                            alertController.addAction(okAction)
-                            self.present(alertController, animated: true, completion: nil)
+                            MainManager.shared.alertPopMessage(self, "네트워크 연결에 문제가 있거나 서버에서 응답이 지연되고 있습니다.앱을 종료 했다가 다시 실행해 주세요.")
+                           
                         }
                         
                         print( "LOGIN_FAIL_1" )
@@ -5680,20 +5391,10 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
                     else {
                         
                         MainManager.shared.bLoginTryErr = true
-                        let alertController = UIAlertController(title: "", message: "로그인이 지연되고 있습니다. 인터넷 연결을 확인해 주세요.", preferredStyle: UIAlertControllerStyle.alert)
-                        //                let DestructiveAction = UIAlertAction(title: "취소", style: UIAlertActionStyle.Destructive) { (result : UIAlertAction) -> Void in
-                        //
-                        //                    print("취소")
-                        //                }
                         
-                        let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-                            
-                            print("단말기를 찾을수 없습니다. 연결을 확인해 주세요")
-                        }
-                        // alertController.addAction(DestructiveAction)
+                        MainManager.shared.alertPopMessage(self, "네트워크 연결에 문제가 있거나 서버에서 응답이 지연되고 있습니다.앱을 종료 했다가 다시 실행해 주세요.")
                         
-                        alertController.addAction(okAction)
-                        self.present(alertController, animated: true, completion: nil) 
+                        
                     }
                     print( "LOGIN_FAIL_2" )
                 }

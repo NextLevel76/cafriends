@@ -182,6 +182,7 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
     
     var timer = Timer()
     var timerBLE = Timer()
+    
     var timerDATETIME = Timer()
     var timerCarFriendStart = Timer()
     var timerStopScan = Timer()
@@ -570,11 +571,8 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
                     
                     sleep(0)
                 }
-                
-                
             }
         }
-        
     }
     
     @IBAction func pressed_back(_ sender: UIButton) {
@@ -648,13 +646,7 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
 //            MainManager.shared.str_certifi_notis = "사용하실 닉네임을 입력해주세요."
 //            self.performSegue(withIdentifier: "joinPopSegue", sender: self)
             
-            let alertController = UIAlertController(title: "", message: "닉네임를 입력해주세요.", preferredStyle: UIAlertControllerStyle.alert)
-            let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-                
-                print("회원가입")
-            }
-            alertController.addAction(okAction)
-            self.present(alertController, animated: true, completion: nil)
+            MainManager.shared.alertPopMessage(self,"아이디를 입력해주세요.")
         }
         else {
             
@@ -715,13 +707,8 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
 //                            MainManager.shared.str_certifi_notis = "사용 가능한 닉네임입니다."
 //                            self.performSegue(withIdentifier: "joinPopSegue", sender: self)
                             
-                            let alertController = UIAlertController(title: "", message: "사용 가능한 닉네임입니다.", preferredStyle: UIAlertControllerStyle.alert)
-                            let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-                                
-                                print("닉네임 사용가능")
-                            }
-                            alertController.addAction(okAction)
-                            self.present(alertController, animated: true, completion: nil)
+                            MainManager.shared.alertPopMessage(self,"사용 가능한 아이디입니다.")                            
+                            
                             
                             // 닉네임 저장
                             // MainManager.shared.info?.str_id_nick = (self.field_nick_input.text)!
@@ -736,13 +723,7 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
 //                            MainManager.shared.str_certifi_notis = "이미 사용중인 닉네임 입니다."
 //                            self.performSegue(withIdentifier: "joinPopSegue", sender: self)
                             
-                            let alertController = UIAlertController(title: "", message: "이미 사용중인 닉네임 입니다.", preferredStyle: UIAlertControllerStyle.alert)
-                            let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-                                
-                                print("닉네임 중복")
-                            }
-                            alertController.addAction(okAction)
-                            self.present(alertController, animated: true, completion: nil)
+                            MainManager.shared.alertPopMessage(self,"아이디가 이미 있습니다. 다른 아이디를 사용해주세요.")
                             
                             print("닉네임 중복")
                             print(temp)
@@ -761,17 +742,8 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
         
         
         if( bNickNameUplicateCheck == false ) {
-
-//            MainManager.shared.str_certifi_notis = "닉네임 중복체크를 먼저 해주세요."
-//            self.performSegue(withIdentifier: "joinPopSegue", sender: self)
-            let alertController = UIAlertController(title: "", message: "닉네임 중복체크를 먼저 해주세요.", preferredStyle: UIAlertControllerStyle.alert)
-            let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-                
-                print("닉네임 중복체크")
-            }
-            alertController.addAction(okAction)
-            self.present(alertController, animated: true, completion: nil)
             
+            MainManager.shared.alertPopMessage(self,"아이디 중복확인 또는 핸드폰인증 절차가 완료되지 않았습니다.")
         }
         else if( bTimeCheckStart == false ) {
             
@@ -779,18 +751,13 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
             //전번 저장
             MainManager.shared.info.str_id_phone_num = tempString01!
             
+            // 0102227777
             if( field_phone_01.text!.count < 10 ) {
 
 //                MainManager.shared.str_certifi_notis = "전화번호를 정확하게 입력해주세요."
 //                self.performSegue(withIdentifier: "joinPopSegue", sender: self)
                 
-                let alertController = UIAlertController(title: "", message: "전화번호를 정확하게 입력해주세요.", preferredStyle: UIAlertControllerStyle.alert)
-                let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-                    
-                    print("전화번호 입력")
-                }
-                alertController.addAction(okAction)
-                self.present(alertController, animated: true, completion: nil)
+                MainManager.shared.alertPopMessage(self,"전화번호를 정확하게 입력해주세요.")
                 
                 return
             }
@@ -802,13 +769,8 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
 //            MainManager.shared.str_certifi_notis = "휴대전화에 전송된 인증번호를 입력해 주세요."
 //            self.performSegue(withIdentifier: "joinPopSegue", sender: self)
             
-            let alertController = UIAlertController(title: "", message: "휴대전화에 전송된 인증번호를 입력해 주세요.", preferredStyle: UIAlertControllerStyle.alert)
-            let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-                
-                print("인증번호")
-            }
-            alertController.addAction(okAction)
-            self.present(alertController, animated: true, completion: nil)
+            MainManager.shared.alertPopMessage(self,"휴대전화에 전송된 인증번호를 입력해 주세요.")
+            
             
             // login.php?Req=PhoneCheck&PhoneNo=핸폰번호
             let phone_num = MainManager.shared.info.str_id_phone_num // 문자열 타입 벗기기?
@@ -873,7 +835,7 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
         }
         else if ( field_pwd01.text! != field_pwd02.text! ) {
             
-            MainManager.shared.str_certifi_notis = "비밀번호가 동일하지 않습니다."
+            MainManager.shared.str_certifi_notis = "비밀번호 입력이 올바르지 않습니다."
         }
         else if( field_certifi_input.text!.count == 0 ) {
 
@@ -887,23 +849,16 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
         else {
             
             // 인증번호가 틀렸다.
-            MainManager.shared.str_certifi_notis = "인증 번호가 맞지 않습니다."
+            MainManager.shared.str_certifi_notis = "인증번호가 틀립니다.다시 입력해주세요."
             MainManager.shared.bMemberPhoneCertifi = false
         }
         
         MainManager.shared.info.str_password = field_pwd01.text!
         
-        // Segue -> 사용 팝업뷰컨트롤러 띠우기
-        let alertController = UIAlertController(title: "", message: MainManager.shared.str_certifi_notis, preferredStyle: UIAlertControllerStyle.alert)
-        let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-            
-            if( MainManager.shared.str_certifi_notis == "인증 되었습니다." ) {
-                
-                MainManager.shared.bMemberPhoneCertifi = true
-            }
-        }
-        alertController.addAction(okAction)
-        self.present(alertController, animated: true, completion: nil)
+        
+        MainManager.shared.alertPopMessage(self,MainManager.shared.str_certifi_notis)
+        
+        
         
         print( MainManager.shared.str_certifi_notis )
     }
@@ -1028,33 +983,25 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
         // 연비
         MainManager.shared.info.str_TotalAvgFuelMileage = field_car_km_L.text!
         
+        // 차 정보 모두 입력 안 해도 된다
+//        if( field_certifi_num.text!.count == 0 ||
+//            field_car_dae_num.text!.count == 0 ||
+//            field_car_kind.text!.count == 0 ||
+//            field_car_year.text!.count == 0 ||
+//            field_car_fuel.text!.count == 0 ||
+//            field_car_tot_km.text!.count == 0 ||
+//            field_car_km_L.text!.count == 0 ) {
+//
+//            // MainManager.shared.alertPopMessage(self, "차 정보를 모두 입력 해주세요 ~!")
+//        }
+//        else {
         
-        // 차 정보
-        if( field_certifi_num.text!.count == 0 ||
-            field_car_dae_num.text!.count == 0 ||
-            field_car_kind.text!.count == 0 ||
-            field_car_year.text!.count == 0 ||
-            field_car_fuel.text!.count == 0 ||
-            field_car_tot_km.text!.count == 0 ||
-            field_car_km_L.text!.count == 0 ) {
-            
-            MainManager.shared.str_certifi_notis = "차 정보를 모두 입력 해주세요 ~!"
-            let alertController = UIAlertController(title: "", message: MainManager.shared.str_certifi_notis, preferredStyle: UIAlertControllerStyle.alert)
-            let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-                
-                print("회원가입")
-            }
-            alertController.addAction(okAction)
-            self.present(alertController, animated: true, completion: nil)
-        }
-        else {
-            
             // 인터넷 연결 체크 회원가입
             if( MainManager.shared.isConnectCheck(self) == true ) {
                 
                 setUserInfoDB()
             }
-        }
+
     }
     
     
@@ -1164,14 +1111,8 @@ class MemberJoinViewController: UIViewController, UIPickerViewDelegate, UIPicker
                     }
                     else {
                         
-                        MainManager.shared.str_certifi_notis = "서버와의 연결이 지연되고 있습니다. 인터넷 연결을 확인해 주세요."
-                        let alertController = UIAlertController(title: "", message: MainManager.shared.str_certifi_notis, preferredStyle: UIAlertControllerStyle.alert)
-                        let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-                            
-                            print("회원가입")
-                        }
-                        alertController.addAction(okAction)
-                        self.present(alertController, animated: true, completion: nil)
+                        MainManager.shared.alertPopMessage(self, "서버와의 연결이 지연되고 있습니다. 인터넷 연결을 확인해 주세요.")
+                        
                         print( "회원가입 실패2" )
                     }
                     

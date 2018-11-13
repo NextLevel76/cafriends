@@ -687,12 +687,12 @@ struct Member_Info {
                 }
                 else {                    
                     // 카 리스트 못받았다
-                    MainManager.shared.alertPopMessage(viewCtr, "서버와의 연결이 지연되고 있습니다. 인터넷 연결을 확인해 주세요.")
+                    MainManager.shared.alertPopMessage(viewCtr, "네트워크 연결에 문제가 있거나 서버에서 응답이 지연되고 있습니다.앱을 종료 했다가 다시 실행해 주세요.")
                 }
             }
             else {
                 // 카 리스트 못받았다
-                MainManager.shared.alertPopMessage(viewCtr, "서버와의 연결이 지연되고 있습니다. 인터넷 연결을 확인해 주세요.")
+                MainManager.shared.alertPopMessage(viewCtr, "네트워크 연결에 문제가 있거나 서버에서 응답이 지연되고 있습니다.앱을 종료 했다가 다시 실행해 주세요.")
             }
         }
     }
@@ -962,7 +962,7 @@ class MainManager   {
     var bAPP_TEST = true
     
     var isAPP_PAUSE = false
-    var isBLE_RESTART = false
+    var isAPP_RESUME = false
     
     
 
@@ -1031,7 +1031,7 @@ class MainManager   {
     
     
     
-    // 인터넷 연결 체크
+    // 팝업 메세지
     func alertPopMessage(_ viewCtr:UIViewController, _ msg:String  ) {
             
         let alertController = UIAlertController(title: "", message: msg, preferredStyle: UIAlertControllerStyle.alert)
@@ -1062,7 +1062,7 @@ class MainManager   {
             print("No Internet")
             
             
-            let alertController = UIAlertController(title: "", message: "서버와의 연결이 지연되고 있습니다. 인터넷 연결을 확인해 주세요.", preferredStyle: UIAlertControllerStyle.alert)
+            let alertController = UIAlertController(title: "", message: "네트워크 연결에 문제가 있거나 서버에서 응답이 지연되고 있습니다.앱을 종료 했다가 다시 실행해 주세요.", preferredStyle: UIAlertControllerStyle.alert)
             //                let DestructiveAction = UIAlertAction(title: "취소", style: UIAlertActionStyle.Destructive) { (result : UIAlertAction) -> Void in
             //
             //                    print("취소")
@@ -1104,7 +1104,7 @@ class MainManager   {
 //            let alert = UIAlertView(title: "No Login Connection", message: "로그인이 지연되고 있습니다. 잠시후 확인해 주세요.", delegate: nil, cancelButtonTitle: "OK")
 //            alert.show()            
             
-            let alertController = UIAlertController(title: "", message: "로그인이 지연되고 있습니다. 인터넷 연결을 확인해 주세요.", preferredStyle: UIAlertControllerStyle.alert)
+            let alertController = UIAlertController(title: "", message: "네트워크 연결에 문제가 있거나 서버에서 응답이 지연되고 있습니다.앱을 종료 했다가 다시 실행해 주세요..", preferredStyle: UIAlertControllerStyle.alert)
             //                let DestructiveAction = UIAlertAction(title: "취소", style: UIAlertActionStyle.Destructive) { (result : UIAlertAction) -> Void in
             //
             //                    print("취소")

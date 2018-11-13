@@ -149,6 +149,10 @@ class Terms02_ViewController: UIViewController, WKNavigationDelegate, WKUIDelega
             let myView = self.storyboard?.instantiateViewController(withIdentifier: "terms01") as! Terms01_ViewController
             self.present(myView, animated: true, completion: nil)
         }
+        else {
+                
+            MainManager.shared.alertPopMessage(self,"약관동의를 확인해주세요.")
+        }
     }
     
     
@@ -227,8 +231,7 @@ class Terms02_ViewController: UIViewController, WKNavigationDelegate, WKUIDelega
             print("Webview URL NOT FOUND ON SERVER");
         }
         
-        print("Webview didFailProvisionalNavigation");
-        
+        print("Webview didFailProvisionalNavigation");        
         
     }
     
