@@ -28,7 +28,7 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         
         if(message.name == "callbackHandler") {
             
-            print(message.body)
+            print("message.body : \(message.body)" )
         }
     }
     
@@ -36,7 +36,7 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         if let touch = touches.first {
             let position = touch.location(in: self.view )
             let center = CGPoint(x: position.x, y: position.y)
-            print(center)
+            //print(center)
         }
     }
     
@@ -102,22 +102,26 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
     var phoneToBleTimeCheckCount = 0
     
     //---------------------------------- PIN_CODE 체크
+    //
+    // 앱 실행시 핀코드 자동 변경
+    var otherPinCodeAutoChangePinViewGO:Bool = false
     // 처음 접속시 비교
     var isConnectBlePinCodeCheck:Bool = false
-    // var connectBlePinCodeCheckCount = 0
+    // 처음 핀코드 체크 타임아웃
+    var isConnectBlePinCodeTimeOutCheck:Bool = false
+   
+
     
     // 변경시 비교
     var isPhoneToBlePinCodeCheck:Bool = false
     var phoneToBlePinCodeCheckCount = 0
         
+   
+    
+
     
     
-    var autoBtnDataSet:Bool = false
-    var autoBtnDataSetCount = 0
     
-    
-    // 카프랜드 연결후 데이타 두번 파싱 후 카프랜드 명령실행 보낼수 있게 딜레이 주고 인디케이터 돌린다
-    var BLE_WAKE_UP_DELEY_COUNT = 0
     
     
     var isMoveSceneDisConnectBLE:Bool = false
@@ -137,6 +141,7 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
     var bleSerachDelayStopState:Int = 0
     
     
+    @IBOutlet weak var mainSubView: UIView!
     
     // 서브 메뉴 위치
     // 시간 상단 메뉴 20
@@ -150,10 +155,7 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
     var activityIndicator:UIActivityIndicatorView = UIActivityIndicatorView()
     
     
-    //  let myView = self.storyboard?.instantiateViewController(withIdentifier: "a00") as! ViewController
-    //    self.present(myView, animated: true, completion: nil)
-    
-    // performSegue(withIdentifier: "gotoAB", sender:  self)
+
     
     
     @IBOutlet weak var viewContainer: UIView!
@@ -279,14 +281,27 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
     
     // test Alaram
     @IBAction func pressedA(_ sender: UIButton) {
+
+        // 인터넷 연결 체크
+        // MainManager.shared.isConnectCheckTest(viewCtr: self)
+
+//        // 다시 연결
+//        MainManager.shared.info.isCAR_FRIENDS_CONNECT = false
+//        centralManager.cancelPeripheralConnection(self.carFriendsPeripheral!)
+//
+//        // 카프랜드 연결중
+//        a01_01_scroll_view.btn_kit_connect.setBackgroundImage(UIImage(named:"a_01_01_unlink"), for: .normal)
+//        self.a01_01_scroll_view.label_kit_connect.text = "블루투스 연결중"
+//        self.a01_01_scroll_view.label_kit_connect.textColor = UIColor.red
+
         
-//        MainManager.shared.member_info.str_SetPinCode = "2233"
+        
+//        MainManager.shared.info.str_SetPinCode = "2233"
 //        setPinDataDB()
         
         
         
-        // 블루투스 켜라 팝업
-        // self.performSegue(withIdentifier: "blueToothOffPopSegue02", sender: self)
+
         
 //        btn_a_change.setTitleColor(UIColor.black, for: .normal)
 //        btn_b_change.setTitleColor(UIColor.lightGray, for: .normal)
@@ -298,20 +313,20 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         
         // [DTC_EBCM]=P0000-00 YYYY-MM-DD HH:MM:SS
         // TEST
-        //MainManager.shared.member_info.setDTC_INFO_DB( "P0000-00" )
+        //MainManager.shared.info.setDTC_INFO_DB( "P0000-00" )
     }
     
     
     @IBAction func pressedB(_ sender: UIButton) {
         
         // 유저 로그인 체크
-        if( MainManager.shared.isLoginErrMessage() == false ) {
+        if( MainManager.shared.isLoginErrMessage(self) == false ) {
             
             return
         }
         
         // 인터넷 연결 체크, 연결 안됬으면 버튼 비활성
-        if( MainManager.shared.isConnectCheck() == false ) {
+        if( MainManager.shared.isConnectCheck(self) == false ) {
 
             return
         }
@@ -324,6 +339,7 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         
         let myView = self.storyboard?.instantiateViewController(withIdentifier: "b00") as! BViewController
         self.present(myView, animated: true, completion: nil)
+
     }
     
     
@@ -332,13 +348,13 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
     @IBAction func pressedC(_ sender: UIButton) {
         
         // 유저 로그인 체크
-        if( MainManager.shared.isLoginErrMessage() == false ) {
+        if( MainManager.shared.isLoginErrMessage(self) == false ) {
           
             return
         }
         
         // 인터넷 연결 체크, 연결 안됬으면 버튼 비활성
-        if( MainManager.shared.isConnectCheck() == false ) {
+        if( MainManager.shared.isConnectCheck(self) == false ) {
 
             return
         }
@@ -350,29 +366,29 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         
         let myView = self.storyboard?.instantiateViewController(withIdentifier: "c00") as! CViewController
         self.present(myView, animated: true, completion: nil)
+
     }
     
     
     func bleDisConnect() {
         
-        if( MainManager.shared.member_info.isCAR_FRIENDS_CONNECT == true ) {
+        isMoveSceneDisConnectBLE = true
+        MainManager.shared.info.isCAR_FRIENDS_CONNECT = false
+        
             
-            if( carFriendsPeripheral != nil ) {
-                // 블루투스 끊기 위해, 끊김 딜리게이트 호출
-                centralManager.stopScan()
-                centralManager.cancelPeripheralConnection(self.carFriendsPeripheral!)
-                centralManager = nil
-            }
-            self.carFriendsPeripheral = nil
-            self.myCharacteristic = nil
-            //self.mySerview = nil
-            bleSerachDelayStopState = 0
-            
-            isMoveSceneDisConnectBLE = true
-            MainManager.shared.member_info.isCAR_FRIENDS_CONNECT = false
-            
-            print("###### bleDisConnect() isCAR_FRIENDS_CONNECT = false")
+        if( carFriendsPeripheral != nil ) {
+            // 블루투스 끊기 위해, 끊김 딜리게이트 호출
+            centralManager.stopScan()
+            centralManager.cancelPeripheralConnection(self.carFriendsPeripheral!)
+            centralManager = nil
         }
+        self.carFriendsPeripheral = nil
+        self.myCharacteristic = nil
+        //self.mySerview = nil
+        bleSerachDelayStopState = 0
+        
+        print("###### bleDisConnect() isCAR_FRIENDS_CONNECT = false")
+
     }
     
     
@@ -860,33 +876,46 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
     }
     
     
-    // 반복호출 스케줄러 1초
+    
+    
+    
+    
+    
+    
+    
+    // 반복호출 스케줄러 0.1초
     func timerAction() {
 
         
-        // 블루투스 연결 초기화
+        // PAUSE
         if( MainManager.shared.isBLE_RESTART == true ) {
-
+            
             MainManager.shared.isBLE_RESTART = false
-           
-//            // 다시 연결 안하는 플레그
-//            bleDisConnect()
-//            // 반복 타이머 정지
-//            stopTimer()
-//
-//            let myView = self.storyboard?.instantiateViewController(withIdentifier: "a00") as! AViewController
-//            self.present(myView, animated: true, completion: nil)
-
+            // 푸시가 있으면 A01_06 화면으로
+            pushCheck_MoveToA0106View()
+            
             print("___________ PAUSE")
         }
         
         
-//        if( MainManager.shared.isAPP_PAUSE == true ) {
-//
-//        }
-//        else {
-//
-//        }
+        //처음 차량 정보 DB 저장, DTC 코드 정보 모드 BLE 읽기
+        initCarDataDB()
+        
+        
+        
+
+        
+
+        
+        
+        // 파싱 데이타가 5초 동안 제대로 들어오지 않으면 단말기 블루투스 재연결 한다.
+        bleParsingDataCheck()
+        
+        
+        // a02_01 카프렌즈 연결 상태
+        a02_01_view.ble_state( MainManager.shared.info.isCAR_FRIENDS_CONNECT )
+        // a02_02 카프렌즈 연결 상태
+        a02_02_view.ble_state( MainManager.shared.info.isCAR_FRIENDS_CONNECT )
         
         
         
@@ -905,68 +934,31 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
             }
         }
         
-        // 예약시간 설정 성공
-        if( MainManager.shared.bStartPopTimeReserv == true ) {
-
-            MainManager.shared.bStartPopTimeReserv = false
-            
-            if( isBLE_CAR_FRIENDS_CONNECT() == false ) { return }
-            
-//            ToastView.shared.short(self.view, txt_msg: "예약 시동 활성 모드입니다.")
-//            // 시간 세팅
-//            let nsDataT:NSData = MainManager.shared.member_info.setRES_RVS_TIME( MainManager.shared.member_info.strCar_Check_ReservedRVSTime )
-//            setDataBLE( nsDataT )
-        }
-        
-        // 온오프 버튼 상태
-        //btn_a02_change.isEnabled = isBLE_CAR_FRIENDS_CONNECT()
         
         
-       
-       
+        
+        
+        // 온오프 버튼 유저가 동작한 값을 가지고 위 단말기 auto 변수들 값과 다를 경우 BLE에 명령을 계속 보내 같아지게 만든다.
+        autoBtnStateBleSettingInit()
         
         // 차트, 서버에서 받은 데이타로 다시 그리기
         getDataChartsDraw()
         
         // DTC 코드를 읽었을때 AddDTC 하고 나면 8weekDTC 다시 읽어와야함.
-        AddDtcAnd8WeekReadDtc()        
-    }
-    
-    
-    
-    
-    
-    
-    // 반복호출 스케줄러 0.1초
-    func timerAction2() {
+        AddDtcAnd8WeekReadDtc()
+        
+        
+        
+        
         
         // 단말기 처음 접속시 핀코드 비교 후 DB저장 및 시간 세팅
-        connectToBlePinCodeCheck()
+        connectToBlePinCodeCheckStart()
         
-        // 단말기 처음 접속시 핀코드가 다르다 핀코드 변경화면으로
-        if( MainManager.shared.member_info.bPinCodeViewGO == true ) {
-            
-            // 핀코드 요청
-            let nsData:NSData = MainManager.shared.member_info.getPIN_CODE()
-            self.setDataBLE( nsData )
-            
-            self.view.bringSubview(toFront: a01_01_pin_view)
-            self.view.bringSubview(toFront: mainMenuABC_view)
-            a01_01_pin_view.label_pin_num_notis.text = "단말기의 비밀번호를 설정 합니다."
-            a01_01_pin_view.pin_input_repeat_conut = 0
-            
-            // 자동 포커스 이동 체크
-            a01_01_pin_view.bPin_input_location = true
-            a01_01_pin_view.iPin_input_location_no = 0
-            
-            // 현재 핀코드 입력
-            a01_01_pin_view.field_pin_now.text = MainManager.shared.member_info.str_LocalPinCode
-            a01_01_pin_view.field_pin_new.text = ""
-            
-            MainManager.shared.member_info.bPinCodeViewGO = false
-            
-            print("##### 핀코드 다르다. 핀코드 변경 화면으로 Local :: " + MainManager.shared.member_info.str_LocalPinCode)
-        }
+        // DB 정보값 읽고 쓰기
+        procCarDataDB()
+        
+        // 단말기 처음 접속시 핀코드가 다르다. 팝업창 확인 -> 핀코드 변경화면으로
+        pinCodeDifferent_a01_01_ModPinViewGo()
         
         
         if( a01_01_pin_view.bPin_input_location == true ) {
@@ -981,7 +973,6 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
                 a01_01_pin_view.iPin_input_location_no = 2
                 a01_01_pin_view.field_pin_new.becomeFirstResponder() // 2번으로 포커스 이동
             }
-            
         }
         
         // 카프랜드 찾았다
@@ -993,156 +984,126 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         }
         
         
+        // 유저 로그인 3번 트라이
         if( MainManager.shared.bLoginTry == true ) {
             
             MainManager.shared.bLoginTry = false
             userLogin()
         }
-        
-        
-        
     }
     
     
     // 2초
     func timerActionBLE() {
-        
             
         if( self.isBLE_CAR_FRIENDS_CONNECT() == true ) {
             
-            // 블루투스에서 1초마다 브로드캐스팅 되는 문자열 계속 파싱
-            //MainManager.shared.member_info.readDataCarFriendsBLE()
-            
-            // 유저가 동작한 값을 가지고 위 단말기 auto 변수들 값과 다를 경우 BLE에 명령을 계속 보내 같아지게 만든다.
-            autoBtnStateBleSetting()
-            
             // a01_04 배터리 상태, 타이어 공기압 기타 등등 레이블 실시간 갱신
             a01_04_viewInit()
-            
             // TEST GET PIN CODE
-            let nsData1:NSData = MainManager.shared.member_info.getPIN_CODE()
-            self.setDataBLE( nsData1 )
+//            let nsData1:NSData = MainManager.shared.info.getPIN_CODE()
+//            self.setDataBLE( nsData1 )
             
             
-//            let nsData:NSData = MainManager.shared.member_info.setPIN_CODE( "7788" )
-//            self.setDataBLE( nsData )
-            
-//            let nsData:NSData = MainManager.shared.member_info.setREAD_DTC_ALL()
-//            self.setDataBLE( nsData )
-            
-            
-            
-            if( BLE_WAKE_UP_DELEY_COUNT < 1 ) {
-                
-                BLE_WAKE_UP_DELEY_COUNT += 1
-            }
-            else {
-                
-                ToastIndicatorView.shared.close()
-            }
             
             // 날짜 세팅 후 날짜 비교 3번 한다. 그 다음 DTC 명령 실행
-            phoneToBleTimeCheck()
+            phoneToBleDateTimeCheck()
             
             // 핀코드 세팅 후 비교 3번 한다.
-            phoneToBlePinCodeCheck()
-            
+            setBlePinCodeConfirm()
         }
-
         
         // 블루 투스 켜짐 연결 꺼짐 UI 표시 체크
         connectCheckBLE()
         
         // 실시간 레이블 값 갱신
-        setValueLabel()
+        setValueLabelRefreshUI()
     }
     
     
     // 실시간 레이블 값 갱신
-    func setValueLabel() {
+    func setValueLabelRefreshUI() {
         
-        
-        a01_01_scroll_view.label_car_kind_year.text = "\(MainManager.shared.member_info.str_car_kind) \(MainManager.shared.member_info.str_car_year)년형"
-        a01_01_scroll_view.label_fuel_type.text = "\(MainManager.shared.member_info.str_car_fuel_type) 차량"
-        a01_01_scroll_view.label_car_plate_nem.text = MainManager.shared.member_info.str_car_plate_num
-        a01_01_scroll_view.label_car_vin_num.text = MainManager.shared.member_info.str_car_vin_number
-        
+        a01_01_scroll_view.label_car_kind_year.text = "\(MainManager.shared.info.str_car_kind) \(MainManager.shared.info.str_car_year)년형"
+        a01_01_scroll_view.label_fuel_type.text = "\(MainManager.shared.info.str_car_fuel_type) 차량"
+        a01_01_scroll_view.label_car_plate_nem.text = MainManager.shared.info.str_car_plate_num
+        a01_01_scroll_view.label_car_vin_num.text = MainManager.shared.info.str_car_vin_number
         
         /////////////////////
         // TOT
-        if( MainManager.shared.member_info.str_TotalDriveMileage.isAlphanumeric == false ) {
+        if( MainManager.shared.info.str_TotalDriveMileage.isAlphanumeric == false ) {
             
-            MainManager.shared.member_info.str_TotalDriveMileage = "0"
+            MainManager.shared.info.str_TotalDriveMileage = "0"
         }
         
         //  이번주 거리
-        if( MainManager.shared.member_info.str_ThisWeekDriveMileage.isAlphanumeric == false ) {
+        if( MainManager.shared.info.str_ThisWeekDriveMileage.isAlphanumeric == false ) {
             
-            MainManager.shared.member_info.str_ThisWeekDriveMileage = "0"
+            MainManager.shared.info.str_ThisWeekDriveMileage = "0"
         }
         
         // 8주 평균
-        if( MainManager.shared.member_info.str_8WeekDriveMileage.isAlphanumeric == false ) {
+        if( MainManager.shared.info.str_8WeekDriveMileage.isAlphanumeric == false ) {
             
-            MainManager.shared.member_info.str_8WeekDriveMileage = "0"
+            MainManager.shared.info.str_8WeekDriveMileage = "0"
         }
         
         
         /////////////////////
         // 전체 연비로 수정
         
-        if( MainManager.shared.member_info.str_TotalAvgFuelMileage.isAlphanumeric == false ) {
+        if( MainManager.shared.info.str_TotalAvgFuelMileage.isAlphanumeric == false ) {
             
-            MainManager.shared.member_info.str_TotalAvgFuelMileage = "0.0"
+            MainManager.shared.info.str_TotalAvgFuelMileage = "0.0"
         }
         
-        if( MainManager.shared.member_info.str_ThisWeekFuelMileage.isAlphanumeric == false ) {
+        if( MainManager.shared.info.str_ThisWeekFuelMileage.isAlphanumeric == false ) {
             
-            MainManager.shared.member_info.str_ThisWeekFuelMileage = "0.0"
+            MainManager.shared.info.str_ThisWeekFuelMileage = "0.0"
         }
         
-        if( MainManager.shared.member_info.str_8WeekAvgFuelMileage.isAlphanumeric == false ) {
+        if( MainManager.shared.info.str_8WeekAvgFuelMileage.isAlphanumeric == false ) {
             
-            MainManager.shared.member_info.str_8WeekAvgFuelMileage = "0.0"
+            MainManager.shared.info.str_8WeekAvgFuelMileage = "0.0"
         }
         
         
         /////////////////////
         // DTC
-        if( MainManager.shared.member_info.str_ThisWeekDtcCount.isAlphanumeric == false ) {
+        if( MainManager.shared.info.str_ThisWeekDtcCount.isAlphanumeric == false ) {
             
-            MainManager.shared.member_info.str_ThisWeekDtcCount = "0.0"
+            MainManager.shared.info.str_ThisWeekDtcCount = "0.0"
         }
         
-        if( MainManager.shared.member_info.str_8WeekDtcCount.isAlphanumeric == false ) {
+        if( MainManager.shared.info.str_8WeekDtcCount.isAlphanumeric == false ) {
             
-            MainManager.shared.member_info.str_8WeekDtcCount = "0.0"
+            MainManager.shared.info.str_8WeekDtcCount = "0.0"
         }
         
         /////////////////////////////////////////////////////////////////////////
         // 전체 거리
         // 콤마
         var tempTotKm:Int = 0
-        tempTotKm = Int(Double(MainManager.shared.member_info.str_TotalDriveMileage)!)
+        tempTotKm = Int(Double(MainManager.shared.info.str_TotalDriveMileage)!)
         // 첫주
         var tempThisWeekKm:Int = 0
-        tempThisWeekKm = Int(Double(MainManager.shared.member_info.str_ThisWeekDriveMileage)!)
+        tempThisWeekKm = Int(Double(MainManager.shared.info.str_ThisWeekDriveMileage)!)
         // 8주 평균
         var temp8WeekKm:Int = 0
-        temp8WeekKm = Int(Double(MainManager.shared.member_info.str_8WeekDriveMileage)!)
+        temp8WeekKm = Int(Double(MainManager.shared.info.str_8WeekDriveMileage)!)
         
         
         /////////////////////////////////////////////////////////////////////////
         // 전체 평균 연비
         // 소수점 한자리 남게 rounded()
         var tempTotAvgFuel:Double = 0.0
-        tempTotAvgFuel = Double(MainManager.shared.member_info.str_TotalAvgFuelMileage)!.rounded( toPlaces: 1)
+        tempTotAvgFuel = Double(MainManager.shared.info.str_TotalAvgFuelMileage)!.rounded( toPlaces: 1)
         
         var tempThisWeektAvgFuel:Double = 0.0
-        tempThisWeektAvgFuel = Double(MainManager.shared.member_info.str_ThisWeekFuelMileage)!.rounded( toPlaces: 1)
+        tempThisWeektAvgFuel = Double(MainManager.shared.info.str_ThisWeekFuelMileage)!.rounded( toPlaces: 1)
         
         var temp8WeekAvgFuel:Double = 0.0
-        temp8WeekAvgFuel = Double(MainManager.shared.member_info.str_8WeekAvgFuelMileage)!.rounded( toPlaces: 1)
+        temp8WeekAvgFuel = Double(MainManager.shared.info.str_8WeekAvgFuelMileage)!.rounded( toPlaces: 1)
         
         
         // 콤마
@@ -1155,10 +1116,10 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         a01_01_scroll_view.label_avg_8week_kml.text = "\(temp8WeekAvgFuel) km/l"
         
         // 정수로
-        //MainManager.shared.member_info.str_ThisWeekDtcCount = "123.123"
-        //MainManager.shared.member_info.str_8WeekDtcCount = "345.567"
-        var temp_ThisWeekDtcCount:Int = Int(Float(MainManager.shared.member_info.str_ThisWeekDtcCount)!)
-        var temp_8WeekDtcCount:Int = Int(Float(MainManager.shared.member_info.str_8WeekDtcCount)!)
+        //MainManager.shared.info.str_ThisWeekDtcCount = "123.123"
+        //MainManager.shared.info.str_8WeekDtcCount = "345.567"
+        let temp_ThisWeekDtcCount:Int = Int(Float(MainManager.shared.info.str_ThisWeekDtcCount)!)
+        let temp_8WeekDtcCount:Int = Int(Float(MainManager.shared.info.str_8WeekDtcCount)!)
         
         // 이번주, 8주 합
         a01_01_scroll_view.label_tot_dtc.text = "\(temp_ThisWeekDtcCount) 회"
@@ -1185,17 +1146,15 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         a01_04_1_view.label_8week_dtc.text = "\(temp_8WeekDtcCount) 회"
         
         
-        
         // 예약 시간 레이블 갱신
-        ResRvsLabelRefrash()
-        
+        ResRvsLabelRefresh()
     }
     
     
     
     func getDataChartsDraw() {
         
-        if( getMy8Drive && getAllDrive && getMy8Fuel && getAllFuel && getMy8DTC && getAllDTC && getWeekDTC ) {
+        //if( getMy8Drive && getAllDrive && getMy8Fuel && getAllFuel && getMy8DTC && getAllDTC ) {
             
             // 8주 데이타 다 받으면 한번 그리고 말기
             getMy8Drive = false
@@ -1203,9 +1162,9 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
             getMy8Fuel = false
             getAllFuel = false
             getMy8DTC = false
-            
             getAllDTC = false
-            getWeekDTC = false // 금주 DTC 갯수
+            
+            // getWeekDTC = false // 금주 DTC 갯수
             
             // 8주 평균 계산
             car8WeekInfoCal()
@@ -1220,10 +1179,8 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
             setChartValues_a03()
             setChartValues_a04()
             
-            setValueLabel()
-        }
-        
-        
+            setValueLabelRefreshUI()
+        //}
         
         
     }
@@ -1243,7 +1200,7 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
             temp8WeekDriveMileage += Double( MainManager.shared.str_My8WeeksDriveMileage[i] )!
         }
         
-        MainManager.shared.member_info.str_8WeekDriveMileage = String( temp8WeekDriveMileage )
+        MainManager.shared.info.str_8WeekDriveMileage = String( temp8WeekDriveMileage )
         
         // 8주 평균
         for i in 0..<MainManager.shared.str_My8weeksFuelMileage.count {
@@ -1251,40 +1208,36 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
             temp8WeekFuelMileage += Double( MainManager.shared.str_My8weeksFuelMileage[i] )!
         }
         temp8WeekFuelMileage /= 8
-        MainManager.shared.member_info.str_8WeekAvgFuelMileage = String( temp8WeekFuelMileage )
+        MainManager.shared.info.str_8WeekAvgFuelMileage = String( temp8WeekFuelMileage )
         
         // 8주 합
         for i in 0..<MainManager.shared.str_My8WeeksDTCCount.count {
             
             temp8WeekDtcCount += Int( MainManager.shared.str_My8WeeksDTCCount[i] )!
         }
-        MainManager.shared.member_info.str_8WeekDtcCount = String( temp8WeekDtcCount )
+        MainManager.shared.info.str_8WeekDtcCount = String( temp8WeekDtcCount )
         
         // 내꺼
-        print(MainManager.shared.member_info.str_8WeekDriveMileage)
-        print(MainManager.shared.member_info.str_8WeekAvgFuelMileage)
-        print(MainManager.shared.member_info.str_8WeekDtcCount)
+        print(MainManager.shared.info.str_8WeekDriveMileage)
+        print(MainManager.shared.info.str_8WeekAvgFuelMileage)
+        print(MainManager.shared.info.str_8WeekDtcCount)
         
-        print("______ car8WeekInfoCal")
+        // print("______ car8WeekInfoCal")
     }
     
     
     func AddDtcAnd8WeekReadDtc() {
         
         // DTC 코드를 읽었을때 AddDTC 했다
-        if( MainManager.shared.member_info.bAddDtcOK_8WeekReadDtc == true ) {
+        if( MainManager.shared.info.bAddDtcOK_8WeekReadDtc == true ) {
             
+            // 금주 DTC
+            // getDataWeekDTCCount()
             // 8weekDTC 다시 읽는다.
-            getDataWeekDTCCount()
-            
             getData8Week_myDTC()
+            getData8Week_AllMemberDTC()
             
-            // 8주 합계 or 평균 계산
-            car8WeekInfoCal()
-            
-            // getData8Week_AllMemberDTC()
-            
-            MainManager.shared.member_info.bAddDtcOK_8WeekReadDtc = false
+            MainManager.shared.info.bAddDtcOK_8WeekReadDtc = false
         }
     }
     
@@ -1292,139 +1245,245 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
     
     
     
-    // 유저가 동작한 값을 가지고 위 auto 변수들 값과 다를 경우 BLE에 명령을 계속 보내 같아지게 만든다.
-    func autoBtnStateBleSetting() {
+    // ON/OFF 명령 세팅 확인
+    func autoBtnStateBleSettingInit() {
         
-        // 블루 투스가 연결 되면 파싱 3번만 해서 초기값 세팅
-        if( autoBtnDataSet == false ) {
+        // 처음 블루 투스가 연결 되면 파싱 3번만 해서 초기값 세팅
+        if( MainManager.shared.info.autoBtnDataSet == false ) {
             
-            if( autoBtnDataSetCount > 2) {
-                
-                autoBtnDataSet = true
-            }
-            else {
-                
-                autoBtnDataSetCount += 1
-            }
-            
-            MainManager.shared.member_info.bCar_Btn_AutoLockFolding = MainManager.shared.member_info.bCar_Func_AutoLockFolding
-            MainManager.shared.member_info.bCar_Btn_AutoWindowClose = MainManager.shared.member_info.bCar_Func_AutoWindowClose
-            MainManager.shared.member_info.bCar_Btn_AutoSunroofClose = MainManager.shared.member_info.bCar_Func_AutoSunroofClose
-            MainManager.shared.member_info.bCar_Btn_AutoWindowRevOpen = MainManager.shared.member_info.bCar_Func_AutoWindowRevOpen
-            MainManager.shared.member_info.bCar_Btn_RVS = MainManager.shared.member_info.bCar_Func_RVS
-            MainManager.shared.member_info.strCar_Check_ReservedRVSTime = MainManager.shared.member_info.strCar_Status_ReservedRVSTime
-            
-            carOnOffSetting()
-            
+            MainManager.shared.info.bUserInputAutoBtnState[AutoBtn.LOCKFOLDING.rawValue] = MainManager.shared.info.bGetBleAutoBtnState[AutoBtn.LOCKFOLDING.rawValue]
+            MainManager.shared.info.bUserInputAutoBtnState[AutoBtn.AUTOWINDOWS.rawValue] = MainManager.shared.info.bGetBleAutoBtnState[AutoBtn.AUTOWINDOWS.rawValue]
+            MainManager.shared.info.bUserInputAutoBtnState[AutoBtn.AUTOSUNROOF.rawValue] = MainManager.shared.info.bGetBleAutoBtnState[AutoBtn.AUTOSUNROOF.rawValue]
+            MainManager.shared.info.bUserInputAutoBtnState[AutoBtn.REV_WINDOW.rawValue] = MainManager.shared.info.bGetBleAutoBtnState[AutoBtn.REV_WINDOW.rawValue]
+            MainManager.shared.info.bUserInputAutoBtnState[AutoBtn.RES_RVS.rawValue] = MainManager.shared.info.bGetBleAutoBtnState[AutoBtn.RES_RVS.rawValue]
+            // 예약시간
+            MainManager.shared.info.strUserInputReservedRVSTime = MainManager.shared.info.strGetBleReservedRVSTime
         }
-        // 유저가 동작한 값을 가지고 위 auto 변수들 값과 다를 경우 BLE에 명령을 계속 보내 같아지게 만든다.
+        // 유저가 입력한 값을 단말기에서 파싱 두번 할때 까지 값이 변경 되었나 확인후 토스트, 팝업 알려준다.
         else {
             
-            
-            if( MainManager.shared.member_info.bCar_Btn_AutoLockFolding != MainManager.shared.member_info.bCar_Func_AutoLockFolding ) {
-                
-                if( MainManager.shared.member_info.bCar_Btn_AutoLockFolding == true ) {
-                    
-                    let nsData:NSData = MainManager.shared.member_info.setLOCKFOLDING( "1" )
-                    setDataBLE( nsData )
-                }
-                else {
-                    
-                    let nsData:NSData = MainManager.shared.member_info.setLOCKFOLDING( "0" )
-                    setDataBLE( nsData )
-                }
-            }
-            else if( MainManager.shared.member_info.bCar_Btn_AutoWindowClose != MainManager.shared.member_info.bCar_Func_AutoWindowClose ) {
-                
-                if( MainManager.shared.member_info.bCar_Btn_AutoWindowClose == true ) {
-                    
-                    let nsData:NSData = MainManager.shared.member_info.setAUTOWINDOWS( "1" )
-                    setDataBLE( nsData )
-                }
-                else {
-                    
-                    let nsData:NSData = MainManager.shared.member_info.setAUTOWINDOWS( "0" )
-                    setDataBLE( nsData )
-                }
-            }
-            else if( MainManager.shared.member_info.bCar_Btn_AutoSunroofClose != MainManager.shared.member_info.bCar_Func_AutoSunroofClose ) {
-                
-                if( MainManager.shared.member_info.bCar_Btn_AutoSunroofClose == true ) {
-                    
-                    let nsData:NSData = MainManager.shared.member_info.setAUTOSUNROOF( "1" )
-                    setDataBLE( nsData )
-                }
-                else {
-                    
-                    let nsData:NSData = MainManager.shared.member_info.setAUTOSUNROOF( "0" )
-                    setDataBLE( nsData )
-                }
-            }
-            else if( MainManager.shared.member_info.bCar_Btn_AutoWindowRevOpen != MainManager.shared.member_info.bCar_Func_AutoWindowRevOpen ) {
-                
-                if( MainManager.shared.member_info.bCar_Btn_AutoWindowRevOpen == true ) {
-                    
-                    let nsData:NSData = MainManager.shared.member_info.setREVWINDOW( "1" )
-                    setDataBLE( nsData )
-                }
-                else {
-                    
-                    let nsData:NSData = MainManager.shared.member_info.setREVWINDOW( "0" )
-                    setDataBLE( nsData )
-                }
-            }
-            else if( MainManager.shared.member_info.bCar_Btn_RVS != MainManager.shared.member_info.bCar_Func_RVS ) {
-                
-                if( MainManager.shared.member_info.bCar_Btn_RVS == true ) {
-                    
-                    // 예약설정
-                    let nsData:NSData = MainManager.shared.member_info.setRES_RVS( "1" )
-                    setDataBLE( nsData )
-                }
-                else {
-                    
-                    let nsData:NSData = MainManager.shared.member_info.setRES_RVS( "0" )
-                    setDataBLE( nsData )
-                }
-            }
-            else if( MainManager.shared.member_info.strCar_Check_ReservedRVSTime != MainManager.shared.member_info.strCar_Status_ReservedRVSTime ) {
-                
-                // 시간 세팅
-                let nsDataT:NSData = MainManager.shared.member_info.setRES_RVS_TIME( MainManager.shared.member_info.strCar_Check_ReservedRVSTime )
-                setDataBLE( nsDataT )
-            }
-            
-            // -> "UVWXYZ" 지정한 인덱스에서 끝까지
-            //print(txt[txt.index(txt.startIndex, offsetBy: 20)...])
-            // String(str_1[..<str_1.index(str_1.startIndex, offsetBy: 10)])
-            
-            // 예약 시간 레이블 갱신
-            ResRvsLabelRefrash()
-            
+            autoBtnStateBleSetting()
         }
+        
+        // ON/OFF 버튼 UI 실시간 갱신
+        autoBtnOnOffSetUI()
+        
     }
+    
+    
+    
+    func autoBtnStateBleSetting()
+    {
+        
+        for autoBtn in 0..<5 {
+            
+            if( MainManager.shared.info.bSetDataBleAutoBtn[autoBtn] == true ) {
+                
+                // 명령을 받고 단말기에서 두번 데이타를 받았다
+                if( MainManager.shared.info.iSetDataBleAutoBtnCount[autoBtn] >= 2 ) {
+                    
+                    MainManager.shared.info.bSetDataBleAutoBtn[autoBtn] = false
+                    MainManager.shared.info.iSetDataBleAutoBtnCount[autoBtn] = 0
+                    
+                    
+                    
+                    if( MainManager.shared.info.bUserInputAutoBtnState[autoBtn] == MainManager.shared.info.bGetBleAutoBtnState[autoBtn] )
+                    {
+                        
+                        if( MainManager.shared.info.bGetBleAutoBtnState[autoBtn] ) {
+                            
+                            ToastView.shared.short(self.view, txt_msg: set_notis_on[6+autoBtn])
+                        }
+                        else {
+                            
+                            ToastView.shared.short(self.view, txt_msg: set_notis_off[6+autoBtn])
+                        }
+                       
+                    }
+                    else {
+
+                        
+                        let alertController = UIAlertController(title: "", message: "단말기와 통신이 지연되고 있습니다. 잠시후에 다시 사용해 주세요.", preferredStyle: UIAlertControllerStyle.alert)
+                        let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+                            
+                            print("단말기 통신")
+                        }
+                        alertController.addAction(okAction)
+                        self.present(alertController, animated: true, completion: nil)
+                        
+                        
+                        // 실패 했을때 버튼을 이전 값으로 되돌린다.
+                        if( autoBtn == 0 ) {
+
+                            MainManager.shared.info.bUserInputAutoBtnState[autoBtn] = !MainManager.shared.info.bUserInputAutoBtnState[autoBtn]
+                            a02_02_view.switch_btn_07.isOn = MainManager.shared.info.bUserInputAutoBtnState[autoBtn]
+                        }
+                        else if( autoBtn == 1 ) {
+
+                            MainManager.shared.info.bUserInputAutoBtnState[autoBtn] = !MainManager.shared.info.bUserInputAutoBtnState[autoBtn]
+                            a02_02_view.switch_btn_08.isOn = MainManager.shared.info.bUserInputAutoBtnState[autoBtn]
+                        }
+                        else if( autoBtn == 2 ) {
+
+                            MainManager.shared.info.bUserInputAutoBtnState[autoBtn] = !MainManager.shared.info.bUserInputAutoBtnState[autoBtn]
+                            a02_02_view.switch_btn_09.isOn = MainManager.shared.info.bUserInputAutoBtnState[autoBtn]
+                        }
+                        else if( autoBtn == 3 ) {
+
+                            MainManager.shared.info.bUserInputAutoBtnState[autoBtn] = !MainManager.shared.info.bUserInputAutoBtnState[autoBtn]
+                            a02_02_view.switch_btn_10.isOn = MainManager.shared.info.bUserInputAutoBtnState[autoBtn]
+                        }
+                        else if( autoBtn == 4 ) {
+
+                            MainManager.shared.info.bUserInputAutoBtnState[autoBtn] = !MainManager.shared.info.bUserInputAutoBtnState[autoBtn]
+                            a02_02_view.switch_btn_11.isOn = MainManager.shared.info.bUserInputAutoBtnState[autoBtn]
+                        }
+                    }
+                    
+                    // 인디케이터 중지
+                    ToastIndicatorView.shared.close()
+                }
+                    // 횟수 두번 파싱 전에 같으면
+                else {
+                    
+                    if( MainManager.shared.info.bUserInputAutoBtnState[autoBtn] == MainManager.shared.info.bGetBleAutoBtnState[autoBtn] ) {
+                        
+                        MainManager.shared.info.bSetDataBleAutoBtn[autoBtn] = false
+                        MainManager.shared.info.iSetDataBleAutoBtnCount[autoBtn] = 0
+                        
+                        
+                        
+                        if( MainManager.shared.info.bGetBleAutoBtnState[autoBtn] ) {
+                        
+                            ToastView.shared.short(self.view, txt_msg: set_notis_on[6+autoBtn])
+                        }
+                        else {
+                            
+                            ToastView.shared.short(self.view, txt_msg: set_notis_off[6+autoBtn])
+                        }
+                        
+                        // 인디케이터 중지
+                        ToastIndicatorView.shared.close()
+
+                    }
+                }
+                
+            }
+        }
+        
+        
+        
+
+        
+        //        var bSetResRvsTime = false
+        //        var bSetResRvsTimeCount = 0
+        //        // 단말기 올라온 시간
+        //        var strGetBleReservedRVSTime = "0"
+        //        // 유저가 세팅한 시간
+        //        var strUserInputReservedRVSTime = "00:00:00"
+        
+        // 예약시간 설정 단말기 세팅 시작
+        if( MainManager.shared.info.bStartPopTimeReserv == true ) {
+
+            MainManager.shared.info.bStartPopTimeReserv = false
+            
+            MainManager.shared.info.bSetResRvsTime = true
+            MainManager.shared.info.bSetResRvsTimeCount = 0
+            // 시간 세팅
+            let nsDataT:NSData = MainManager.shared.info.setRES_RVS_TIME( MainManager.shared.info.strUserInputReservedRVSTime )
+            setDataBLE( nsDataT )
+            
+            ToastIndicatorView.shared.setup(self.view, "")
+        }
+        
+        if( MainManager.shared.info.bSetResRvsTime == true ) {
+            
+            // 명령을 받고 단말기에서 두번 데이타를 받았다
+            if( MainManager.shared.info.bSetResRvsTimeCount >= 2 ) {
+                
+                MainManager.shared.info.bSetResRvsTime = false
+                MainManager.shared.info.bSetResRvsTimeCount = 0
+                
+                // 시간 같다.
+                if( MainManager.shared.info.strUserInputReservedRVSTime == MainManager.shared.info.strGetBleReservedRVSTime )
+                {
+                    // 예약 시간 레이블 갱신
+                    ResRvsLabelRefresh()
+                }
+                // 시간 다르다.
+                else {
+                    
+                    
+                    let alertController = UIAlertController(title: "", message: "단말기와 통신이 지연되고 있습니다. 잠시후에 다시 사용해 주세요.", preferredStyle: UIAlertControllerStyle.alert)
+                    //                let DestructiveAction = UIAlertAction(title: "취소", style: UIAlertActionStyle.Destructive) { (result : UIAlertAction) -> Void in
+                    //
+                    //                    print("취소")
+                    //                }
+                    
+                    let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+                        
+                        print("로컬 단말기 시간 다르다.")
+                    }
+                    // alertController.addAction(DestructiveAction)
+                    
+                    alertController.addAction(okAction)
+                    self.present(alertController, animated: true, completion: nil)
+                    
+                    
+                    
+                }
+                
+                // 인디케이터 중지
+                ToastIndicatorView.shared.close()
+            }
+                // 횟수 두번 파싱 전에 같으면
+            else {
+                
+                // 시간 같다.
+                if( MainManager.shared.info.strUserInputReservedRVSTime == MainManager.shared.info.strGetBleReservedRVSTime )
+                {
+                    MainManager.shared.info.bSetResRvsTime = false
+                    MainManager.shared.info.bSetResRvsTimeCount = 0
+                    // 인디케이터 중지
+                    ToastIndicatorView.shared.close()
+                    // 예약 시간 레이블 갱신
+                    ResRvsLabelRefresh()
+                }
+            }
+        }
+        
+        
+        
+    }
+    
+    
     
     
     // 예약 시간 레이블 갱신
-    func ResRvsLabelRefrash() {
+    func ResRvsLabelRefresh() {
         
-        // MainManager.shared.member_info.strCar_Check_ReservedRVSTime = "1980-01-28 23:67:45"
+        //MainManager.shared.info.strUserInputReservedRVSTime =
+        //    MainManager.shared.info.strGetBleReservedRVSTime
+        
+        // = "1980-01-28 23:67:45"
         
         // 예약 시동 시간 00:00:00 8글자일 경우 값 세팅
-        if( MainManager.shared.member_info.strCar_Status_ReservedRVSTime.count == 8  ) {
+        if( MainManager.shared.info.strGetBleReservedRVSTime.count == 8  ) {
             
-            var str_1:String = MainManager.shared.member_info.strCar_Status_ReservedRVSTime
+            var str_1:String = MainManager.shared.info.strGetBleReservedRVSTime
             //str_1 = String(str_1[..<str_1.index(str_1.startIndex, offsetBy: 10)])
             // 뒤 6자리 남기기 "00:00:00"시 분 초
             //let str_2:String = String(str_1[str_1.index(str_1.startIndex, offsetBy: 11)...])
             
-            let str_2:String = MainManager.shared.member_info.strCar_Status_ReservedRVSTime
+            let str_2:String = MainManager.shared.info.strGetBleReservedRVSTime
             // 앞 5자리 자르기 "12:15" 시 분
             let str_3:String = String(str_2[..<str_2.index(str_2.startIndex, offsetBy: 5)])
             
             // "예약 시동 시간 [13:00]"
             a02_02_view.label_rvs_time.text = " 매일 " + str_3 + " 에 시동을 겁니다."
             sleep(0)
+            
+            // print("__________ : " + a02_02_view.label_rvs_time.text! )
         }
         else {
             
@@ -1440,35 +1499,49 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
             
             isConnectBlePinCodeCheck = true
             
-            // 핀코드 요청 쓰레드 돌린다
-            MainManager.shared.member_info.str_GetPinCode = ""
+            // 핀코드 요청 쓰레드 1초 돌린다
+            MainManager.shared.info.str_GetPinCode = ""
             timerPinCodeBleRead = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(timerActionReadPinCode), userInfo: nil, repeats: true)
+            
+            // 핀코드 비교 타임 아웃 체크 쓰레드
+            timerPinCodeBleReadTimeOut = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(timerActionReadPinCodeTimeOut), userInfo: nil, repeats: false)
         }
         else {
 
         }
     }
     
+    
+    
+    // 블루투스 연결 될때 3초 돌린다.
+    func timerActionBleReConnect() {
+        
+        ToastIndicatorView.shared.close()
+    }
+    
     // 핀코드 요청 쓰레드
     func timerActionReadPinCode() {
         // 핀코드 요청
-        let nsData:NSData = MainManager.shared.member_info.getPIN_CODE()
+        let nsData:NSData = MainManager.shared.info.getPIN_CODE()
         self.setDataBLE( nsData )
     }
     
-    
-    
+    // 핀코드 비교 타임 아웃 체크 쓰레드
+    func timerActionReadPinCodeTimeOut() {
+        
+        isConnectBlePinCodeTimeOutCheck = true
+    }
     
     
     // 2초 스케줄러에 돌림
     // 날짜 세팅 후 날짜 비교 3번 한다. 그 다음 DTC 읽기 명령 실행
     // [DATETIME]=YYYY-MM-DD HH:MM:SS!
-    func phoneToBleTimeCheck() {
+    func phoneToBleDateTimeCheck() {
 
         if( isPhoneToBleTimeCheck == true && isPeripheral_LIVE() == true) {
             
-            let str_1:String = MainManager.shared.member_info.str_Phone_DateTime
-            let str_2:String = MainManager.shared.member_info.str_Car_DateTime
+            let str_1:String = MainManager.shared.info.str_Phone_DateTime
+            let str_2:String = MainManager.shared.info.str_Car_DateTime
             
             // 아래 날짜 비교 때문에 초기화 다른값으로
             var tempPhoneTime = "0"
@@ -1483,12 +1556,9 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
                 tempCarTime = String(str_2[..<str_2.index(str_2.startIndex, offsetBy: 16)])
             }
             
-            // 날짜비교
+            // 날짜비교 같다
             if( tempPhoneTime == tempCarTime ) {
                 
-                // 차량 정보 DB 저장, DTC 코드 정보 모드 BLE 읽기
-                // 이제 핀코드 비교후 처리
-                //initCarDataSaveDB()
                 
                 phoneToBleTimeCheckCount = 0
                 isPhoneToBleTimeCheck = false
@@ -1497,28 +1567,44 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
             }
             
             print("_____ DATETIME 1 tempPhoneTime : " + tempPhoneTime)
-            print("_____ DATETIME 1 tempCarTime   : " + tempCarTime)
+            print("_____ DATETIME 2 tempCarTime   : " + tempCarTime)
             print("_____________________________ phoneToBle DATETIME Check")
             
             
             
             phoneToBleTimeCheckCount += 1
             // 메세지 경고 메세지 보여준다. 같은걸 못찾고 횟수 오바 일때
-            if( phoneToBleTimeCheckCount >= 3 ) {
+            if( phoneToBleTimeCheckCount >= 4 ) {
                 
                 phoneToBleTimeCheckCount = 0
                 isPhoneToBleTimeCheck = false
-
-                // 경고
-                var alert = UIAlertView(title: "DATE Err...", message: "[DATETIME] 단말 시간 설정이 실패하였습니다.", delegate: nil, cancelButtonTitle: "OK")
-                alert.show()
+                
+                let alertController = UIAlertController(title: "", message: "단말기 날짜 설정을 실패 하였습니다.", preferredStyle: UIAlertControllerStyle.alert)
+                //                let DestructiveAction = UIAlertAction(title: "취소", style: UIAlertActionStyle.Destructive) { (result : UIAlertAction) -> Void in
+                //
+                //                    print("취소")
+                //                }
+                
+                let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+                    
+                    print("단말기 시간 설정 실패 .")
+                }
+                // alertController.addAction(DestructiveAction)
+                
+                alertController.addAction(okAction)
+                self.present(alertController, animated: true, completion: nil)
+                
                 print("##### : 날짜 세팅 3번 실패 " + tempPhoneTime)
+                
+                
+                
+                
             }
             else {
                 // 시간 다시 세팅
                 if( carFriendsPeripheral != nil && myCharacteristic != nil)
                 {
-                    MainManager.shared.getDateTimeSetTimeBLE( carFriendsPeripheral!, myCharacteristic! )
+                    MainManager.shared.getDateTime_SetTimeBLE( carFriendsPeripheral!, myCharacteristic! )
                     print("##### : 단말기 날짜 세팅 명령 전송  " + tempPhoneTime)
                 }
                 else {
@@ -1536,95 +1622,47 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
     }
     
     
-    
-    
-    
-    
-    
-    
-    // 단말기 첨 연결시 핀코드 비교
-    func connectToBlePinCodeCheck() {
+    func setBleDateTimeStart() {
         
-        if( isConnectBlePinCodeCheck == true && isPeripheral_LIVE() == true) {
+        // 로컬 시간 읽기
+        getLocalTime()
+        
+        // 로컬과 단말기 시간 비교 시작
+        let str_Date1:String = MainManager.shared.info.str_Phone_DateTime
+        let str_Date2:String = MainManager.shared.info.str_Car_DateTime
+        
+        // 아래 날짜 비교 때문에 초기화 다른값으로
+        var tempPhoneTime = "0"
+        var tempCarTime = "1"
+        
+        // 날짜 데이타가 있을때 파싱
+        if( str_Date1.count > 10 && str_Date2.count > 10 ) {
             
-            let str_1:String = MainManager.shared.member_info.str_LocalPinCode
-            let str_2:String = MainManager.shared.member_info.str_GetPinCode
+            // 2018-10-02 18:15:06
+            // 날짜 자르기 YYYY-MM-DD
+            tempPhoneTime = String(str_Date1[..<str_Date1.index(str_Date1.startIndex, offsetBy: 16)])
+            tempCarTime = String(str_Date2[..<str_Date2.index(str_Date2.startIndex, offsetBy: 16)])
+        }
+        
+        // 날짜 같다. 그냥 진행
+        if( tempPhoneTime == tempCarTime ) {
             
-            // 4자리 이상 핀코드 단말기에서 읽었다
-            if( MainManager.shared.member_info.str_GetPinCode.count > 3 ) {
-                // 핀코드 비교 플래그 해제
-                isConnectBlePinCodeCheck = false
-
-                // 핀코드 읽기 스레드 해제
-                timerPinCodeBleRead.invalidate()
-                
-
-                // 핀코드 비교 같다
-                if( str_1 == str_2 ) {
-                    
-                    print("##### PIN CODE 같다 ")
- 
-                    //처음 저장할 차량 정보 DB 저장, DTC 코드 정보 모드 BLE 읽기
-                    initCarDataSaveDB()
-                    print("##### 차량 정보 DB 저장 시작 및 DTC 읽기 ")
-                    
-                    
-                    // 로컬 시간 읽기
-                    getLocalTime()
-                    
-                    // 로컬과 단말기 시간 비교 시작
-                    let str_Date1:String = MainManager.shared.member_info.str_Phone_DateTime
-                    let str_Date2:String = MainManager.shared.member_info.str_Car_DateTime
-                    
-                    // 아래 날짜 비교 때문에 초기화 다른값으로
-                    var tempPhoneTime = "0"
-                    var tempCarTime = "1"
-                    
-                    // 날짜 데이타가 있을때 파싱
-                    if( str_Date1.count > 10 && str_Date2.count > 10 ) {
-                        
-                        // 2018-10-02 18:15:06
-                        // 날짜 자르기 YYYY-MM-DD
-                        tempPhoneTime = String(str_Date1[..<str_Date1.index(str_Date1.startIndex, offsetBy: 16)])
-                        tempCarTime = String(str_Date2[..<str_Date2.index(str_Date2.startIndex, offsetBy: 16)])
-                    }
-                    
-                    // 날짜 같다. 그냥 진행
-                    if( tempPhoneTime == tempCarTime ) {
-                        
-                        print("##### 날짜 시간 같다 :: 날짜 시간 세팅.  오차 보정 위해 한번 더 세팅.")
-                        if( carFriendsPeripheral != nil && myCharacteristic != nil)
-                        {
-                            MainManager.shared.getDateTimeSetTimeBLE( carFriendsPeripheral!, myCharacteristic! )
-                        }
-                    }
-                    // 다르다
-                    else {
-                        
-                        // 핸드폰이랑 기기 날짜가 같은가 3번 비교 시작
-                        isPhoneToBleTimeCheck = true
-                        phoneToBleTimeCheckCount = 0
-                        
-                        print("##### 날짜 시간 다르다. 날짜 세팅 시작 ")
-                    }                    
-                    
-                }
-                // 핀코드 다르다
-                else {
-                    
-                    // 핀코드 다르다 알림 팝업
-                    //pop up
-                    MainManager.shared.str_certifi_notis = "단말기 비밀번호가 다릅니다.비밀번호 설정을 해주세요"
-                    // Segue -> 사용 팝업뷰컨트롤러 띠우기
-                    self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
-                    
-                    // 핀코드 기존 변경 화면으로
-                    print("##### 핀코드 다르다. 팝업 띠우기. ")
-                    
-               }
+            print("##### 날짜 시간 같다 :: 날짜 시간 세팅.  오차 보정 위해 한번 더 세팅.")
+            if( carFriendsPeripheral != nil && myCharacteristic != nil)
+            {
+                MainManager.shared.getDateTime_SetTimeBLE( carFriendsPeripheral!, myCharacteristic! )
             }
         }
+            // 다르다
+        else {
+            
+            // 핸드폰이랑 기기 날짜가 같은가 3번 비교 시작
+            isPhoneToBleTimeCheck = true
+            phoneToBleTimeCheckCount = 0
+            print("##### 날짜 시간 다르다. 날짜 세팅 시작 ")
+        }
     }
+    
     
     func getLocalTime() {
         
@@ -1636,82 +1674,270 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         dateFormatter.locale = Locale(identifier: "ko_KR")
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
         
-        MainManager.shared.member_info.str_Phone_DateTime = dateFormatter.string(from: now)
+        MainManager.shared.info.str_Phone_DateTime = dateFormatter.string(from: now)
     }
     
     
     
     
     
-    // 2초씩 - 핀코드 세팅 후 단말기 값이 변경이 될때까지 비교 3번 한다.
-    func phoneToBlePinCodeCheck() {
+    
+    // 단말기 첨 연결시 핀코드 비교 ( 0.1 )
+    func connectToBlePinCodeCheckStart() {
+        
+        if( isConnectBlePinCodeCheck == true && isPeripheral_LIVE() == true) {
+            
+            let str_1:String = MainManager.shared.info.str_LocalPinCode
+            let str_2:String = MainManager.shared.info.str_GetPinCode
+            
+            // 4자리 이상 핀코드 단말기에서 읽었다
+            if( MainManager.shared.info.str_GetPinCode.count > 3 ) {
+                // 핀코드 비교 플래그 해제
+                isConnectBlePinCodeCheck = false
+                // 핀코드 읽기 스레드 해제
+                timerPinCodeBleRead.invalidate()
+                
+                // 핀코드 비교 같다
+                if( str_1 == str_2 ) {
+                    
+                    print("##### PIN CODE 같다. 날짜 시간 비교 시작 #1 ")
+                    setBleDateTimeStart()
+                }
+                    // 핀코드 다르다
+                else {
+                    
+                    // 핀코드 다르다 알림 팝업
+                    //pop up
+                    let alertController = UIAlertController(title: "", message: "단말기 비밀번호가 다릅니다.비밀번호 설정을 해주세요", preferredStyle: UIAlertControllerStyle.alert)
+                    let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+                        
+                        print("단말기 비밀번호가 다릅니다")
+                        MainManager.shared.info.bPinCodeViewGO = true
+                    }
+                    alertController.addAction(okAction)
+                    self.present(alertController, animated: true, completion: nil)
+                    
+                    
+                    // 핀코드 기존 변경 화면으로
+                    print("##### 핀코드 다르다. 팝업 띠우기. ")
+                    
+                }
+            }
+                //
+            else {
+                // 처음 핀코드 비교 타임아웃. 핀코드 데이타가 제대로 안 올라왔다
+                if( isConnectBlePinCodeTimeOutCheck == true ) {
+                    // 핀코드 비교 플래그 해제
+                    isConnectBlePinCodeCheck = false
+                    // 핀코드 읽기 스레드 해제
+                    timerPinCodeBleRead.invalidate()
+                    //pop up
+
+                    
+                    let alertController = UIAlertController(title: "", message: "단말기 비밀번호를 응답받지 못했습니다.", preferredStyle: UIAlertControllerStyle.alert)
+                    let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+                        
+                        print("단말기 통신")
+                    }
+                    alertController.addAction(okAction)
+                    self.present(alertController, animated: true, completion: nil)
+                    
+                    // 핀코드 기존 변경 화면으로
+                    print("##### 처음 핀코드 비교 타임아웃. 핀코드 데이타가 제대로 안 올라왔다 ")
+                }
+            }
+            
+        }
+    }
+    
+    
+    // 단말기 처음 접속시 핀코드가 다르다 핀코드 변경화면으로
+    func pinCodeDifferent_a01_01_ModPinViewGo() {
+        
+        // 단말기 처음 접속시 핀코드가 다르다 핀코드 변경화면으로
+        if( MainManager.shared.info.bPinCodeViewGO == true ) {
+            
+            // 핀코드 요청
+            let nsData:NSData = MainManager.shared.info.getPIN_CODE()
+            self.setDataBLE( nsData )
+            
+            otherPinCodeAutoChangePinViewGO = true
+            // 핀코드 변경 VIEW
+            self.mainSubView.bringSubview(toFront: a01_01_pin_view)
+            self.mainSubView.bringSubview(toFront: mainMenuABC_view)
+            a01_01_pin_view.label_pin_num_notis.text = "단말기의 비밀번호를 설정 합니다."
+            a01_01_pin_view.pin_input_repeat_conut = 0
+            
+            // 자동 포커스 이동 체크
+            a01_01_pin_view.bPin_input_location = true
+            a01_01_pin_view.iPin_input_location_no = 0
+            
+            
+            // 현재 핀코드 입력
+            a01_01_pin_view.field_pin_now.text = MainManager.shared.info.str_LocalPinCode
+            a01_01_pin_view.field_pin_new.text = ""
+            
+            if( MainManager.shared.info.str_GetPinCode == "unknown" ) { MainManager.shared.info.str_GetPinCode = "0000" }
+            
+            MainManager.shared.info.bPinCodeViewGO = false
+            
+            print("##### 핀코드 다르다. 핀코드 변경 화면으로 Local :: " + MainManager.shared.info.str_LocalPinCode)
+        }
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    // 2초씩 - 핀코드 세팅 후 단말기 값이 변경이 될때까지 비교 3번 한다. 세팅확인
+    func setBlePinCodeConfirm() {
         
         if( isPhoneToBlePinCodeCheck == true && isPeripheral_LIVE() == true) {
         
-            let str_1:String = MainManager.shared.member_info.str_SetPinCode
-            let str_2:String = MainManager.shared.member_info.str_GetPinCode
+            // isPhoneToBlePinCodeCheck
+            ToastIndicatorView.shared.close()
+            
+            phoneToBlePinCodeCheckCount = 0
+            isPhoneToBlePinCodeCheck = false
+            
+            
+            let str_1:String = MainManager.shared.info.str_SetPinCode
+            let str_2:String = MainManager.shared.info.str_GetPinCode
             
             phoneToBlePinCodeCheckCount += 1
             // 핀코드 비교 비교
             if( str_1 == str_2 ) {
-                MainManager.shared.member_info.str_LocalPinCode = str_1 // == str_SetPinCode
-                
-                phoneToBlePinCodeCheckCount = 0
-                isPhoneToBlePinCodeCheck = false
+                MainManager.shared.info.str_LocalPinCode = str_1 // == str_SetPinCode
+
                 // 핀코드 변경된 값 디비 저장
                 setPinDataDB()
-                
                 // 바뀐 핀코드 클라 저장 str_LocalPinCode
-                UserDefaults.standard.set(MainManager.shared.member_info.str_LocalPinCode, forKey: "str_LocalPinCode")
-                //
-                ToastIndicatorView.shared.close()
-                
-//                // 경고
-//                var alert = UIAlertView(title: "PIN CODE OK", message: "[PIN_CODE] PIN_CODE 설정 되었습니다.", delegate: nil, cancelButtonTitle: "OK")
-//                alert.show()
+                UserDefaults.standard.set(MainManager.shared.info.str_LocalPinCode, forKey: "str_LocalPinCode")
                 
                 print("_____SET PIN_CODE OK")
-                print("_____str_SetPinCode = \(MainManager.shared.member_info.str_SetPinCode)")
-                print("_____str_LocalPinCode = \(MainManager.shared.member_info.str_LocalPinCode)")
+                print("_____str_SetPinCode = \(MainManager.shared.info.str_SetPinCode)")
+                print("_____str_LocalPinCode = \(MainManager.shared.info.str_LocalPinCode)")
                 
-                print("##### 핀코드 변경 성공 \(MainManager.shared.member_info.str_LocalPinCode)")
+                print("##### 핀코드 변경 성공 \(MainManager.shared.info.str_LocalPinCode)")
                 
+                // 처음 앱시작 핀코드가 달라 자동 핀코드 변경일때만 날짜 변경 시작
+                if( otherPinCodeAutoChangePinViewGO ) {
+                
+                    otherPinCodeAutoChangePinViewGO = false
+                    print("##### PIN CODE 같다. 날짜 시간 비교 시작 #2 ")
+                    setBleDateTimeStart()
+                }
             }
             // 메세지 경고 메세지 보여준다. 같은걸 못찾고 횟수 오바 일때
             else if( phoneToBlePinCodeCheckCount >= 4 ) {
                 
-                phoneToBlePinCodeCheckCount = 0
-                isPhoneToBlePinCodeCheck = false
                 
-//                // 경고
-//                var alert = UIAlertView(title: "PIN Err...", message: "[PIN_CODE] PIN_CODE 설정이 실패하였습니다. 잠시후 다시 시도해 주세요", delegate: nil, cancelButtonTitle: "OK")
-//                alert.show()
+                let alertController = UIAlertController(title: "", message: "단말기 비밀번호 설정이 실패하였습니다.", preferredStyle: UIAlertControllerStyle.alert)
+                //                let DestructiveAction = UIAlertAction(title: "취소", style: UIAlertActionStyle.Destructive) { (result : UIAlertAction) -> Void in
                 //
-                ToastIndicatorView.shared.close()
+                //                    print("취소")
+                //                }
+                
+                let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+                    
+                    print("단말기 PIN_CODE 설정 실패 .")
+                }
+                // alertController.addAction(DestructiveAction)
+                
+                alertController.addAction(okAction)
+                self.present(alertController, animated: true, completion: nil)
+                
+                
                 
                 print("_____SET PIN_CODE ERR")
-                print("_____str_SetPinCode = \(MainManager.shared.member_info.str_SetPinCode)")
-                print("_____str_LocalPinCode = \(MainManager.shared.member_info.str_LocalPinCode)")
+                print("_____str_SetPinCode = \(MainManager.shared.info.str_SetPinCode)")
+                print("_____str_LocalPinCode = \(MainManager.shared.info.str_LocalPinCode)")
             }
             else {
+                
                 // 다시 명령 실행 세팅
-                if( carFriendsPeripheral != nil && myCharacteristic != nil)
+                if( isPeripheral_LIVE() == true )
                 {
-                    let nsData:NSData = MainManager.shared.member_info.setPIN_CODE( MainManager.shared.member_info.str_SetPinCode )
+                    // isPhoneToBlePinCodeCheck
+                    ToastIndicatorView.shared.setup(self.view,"")
+                    
+                    let nsData:NSData = MainManager.shared.info.setPIN_CODE( MainManager.shared.info.str_SetPinCode )
                     self.setDataBLE( nsData )
                 }
             }
         }
-            // 블루 투스 꺼지거나 연결 안됨
-        else {
-            
-            phoneToBlePinCodeCheckCount = 0
-            isPhoneToBlePinCodeCheck = false
-        }
     }
     
     
+    
+//    // 파싱 데이타가 5초 동안 제대로 들어오지 않으면 단말기 블루투스 재연결 한다.
+//    // [TOTAL_MILEAGE]
+//    var parsingStartCount = 0
+//    // [ENGINE_RUN]
+//    var parsingEndCount = 0
+//    // 시간 0.1 초 쓰레드에 돌린다.
+//    var parsingTimeCount = 50
+    
+    // 파싱 데이타가 5초 동안 제대로 들어오지 않으면 단말기 블루투스 재연결 한다.
+    func bleParsingDataCheck() {
+        
+        if( MainManager.shared.info.isCAR_FRIENDS_CONNECT ) {
+            
+            if( MainManager.shared.info.parsingStartCount > 0 && MainManager.shared.info.parsingEndCount > 0 ) {
+                
+                MainManager.shared.info.parsingStartCount = 0
+                MainManager.shared.info.parsingEndCount = 0
+                MainManager.shared.info.parsingTimeCount = 50
+            }
+            
+            MainManager.shared.info.parsingTimeCount -= 1
+            
+            // 연결끊기. 재연결
+            if( MainManager.shared.info.parsingTimeCount <= 0 ) {
+                
+                MainManager.shared.info.isCAR_FRIENDS_CONNECT = false
+                centralManager.cancelPeripheralConnection(self.carFriendsPeripheral!)
+                
+                // 카프랜드 연결중
+                a01_01_scroll_view.btn_kit_connect.setBackgroundImage(UIImage(named:"a_01_01_unlink"), for: .normal)
+                self.a01_01_scroll_view.label_kit_connect.text = "블루투스 연결중"
+                self.a01_01_scroll_view.label_kit_connect.textColor = UIColor.red
+                
+                // a02_01 카프렌즈 연결 상태
+                a02_01_view.ble_state( MainManager.shared.info.isCAR_FRIENDS_CONNECT )
+                // a02_02 카프렌즈 연결 상태
+                a02_02_view.ble_state( MainManager.shared.info.isCAR_FRIENDS_CONNECT )
+                
+                
 
+                
+                let alertController = UIAlertController(title: "", message: "단말기와 통신이 불안정하여 재 연결 합니다.", preferredStyle: UIAlertControllerStyle.alert)
+//                let DestructiveAction = UIAlertAction(title: "취소", style: UIAlertActionStyle.Destructive) { (result : UIAlertAction) -> Void in
+//
+//                    print("취소")
+//                }
+                
+                let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+                    
+                    print("연결 끊김 확인 확인")
+                }
+                // alertController.addAction(DestructiveAction)
+                
+                alertController.addAction(okAction)
+                self.present(alertController, animated: true, completion: nil)
+                
+
+            }
+        }
+    }
+    
+
+    
+    
+    
     
 
     
@@ -1720,39 +1946,86 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
     
     
     //
-    func initCarDataSaveDB() {
+    func initCarDataDB() {
         // 인터넷 연결 체크
         
-        if( MainManager.shared.isConnectCheck() == true ) {
+//        enum EN_DB_KIND: Int {
+//
+//            case SET_TOT_DRIVE = 0
+//            case SET_WEEK_DRIVE
+//            case SET_AVG_FUEL
+//            case SET_WEEK_FUEL
+//            case SET_VIN_DATA
+//            case SET_SEED
+//            case GET_KEY
+//        }
+        
+        if( MainManager.shared.info.bBleConnectSaveDb == true ) {
             
-            setTotalDriveMileageDB()
-            setWeekDriveMileageDB()
-            
-            setAvgFuelMileageDB()
-            setWeekFuelMileageDB()
-            
-            setSeedDB()
-            getKeyDB()
-            
-            setVinDataDB()
-            
-            // DTC 코드 정보 모드 BLE 읽기
-            let nsData:NSData = MainManager.shared.member_info.getREAD_DTC_ALL()
-            self.setDataBLE( nsData )
+            if( MainManager.shared.info.bBleConnectSaveDbParsingCount >= 2 ) {
+                
+                MainManager.shared.info.bBleConnectSaveDb = false
+                
+                
+                if( MainManager.shared.isConnectCheck(self) == true ) {
+                    
+                    MainManager.shared.info.bCommunicationTry3[EN_DB_KIND.SET_TOT_DRIVE.rawValue] = true
+                    MainManager.shared.info.bCommunicationTry3[EN_DB_KIND.SET_WEEK_DRIVE.rawValue] = true
+                    MainManager.shared.info.bCommunicationTry3[EN_DB_KIND.SET_AVG_FUEL.rawValue] = true
+                    MainManager.shared.info.bCommunicationTry3[EN_DB_KIND.SET_WEEK_FUEL.rawValue] = true
+                    MainManager.shared.info.bCommunicationTry3[EN_DB_KIND.SET_VIN_DATA.rawValue] = true
+                    MainManager.shared.info.bCommunicationTry3[EN_DB_KIND.SET_SEED.rawValue] = true
+                    MainManager.shared.info.bCommunicationTry3[EN_DB_KIND.GET_KEY.rawValue] = true
+                    
+                    // 제대로 안될시 3번
+                    MainManager.shared.info.bCommunicationTry3Count[EN_DB_KIND.SET_TOT_DRIVE.rawValue] = 3
+                    MainManager.shared.info.bCommunicationTry3Count[EN_DB_KIND.SET_WEEK_DRIVE.rawValue] = 3
+                    MainManager.shared.info.bCommunicationTry3Count[EN_DB_KIND.SET_AVG_FUEL.rawValue] = 3
+                    MainManager.shared.info.bCommunicationTry3Count[EN_DB_KIND.SET_WEEK_FUEL.rawValue] = 3
+                    MainManager.shared.info.bCommunicationTry3Count[EN_DB_KIND.SET_VIN_DATA.rawValue] = 3
+                    MainManager.shared.info.bCommunicationTry3Count[EN_DB_KIND.SET_SEED.rawValue] = 3
+                    MainManager.shared.info.bCommunicationTry3Count[EN_DB_KIND.GET_KEY.rawValue] = 3
+                    
+                    getDtcBLE() // 1번
+                    print("##### 차량 정보 DB 저장 시작 및 DTC 읽기 ")
+                }
+                
+                
+            }
         }
     }
     
+    // 제대로 안될시 3번
+    func procCarDataDB() {
+        
+        setTotalDriveMileageDB()
+        setWeekDriveMileageDB()
+        
+        setAvgFuelMileageDB()
+        setWeekFuelMileageDB()
+        
+        setVinDataDB()
+        setSeedDB()
+
+        getKeyDB()
+    }
+    
+    
     func setTotalDriveMileageDB() {
         
-        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
-        // database.php?Req=SetTotalDriveMileage&DriveMileage=주행거리
-        let parameters = [
-            "Req": "SetTotalDriveMileage",
-            "DriveMileage": MainManager.shared.member_info.str_TotalDriveMileage]
+        if( MainManager.shared.info.bCommunicationTry3[EN_DB_KIND.SET_TOT_DRIVE.rawValue] == true )
+        {
+            MainManager.shared.info.bCommunicationTry3[EN_DB_KIND.SET_TOT_DRIVE.rawValue] = false
+            
+            ToastIndicatorView.shared.setup(self.view, "")
+            // database.php?Req=SetTotalDriveMileage&DriveMileage=주행거리
+            let parameters = [
+                "Req": "SetTotalDriveMileage",
+                "DriveMileage": MainManager.shared.info.str_TotalDriveMileage]
 
-        Alamofire.request(MainManager.shared.SeverURL+"database.php", method: .post, parameters: parameters)
-            .responseJSON { response in
-                
+            Alamofire.request(MainManager.shared.SeverURL+"database.php", method: .post, parameters: parameters).responseJSON
+            { response in
+                    
                 ToastIndicatorView.shared.close()
                 print(response)
                 //to get status code
@@ -1772,14 +2045,34 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
                     let Result = json["Result"].rawString()!
                     if( Result == "SAVE_OK" ) {
 
-                        print( "총 거리 저장.!" )
+                        print( "##### DB 총 거리 저장.!" )
+                        MainManager.shared.info.bCommunicationTry3[EN_DB_KIND.SET_TOT_DRIVE.rawValue] = false
+                        MainManager.shared.info.bCommunicationTry3Count[EN_DB_KIND.SET_TOT_DRIVE.rawValue] = 0
                     }
                     else {
 
-                        print( "총 거리 저장 실패.!" )
+                        print( "##### DB 총 거리 저장 실패.!" )
+                        
+                        if( MainManager.shared.info.bCommunicationTry3Count[EN_DB_KIND.SET_TOT_DRIVE.rawValue] > 0 ) {
+                            
+                            MainManager.shared.info.bCommunicationTry3Count[EN_DB_KIND.SET_TOT_DRIVE.rawValue] -= 1
+                            MainManager.shared.info.bCommunicationTry3[EN_DB_KIND.SET_TOT_DRIVE.rawValue] = true
+                        }
                     }
                     print( Result )
                 }
+                else {
+                    
+                    if( MainManager.shared.info.bCommunicationTry3Count[EN_DB_KIND.SET_TOT_DRIVE.rawValue] > 0 ) {
+                        
+                        MainManager.shared.info.bCommunicationTry3Count[EN_DB_KIND.SET_TOT_DRIVE.rawValue] -= 1
+                        MainManager.shared.info.bCommunicationTry3[EN_DB_KIND.SET_TOT_DRIVE.rawValue] = true
+                    }
+                    
+                    print( "##### DB 총 거리 저장 실패.!" )
+                }
+                
+            }
         }
     }
     
@@ -1790,28 +2083,33 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
     
     func setWeekDriveMileageDB() {
         
-        // 현재 시각 구하기
-        let now = Date()
-        // 데이터 포맷터
-        let dateFormatter = DateFormatter()
-        // 한국 Locale
-        dateFormatter.locale = Locale(identifier: "ko_KR")
-        dateFormatter.dateFormat = "yyyy-MM-dd"
+        if( MainManager.shared.info.bCommunicationTry3[EN_DB_KIND.SET_WEEK_DRIVE.rawValue] == true )
+        {
+            MainManager.shared.info.bCommunicationTry3[EN_DB_KIND.SET_WEEK_DRIVE.rawValue] = false
         
-        let dateTime:String = dateFormatter.string(from: now)
+            // 현재 시각 구하기
+            let now = Date()
+            // 데이터 포맷터
+            let dateFormatter = DateFormatter()
+            // 한국 Locale
+            dateFormatter.locale = Locale(identifier: "ko_KR")
+            dateFormatter.dateFormat = "yyyy-MM-dd"
+            
+            let dateTime:String = dateFormatter.string(from: now)
 
-        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
-        print(MainManager.shared.member_info.str_ThisWeekDriveMileageSetDB)
-        // database.php?Req=AddDriveMileage&CheckDate=yyyy-mm-dd&DriveMileage=주행거리
-        let parameters = [
-            "Req": "AddDriveMileage",
-            "CheckDate":dateTime,
-            "DriveMileage": MainManager.shared.member_info.str_ThisWeekDriveMileageSetDB,
-            "Car_Model": MainManager.shared.member_info.str_car_kind,
-            "VIN": MainManager.shared.member_info.str_car_vin_number]
-        
-        Alamofire.request(MainManager.shared.SeverURL+"database.php", method: .post, parameters: parameters)
-            .responseJSON { response in
+            ToastIndicatorView.shared.setup(self.view, "")
+            print(MainManager.shared.info.str_ThisWeekDriveMileageSetDB)
+            // database.php?Req=AddDriveMileage&CheckDate=yyyy-mm-dd&DriveMileage=주행거리
+            let parameters = [
+                "Req": "AddDriveMileage",
+                "CheckDate":dateTime,
+                "DriveMileage": MainManager.shared.info.str_ThisWeekDriveMileageSetDB,
+                "Car_Model": MainManager.shared.info.str_car_kind,
+                "VIN": MainManager.shared.info.str_car_vin_number]
+            
+            Alamofire.request(MainManager.shared.SeverURL+"database.php", method: .post, parameters: parameters)
+                .responseJSON
+            { response in
                 
                 ToastIndicatorView.shared.close()
                 print(response)
@@ -1832,31 +2130,57 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
                     let Result = json["Result"].rawString()!
                     if( Result == "SAVE_OK" ) {
 
-                        print( "주 주행거리 저장.!" )
+                        print( "##### DB 주 주행거리 저장 거리 저장.!" )
+                        MainManager.shared.info.bCommunicationTry3[EN_DB_KIND.SET_WEEK_DRIVE.rawValue] = false
+                        MainManager.shared.info.bCommunicationTry3Count[EN_DB_KIND.SET_WEEK_DRIVE.rawValue] = 0
                     }
                     else {
                         
-                        print( "주 주행거리 저장 실패.!" )
+                        print( "##### DB 주 주행거리 거리 저장 실패.!" )
+                        
+                        if( MainManager.shared.info.bCommunicationTry3Count[EN_DB_KIND.SET_WEEK_DRIVE.rawValue] > 0 ) {
+                            
+                            MainManager.shared.info.bCommunicationTry3Count[EN_DB_KIND.SET_WEEK_DRIVE.rawValue] -= 1
+                            MainManager.shared.info.bCommunicationTry3[EN_DB_KIND.SET_WEEK_DRIVE.rawValue] = true
+                        }
                     }
                     print( Result )
                 }
+                else {
+                    
+                    if( MainManager.shared.info.bCommunicationTry3Count[EN_DB_KIND.SET_WEEK_DRIVE.rawValue] > 0 ) {
+                        
+                        MainManager.shared.info.bCommunicationTry3Count[EN_DB_KIND.SET_WEEK_DRIVE.rawValue] -= 1
+                        MainManager.shared.info.bCommunicationTry3[EN_DB_KIND.SET_WEEK_DRIVE.rawValue] = true
+                    }
+                    
+                    print( "##### DB 주 주행거리 거리 저장 실패.!" )
+                }
+            }
         }
+            
+            
+            
     }
     
     
     
     func setAvgFuelMileageDB() {
         
-        self.activityIndicator.startAnimating()
-        // database.php?Req=GetAvgFuelMileage
-        let parameters = [
-            "Req": "SetAvgFuelMileage",
-            "FuelMileage":MainManager.shared.member_info.str_TotalAvgFuelMileage ]
+        if( MainManager.shared.info.bCommunicationTry3[EN_DB_KIND.SET_AVG_FUEL.rawValue] == true )
+        {
+            MainManager.shared.info.bCommunicationTry3[EN_DB_KIND.SET_AVG_FUEL.rawValue] = false
         
-        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
-        
-        Alamofire.request(MainManager.shared.SeverURL+"database.php", method: .post, parameters: parameters)
-            .responseJSON { response in
+
+            // database.php?Req=GetAvgFuelMileage
+            let parameters = [
+                "Req": "SetAvgFuelMileage",
+                "FuelMileage":MainManager.shared.info.str_TotalAvgFuelMileage ]
+            
+            ToastIndicatorView.shared.setup(self.view, "")
+            
+            Alamofire.request(MainManager.shared.SeverURL+"database.php", method: .post, parameters: parameters).responseJSON
+            { response in
                 
                 ToastIndicatorView.shared.close()
                 
@@ -1878,14 +2202,35 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
                     let Result = json["Result"].rawString()!
                     if( Result == "SAVE_OK" ) {
 
-                        print( "누적 연비 저장.!" )
+                        print( "##### DB 누적 연비 저장.!" )
+                        MainManager.shared.info.bCommunicationTry3[EN_DB_KIND.SET_AVG_FUEL.rawValue] = false
+                        MainManager.shared.info.bCommunicationTry3Count[EN_DB_KIND.SET_AVG_FUEL.rawValue] = 0
                     }
                     else {
                         
-                        print( "누적 연비 저장 실패.!" )
+                        print( "##### DB 누적 연비 저장 실패.!" )
+                        
+                        if( MainManager.shared.info.bCommunicationTry3Count[EN_DB_KIND.SET_AVG_FUEL.rawValue] > 0 ) {
+                            
+                            MainManager.shared.info.bCommunicationTry3Count[EN_DB_KIND.SET_AVG_FUEL.rawValue] -= 1
+                            MainManager.shared.info.bCommunicationTry3[EN_DB_KIND.SET_AVG_FUEL.rawValue] = true
+                        }
                     }
                     print( Result )
                 }
+                else {
+                    
+                    if( MainManager.shared.info.bCommunicationTry3Count[EN_DB_KIND.SET_AVG_FUEL.rawValue] > 0 ) {
+                        
+                        MainManager.shared.info.bCommunicationTry3Count[EN_DB_KIND.SET_AVG_FUEL.rawValue] -= 1
+                        MainManager.shared.info.bCommunicationTry3[EN_DB_KIND.SET_AVG_FUEL.rawValue] = true
+                    }
+                    
+                    print( "##### DB 누적 연비 저장 실패.!" )
+                }
+                
+                
+            }
         }
     }
     
@@ -1894,28 +2239,34 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
     
     func setWeekFuelMileageDB() {
         
-        // 현재 시각 구하기
-        let now = Date()
-        // 데이터 포맷터
-        let dateFormatter = DateFormatter()
-        // 한국 Locale
-        dateFormatter.locale = Locale(identifier: "ko_KR")
-        dateFormatter.dateFormat = "yyyy-MM-dd"
         
-        let dateTime:String = dateFormatter.string(from: now)
+        if( MainManager.shared.info.bCommunicationTry3[EN_DB_KIND.SET_WEEK_FUEL.rawValue] == true )
+        {
+            MainManager.shared.info.bCommunicationTry3[EN_DB_KIND.SET_WEEK_FUEL.rawValue] = false
+        
+            // 현재 시각 구하기
+            let now = Date()
+            // 데이터 포맷터
+            let dateFormatter = DateFormatter()
+            // 한국 Locale
+            dateFormatter.locale = Locale(identifier: "ko_KR")
+            dateFormatter.dateFormat = "yyyy-MM-dd"
+            
+            let dateTime:String = dateFormatter.string(from: now)
 
-        // database.php?Req=AddFuelMileage&CheckDate=yyyy-mm-dd&FuelMileage=연비 (10.1)
-        let parameters = [
-            "Req": "AddFuelMileage",
-            "CheckDate":dateTime,
-            "FuelMileage": MainManager.shared.member_info.str_ThisWeekFuelMileageSetDB,
-            "Car_Model": MainManager.shared.member_info.str_car_kind,
-            "VIN": MainManager.shared.member_info.str_car_vin_number]
-        
-        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
-        print("_____ str_ThisWeekFuelMileage SAVE_DB:: " + MainManager.shared.member_info.str_ThisWeekFuelMileageSetDB)
-        Alamofire.request(MainManager.shared.SeverURL+"database.php", method: .post, parameters: parameters)
-            .responseJSON { response in
+            // database.php?Req=AddFuelMileage&CheckDate=yyyy-mm-dd&FuelMileage=연비 (10.1)
+            let parameters = [
+                "Req": "AddFuelMileage",
+                "CheckDate":dateTime,
+                "FuelMileage": MainManager.shared.info.str_ThisWeekFuelMileageSetDB,
+                "Car_Model": MainManager.shared.info.str_car_kind,
+                "VIN": MainManager.shared.info.str_car_vin_number]
+            
+            ToastIndicatorView.shared.setup(self.view, "")
+            print("_____ str_ThisWeekFuelMileage SAVE_DB:: " + MainManager.shared.info.str_ThisWeekFuelMileageSetDB)
+            Alamofire.request(MainManager.shared.SeverURL+"database.php", method: .post, parameters: parameters)
+                .responseJSON
+            { response in
                 
                 ToastIndicatorView.shared.close()
                 print(response)
@@ -1936,30 +2287,126 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
                     let Result = json["Result"].rawString()!
                     if( Result == "SAVE_OK" ) {
 
-                        print( "주 연비 저장.!" )
+                        print( "##### DB 주 연비 저장.!" )
+                        MainManager.shared.info.bCommunicationTry3[EN_DB_KIND.SET_WEEK_FUEL.rawValue] = false
+                        MainManager.shared.info.bCommunicationTry3Count[EN_DB_KIND.SET_WEEK_FUEL.rawValue] = 0
                     }
                     else {
                         
-                        print( "주 연비 저장 실패.!" )
+                        print( "##### DB 주 연비 저장 실패.!" )
+                        
+                        if( MainManager.shared.info.bCommunicationTry3Count[EN_DB_KIND.SET_WEEK_FUEL.rawValue] > 0 ) {
+                            
+                            MainManager.shared.info.bCommunicationTry3Count[EN_DB_KIND.SET_WEEK_FUEL.rawValue] -= 1
+                            MainManager.shared.info.bCommunicationTry3[EN_DB_KIND.SET_WEEK_FUEL.rawValue] = true
+                        }
                     }
                     print( Result )
                 }
+                else {
+                    
+                    if( MainManager.shared.info.bCommunicationTry3Count[EN_DB_KIND.SET_WEEK_FUEL.rawValue] > 0 ) {
+                        
+                        MainManager.shared.info.bCommunicationTry3Count[EN_DB_KIND.SET_WEEK_FUEL.rawValue] -= 1
+                        MainManager.shared.info.bCommunicationTry3[EN_DB_KIND.SET_WEEK_FUEL.rawValue] = true
+                    }
+                    
+                    print( "##### DB 주 연비 저장 실패.!" )
+                }
+                
+            }
+        }
+    }
+    
+    
+    func setVinDataDB() {
+        
+        if( MainManager.shared.info.bCommunicationTry3[EN_DB_KIND.SET_VIN_DATA.rawValue] == true )
+        {
+            MainManager.shared.info.bCommunicationTry3[EN_DB_KIND.SET_VIN_DATA.rawValue] = false
+        
+            let parameters = [
+                "Req": "SetVIN",
+                "VIN": MainManager.shared.info.str_car_vin_number]
+            
+            print(MainManager.shared.info.str_car_vin_number)
+            
+            ToastIndicatorView.shared.setup(self.view, "")
+            
+            Alamofire.request(MainManager.shared.SeverURL+"database.php", method: .post, parameters: parameters).responseJSON
+            { response in
+                
+                ToastIndicatorView.shared.close()
+                print(response)
+                //to get status code
+                if let status = response.response?.statusCode {
+                    switch(status){
+                    case 201:
+                        print("example success")
+                    default:
+                        print("error with response status: \(status)")
+                    }
+                }
+            
+                //to get JSON return value
+                if let json = try? JSON(response.result.value) {
+                    
+                    print(json["Result"])
+                    
+                    let Result = json["Result"].rawString()!
+                    
+                    if( Result == "SAVE_OK" ) {
+                        
+                        print( "##### DB 차대 번호 저장 성공." )
+                        MainManager.shared.info.bCommunicationTry3[EN_DB_KIND.SET_VIN_DATA.rawValue] = false
+                        MainManager.shared.info.bCommunicationTry3Count[EN_DB_KIND.SET_VIN_DATA.rawValue] = 0
+                    }
+                    else {
+                        
+                        print( "##### DB 차대 번호 저장 실패.!" )
+                        
+                        if( MainManager.shared.info.bCommunicationTry3Count[EN_DB_KIND.SET_VIN_DATA.rawValue] > 0 ) {
+                            
+                            MainManager.shared.info.bCommunicationTry3Count[EN_DB_KIND.SET_VIN_DATA.rawValue] -= 1
+                            MainManager.shared.info.bCommunicationTry3[EN_DB_KIND.SET_VIN_DATA.rawValue] = true
+                        }
+                    }
+                    print( Result )
+                }
+                else {
+                    
+                    if( MainManager.shared.info.bCommunicationTry3Count[EN_DB_KIND.SET_VIN_DATA.rawValue] > 0 ) {
+                        
+                        MainManager.shared.info.bCommunicationTry3Count[EN_DB_KIND.SET_VIN_DATA.rawValue] -= 1
+                        MainManager.shared.info.bCommunicationTry3[EN_DB_KIND.SET_VIN_DATA.rawValue] = true
+                    }
+                    
+                    print( "##### DB 주 연비 저장 실패.!" )
+                }
+            }
         }
     }
     
     
     
+    
+    
     func setSeedDB() {
         
-        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
+        if( MainManager.shared.info.bCommunicationTry3[EN_DB_KIND.SET_SEED.rawValue] == true )
+        {
+            MainManager.shared.info.bCommunicationTry3[EN_DB_KIND.SET_SEED.rawValue] = false
         
-        // database.php?Req=SetSeed&Sed=
-        let parameters = [
-            "Req": "SetSeed",
-            "Sed":MainManager.shared.member_info.str_Car_Status_Seed ]
-        
-        Alamofire.request(MainManager.shared.SeverURL+"database.php", method: .post, parameters: parameters)
-            .responseJSON { response in
+            
+            // database.php?Req=SetSeed&Sed=
+            let parameters = [
+                "Req": "SetSeed",
+                "Sed":MainManager.shared.info.str_Car_Status_Seed ]
+            
+            ToastIndicatorView.shared.setup(self.view, "")
+            Alamofire.request(MainManager.shared.SeverURL+"database.php", method: .post, parameters: parameters)
+                .responseJSON
+            { response in
                 
                 ToastIndicatorView.shared.close()
                 print(response)
@@ -1972,7 +2419,7 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
                         print("error with response status: \(status)")
                     }
                 }
-                
+            
                 //to get JSON return value
                 if let json = try? JSON(response.result.value) {
                     
@@ -1980,29 +2427,54 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
                     let Result = json["Result"].rawString()!
                     if( Result == "SAVE_OK" ) {
 
-                        print( "Seed 저장.!" )
+                        print( "##### DB SetSeed 저장.!" )
+                        MainManager.shared.info.bCommunicationTry3[EN_DB_KIND.SET_SEED.rawValue] = false
+                        MainManager.shared.info.bCommunicationTry3Count[EN_DB_KIND.SET_SEED.rawValue] = 0
                     }
                     else {
-                        print( "Seed 저장 실패.!" )
+                        
+                        print( "##### DB SetSeed 저장 실패.!" )
+                        
+                        if( MainManager.shared.info.bCommunicationTry3Count[EN_DB_KIND.SET_SEED.rawValue] > 0 ) {
+                            
+                            MainManager.shared.info.bCommunicationTry3Count[EN_DB_KIND.SET_SEED.rawValue] -= 1
+                            MainManager.shared.info.bCommunicationTry3[EN_DB_KIND.SET_SEED.rawValue] = true
+                        }
                     }
                     print( Result )
                 }
+                else {
+                    
+                    if( MainManager.shared.info.bCommunicationTry3Count[EN_DB_KIND.SET_SEED.rawValue] > 0 ) {
+                        
+                        MainManager.shared.info.bCommunicationTry3Count[EN_DB_KIND.SET_SEED.rawValue] -= 1
+                        MainManager.shared.info.bCommunicationTry3[EN_DB_KIND.SET_SEED.rawValue] = true
+                    }
+                    
+                    print( "##### DB SetSeed 저장 실패.!" )
+                }
+                
+                
+            }
         }
     }
     
     
     func getKeyDB() {
         
-
-        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
+        if( MainManager.shared.info.bCommunicationTry3[EN_DB_KIND.GET_KEY.rawValue] == true )
+        {
+            MainManager.shared.info.bCommunicationTry3[EN_DB_KIND.GET_KEY.rawValue] = false
         
-        // database.php?Req=GetKey
-        let parameters = [
-            "Req": "GetKey"]
         
-        Alamofire.request(MainManager.shared.SeverURL+"database.php", method: .post, parameters: parameters)
-            .responseJSON { response in
-                
+            // database.php?Req=GetKey
+            let parameters = [
+                "Req": "GetKey"]
+            
+            ToastIndicatorView.shared.setup(self.view, "")
+            Alamofire.request(MainManager.shared.SeverURL+"database.php", method: .post, parameters: parameters)
+                .responseJSON
+            { response in
 
                 ToastIndicatorView.shared.close()
                 print(response)
@@ -2026,24 +2498,51 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
                     
                     if( Res == "GetKey" ) {
                         
-                        print( "Key 가져오기 성공.!" )
-                        let nsData:NSData = MainManager.shared.member_info.setKEY( Result )
-                        self.setDataBLE( nsData )
-                        print( "Key값 BLE set .!" )
+                        print( "##### DB GetKey 성공.!" )
+                        MainManager.shared.info.bCommunicationTry3[EN_DB_KIND.GET_KEY.rawValue] = false
+                        MainManager.shared.info.bCommunicationTry3Count[EN_DB_KIND.GET_KEY.rawValue] = 0
                     }
                     else {
                         
-                        print( "Key 가져오기 실패.!" )
+                        print( "##### DB GetKey 실패.!" )
+                        
+                        if( MainManager.shared.info.bCommunicationTry3Count[EN_DB_KIND.GET_KEY.rawValue] > 0 ) {
+                            
+                            MainManager.shared.info.bCommunicationTry3Count[EN_DB_KIND.GET_KEY.rawValue] -= 1
+                            MainManager.shared.info.bCommunicationTry3[EN_DB_KIND.GET_KEY.rawValue] = true
+                        }
                     }
-                   
-                    // print( Result )
+                    print( Result )
                 }
+                else {
+                    
+                    if( MainManager.shared.info.bCommunicationTry3Count[EN_DB_KIND.GET_KEY.rawValue] > 0 ) {
+                        
+                        MainManager.shared.info.bCommunicationTry3Count[EN_DB_KIND.GET_KEY.rawValue] -= 1
+                        MainManager.shared.info.bCommunicationTry3[EN_DB_KIND.GET_KEY.rawValue] = true
+                    }
+                    
+                    print( "##### DB GetKey 실패.!" )
+                }
+            }
         }
     }
     
+    // DTC 코드 정보 모드 BLE 읽기
+    func getDtcBLE() {
+        
+        getLocalTime()
+        
+        if( isBLE_CAR_FRIENDS_CONNECT() == true && isPeripheral_LIVE() == true ) {
+            
+            let nsData:NSData = MainManager.shared.info.getREAD_DTC_ALL()
+            self.setDataBLE( nsData )
+        }
+        
+        print( "##### DB getDtcBLE()" )
+    }
     
-    
-    
+
     
     
     
@@ -2052,7 +2551,7 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
     func connectCheckBLE() {
         
         // 블루 투스 기기 꺼짐
-        if( MainManager.shared.member_info.isBLE_ON == false ) {
+        if( MainManager.shared.info.isBLE_ON == false ) {
             // 연결됨
             a01_01_scroll_view.btn_kit_connect.setBackgroundImage(UIImage(named:"a_01_01_link02"), for: .normal)
             self.a01_01_scroll_view.label_kit_connect.text = "블루투스 꺼짐!"
@@ -2060,7 +2559,7 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         }
         else {
             
-            if( MainManager.shared.member_info.isCAR_FRIENDS_CONNECT == true ) {
+            if( MainManager.shared.info.isCAR_FRIENDS_CONNECT == true ) {
                 // 연결됨
                 a01_01_scroll_view.btn_kit_connect.setBackgroundImage(UIImage(named:"a_01_01_link"), for: .normal)
                 self.a01_01_scroll_view.label_kit_connect.text = "블루투스 연결됨"
@@ -2178,11 +2677,10 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
     
     
     // A02 ON OFF 세팅
-    
     func carOnOffIsHiddenSetA02_01() {
         
-        if( MainManager.shared.member_info.isBLE_ON == false ||
-            MainManager.shared.member_info.isCAR_FRIENDS_CONNECT == false ) {
+        if( MainManager.shared.info.isBLE_ON == false ||
+            MainManager.shared.info.isCAR_FRIENDS_CONNECT == false ) {
             
             
             a02_01_view.btn_01_on.isEnabled = false
@@ -2197,10 +2695,9 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
             a02_01_view.btn_03_off.isEnabled = false
             a02_01_view.btn_04_off.isEnabled = false
             a02_01_view.btn_05_off.isEnabled = false
-
             
             // 시간 설정 버튼
-            // a02_02_view.btn_rvs_time.isEnabled = false
+            a02_02_view.btn_rvs_time.isEnabled = false
             
             a02_02_view.switch_btn_07.isEnabled = false
             a02_02_view.switch_btn_08.isEnabled = false
@@ -2209,7 +2706,7 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
             a02_02_view.switch_btn_11.isEnabled = false
             
         }
-        else if( MainManager.shared.member_info.isCAR_FRIENDS_CONNECT == true ) {
+        else if( MainManager.shared.info.isCAR_FRIENDS_CONNECT == true ) {
             
             
             a02_01_view.btn_01_on.isEnabled = true
@@ -2237,7 +2734,7 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         }
     }
         
-    func carOnOffSetting() {
+    func autoBtnOnOffSetUI() {
         
 //        let DF_DOOR_LOCK = 0
 //        let DF_HATCH = 1
@@ -2252,24 +2749,24 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
 //        let DF_RES_RVS_TIME = 10
         
 
-//        a02_01_view.switch_btn_01.isOn = MainManager.shared.member_info.bCar_Status_DoorLock
-//        a02_01_view.switch_btn_02.isOn = MainManager.shared.member_info.bCar_Status_Hatch
-//        a02_01_view.switch_btn_03.isOn = MainManager.shared.member_info.bCar_Status_Window
-//        a02_01_view.switch_btn_04.isOn = MainManager.shared.member_info.bCar_Status_Sunroof
+//        a02_01_view.switch_btn_01.isOn = MainManager.shared.info.bCar_Status_DoorLock
+//        a02_01_view.switch_btn_02.isOn = MainManager.shared.info.bCar_Status_Hatch
+//        a02_01_view.switch_btn_03.isOn = MainManager.shared.info.bCar_Status_Window
+//        a02_01_view.switch_btn_04.isOn = MainManager.shared.info.bCar_Status_Sunroof
 //        // 원격 시동
-//        a02_01_view.switch_btn_05.isOn = MainManager.shared.member_info.bCar_Status_RVS
+//        a02_01_view.switch_btn_05.isOn = MainManager.shared.info.bCar_Status_RVS
 //        // 키리스 온
-//        a02_01_view.switch_btn_06.isOn = MainManager.shared.member_info.bCar_Car_Status_IGN
+//        a02_01_view.switch_btn_06.isOn = MainManager.shared.info.bCar_Car_Status_IGN
         
         
         // 여기부터 AUTO
-        a02_02_view.switch_btn_07.isOn = MainManager.shared.member_info.bCar_Btn_AutoLockFolding
-        a02_02_view.switch_btn_08.isOn = MainManager.shared.member_info.bCar_Btn_AutoWindowClose
-        a02_02_view.switch_btn_09.isOn = MainManager.shared.member_info.bCar_Btn_AutoSunroofClose
+        a02_02_view.switch_btn_07.isOn = MainManager.shared.info.bGetBleAutoBtnState[AutoBtn.LOCKFOLDING.rawValue]
+        a02_02_view.switch_btn_08.isOn = MainManager.shared.info.bGetBleAutoBtnState[AutoBtn.AUTOWINDOWS.rawValue]
+        a02_02_view.switch_btn_09.isOn = MainManager.shared.info.bGetBleAutoBtnState[AutoBtn.AUTOSUNROOF.rawValue]
         // 후진시 창문
-        a02_02_view.switch_btn_10.isOn = MainManager.shared.member_info.bCar_Btn_AutoWindowRevOpen
+        a02_02_view.switch_btn_10.isOn = MainManager.shared.info.bGetBleAutoBtnState[AutoBtn.REV_WINDOW.rawValue]
         // 예약 시동
-        a02_02_view.switch_btn_11.isOn = MainManager.shared.member_info.bCar_Btn_RVS
+        a02_02_view.switch_btn_11.isOn = MainManager.shared.info.bGetBleAutoBtnState[AutoBtn.RES_RVS.rawValue]
         
         
         if( a02_02_view.switch_btn_07.isOn == true ) {
@@ -2327,9 +2824,9 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
             a02_02_view.label_btn_use05.textColor = UIColor.lightGray
         }
         
-        
-        // 버튼 히든 처리
-        if( autoBtnDataSet == false ) {
+
+        // 버튼 비활성화 처리
+        if( MainManager.shared.info.autoBtnDataSet == false ||  MainManager.shared.info.isCAR_FRIENDS_CONNECT == false ) {
             
             a02_02_view.switch_btn_07.isEnabled = false
             a02_02_view.switch_btn_08.isEnabled = false
@@ -2345,8 +2842,6 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
             a02_02_view.switch_btn_10.isEnabled = true
             a02_02_view.switch_btn_11.isEnabled = true
         }
-        
-        
     }
     
     
@@ -2356,7 +2851,6 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         print("stopTimer")
         
         timer.invalidate()
-        timer2.invalidate()
         timerBLE.invalidate()
         timerDATETIME.invalidate()
         timerCarFriendStart.invalidate()
@@ -2365,14 +2859,15 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
     
     
     var timer = Timer()
-    var timer2 = Timer()
     var timerBLE = Timer()
     var timerDATETIME = Timer()
     var timerCarFriendStart = Timer()
     
-    var timerPinCodeBleRead = Timer()
-    
+    var timerPinCodeBleRead = Timer()           // 처음 핀코드 비교 위해 읽는 쓰레드
+    var timerPinCodeBleReadTimeOut = Timer()    // 처음 핀코드 비교 위해 읽는 타임아웃 체크쓰레드
     var timerPinCodeCheck = Timer()
+    
+    var timerBleReconnect = Timer()             // 다시 연결될때 인디케이터 돌리기 1초
     
     
     
@@ -2385,16 +2880,13 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        
-//        MainManager.shared.member_info.str_LocalPinCode = "1111"
-//        UserDefaults.standard.set(MainManager.shared.member_info.str_LocalPinCode, forKey: "str_LocalPinCode")
-        
-
+//        MainManager.shared.info.str_LocalPinCode = "1111"
+//        UserDefaults.standard.set(MainManager.shared.info.str_LocalPinCode, forKey: "str_LocalPinCode")
         
         // pause 대용 초기화
         bleDisConnect()
         isMoveSceneDisConnectBLE = false
-        MainManager.shared.member_info.isCAR_FRIENDS_CONNECT = false;
+
         
         MainManager.shared.isBLE_RESTART = false
         
@@ -2403,7 +2895,31 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         MainManager.shared.bLoginTryErr = false
         MainManager.shared.iLoginTryCount = 1;
         
-        MainManager.shared.member_info.bPinCodeViewGO = false
+
+        MainManager.shared.info.bPinCodeViewGO = false
+        
+        
+        // 오토 버튼 초기값 세팅
+        MainManager.shared.info.autoBtnDataSetCount = 0
+        MainManager.shared.info.autoBtnDataSet = false
+        
+        // 오토버튼 버튼별 파싱 카운트 하는 변수 초기화
+        for autoBtn in 0..<5  {
+            
+            MainManager.shared.info.bSetDataBleAutoBtn[autoBtn] = false
+            MainManager.shared.info.iSetDataBleAutoBtnCount[autoBtn] = 0
+        }
+        
+        // 처음 연결시 DB 읽고 쓰기 값들 3회 초기화
+        for dbSet in 0..<5  {
+            
+            MainManager.shared.info.bCommunicationTry3[dbSet] = false
+            MainManager.shared.info.bCommunicationTry3Count[dbSet] = 0
+        }
+        
+
+        
+        
         
         
 //        // Register notifications for "Pause"
@@ -2413,47 +2929,15 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         
         
         
-
-        
-        
-        
         // 8주 데이타에 쓸 날짜 얻기
         getDateDay()
         // 8주 DTC 다시 읽는 플래그
-        MainManager.shared.member_info.bAddDtcOK_8WeekReadDtc = false
-        
-        // TOT 전체로 변경 해야 됨
-        if UserDefaults.standard.object(forKey: "str_TotalDriveMileage") != nil
-        {
-            MainManager.shared.member_info.str_TotalDriveMileage = UserDefaults.standard.string(forKey: "str_TotalDriveMileage")!
-            sleep(0)
-        }
-        
-//        if UserDefaults.standard.object(forKey: "str_ThisWeekDriveMileage") != nil
-//        {
-//            MainManager.shared.member_info.str_ThisWeekDriveMileage = UserDefaults.standard.string(forKey: "str_ThisWeekDriveMileage")!
-//        }
-        
-        if UserDefaults.standard.object(forKey: "str_TotalAvgFuelMileage") != nil
-        {
-            MainManager.shared.member_info.str_TotalAvgFuelMileage = UserDefaults.standard.string(forKey: "str_TotalAvgFuelMileage")!
-        }
-        
-        
-        
-//        if UserDefaults.standard.object(forKey: "str_ThisWeekFuelMileage") != nil
-//        {
-//            MainManager.shared.member_info.str_ThisWeekFuelMileage = UserDefaults.standard.string(forKey: "str_ThisWeekFuelMileage")!
-//        }
+        MainManager.shared.info.bAddDtcOK_8WeekReadDtc = false
+
         
                
         
-        
-        
-        if UserDefaults.standard.object(forKey: "str_car_vin_number") != nil
-        {
-            MainManager.shared.member_info.str_car_vin_number = UserDefaults.standard.string(forKey: "str_car_vin_number")!
-        }
+       
         
 
         
@@ -2465,10 +2949,10 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
 
         
         // 반복 호출 스케줄러
-        timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(timerAction), userInfo: nil, repeats: true)
-        timer2 = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(timerAction2), userInfo: nil, repeats: true)
+        timer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(timerAction), userInfo: nil, repeats: true)
         // 2초
         timerBLE = Timer.scheduledTimer(timeInterval: 2, target: self, selector: #selector(timerActionBLE), userInfo: nil, repeats: true)
+        
         
         
         ////////////////////////////////////////////////// main btn init
@@ -2496,9 +2980,9 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         
         
         
-//        MainManager.shared.member_info.str_8WeekDriveMileage
-//        print(MainManager.shared.member_info.str_8WeekAvgFuelMileage
-//        print(MainManager.shared.member_info.str_8WeekDtcCount
+//        MainManager.shared.info.str_8WeekDriveMileage
+//        print(MainManager.shared.info.str_8WeekAvgFuelMileage
+//        print(MainManager.shared.info.str_8WeekDtcCount
         
         
         
@@ -2507,7 +2991,7 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         
         
         
-        
+        // mainSubView
         
         
         if let featView1 = Bundle.main.loadNibNamed("A01_01_View", owner: self, options: nil)?.first as? A01_01_View
@@ -2527,14 +3011,31 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
             
             //featView2.frame.origin.x = 10
             featView1.frame.origin.y = CGFloat(subSubView_y)
-            self.view.addSubview(featView1)
+            
+            // self.view.addSubview(featView1)
+            mainSubView.addSubview(featView1)
+            
+            
             a01_01_view = featView1
             
             // 스크롤뷰 세로 스크롤 영역 설정
             a01_01_view.addSubview(a01_01_scroll_view)
-            a01_01_scroll_view.frame = CGRect(x: 15, y: 0, width: 345, height: 438+52)
+            // a01_01_scroll_view.frame = CGRect(x: 15, y: 0, width: 345, height: 438+52)
+            a01_01_scroll_view.frame = CGRect(x: 15, y: 0, width: 345, height: 667-60-53)
             a01_01_scroll_view.frame = MainManager.shared.initLoadChangeFrame( frame: a01_01_scroll_view.frame )
             a01_01_scroll_view.delegate = self
+            
+            
+            // a01_01_scroll_view.frame (15.0, 0.0, 345.0, 490.0)
+            //  a01_01_scroll_view.frame (16.560000000000002, 0.0, 380.88000000000005, 540.6896551724138)
+            
+            
+            // 메인 스크롤뷰 화면 크기
+            print( " a01_01_scroll_view.frame \(a01_01_scroll_view.frame)"  )
+            
+            
+            
+            
             
             a01_01_scroll_view.roundView00.frame = MainManager.shared.initLoadChangeFrame( frame: a01_01_scroll_view.roundView00.frame )
             a01_01_scroll_view.roundView01.frame = MainManager.shared.initLoadChangeFrame( frame: a01_01_scroll_view.roundView01.frame )
@@ -2544,7 +3045,7 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
             
             // 스크롤 영역 크기 자동 계산
             a01_01_scroll_view.resizeScrollViewContentSize()
-            a01_01_scroll_view.contentSize.height += 30
+            a01_01_scroll_view.contentSize.height += 150
             
             
             
@@ -2558,16 +3059,16 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
             // 스크롤 뷰 컨텐트 사이즈 자동 조절perview.bounds;
             
             // USER ID
-            a01_01_scroll_view.label_user_id.text = "\(MainManager.shared.member_info.str_id_nick) 님"
+            a01_01_scroll_view.label_user_id.text = "\(MainManager.shared.info.str_id_nick) 님"
             // kit connect 21
             a01_01_scroll_view.btn_kit_connect.addTarget(self, action: #selector(AViewController.pressed_01(sender:)), for: .touchUpInside)
             // GET INFO TIME
             getTime()
             
-            a01_01_scroll_view.label_car_kind_year.text = "\(MainManager.shared.member_info.str_car_kind) \(MainManager.shared.member_info.str_car_year)년형"
-            a01_01_scroll_view.label_fuel_type.text = "\(MainManager.shared.member_info.str_car_fuel_type) 차량"
-            a01_01_scroll_view.label_car_plate_nem.text = MainManager.shared.member_info.str_car_plate_num
-            a01_01_scroll_view.label_car_vin_num.text = MainManager.shared.member_info.str_car_vin_number
+            a01_01_scroll_view.label_car_kind_year.text = "\(MainManager.shared.info.str_car_kind) \(MainManager.shared.info.str_car_year)년형"
+            a01_01_scroll_view.label_fuel_type.text = "\(MainManager.shared.info.str_car_fuel_type) 차량"
+            a01_01_scroll_view.label_car_plate_nem.text = MainManager.shared.info.str_car_plate_num
+            a01_01_scroll_view.label_car_vin_num.text = MainManager.shared.info.str_car_vin_number
 
             
             
@@ -2651,8 +3152,8 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         a01_01_info_mod_view.field_car_kind.inputAccessoryView = toolBar
         
         // test 피커뷰 셀 이동시켜놓기
-        pickerView.selectRow(MainManager.shared.member_info.i_car_piker_select, inComponent: 0, animated: false)
-        a01_01_info_mod_view.field_car_kind.text = MainManager.shared.member_info.str_car_kind
+        pickerView.selectRow(MainManager.shared.info.i_car_piker_select, inComponent: 0, animated: false)
+        a01_01_info_mod_view.field_car_kind.text = MainManager.shared.info.str_car_kind
         
         
         
@@ -2679,8 +3180,8 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         
         // 피커뷰 셀 이동시켜놓기
         // test 피커뷰 셀 이동시켜놓기
-        pickerView2.selectRow(MainManager.shared.member_info.i_year_piker_select, inComponent: 0, animated: false)
-        a01_01_info_mod_view.field_car_year.text = MainManager.shared.member_info.str_car_year
+        pickerView2.selectRow(MainManager.shared.info.i_year_piker_select, inComponent: 0, animated: false)
+        a01_01_info_mod_view.field_car_year.text = MainManager.shared.info.str_car_year
         
         
         
@@ -2705,8 +3206,8 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         toolBar2.isUserInteractionEnabled = true
         a01_01_info_mod_view.field_car_fuel.inputAccessoryView = toolBar2
         // 피커뷰 셀 이동시켜놓기
-        pickerView3.selectRow(MainManager.shared.member_info.i_fuel_piker_select, inComponent: 0, animated: false)
-        a01_01_info_mod_view.field_car_fuel.text = MainManager.shared.member_info.str_car_fuel_type
+        pickerView3.selectRow(MainManager.shared.info.i_fuel_piker_select, inComponent: 0, animated: false)
+        a01_01_info_mod_view.field_car_fuel.text = MainManager.shared.info.str_car_fuel_type
         
 
         
@@ -2715,19 +3216,19 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         
         a01_01_info_mod_view.field_car_vin_num.delegate = self
         a01_01_info_mod_view.field_car_vin_num.placeholder = "예:KLYDC487DHC701056"
-        a01_01_info_mod_view.field_car_vin_num.text = MainManager.shared.member_info.str_car_vin_number
+        a01_01_info_mod_view.field_car_vin_num.text = MainManager.shared.info.str_car_vin_number
         // 비활성
         a01_01_info_mod_view.field_car_vin_num.isEnabled = false
         
         
         a01_01_info_mod_view.field_plate_num.delegate = self
         a01_01_info_mod_view.field_plate_num.placeholder = "예:99가9999"
-        a01_01_info_mod_view.field_plate_num.text = MainManager.shared.member_info.str_car_plate_num
+        a01_01_info_mod_view.field_plate_num.text = MainManager.shared.info.str_car_plate_num
         
         a01_ScrollBtnCreate()
         a01_ScrollMenuView.frame.origin.y = CGFloat(subMenuView_y)
-        self.view.addSubview(a01_ScrollMenuView)
-        
+        //self.view.addSubview(a01_ScrollMenuView)
+        mainSubView.addSubview(a01_ScrollMenuView)
         
         
         
@@ -2741,7 +3242,8 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         {
             //featView2.frame.origin.x = 10
             featView2.frame.origin.y = CGFloat(subSubView_y)
-            self.view.addSubview(featView2)
+            //self.view.addSubview(featView2)
+            mainSubView.addSubview(featView2)
             a01_02_view = featView2
 
             // 콤마
@@ -2755,7 +3257,8 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         {
             //featView2.frame.origin.x = 10
             featView3.frame.origin.y = CGFloat(subSubView_y)
-            self.view.addSubview(featView3)
+            //self.view.addSubview(featView3)
+            mainSubView.addSubview(featView3)
             a01_03_view = featView3
             
             a01_03_view.label_tot_big_km.text = "0 km/l"
@@ -2768,7 +3271,8 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         // DTC
         a01_04_1_view = A01_04_1_View.instanceFromNib() as! A01_04_1_View
         a01_04_1_view.frame.origin.y = CGFloat(subSubView_y)
-        self.view.addSubview(a01_04_1_view)
+        //self.view.addSubview(a01_04_1_view)
+        mainSubView.addSubview(a01_04_1_view)
         
         a01_04_1_view.label_tot_big_dtc.text = "0 회"
         a01_04_1_view.label_week_dtc.text = "0 회"
@@ -2781,13 +3285,15 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         {
             //featView2.frame.origin.x = 10
             featView4.frame.origin.y = CGFloat(subSubView_y)
-            self.view.addSubview(featView4)
+            //self.view.addSubview(featView4)
+            mainSubView.addSubview(featView4)
             a01_04_view = featView4
         }
         
         
         a01_06_view.frame.origin.y = subSubView_y
-        self.view.addSubview(a01_06_view)
+        //self.view.addSubview(a01_06_view)
+        mainSubView.addSubview(a01_06_view)
         
         if let videoURL:URL = URL(string: MainManager.shared.SeverURL+"a_01_06.php") {
             let request:URLRequest = URLRequest(url: videoURL)
@@ -2810,20 +3316,19 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         setChartValues_a02()
         setChartValues_a03()
         setChartValues_a04()
-        
 
-        
-        
         
         // a05 view add 주요부품
 //        self.view.addSubview(a01_05_1_view)
 //        a01_05_1_view.frame.origin.y = CGFloat(subSubView_y)
         
         // 핀번호 수정
-        self.view.addSubview(a01_01_pin_view)
+        //self.view.addSubview(a01_01_pin_view)
+        mainSubView.addSubview(a01_01_pin_view)
         a01_01_pin_view.frame.origin.y = CGFloat(subSubView_y)
         // 회원 정보 수정
-        self.view.addSubview(a01_01_info_mod_view)
+        //self.view.addSubview(a01_01_info_mod_view)
+        mainSubView.addSubview(a01_01_info_mod_view)
         a01_01_info_mod_view.frame.origin.y = CGFloat(subSubView_y)
         
         
@@ -2832,13 +3337,16 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         // A02
         a02_ScrollBtnCreate()
         
-        self.view.addSubview(a02_ScrollMenuView)
+        //self.view.addSubview(a02_ScrollMenuView)
+        mainSubView.addSubview(a02_ScrollMenuView)
         a02_ScrollMenuView.frame.origin.y = CGFloat(subMenuView_y)
         
-        self.view.addSubview(a02_01_view)
+        //self.view.addSubview(a02_01_view)
+        mainSubView.addSubview((a02_01_view))
         a02_01_view.frame.origin.y = subSubView_y
         
-        self.view.addSubview(a02_02_view)
+        //self.view.addSubview(a02_02_view)
+        mainSubView.addSubview(a02_02_view)
         a02_02_view.frame.origin.y = subSubView_y
         
         a02_02_view.btn_rvs_time.layer.cornerRadius = 5;
@@ -2846,7 +3354,8 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         
         
         
-        self.view.addSubview(a02_03_view)
+        // self.view.addSubview(a02_03_view)
+        mainSubView.addSubview(a02_03_view)
         a02_03_view.frame.origin.y = subSubView_y
         
         
@@ -2874,37 +3383,15 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         
         
         
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        // A03
-        
-//        self.view.addSubview(a03_ScrollMenuView)
-//        a03_ScrollMenuView.frame.origin.y = CGFloat(subMenuView_y)
-//
-//        self.view.addSubview(a03_01_view)
-//        a03_01_view.frame.origin.y = CGFloat(subSubView_y)
-//
-//        self.view.addSubview(a03_02_view)
-//        a03_02_view.frame.origin.y = CGFloat(subSubView_y)
-//
-//        self.view.addSubview(a03_03_view)
-//        a03_03_view.frame.origin.y = CGFloat(subSubView_y)
-//
-//        self.view.addSubview(a03_help_view)
-//        a03_help_view.frame.origin.y = CGFloat(subSubView_y)
-//
-//
-//        if let videoURL:URL = URL(string: "http://www.naver.com") {
-//            let request:URLRequest = URLRequest(url: videoURL)
-//            a03_help_view.webView.load(request)
-//        }
         
         
         
         activityIndicator.center = self.view.center
         activityIndicator.hidesWhenStopped = true
         activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.white
-        self.view.addSubview(activityIndicator)
         
+        //self.view.addSubview(activityIndicator)
+        mainSubView.addSubview(activityIndicator)
         
         
         userLogin()
@@ -2921,9 +3408,9 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         a01_01_pin_view.frame = MainManager.shared.initLoadChangeFrame(frame: a01_01_pin_view.frame)
         a01_01_info_mod_view.frame = MainManager.shared.initLoadChangeFrame(frame: a01_01_info_mod_view.frame)
         
-        print("##### a01_01_view.frame : \(a01_01_view.frame)"  )
-        
-        
+        print("##### a01_01_pin_view.frame : \(a01_01_pin_view.frame)"  )
+        print("##### a01_01_info_mod_view.frame : \(a01_01_info_mod_view.frame)"  )
+                
         
         a01_02_view.frame = MainManager.shared.initLoadChangeFrame(frame: a01_02_view.frame)
         
@@ -2954,21 +3441,68 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
 //
 //        a03_help_view.frame = MainManager.shared.initLoadChangeFrame(frame: a03_help_view.frame)
         
-        setValueLabel()
+        setValueLabelRefreshUI()
         
         createWkWebViewA01()
         
         
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // 1 뷰 젤 앞으로
-        self.view.bringSubview(toFront: a01_01_view)
-        self.view.bringSubview(toFront: a01_ScrollMenuView)
-        self.view.bringSubview(toFront: mainMenuABC_view)
+        self.mainSubView.bringSubview(toFront: a01_01_view)
+        self.mainSubView.bringSubview(toFront: a01_ScrollMenuView)
+        self.mainSubView.bringSubview(toFront: mainMenuABC_view)
+        
+        
+        // 아이폰 X 대응
+        MainManager.shared.initLoadChangeFrameIPhoneX(mainView: self.view, changeView: mainSubView)
+        
+        // 푸시가 있으면 A01_06 화면으로
+        pushCheck_MoveToA0106View()
         
         
         // 블루투스 시작
         initStartBLE()
     }
+    
+    
+    
+    
+    
+    // 푸시가 있으면 A01_06 화면으로
+    func pushCheck_MoveToA0106View() {
+        
+        if( UIApplication.shared.applicationIconBadgeNumber > 0) {
+            
+            print( "UIApplication.shared.applicationIconBadgeNumber = \(UIApplication.shared.applicationIconBadgeNumber)" )
+            
+            UIApplication.shared.applicationIconBadgeNumber = 0
+            // 웹 페이지 새로 로딩
+            if let videoURL:URL = URL(string: MainManager.shared.SeverURL+"a_01_06.php") {
+                let request:URLRequest = URLRequest(url: videoURL)
+                a01_06_view.webview.load(request)
+            }
+            
+            self.mainSubView.bringSubview(toFront: a01_06_view)   // 부품상태
+            self.mainSubView.bringSubview(toFront: mainMenuABC_view)
+            sleep(0)
+            
+            // 버튼색 부품상태 선택으로 색바꾸기
+            for i in 0..<btn_a01_name.count  {
+                
+                let tempBtn = a01_ScrollMenuView.scrollView.viewWithTag(i+1) as! UIButton
+                
+                if( i == 5) {
+                    
+                    tempBtn.setTitleColor( UIColor.black, for: .normal )
+                }
+                else {
+                    
+                    tempBtn.setTitleColor( UIColor.lightGray, for: .normal )
+                }
+            }
+        }
+    }
+    
     
     
     // 피커뷰 닫기
@@ -2993,15 +3527,23 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
     func a01_04_viewInit() {
         
         // 12.8v = 배터리 충전 맥스로 본다. test
-        // MainManager.shared.member_info.str_BattVoltage = "12.8"
+        // MainManager.shared.info.str_BattVoltage = "12.8"
         
-        // 소수점 한자리
-        var tempBattVoltage = Double(MainManager.shared.member_info.str_BattVoltage)!.rounded( toPlaces: 1)
+        var tempBattVoltage = 0.0
+        
+        if( MainManager.shared.info.str_BattVoltage.isAlphanumeric ) {
+            // 소수점 한자리
+            tempBattVoltage = Double(MainManager.shared.info.str_BattVoltage)!.rounded( toPlaces: 1)
+        }
+        else {
+            
+            print( "ERR [BattVoltage] = \(MainManager.shared.info.str_FuelTank)" )
+        }
         
         a01_04_view.label_battery_V.text = "배터리 \(tempBattVoltage)"
         
         // volt %
-        var BattVoltage:Float = Float(MainManager.shared.member_info.str_BattVoltage)!
+        var BattVoltage:Float = Float(MainManager.shared.info.str_BattVoltage)!
         BattVoltage = MainManager.shared.Get_Batt_Level( volt: BattVoltage )
         a01_04_view.label_battery_per.text = String(Int(BattVoltage))+"%"
         
@@ -3019,42 +3561,63 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
             a01_04_view.image_battery_state.setBackgroundImage(UIImage(named:"a_01_05_icon02_01"), for: .normal)
         }
         
-        //MainManager.shared.member_info.str_DRIVEABLE = "123.123"
+        //MainManager.shared.info.str_DRIVEABLE = "ㅁ123414.33"
+        var str_DRIVEABLE:String = "0"
+        // . 으로 양쪽값 나누기 Int 정수만 뽑는다.
+        var arr = MainManager.shared.info.str_DRIVEABLE.components(separatedBy: ".")
         
-        // 정수로 변경
-        var temp_DRIVEABLE:Int = Int(Float(MainManager.shared.member_info.str_DRIVEABLE)!)
-        // 주행가능거리
-        a01_04_view.label_DRIVEABLE.text = "\(temp_DRIVEABLE) km"
-        
-        
-        // 실내 온도
-        a01_04_view.label_temp.text = MainManager.shared.member_info.str_IN_TEMP
-
-        // 연료탱크잔량
-        a01_04_view.label_FUEL_TANK.text = MainManager.shared.member_info.str_FuelTank + " %"
-        
-        
-        // 플그래스
-        var tempFuelTank:Float = 0
-        do {
+        if( arr[0].isAlphanumeric ) {
             
-            tempFuelTank = try Float(MainManager.shared.member_info.str_FuelTank)!
-            
-        } catch {
-            
-            print( "[FUEL] = \(MainManager.shared.member_info.str_FuelTank)" )
-            a01_04_view.progress_fuel.progress = 0
-        }
-        
-        a01_04_view.progress_fuel.progress =  tempFuelTank / 100
-        if( tempFuelTank < 20 ) {
-            
-            a01_04_view.progress_fuel.progressTintColor = UIColor(red:238/255, green:73/255, blue:73/255, alpha:1)
+            str_DRIVEABLE = arr[0]
         }
         else {
             
-            a01_04_view.progress_fuel.progressTintColor = UIColor(red:68/255, green:159/255, blue:252/255, alpha:1)
+            print( "______ ERR [DRIVEABLE] = \(MainManager.shared.info.str_DRIVEABLE)" )
+            MainManager.shared.info.str_DRIVEABLE = "0"
         }
+        
+        
+
+        // 주행가능거리
+        a01_04_view.label_DRIVEABLE.text = "\(str_DRIVEABLE) km"
+        // 실내 온도
+        a01_04_view.label_temp.text = MainManager.shared.info.str_IN_TEMP
+        // 연료탱크잔량
+        a01_04_view.label_FUEL_TANK.text = MainManager.shared.info.str_FuelTank + " %"
+        
+        
+        
+        if let tempFuelTank:Double = Double(MainManager.shared.info.str_FuelTank)
+        {
+            a01_04_view.progress_fuel.progress =  Float(tempFuelTank / 100)
+            if( tempFuelTank < 20 ) {
+                
+                a01_04_view.progress_fuel.progressTintColor = UIColor(red:238/255, green:73/255, blue:73/255, alpha:1)
+            }
+            else {
+                
+                a01_04_view.progress_fuel.progressTintColor = UIColor(red:68/255, green:159/255, blue:252/255, alpha:1)
+            }
+        }
+        else {
+            
+            print( "______ ERR [FUEL] = \(MainManager.shared.info.str_FuelTank)" )
+        }
+        
+        // 플그래스
+//        var tempFuelTank:Float = 0
+//        if( MainManager.shared.info.str_FuelTank.isAlphanumeric ) {
+//
+//            tempFuelTank = try Float(MainManager.shared.info.str_FuelTank)!
+//        }
+//        else {
+//
+//            print( "ERR [FUEL] = \(MainManager.shared.info.str_FuelTank)" )
+//        }
+        
+      
+        
+        
         
         
         
@@ -3062,7 +3625,7 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         
         
         // 엔진
-        if( MainManager.shared.member_info.bENGINE_RUN == true ) {
+        if( MainManager.shared.info.bENGINE_RUN == true ) {
             
             a01_04_view.btn_ENGINE_RUN.setBackgroundImage(UIImage(named:"a_01_05_icon03_02"), for: .normal)
         }
@@ -3071,7 +3634,7 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
             a01_04_view.btn_ENGINE_RUN.setBackgroundImage(UIImage(named:"a_01_05_icon03_01"), for: .normal)
         }
         
-        if( MainManager.shared.member_info.bCar_Status_DoorLock == true ) {
+        if( MainManager.shared.info.bCar_Status_DoorLock == true ) {
             
             a01_04_view.btn_DOOR_STATE.setBackgroundImage(UIImage(named:"a_01_05_icon04_02"), for: .normal)
         }
@@ -3080,7 +3643,7 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
             a01_04_view.btn_DOOR_STATE.setBackgroundImage(UIImage(named:"a_01_05_icon04_01"), for: .normal)
         }
         
-        if( MainManager.shared.member_info.bCar_Status_Sunroof == true ) {
+        if( MainManager.shared.info.bCar_Status_Sunroof == true ) {
             
             a01_04_view.btn_SUNROOF_STATE.setBackgroundImage(UIImage(named:"a_01_05_icon04_02"), for: .normal)
         }
@@ -3089,7 +3652,7 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
             a01_04_view.btn_SUNROOF_STATE.setBackgroundImage(UIImage(named:"a_01_05_icon04_01"), for: .normal)
         }
         
-        if( MainManager.shared.member_info.bCar_Status_Hatch == true ) {
+        if( MainManager.shared.info.bCar_Status_Hatch == true ) {
             
             a01_04_view.btn_HATCH_STATE.setBackgroundImage(UIImage(named:"a_01_05_icon05_02"), for: .normal)
         }
@@ -3100,71 +3663,109 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         
         
         ////////////////////////////// TPMS
-//                MainManager.shared.member_info.str_TPMS_FL = "27.3"
-//                MainManager.shared.member_info.str_TPMS_FR = "160.2"
-//                MainManager.shared.member_info.str_TPMS_RL = "25.1"
-//                MainManager.shared.member_info.str_TPMS_RR = "180.0"
+//                MainManager.shared.info.str_TPMS_FL = "27.3"
+//                MainManager.shared.info.str_TPMS_FR = "160.2"
+//                MainManager.shared.info.str_TPMS_RL = "25.1"
+//                MainManager.shared.info.str_TPMS_RR = "180.0"
         
-        a01_04_view.label_TPMS_FL.text = MainManager.shared.member_info.str_TPMS_FL + " psi"
-        a01_04_view.label_TPMS_FR.text = MainManager.shared.member_info.str_TPMS_FR + " psi"
-        a01_04_view.label_TPMS_RL.text = MainManager.shared.member_info.str_TPMS_RL + " psi"
-        a01_04_view.label_TPMS_RR.text = MainManager.shared.member_info.str_TPMS_RR + " psi"
+        a01_04_view.label_TPMS_FL.text = MainManager.shared.info.str_TPMS_FL + " psi"
+        a01_04_view.label_TPMS_FR.text = MainManager.shared.info.str_TPMS_FR + " psi"
+        a01_04_view.label_TPMS_RL.text = MainManager.shared.info.str_TPMS_RL + " psi"
+        a01_04_view.label_TPMS_RR.text = MainManager.shared.info.str_TPMS_RR + " psi"
         
-        var tempTPMS_NUM = Float(MainManager.shared.member_info.str_TPMS_FL)
-        if(  tempTPMS_NUM ?? 0 < 29 ) {
+        if let tempTPMS_NUM_FL = Float(MainManager.shared.info.str_TPMS_FL) {
+            
+            if(  tempTPMS_NUM_FL < 29 ) {
+                
+                a01_04_view.btn_bg_FL.setBackgroundImage(UIImage(named:"a_01_05_line01_02"), for: .normal) // RED
+                a01_04_view.label_TPMS_FL.textColor = UIColor(red:238/255, green:73/255, blue:73/255, alpha:1)
+            }
+            else {
+                
+                a01_04_view.btn_bg_FL.setBackgroundImage(UIImage(named:"a_01_05_line01_01"), for: .normal) //BLUE
+                a01_04_view.label_TPMS_FL.textColor = UIColor(red:68/255, green:159/255, blue:252/255, alpha:1)
+            }
+        }
+        else {
+            
+            a01_04_view.label_TPMS_FL.text = "0 psi"
             
             a01_04_view.btn_bg_FL.setBackgroundImage(UIImage(named:"a_01_05_line01_02"), for: .normal) // RED
             a01_04_view.label_TPMS_FL.textColor = UIColor(red:238/255, green:73/255, blue:73/255, alpha:1)
         }
+        
+
+        if let tempTPMS_NUM_FR = Float(MainManager.shared.info.str_TPMS_FR) {
+            
+            if(  tempTPMS_NUM_FR < 29 ) {
+                
+                a01_04_view.btn_bg_FR.setBackgroundImage(UIImage(named:"a_01_05_line01_02"), for: .normal) // RED
+                a01_04_view.label_TPMS_FR.textColor = UIColor(red:238/255, green:73/255, blue:73/255, alpha:1)
+            }
+            else {
+                
+                a01_04_view.btn_bg_FR.setBackgroundImage(UIImage(named:"a_01_05_line01_01"), for: .normal) //BLUE
+                a01_04_view.label_TPMS_FR.textColor = UIColor(red:68/255, green:159/255, blue:252/255, alpha:1)
+            }
+        }
         else {
             
-            a01_04_view.btn_bg_FL.setBackgroundImage(UIImage(named:"a_01_05_line01_01"), for: .normal) //BLUE
-            a01_04_view.label_TPMS_FL.textColor = UIColor(red:68/255, green:159/255, blue:252/255, alpha:1)
-        }
-        
-        tempTPMS_NUM = Float(MainManager.shared.member_info.str_TPMS_FR)
-        if(  tempTPMS_NUM ?? 0 < 29 ) {
+            a01_04_view.label_TPMS_FR.text = "0 psi"
             
             a01_04_view.btn_bg_FR.setBackgroundImage(UIImage(named:"a_01_05_line01_02"), for: .normal) // RED
             a01_04_view.label_TPMS_FR.textColor = UIColor(red:238/255, green:73/255, blue:73/255, alpha:1)
         }
+        
+        
+        if let tempTPMS_NUM_RL = Float(MainManager.shared.info.str_TPMS_RL) {
+            
+            if(  tempTPMS_NUM_RL < 29 ) {
+                
+                a01_04_view.btn_bg_RL.setBackgroundImage(UIImage(named:"a_01_05_line01_02"), for: .normal) // RED
+                a01_04_view.label_TPMS_RL.textColor = UIColor(red:238/255, green:73/255, blue:73/255, alpha:1)
+            }
+            else {
+                
+                a01_04_view.btn_bg_RL.setBackgroundImage(UIImage(named:"a_01_05_line01_01"), for: .normal) //BLUE
+                a01_04_view.label_TPMS_RL.textColor = UIColor(red:68/255, green:159/255, blue:252/255, alpha:1)
+            }
+        }
         else {
             
-            a01_04_view.btn_bg_FR.setBackgroundImage(UIImage(named:"a_01_05_line01_01"), for: .normal) //BLUE
-            a01_04_view.label_TPMS_FR.textColor = UIColor(red:68/255, green:159/255, blue:252/255, alpha:1)
-        }
-        
-        tempTPMS_NUM = Float(MainManager.shared.member_info.str_TPMS_RL)
-        if(  tempTPMS_NUM ?? 0 < 29 ) {
+            a01_04_view.label_TPMS_RL.text = "0 psi"
             
             a01_04_view.btn_bg_RL.setBackgroundImage(UIImage(named:"a_01_05_line01_02"), for: .normal) // RED
             a01_04_view.label_TPMS_RL.textColor = UIColor(red:238/255, green:73/255, blue:73/255, alpha:1)
         }
+        
+        
+        
+        if let tempTPMS_NUM_RR = Float(MainManager.shared.info.str_TPMS_RR) {
+            
+            if(  tempTPMS_NUM_RR < 29 ) {
+                
+                a01_04_view.btn_bg_RR.setBackgroundImage(UIImage(named:"a_01_05_line01_02"), for: .normal) // RED
+                a01_04_view.label_TPMS_RR.textColor = UIColor(red:238/255, green:73/255, blue:73/255, alpha:1)
+            }
+            else {
+                
+                a01_04_view.btn_bg_RR.setBackgroundImage(UIImage(named:"a_01_05_line01_01"), for: .normal) //BLUE
+                a01_04_view.label_TPMS_RR.textColor = UIColor(red:68/255, green:159/255, blue:252/255, alpha:1)
+            }
+        }
         else {
             
-            a01_04_view.btn_bg_RL.setBackgroundImage(UIImage(named:"a_01_05_line01_01"), for: .normal) //BLUE
-            a01_04_view.label_TPMS_RL.textColor = UIColor(red:68/255, green:159/255, blue:252/255, alpha:1)
-        }
-        
-        tempTPMS_NUM = Float(MainManager.shared.member_info.str_TPMS_RR)
-        if(  tempTPMS_NUM ?? 0 < 29 ) {
+            a01_04_view.label_TPMS_RR.text = "0 psi"
             
             a01_04_view.btn_bg_RR.setBackgroundImage(UIImage(named:"a_01_05_line01_02"), for: .normal) // RED
             a01_04_view.label_TPMS_RR.textColor = UIColor(red:238/255, green:73/255, blue:73/255, alpha:1)
         }
-        else {
-            
-            a01_04_view.btn_bg_RR.setBackgroundImage(UIImage(named:"a_01_05_line01_01"), for: .normal) //BLUE
-            a01_04_view.label_TPMS_RR.textColor = UIColor(red:68/255, green:159/255, blue:252/255, alpha:1)
-        }
-        
-        
         
         
         //a01_04_view.progress_fuel.transform = CGAffineTransform(scaleX: 1.0, y: 7.0)
         
         // 프로그래스 바 위치 계산
-        var temp_y = 107 * MainManager.shared.ratio_Y
+        // var temp_y = 107 * MainManager.shared.ratio_Y
         // a01_04_view.progress_fuel.frame.origin.y = temp_y
         
         print(a01_04_view.progress_fuel.frame.origin.y)
@@ -3200,8 +3801,8 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         print("pressed_tableView_A03_02")
         print("%d",sender.tag)
 //
-//        self.view.bringSubview(toFront: a03_03_view)
-//        self.view.bringSubview(toFront: mainMenuABC_view)
+//        self.mainSubView.bringSubview(toFront: a03_03_view)
+//        self.mainSubView.bringSubview(toFront: mainMenuABC_view)
     }
     
     
@@ -3216,12 +3817,12 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
     // database.php?Req=GetServiceList&VehicleName=크루즈
     func a01_05_tableViewSet() {
         
-        // login.php?Req=Login&ID=아이디&Pass=패스워드
+        // login.php?Req=Login&ID=닉네임&Pass=패스워드
         let parameters = [
             "Req": "GetServiceList",
             "VehicleName": ""]  // 차종
         
-        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
+        ToastIndicatorView.shared.setup(self.view, "")
         
         Alamofire.request(MainManager.shared.SeverURL+"database.php", method: .post, parameters: parameters)
             .responseJSON { response in
@@ -3297,8 +3898,8 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         // "내정보","주행거리","평균연비","진단정보","차량상태","주요부품"
         if sender.tag == 1 {
             
-            self.view.bringSubview(toFront: a01_01_view)
-            self.view.bringSubview(toFront: mainMenuABC_view)
+            self.mainSubView.bringSubview(toFront: a01_01_view)
+            self.mainSubView.bringSubview(toFront: mainMenuABC_view)
             print("A01_01")
         }
         else if sender.tag == 2 {
@@ -3309,8 +3910,8 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
                 a01_02_view.webView.load(request)
             }
             
-            self.view.bringSubview(toFront: a01_02_view)
-            self.view.bringSubview(toFront: mainMenuABC_view)
+            self.mainSubView.bringSubview(toFront: a01_02_view)
+            self.mainSubView.bringSubview(toFront: mainMenuABC_view)
             print("A01_02")
         }
         else if sender.tag == 3 {
@@ -3319,8 +3920,8 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
                 let request:URLRequest = URLRequest(url: videoURL)
                 a01_03_view.webView.load(request)
             }
-            self.view.bringSubview(toFront: a01_03_view)
-            self.view.bringSubview(toFront: mainMenuABC_view)
+            self.mainSubView.bringSubview(toFront: a01_03_view)
+            self.mainSubView.bringSubview(toFront: mainMenuABC_view)
             print("A01_03")
         }
         else if sender.tag == 4 {
@@ -3330,15 +3931,15 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
                 a01_04_1_view.webView.load(request)
             }
             
-            self.view.bringSubview(toFront: a01_04_1_view) // 진단정보
-            self.view.bringSubview(toFront: mainMenuABC_view)
+            self.mainSubView.bringSubview(toFront: a01_04_1_view) // 진단정보
+            self.mainSubView.bringSubview(toFront: mainMenuABC_view)
             print("A01_04_1")
         }
         else if sender.tag == 5 {
             
             a01_04_viewInit()
-            self.view.bringSubview(toFront: a01_04_view)   // 차량상태
-            self.view.bringSubview(toFront: mainMenuABC_view)
+            self.mainSubView.bringSubview(toFront: a01_04_view)   // 차량상태
+            self.mainSubView.bringSubview(toFront: mainMenuABC_view)
             print("A01_04")
         }
         else if sender.tag == 6 {
@@ -3349,19 +3950,19 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
                 a01_06_view.webview.load(request)
             }
             
-            self.view.bringSubview(toFront: a01_06_view)   // 부품상태
-            self.view.bringSubview(toFront: mainMenuABC_view)
+            self.mainSubView.bringSubview(toFront: a01_06_view)   // 부품상태
+            self.mainSubView.bringSubview(toFront: mainMenuABC_view)
         }
             
             
             // PIN CODE 수정 화면으로
         else if sender.tag == 11 {
             // 핀코드 요청
-            let nsData:NSData = MainManager.shared.member_info.getPIN_CODE()
+            let nsData:NSData = MainManager.shared.info.getPIN_CODE() // 수정화면 1 요청
             self.setDataBLE( nsData )
             
-            self.view.bringSubview(toFront: a01_01_pin_view)
-            self.view.bringSubview(toFront: mainMenuABC_view)
+            self.mainSubView.bringSubview(toFront: a01_01_pin_view)
+            self.mainSubView.bringSubview(toFront: mainMenuABC_view)
             a01_01_pin_view.label_pin_num_notis.text = "단말기의 비밀번호를 설정 합니다."
             a01_01_pin_view.pin_input_repeat_conut = 0
             
@@ -3370,7 +3971,7 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
             a01_01_pin_view.iPin_input_location_no = 0
             
             // 현재 핀코드 입력
-            a01_01_pin_view.field_pin_now.text = MainManager.shared.member_info.str_LocalPinCode
+            a01_01_pin_view.field_pin_now.text = MainManager.shared.info.str_LocalPinCode
             a01_01_pin_view.field_pin_new.text = ""
             
             // 포커스 처음으로
@@ -3380,7 +3981,7 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
             // 회원번호 수정 화면으로
         else if sender.tag == 12 {
             
-            if( MainManager.shared.isLoginErrMessage() == false ) {
+            if( MainManager.shared.isLoginErrMessage(self) == false ) {
                 return
             }
             
@@ -3389,9 +3990,9 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
             a01_01_info_mod_view.certifi_count = 0
             
             
-            a01_01_info_mod_view.field_phone01.text = MainManager.shared.member_info.str_id_phone_num
-            self.view.bringSubview(toFront: a01_01_info_mod_view)
-            self.view.bringSubview(toFront: mainMenuABC_view)
+            a01_01_info_mod_view.field_phone01.text = MainManager.shared.info.str_id_phone_num
+            self.mainSubView.bringSubview(toFront: a01_01_info_mod_view)
+            self.mainSubView.bringSubview(toFront: mainMenuABC_view)
             print("btn_car_info_mod")
             
         }
@@ -3453,9 +4054,9 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
 //        btn_a02_change.setBackgroundImage(UIImage(named:"frame-A-02-off"), for: UIControlState.normal )
 //        btn_a03_change.setBackgroundImage(UIImage(named:"frame-A-03-off"), for: UIControlState.normal )
         
-        self.view.bringSubview(toFront: a01_01_view)
-        self.view.bringSubview(toFront: a01_ScrollMenuView)
-        self.view.bringSubview(toFront: mainMenuABC_view)
+        self.mainSubView.bringSubview(toFront: a01_01_view)
+        self.mainSubView.bringSubview(toFront: a01_ScrollMenuView)
+        self.mainSubView.bringSubview(toFront: mainMenuABC_view)
         
         
         // 버튼색 처음거 선택으로 색바꾸기
@@ -3484,12 +4085,11 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         btn_a02_change.setTitleColor(.white, for: .normal)
         //btn_a03_change.setTitleColor(.gray, for: .normal)
         
-        
-        carOnOffSetting()
+
         carOnOffIsHiddenSetA02_01()
-        self.view.bringSubview(toFront: a02_01_view)
-        self.view.bringSubview(toFront: a02_ScrollMenuView)
-        self.view.bringSubview(toFront: mainMenuABC_view) // 하단 메인 메뉴
+        self.mainSubView.bringSubview(toFront: a02_01_view)
+        self.mainSubView.bringSubview(toFront: a02_ScrollMenuView)
+        self.mainSubView.bringSubview(toFront: mainMenuABC_view) // 하단 메인 메뉴
         
         
         // 버튼색 처음거 선택으로 색바꾸기
@@ -3520,9 +4120,9 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
 //        a03_ScrollMenuView.btn_02.setTitleColor( .lightGray, for: .normal )
 //        
 //        
-//        self.view.bringSubview(toFront: a03_01_view)
-//        self.view.bringSubview(toFront: a03_ScrollMenuView)
-//        self.view.bringSubview(toFront: mainMenuABC_view) // 하단 메인 메뉴
+//        self.mainSubView.bringSubview(toFront: a03_01_view)
+//        self.mainSubView.bringSubview(toFront: a03_ScrollMenuView)
+//        self.mainSubView.bringSubview(toFront: mainMenuABC_view) // 하단 메인 메뉴
 //        
 //        print("A03")
 //    }
@@ -3634,16 +4234,15 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         
         //--------------------------------------------- sub view change
         if( sender.tag == 1 )       {
-            
-            carOnOffSetting()
+
             carOnOffIsHiddenSetA02_01()
-            self.view.bringSubview(toFront: a02_01_view)
-            self.view.bringSubview(toFront: mainMenuABC_view)
+            self.mainSubView.bringSubview(toFront: a02_01_view)
+            self.mainSubView.bringSubview(toFront: mainMenuABC_view)
         }
         else if( sender.tag == 2 )  {
             
-            self.view.bringSubview(toFront: a02_02_view)
-            self.view.bringSubview(toFront: mainMenuABC_view)
+            self.mainSubView.bringSubview(toFront: a02_02_view)
+            self.mainSubView.bringSubview(toFront: mainMenuABC_view)
         }
         else if( sender.tag == 3 )  {
             
@@ -3652,8 +4251,8 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
                 a02_03_view.webView.load(request)
             }
             
-            self.view.bringSubview(toFront: a02_03_view)
-            self.view.bringSubview(toFront: mainMenuABC_view)
+            self.mainSubView.bringSubview(toFront: a02_03_view)
+            self.mainSubView.bringSubview(toFront: mainMenuABC_view)
         }
        
         
@@ -3681,31 +4280,31 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
 //
 //        if( sender.tag == 1 )       {
 //
-//            self.view.bringSubview(toFront: a03_01_view)
-//            self.view.bringSubview(toFront: mainMenuABC_view)
+//            self.mainSubView.bringSubview(toFront: a03_01_view)
+//            self.mainSubView.bringSubview(toFront: mainMenuABC_view)
 //        }
 //        else if( sender.tag == 2 )       {
 //
-//            self.view.bringSubview(toFront: a03_help_view)
-//            self.view.bringSubview(toFront: mainMenuABC_view)
+//            self.mainSubView.bringSubview(toFront: a03_help_view)
+//            self.mainSubView.bringSubview(toFront: mainMenuABC_view)
 //        }
 //
 //
-//        self.view.bringSubview(toFront: mainMenuABC_view)
+//        self.mainSubView.bringSubview(toFront: mainMenuABC_view)
     }
     
     
     
     @IBAction func pressed_a03_01(_ sender: UIButton) {
         
-//        self.view.bringSubview(toFront: a03_02_view)
-//        self.view.bringSubview(toFront: mainMenuABC_view)
+//        self.mainSubView.bringSubview(toFront: a03_02_view)
+//        self.mainSubView.bringSubview(toFront: mainMenuABC_view)
     }
     
     @IBAction func pressed_a03_03(_ sender: UIButton) {
         
-//        self.view.bringSubview(toFront: a03_01_view)
-//        self.view.bringSubview(toFront: mainMenuABC_view)
+//        self.mainSubView.bringSubview(toFront: a03_01_view)
+//        self.mainSubView.bringSubview(toFront: mainMenuABC_view)
     }
     
     
@@ -3751,8 +4350,6 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
             textField.text = ""
             a01_01_pin_view.iPin_input_location_no = 1
         }
-        
-        
     }
     
     // 텍스트 필드 입력 수정
@@ -3769,9 +4366,32 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         a01_01_pin_view.field_pin_now.resignFirstResponder()
         a01_01_pin_view.field_pin_new.resignFirstResponder()
         
-        self.view.bringSubview(toFront: a01_01_view)
-        self.view.bringSubview(toFront: mainMenuABC_view)
-        print("pin cancel")
+        self.mainSubView.bringSubview(toFront: a01_01_view)
+        self.mainSubView.bringSubview(toFront: mainMenuABC_view)
+        
+        // 처음 접속 핀코드 다를시 자동 변경일때만 알림 경고
+        if( otherPinCodeAutoChangePinViewGO ) {
+            
+            otherPinCodeAutoChangePinViewGO = false
+            
+            let alertController = UIAlertController(title: "", message: "단말기 비밀번호가 다르면 정상적으로 앱을 사용할 수 없습니다.", preferredStyle: UIAlertControllerStyle.alert)
+            //                let DestructiveAction = UIAlertAction(title: "취소", style: UIAlertActionStyle.Destructive) { (result : UIAlertAction) -> Void in
+            //
+            //                    print("취소")
+            //                }
+            
+            let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+                
+                print("PIN_CODE가 다르면 정상적으로 앱을 사용할 수 없습니다.")
+            }
+            // alertController.addAction(DestructiveAction)
+            
+            alertController.addAction(okAction)
+            self.present(alertController, animated: true, completion: nil)            
+
+        }
+        
+        print("##### PIN CODE 변경 취소")
     }
     
     
@@ -3780,9 +4400,22 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
     @IBAction func btn_pin_ok(_ sender: UIButton) {
         
         if( self.isBLE_CAR_FRIENDS_CONNECT() == false ) {
-            // 경고
-            var alert = UIAlertView(title: "연결체크", message: "단말기를 찾을수 없습니다. 확인해 주세요", delegate: nil, cancelButtonTitle: "OK")
-            alert.show()
+            
+            let alertController = UIAlertController(title: "", message: "단말기를 찾을수 없습니다. 연결을 확인해 주세요", preferredStyle: UIAlertControllerStyle.alert)
+            //                let DestructiveAction = UIAlertAction(title: "취소", style: UIAlertActionStyle.Destructive) { (result : UIAlertAction) -> Void in
+            //
+            //                    print("취소")
+            //                }
+            
+            let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+                
+                print("단말기를 찾을수 없습니다. 연결을 확인해 주세요")
+            }
+            // alertController.addAction(DestructiveAction)
+            
+            alertController.addAction(okAction)
+            self.present(alertController, animated: true, completion: nil)
+            
             return
         }
         
@@ -3795,58 +4428,95 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         // 4자리 다 입력하지 않았으면
         if( tempCount01 < 4 || tempCount02 < 4) {
             
-                a01_01_pin_view.field_pin_now.becomeFirstResponder()
-                MainManager.shared.str_certifi_notis = "핀번호를 4자리 입력해주세요."
-                // Segue -> 사용 팝업뷰컨트롤러 띠우기
-                self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
+            a01_01_pin_view.field_pin_now.becomeFirstResponder()
+            
+            let alertController = UIAlertController(title: "", message: "단말기 비밀번호 4자리를 입력해주세요.", preferredStyle: UIAlertControllerStyle.alert)
+            let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+                
+                print("핀코드 입력")
+            }
+            alertController.addAction(okAction)
+            self.present(alertController, animated: true, completion: nil)
                 // 포커스 이동
                 // a01_01_pin_view.field_pin_now.becomeFirstResponder()
          }
          else {
             
             // 핀코드 요청
-            let nsData:NSData = MainManager.shared.member_info.getPIN_CODE()
+            let nsData:NSData = MainManager.shared.info.getPIN_CODE() // 수정화면 2 요청 "확인"
             self.setDataBLE( nsData )
             
-            // 핀 코드 요청, 2초 후 응답 받고 체크 함수 한번만 실행
-            timerPinCodeCheck = Timer.scheduledTimer(timeInterval: 2, target: self, selector: #selector(timerActionPinCodeCheck), userInfo: nil, repeats: false)
+            //timerActionPinCodeCheck 쓰레드
+            ToastIndicatorView.shared.setup(self.view, "")
+            // 핀 코드 요청, 3초 후 응답 받고 체크 함수 한번만 실행
+            timerPinCodeCheck = Timer.scheduledTimer(timeInterval: 3, target: self, selector: #selector(timerActionPinCodeCheckStart), userInfo: nil, repeats: false)
             
             //___________________PIN 번호 수정 시작__________________
-            MainManager.shared.member_info.str_SetPinCode = a01_01_pin_view.field_pin_new.text!
+            MainManager.shared.info.str_SetPinCode = a01_01_pin_view.field_pin_new.text!
         }
     }
     
     
-    // 핀 코드 요청, 2초 후 응답 받고 체크 함수 한번만 실행
-    func timerActionPinCodeCheck() {
+    
+    // "보안설정 OK 버튼" 핀 코드 요청, 3초 후 응답 받고 체크 함수 한번만 실행
+    func timerActionPinCodeCheckStart() {
         
-        if( MainManager.shared.member_info.str_GetPinCode.count < 4 ) {
+        // timerActionPinCodeCheck 쓰레드
+        ToastIndicatorView.shared.close()
+        
+        if( self.isBLE_CAR_FRIENDS_CONNECT() == false ) {
+            // 경고
             
-            MainManager.shared.str_certifi_notis = "단말기 핀코드를 응답받지 못했습니다."
-            // Segue -> 사용 팝업뷰컨트롤러 띠우기
-            self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
+            let alertController = UIAlertController(title: "", message: "단말기를 찾을수 없습니다. 연결을 확인해 주세요", preferredStyle: UIAlertControllerStyle.alert)
+            //                let DestructiveAction = UIAlertAction(title: "취소", style: UIAlertActionStyle.Destructive) { (result : UIAlertAction) -> Void in
+            //
+            //                    print("취소")
+            //                }
+            
+            let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+                
+                print("단말기를 찾을수 없습니다. 연결을 확인해 주세요")
+            }
+            
+            alertController.addAction(okAction)
+            self.present(alertController, animated: true, completion: nil)
+            return
+        }
+        
+        if( MainManager.shared.info.str_GetPinCode.count < 4 ) {
+
+            let alertController = UIAlertController(title: "", message: "단말기 비밀번호를 응답받지 못했습니다.", preferredStyle: UIAlertControllerStyle.alert)
+            let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+                
+                print("단말기 통신")
+            }
+            alertController.addAction(okAction)
+            self.present(alertController, animated: true, completion: nil)
             return
         }
         
         let tempInput:String = a01_01_pin_view.field_pin_now.text!
-        MainManager.shared.member_info.str_SetPinCode = a01_01_pin_view.field_pin_new.text!
+        MainManager.shared.info.str_SetPinCode = a01_01_pin_view.field_pin_new.text!
 
         // 입력 한거랑 읽어온 단말기 핀코드가 같으면 세팅한다.
         //
+        if( MainManager.shared.info.str_GetPinCode == "unknown" )
+            { MainManager.shared.info.str_GetPinCode = "0000" }
+        
         print( "##### input PinCode :: " + tempInput )
-        print( "##### Read BLE PinCode :: " + MainManager.shared.member_info.str_GetPinCode )
-        if( tempInput == MainManager.shared.member_info.str_GetPinCode ) {
+        print( "##### Read BLE PinCode :: " + MainManager.shared.info.str_GetPinCode )
+        if( tempInput == MainManager.shared.info.str_GetPinCode ) {
             
              // 2초 쓰레드에서 핀코드 비교 시작
              self.isPhoneToBlePinCodeCheck = true
              self.phoneToBlePinCodeCheckCount = 0
              print( "___________________PIN 번호 수정 시작__________________" )
-             print( "___________________PIN 번호 \(MainManager.shared.member_info.str_SetPinCode)" )
+             print( "___________________PIN 번호 \(MainManager.shared.info.str_SetPinCode)" )
             
             // 핀코드 첫 세팅
             if( carFriendsPeripheral != nil && myCharacteristic != nil)
             {
-                let nsData:NSData = MainManager.shared.member_info.setPIN_CODE( MainManager.shared.member_info.str_SetPinCode )
+                let nsData:NSData = MainManager.shared.info.setPIN_CODE( MainManager.shared.info.str_SetPinCode )
                 self.setDataBLE( nsData )
             }
             
@@ -3854,10 +4524,11 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
             self.a01_01_pin_view.field_pin_new.resignFirstResponder()
             
 
-            self.view.bringSubview(toFront: self.a01_01_view)
-            self.view.bringSubview(toFront: self.mainMenuABC_view)
-            //
-            ToastIndicatorView.shared.setup(self.view, txt_msg: "")
+            self.mainSubView.bringSubview(toFront: self.a01_01_view)
+            self.mainSubView.bringSubview(toFront: self.mainMenuABC_view)
+            
+            // isPhoneToBlePinCodeCheck
+            ToastIndicatorView.shared.setup(self.view, "")
         }
         // 로컬이랑 단말기값이랑 틀리다
         else {
@@ -3865,7 +4536,7 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
 //            // 테스트 핀코드 첫 세팅
 //            if( carFriendsPeripheral != nil && myCharacteristic != nil)
 //            {
-//                let nsData:NSData = MainManager.shared.member_info.setPIN_CODE( MainManager.shared.member_info.str_SetPinCode )
+//                let nsData:NSData = MainManager.shared.info.setPIN_CODE( MainManager.shared.info.str_SetPinCode )
 //                self.setDataBLE( nsData )
 //            }
             
@@ -3873,10 +4544,14 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
             a01_01_pin_view.field_pin_new.text = ""
             
             a01_01_pin_view.field_pin_now.becomeFirstResponder()
-            
-            MainManager.shared.str_certifi_notis = "핀번호가 틀렸습니다. 다시 입력해주세요."
-            // Segue -> 사용 팝업뷰컨트롤러 띠우기
-            self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
+
+            let alertController = UIAlertController(title: "", message: "단말기 비밀번호가 다릅니다. 다시 입력해주세요.", preferredStyle: UIAlertControllerStyle.alert)
+            let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+                
+                print("단말기 통신")
+            }
+            alertController.addAction(okAction)
+            self.present(alertController, animated: true, completion: nil)
         }
     }
     
@@ -3884,14 +4559,14 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
     
     func setPinDataDB() {
         
-        let pin_num:String = MainManager.shared.member_info.str_SetPinCode
+        let pin_num:String = MainManager.shared.info.str_SetPinCode
         let parameters = [
             "Req": "SetPinNo",
             "Pin": pin_num]
         
         print(pin_num)
         
-        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
+        ToastIndicatorView.shared.setup(self.view, "")
         
         Alamofire.request(MainManager.shared.SeverURL+"database.php", method: .post, parameters: parameters)
             .responseJSON { response in
@@ -3918,21 +4593,33 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
                     
                     if( Result == "SAVE_OK" ) {
                         
-                        // MainManager.shared.member_info.str_id_phone_num = pin_num // 핸드폰 번호 바꾸기
+                        // MainManager.shared.info.str_id_phone_num = pin_num // 핸드폰 번호 바꾸기
                         // 클라 저장
-                        // UserDefaults.standard.set(MainManager.shared.member_info.str_id_phone_num, forKey: "str_id_phone_num")
+                        // UserDefaults.standard.set(MainManager.shared.info.str_id_phone_num, forKey: "str_id_phone_num")
                         
                         //pop up
-                        MainManager.shared.str_certifi_notis = "핀번호가 성공적으로 변경되었습니다."
-                        // Segue -> 사용 팝업뷰컨트롤러 띠우기
-                        self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
+                        let alertController = UIAlertController(title: "", message: "단말기 비밀번호가 성공적으로 변경되었습니다.", preferredStyle: UIAlertControllerStyle.alert)
+                        let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+                            
+                            print("핀코드 변경")
+                        }
+                        alertController.addAction(okAction)
+                        self.present(alertController, animated: true, completion: nil)
+                        
                         self.a01_01_pin_view.bPin_input_location = false
                     }
                     else {
                         
-                        MainManager.shared.str_certifi_notis = "서버와의 연결이 지연되고 있습니다. 잠시후에 다시 사용해 주세요."
+                        let alertController = UIAlertController(title: "", message: "서버와의 연결이 지연되고 있습니다. 인터넷 연결을 확인해 주세요.", preferredStyle: UIAlertControllerStyle.alert)
+                        let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+                            
+                            print("서버 연결")
+                        }
+                        alertController.addAction(okAction)
+                        self.present(alertController, animated: true, completion: nil)
+                        
+                        
                         MainManager.shared.bMemberPhoneCertifi = false
-                        self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
                         //self.a01_01_info_mod_view.label_notis.text = "휴대폰 번호 저장 실패.!"
                         print( "PIN 번호 저장 실패.!" )
                     }
@@ -3954,7 +4641,7 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
     
     // 피커뷰 닫기
     // Called when 'return' key pressed. return NO to ignore.
-    func textFieldShouldReturn(textField: UITextField) -> Bool {
+    private func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         
         textField.resignFirstResponder()
         return true
@@ -4017,17 +4704,17 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         
         if( pickerView == self.pickerView ) {
             
-            MainManager.shared.member_info.i_car_piker_select = row
+            MainManager.shared.info.i_car_piker_select = row
             a01_01_info_mod_view.field_car_kind.text = MainManager.shared.str_select_carList[row]
         }
         else if( pickerView == self.pickerView2 ) {
             
-            MainManager.shared.member_info.i_year_piker_select = row
+            MainManager.shared.info.i_year_piker_select = row
             a01_01_info_mod_view.field_car_year.text = MainManager.shared.str_select_yearList[row]
         }
         else {
             
-            MainManager.shared.member_info.i_fuel_piker_select = row
+            MainManager.shared.info.i_fuel_piker_select = row
             a01_01_info_mod_view.field_car_fuel.text = MainManager.shared.str_select_fuelList[row]
         }
     }
@@ -4036,8 +4723,8 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
     
     @IBAction func pressed_info_mod_cancel(_ sender: UIButton) {
         
-        self.view.bringSubview(toFront: a01_01_view)
-        self.view.bringSubview(toFront: mainMenuABC_view)
+        self.mainSubView.bringSubview(toFront: a01_01_view)
+        self.mainSubView.bringSubview(toFront: mainMenuABC_view)
         print("mod cancel")
     }
     
@@ -4059,20 +4746,28 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
                 
                 a01_01_info_mod_view.bTimeCheckStart = false
                 
-                //self.a01_01_info_mod_view.label_notis.text = "전화번호를 전부 입력해 주세요.!"
-                MainManager.shared.str_certifi_notis = "전화번호를 전부 입력해 주세요."
-                // Segue -> 사용 팝업뷰컨트롤러 띠우기
-                self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
+
+                let alertController = UIAlertController(title: "", message: "전화번호를 정확하게 입력해주세요.", preferredStyle: UIAlertControllerStyle.alert)
+                let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+                    
+                    print("전화번호 입력")
+                }
+                alertController.addAction(okAction)
+                self.present(alertController, animated: true, completion: nil)
                 
                 
             
                 return
             }
             
-            
-            MainManager.shared.str_certifi_notis = "전송된 인증번호를 입력해 주세요."
-            // Segue -> 사용 팝업뷰컨트롤러 띠우기
-            self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
+
+            let alertController = UIAlertController(title: "", message: "전송된 인증번호를 입력해 주세요.", preferredStyle: UIAlertControllerStyle.alert)
+            let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+                
+                print("인증번호 입력")
+            }
+            alertController.addAction(okAction)
+            self.present(alertController, animated: true, completion: nil)
             
             
             
@@ -4085,7 +4780,7 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
             ]
             print(phone_num)
             
-            ToastIndicatorView.shared.setup(self.view, txt_msg: "")
+            ToastIndicatorView.shared.setup(self.view, "")
             
             Alamofire.request(MainManager.shared.SeverURL+"login.php", method: .post, parameters: parameters)
                 .responseJSON { response in
@@ -4127,18 +4822,19 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
             
             if( self.a01_01_info_mod_view.field_certifi_input.text!.count == 0 ) {                
 
-                MainManager.shared.str_certifi_notis = "전송된 인증번호를 입력 해주세요."
-                self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
+
+                let alertController = UIAlertController(title: "", message: "전송된 인증번호를 입력해 주세요.", preferredStyle: UIAlertControllerStyle.alert)
+                let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+                    
+                    print("인증번호 입력")
+                }
+                alertController.addAction(okAction)
+                self.present(alertController, animated: true, completion: nil)
                 return
             }
             else if( (self.a01_01_info_mod_view.server_get_phone_certifi_num == self.a01_01_info_mod_view.field_certifi_input.text) ) {
                 
-                // 인증번호가 같으면 OK
-//                MainManager.shared.str_certifi_notis = "인증 되었습니다.OK!"
-//                MainManager.shared.bMemberPhoneCertifi = true
-//                self.a01_01_info_mod_view.label_notis.text = "인증 되었습니다.OK!"
-//                //
-//                a01_01_info_mod_view.label_certifi_time_chenk.text = "( 인증 완료 )"
+            
                 
                 let tempString01 = a01_01_info_mod_view.field_phone01.text as String?
                 
@@ -4149,7 +4845,7 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
                     "No": phone_num]
                 
                 print(phone_num)
-                ToastIndicatorView.shared.setup(self.view, txt_msg: "")
+                ToastIndicatorView.shared.setup(self.view, "")
                 
                 Alamofire.request(MainManager.shared.SeverURL+"database.php", method: .post, parameters: parameters)
                     .responseJSON { response in
@@ -4176,22 +4872,36 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
                             
                             if( Result == "SAVE_OK" ) {
 
-                                MainManager.shared.member_info.str_id_phone_num = tempString01! // 핸드폰 번호 바꾸기
+                                MainManager.shared.info.str_id_phone_num = tempString01! // 핸드폰 번호 바꾸기
                                 // 클라 저장
-                                UserDefaults.standard.set(MainManager.shared.member_info.str_id_phone_num, forKey: "str_id_phone_num")
+                                UserDefaults.standard.set(MainManager.shared.info.str_id_phone_num, forKey: "str_id_phone_num")
                                 
-                                MainManager.shared.str_certifi_notis = "인증 되었습니다."
+
                                 MainManager.shared.bMemberPhoneCertifi = true
-                                self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
-                                // self.view.bringSubview(toFront: self.a01_01_view)
+                                
+                                let alertController = UIAlertController(title: "", message: "인증 되었습니다.", preferredStyle: UIAlertControllerStyle.alert)
+                                let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+                                    
+                                    print("인증성공")
+                                }
+                                alertController.addAction(okAction)
+                                self.present(alertController, animated: true, completion: nil)
+                                
+                                // self.mainSubView.bringSubview(toFront: self.a01_01_view)
                                 print( "휴대폰번호 수정 성공2" )
                                 
                             }
                             else {
                                 
-                                MainManager.shared.str_certifi_notis = "서버와의 연결이 지연되고 있습니다. 잠시후에 다시 사용해 주세요."
+
                                 MainManager.shared.bMemberPhoneCertifi = false
-                                self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
+                                let alertController = UIAlertController(title: "", message: "서버와의 연결이 지연되고 있습니다. 인터넷 연결을 확인해 주세요.", preferredStyle: UIAlertControllerStyle.alert)
+                                let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+                                    
+                                    print("서버통신")
+                                }
+                                alertController.addAction(okAction)
+                                self.present(alertController, animated: true, completion: nil)
                                 //self.a01_01_info_mod_view.label_notis.text = "휴대폰 번호 저장 실패.!"
                                 print( "휴대폰 번호 저장 실패.!" )
                             }
@@ -4204,9 +4914,14 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
             else {
                 
                 // 인증번호가 틀렸다.
-                MainManager.shared.str_certifi_notis = "인증 번호가 맞지 않습니다."
                 MainManager.shared.bMemberPhoneCertifi = false
-                self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
+                let alertController = UIAlertController(title: "", message: "인증 번호가 맞지 않습니다.", preferredStyle: UIAlertControllerStyle.alert)
+                let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+                    
+                    print("인증실패")
+                }
+                alertController.addAction(okAction)
+                self.present(alertController, animated: true, completion: nil)
 
                 return
             }
@@ -4222,30 +4937,36 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
     
     @IBAction func pressed_mod_plate_num(_ sender: UIButton) {
         
-        // 유저 로그인 체크
-        if( MainManager.shared.isLoginErrMessage() == false ) {
+
+        if( MainManager.shared.isLoginErrMessage(self) == false ) {
             return
         }
         
         if( self.a01_01_info_mod_view.field_plate_num.text!.count == 0 ) {
 
-            MainManager.shared.str_certifi_notis = "정보를 입력 해주세요."
-            self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
+
+            let alertController = UIAlertController(title: "", message: "정보를 입력 해주세요.", preferredStyle: UIAlertControllerStyle.alert)
+            let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+                
+                print("정보변경")
+            }
+            alertController.addAction(okAction)
+            self.present(alertController, animated: true, completion: nil)
             return
         }
         else {
             
             //database.php?Req=SetVIN&VIN=차대번호
-            MainManager.shared.member_info.str_car_plate_num = self.a01_01_info_mod_view.field_plate_num.text!
+            MainManager.shared.info.str_car_plate_num = self.a01_01_info_mod_view.field_plate_num.text!
             
             let parameters = [
                 "Req": "SetCarNo",
-                "No": MainManager.shared.member_info.str_car_plate_num]
+                "No": MainManager.shared.info.str_car_plate_num]
             
-            print(MainManager.shared.member_info.str_car_plate_num)
+            print(MainManager.shared.info.str_car_plate_num)
             
             
-            ToastIndicatorView.shared.setup(self.view, txt_msg: "")
+            ToastIndicatorView.shared.setup(self.view, "")
             
             Alamofire.request(MainManager.shared.SeverURL+"database.php", method: .post, parameters: parameters)
                 .responseJSON { response in
@@ -4272,23 +4993,39 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
                         
                         if( Result == "SAVE_OK" ) {
                             // 클라 저장
-                            UserDefaults.standard.set(MainManager.shared.member_info.str_car_plate_num, forKey: "str_car_plate_num")
-                            MainManager.shared.str_certifi_notis = "차량번호가 성공적으로 수정되었습니다."
-                            self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
+                            UserDefaults.standard.set(MainManager.shared.info.str_car_plate_num, forKey: "str_car_plate_num")
+
+                            let alertController = UIAlertController(title: "", message: "차량번호가 성공적으로 변경되었습니다.", preferredStyle: UIAlertControllerStyle.alert)
+                            let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+                                
+                                print("정보변경")
+                            }
+                            alertController.addAction(okAction)
+                            self.present(alertController, animated: true, completion: nil)
                             print( "차량등록 번호 수정 성공" )
                         }
                         else {
 
-                            MainManager.shared.str_certifi_notis = "서버와의 연결이 지연되고 있습니다. 잠시후에 다시 사용해 주세요."
-                            self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
+                            let alertController = UIAlertController(title: "", message: "서버와의 연결이 지연되고 있습니다. 인터넷 연결을 확인해 주세요.", preferredStyle: UIAlertControllerStyle.alert)
+                            let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+                                
+                                print("정보변경")
+                            }
+                            alertController.addAction(okAction)
+                            self.present(alertController, animated: true, completion: nil)
                             print( "차량등록 번호 저장 실패." )
                         }
                         print( Result )
                     }
                     else {
-                        
-                        MainManager.shared.str_certifi_notis = "서버와의 연결이 지연되고 있습니다. 잠시후에 다시 사용해 주세요."
-                        self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
+
+                        let alertController = UIAlertController(title: "", message: "서버와의 연결이 지연되고 있습니다. 인터넷 연결을 확인해 주세요.", preferredStyle: UIAlertControllerStyle.alert)
+                        let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+                            
+                            print("서버연결")
+                        }
+                        alertController.addAction(okAction)
+                        self.present(alertController, animated: true, completion: nil)
                         print( "차량등록 번호 저장 실패." )
                     }
                     
@@ -4299,74 +5036,17 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
     
     
     
-    // MainManager.shared.member_info.str_car_dae_num = self.a01_01_info_mod_view.field_car_dae_num.text!
+    // MainManager.shared.info.str_car_dae_num = self.a01_01_info_mod_view.field_car_dae_num.text!
+    //차대번호 수정
     @IBAction func pressed_mod_dae_num(_ sender: UIButton) {
         
-//        if( self.a01_01_info_mod_view.field_car_vin_num.text!.count == 0 ) {
-//
-//            MainManager.shared.str_certifi_notis = "정보를 입력 해주세요."
-//            self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
-//            return
-//        }
-//        else {
-//            
-//            MainManager.shared.member_info.str_car_vin_number = self.a01_01_info_mod_view.field_car_vin_num.text!
-//        }
+
         
     }
     
     
     
     
-    func setVinDataDB() {
-        
-        let parameters = [
-            "Req": "SetVIN",
-            "VIN": MainManager.shared.member_info.str_car_vin_number]
-        
-        print(MainManager.shared.member_info.str_car_vin_number)
-        
-        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
-        
-        Alamofire.request(MainManager.shared.SeverURL+"database.php", method: .post, parameters: parameters)
-            .responseJSON { response in
-                
-                ToastIndicatorView.shared.close()
-                print(response)
-                //to get status code
-                if let status = response.response?.statusCode {
-                    switch(status){
-                    case 201:
-                        print("example success")
-                    default:
-                        print("error with response status: \(status)")
-                    }
-                }
-                
-                //to get JSON return value
-                if let json = try? JSON(response.result.value) {
-                    
-                    print(json["Result"])
-                    
-                    let Result = json["Result"].rawString()!
-                    
-                    if( Result == "SAVE_OK" ) {
-                        
-                        // 클라 저장
-                        UserDefaults.standard.set(MainManager.shared.member_info.str_car_vin_number, forKey: "str_car_vin_number")
-                        print( "차대 번호 수정 성공" )
-                    }
-                    else {
-                        
-                        MainManager.shared.str_certifi_notis = "서버와의 연결이 지연되고 있습니다. 잠시후에 다시 사용해 주세요."
-                        self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
-                        print( "차대 번호 저장 실패." )
-                    }
-                    
-                    print( Result )
-                }
-        }
-    }
     
     
     
@@ -4374,12 +5054,13 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
     
     
     
-    // MainManager.shared.member_info.str_car_kind = self.a01_01_info_mod_view.field_car_kind.text!
+    
+    // MainManager.shared.info.str_car_kind = self.a01_01_info_mod_view.field_car_kind.text!
     @IBAction func pressed_mod_car_kind(_ sender: UIButton) {
         
         
         // 유저 로그인 체크
-        if( MainManager.shared.isLoginErrMessage() == false ) {
+        if( MainManager.shared.isLoginErrMessage(self) == false ) {
             return
         }
         
@@ -4387,22 +5068,26 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         if( self.a01_01_info_mod_view.field_car_kind.text!.count == 0 ) {
             
 
-            
-            MainManager.shared.str_certifi_notis = "정보를 입력 해주세요."
-            self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
+            let alertController = UIAlertController(title: "", message: "정보를 입력 해주세요.", preferredStyle: UIAlertControllerStyle.alert)
+            let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+                
+                print("정보입력")
+            }
+            alertController.addAction(okAction)
+            self.present(alertController, animated: true, completion: nil)
             return
         }
         else {
             
             //database.php?Req=SetVehicleName&Name=차종명
-            MainManager.shared.member_info.str_car_kind = self.a01_01_info_mod_view.field_car_kind.text!
+            MainManager.shared.info.str_car_kind = self.a01_01_info_mod_view.field_car_kind.text!
             
             let parameters = [
                 "Req": "SetVehicleName",
-                "Name": MainManager.shared.member_info.str_car_kind]
+                "Name": MainManager.shared.info.str_car_kind]
             
-            print(MainManager.shared.member_info.str_car_kind)
-            ToastIndicatorView.shared.setup(self.view, txt_msg: "")
+            print(MainManager.shared.info.str_car_kind)
+            ToastIndicatorView.shared.setup(self.view, "")
             Alamofire.request(MainManager.shared.SeverURL+"database.php", method: .post, parameters: parameters)
                 .responseJSON { response in
                     
@@ -4427,26 +5112,44 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
                         if( Result == "SAVE_OK" ) {
                             
                             // 클라 저장
-                            UserDefaults.standard.set(MainManager.shared.member_info.str_car_kind, forKey: "str_car_kind")
+                            UserDefaults.standard.set(MainManager.shared.info.str_car_kind, forKey: "str_car_kind")
                             // 피커뷰 선택번호 저장
-                            UserDefaults.standard.set(MainManager.shared.member_info.i_car_piker_select, forKey: "i_car_piker_select")
+                            UserDefaults.standard.set(MainManager.shared.info.i_car_piker_select, forKey: "i_car_piker_select")
 
-                            MainManager.shared.str_certifi_notis = "차량종류가 성공적으로 수정되었습니다."
-                            self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
+
+                            let alertController = UIAlertController(title: "", message: "차량종류가 성공적으로 변경되었습니다.", preferredStyle: UIAlertControllerStyle.alert)
+                            let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+                                
+                                print("차량종류")
+                            }
+                            alertController.addAction(okAction)
+                            self.present(alertController, animated: true, completion: nil)
                             print( "차종 수정 성공" )
                         }
                         else {
 
-                            MainManager.shared.str_certifi_notis = "서버와의 연결이 지연되고 있습니다. 잠시후에 다시 사용해 주세요."
-                            self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
+
+                            let alertController = UIAlertController(title: "", message: "서버와의 연결이 지연되고 있습니다. 인터넷 연결을 확인해 주세요.", preferredStyle: UIAlertControllerStyle.alert)
+                            let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+                                
+                                print("서버연결")
+                            }
+                            alertController.addAction(okAction)
+                            self.present(alertController, animated: true, completion: nil)
                             print( "차종 저장 실패.!" )
                         }
                         print( Result )
                     }
                     else  {
                         
-                        MainManager.shared.str_certifi_notis = "서버와의 연결이 지연되고 있습니다. 잠시후에 다시 사용해 주세요."
-                        self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
+                        let alertController = UIAlertController(title: "", message: "서버와의 연결이 지연되고 있습니다. 인터넷 연결을 확인해 주세요.", preferredStyle: UIAlertControllerStyle.alert)
+                        let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+                            
+                            print("서버연결")
+                        }
+                        alertController.addAction(okAction)
+                        self.present(alertController, animated: true, completion: nil)
+
                         print( "차종 저장 실패.!" )
                     }
             }
@@ -4457,33 +5160,39 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
     
     
     // 연료 타입
-    // MainManager.shared.member_info.str_car_fuel_type = self.a01_01_info_mod_view.field_car_fuel.text!
+    // MainManager.shared.info.str_car_fuel_type = self.a01_01_info_mod_view.field_car_fuel.text!
     @IBAction func pressed_mod_fuel_type(_ sender: UIButton) {
         
         
         // 유저 로그인 체크
-        if( MainManager.shared.isLoginErrMessage() == false ) {
+        if( MainManager.shared.isLoginErrMessage(self) == false ) {
             return
         }
         
         
         if( self.a01_01_info_mod_view.field_car_fuel.text!.count == 0 ) {
 
-            MainManager.shared.str_certifi_notis = "정보를 입력 해주세요."
-            self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
+
+            let alertController = UIAlertController(title: "", message: "정보를 입력 해주세요.", preferredStyle: UIAlertControllerStyle.alert)
+            let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+                
+                print("정보입력")
+            }
+            alertController.addAction(okAction)
+            self.present(alertController, animated: true, completion: nil)
             return
         }
         else {
             
             //database.php?Req=SetFuelType&Type=연료타입
-            MainManager.shared.member_info.str_car_fuel_type  = self.a01_01_info_mod_view.field_car_fuel.text!
+            MainManager.shared.info.str_car_fuel_type  = self.a01_01_info_mod_view.field_car_fuel.text!
             
             let parameters = [
                 "Req": "SetFuelType",
-                "Type": MainManager.shared.member_info.str_car_fuel_type ]
+                "Type": MainManager.shared.info.str_car_fuel_type ]
             
-            print(MainManager.shared.member_info.str_car_kind)
-            ToastIndicatorView.shared.setup(self.view, txt_msg: "")
+            print(MainManager.shared.info.str_car_kind)
+            ToastIndicatorView.shared.setup(self.view, "")
             Alamofire.request(MainManager.shared.SeverURL+"database.php", method: .post, parameters: parameters)
                 .responseJSON { response in
                     
@@ -4507,26 +5216,42 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
                         if( Result == "SAVE_OK" ) {
                             
                             // 클라 저장
-                            UserDefaults.standard.set(MainManager.shared.member_info.str_car_fuel_type, forKey: "str_car_fuel_type")
-                            UserDefaults.standard.set(MainManager.shared.member_info.i_fuel_piker_select, forKey: "i_fuel_piker_select")
+                            UserDefaults.standard.set(MainManager.shared.info.str_car_fuel_type, forKey: "str_car_fuel_type")
+                            UserDefaults.standard.set(MainManager.shared.info.i_fuel_piker_select, forKey: "i_fuel_piker_select")
                             
 
-                            MainManager.shared.str_certifi_notis = "연료타입이 성공적으로 수정되었습니다"
-                            self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
+
+                            let alertController = UIAlertController(title: "", message: "연료타입이 성공적으로 변경되었습니다", preferredStyle: UIAlertControllerStyle.alert)
+                            let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+                                
+                                print("정보입력")
+                            }
+                            alertController.addAction(okAction)
+                            self.present(alertController, animated: true, completion: nil)
                             print( "연료타입 수정 성공" )
                         }
                         else {
 
-                            MainManager.shared.str_certifi_notis = "서버와의 연결이 지연되고 있습니다. 잠시후에 다시 사용해 주세요."
-                            self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
+                            let alertController = UIAlertController(title: "", message: "서버와의 연결이 지연되고 있습니다. 인터넷 연결을 확인해 주세요.", preferredStyle: UIAlertControllerStyle.alert)
+                            let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+                                
+                                print("서버연결")
+                            }
+                            alertController.addAction(okAction)
+                            self.present(alertController, animated: true, completion: nil)
                             print( "연료타입 수정 실패.!" )
                         }
                         print( Result )
                     }
                     else {
                         
-                        MainManager.shared.str_certifi_notis = "서버와의 연결이 지연되고 있습니다. 잠시후에 다시 사용해 주세요."
-                        self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
+                        let alertController = UIAlertController(title: "", message: "서버와의 연결이 지연되고 있습니다. 인터넷 연결을 확인해 주세요.", preferredStyle: UIAlertControllerStyle.alert)
+                        let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+                            
+                            print("서버연결")
+                        }
+                        alertController.addAction(okAction)
+                        self.present(alertController, animated: true, completion: nil)
                         print( "연료타입 수정 실패.!" )
                     }
             }
@@ -4536,33 +5261,39 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
     
     
     
-    // MainManager.shared.member_info.str_car_year = self.a01_01_info_mod_view.field_car_year.text!
+    // MainManager.shared.info.str_car_year = self.a01_01_info_mod_view.field_car_year.text!
     @IBAction func pressed_mod_car_year(_ sender: UIButton) {
         
         // 유저 로그인 체크
-        if( MainManager.shared.isLoginErrMessage() == false ) {
+        if( MainManager.shared.isLoginErrMessage(self) == false ) {
             return
         }
         
         if( self.a01_01_info_mod_view.field_car_year.text!.count == 0 ) {
             
 
-            MainManager.shared.str_certifi_notis = "정보를 입력 해주세요."
-            self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
+
+            let alertController = UIAlertController(title: "", message: "정보를 입력 해주세요.", preferredStyle: UIAlertControllerStyle.alert)
+            let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+                
+                print("서버연결")
+            }
+            alertController.addAction(okAction)
+            self.present(alertController, animated: true, completion: nil)
             return
         }
         else {
             
             //database.php?Req=SetModelYear&MY=연식
-            MainManager.shared.member_info.str_car_year = self.a01_01_info_mod_view.field_car_year.text!
+            MainManager.shared.info.str_car_year = self.a01_01_info_mod_view.field_car_year.text!
             
             let parameters = [
                 "Req": "SetModelYear",
-                "MY": MainManager.shared.member_info.str_car_kind]
+                "MY": MainManager.shared.info.str_car_kind]
             
-            print(MainManager.shared.member_info.str_car_kind)
+            print(MainManager.shared.info.str_car_kind)
             
-            ToastIndicatorView.shared.setup(self.view, txt_msg: "")
+            ToastIndicatorView.shared.setup(self.view, "")
             
             Alamofire.request(MainManager.shared.SeverURL+"database.php", method: .post, parameters: parameters)
                 .responseJSON { response in
@@ -4587,25 +5318,41 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
                         if( Result == "SAVE_OK" ) {
                             
                             // 클라 저장
-                            UserDefaults.standard.set(MainManager.shared.member_info.str_car_year, forKey: "str_car_year")
-                            UserDefaults.standard.set(MainManager.shared.member_info.i_year_piker_select, forKey: "i_year_piker_select")
+                            UserDefaults.standard.set(MainManager.shared.info.str_car_year, forKey: "str_car_year")
+                            UserDefaults.standard.set(MainManager.shared.info.i_year_piker_select, forKey: "i_year_piker_select")
                             
-                            MainManager.shared.str_certifi_notis = "차량연식이 성공적으로 수정되었습니다."
-                            self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
+
+                            let alertController = UIAlertController(title: "", message: "차량연식이 성공적으로 변경되었습니다.", preferredStyle: UIAlertControllerStyle.alert)
+                            let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+                                
+                                print("서버연결")
+                            }
+                            alertController.addAction(okAction)
+                            self.present(alertController, animated: true, completion: nil)
                             print( "연식 수정 성공" )
                         }
                         else {
                             
-                            MainManager.shared.str_certifi_notis = "서버와의 연결이 지연되고 있습니다. 잠시후에 다시 사용해 주세요."
-                            self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
+                            let alertController = UIAlertController(title: "", message: "서버와의 연결이 지연되고 있습니다. 인터넷 연결을 확인해 주세요.", preferredStyle: UIAlertControllerStyle.alert)
+                            let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+                                
+                                print("서버연결")
+                            }
+                            alertController.addAction(okAction)
+                            self.present(alertController, animated: true, completion: nil)
                             print( "연식 저장 실패.!" )
                         }
                         print( Result )
                     }
                     else {
                         
-                        MainManager.shared.str_certifi_notis = "서버와의 연결이 지연되고 있습니다. 잠시후에 다시 사용해 주세요."
-                        self.performSegue(withIdentifier: "joinPopSegue02", sender: self)
+                        let alertController = UIAlertController(title: "", message: "서버와의 연결이 지연되고 있습니다. 인터넷 연결을 확인해 주세요.", preferredStyle: UIAlertControllerStyle.alert)
+                        let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+                            
+                            print("서버연결")
+                        }
+                        alertController.addAction(okAction)
+                        self.present(alertController, animated: true, completion: nil)
                         print( "연식 저장 실패.!" )
                     }
             }
@@ -4619,64 +5366,64 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         
         switch sender.tag {
         case 1:
-            let nsData:NSData = MainManager.shared.member_info.setDOORLOCK( "0" )
+            let nsData:NSData = MainManager.shared.info.setDOORLOCK( "0" )
             setDataBLE( nsData )
             ToastView.shared.short(self.view, txt_msg: set_notis_on[sender.tag-1])
             break
         case 2:
-            let nsData:NSData = MainManager.shared.member_info.setHATCH( "1" )
+            let nsData:NSData = MainManager.shared.info.setHATCH( "1" )
             setDataBLE( nsData )
             ToastView.shared.short(self.view, txt_msg: set_notis_on[sender.tag-1])
             break
         case 3:
-            let nsData:NSData = MainManager.shared.member_info.setWINDOW( "1" )
+            let nsData:NSData = MainManager.shared.info.setWINDOW( "1" )
             setDataBLE( nsData )
             ToastView.shared.short(self.view, txt_msg: set_notis_on[sender.tag-1])
             break
         case 4:
-            let nsData:NSData = MainManager.shared.member_info.setSUNROOF( "1" )
+            let nsData:NSData = MainManager.shared.info.setSUNROOF( "1" )
             setDataBLE( nsData )
             ToastView.shared.short(self.view, txt_msg: set_notis_on[sender.tag-1])
             break
         case 5:
-            let nsData:NSData = MainManager.shared.member_info.setRVS( "1" )
+            let nsData:NSData = MainManager.shared.info.setRVS( "1" )
             setDataBLE( nsData )
             ToastView.shared.short(self.view, txt_msg: set_notis_on[sender.tag-1])
             break
         case 6:
-            let nsData:NSData = MainManager.shared.member_info.setKEYON( "1" )
+            let nsData:NSData = MainManager.shared.info.setKEYON( "1" )
             setDataBLE( nsData )
             ToastView.shared.short(self.view, txt_msg: set_notis_on[sender.tag-1])
             break
             
             
         case 7:
-            let nsData:NSData = MainManager.shared.member_info.setDOORLOCK( "1" )
+            let nsData:NSData = MainManager.shared.info.setDOORLOCK( "1" )
             setDataBLE( nsData )
             ToastView.shared.short(self.view, txt_msg: set_notis_off[sender.tag-7])
             break
         case 8:
-            let nsData:NSData = MainManager.shared.member_info.setHATCH( "0" )
+            let nsData:NSData = MainManager.shared.info.setHATCH( "0" )
             setDataBLE( nsData )
             ToastView.shared.short(self.view, txt_msg: set_notis_off[sender.tag-7])
             break
         case 9:
-            let nsData:NSData = MainManager.shared.member_info.setWINDOW( "0" )
+            let nsData:NSData = MainManager.shared.info.setWINDOW( "0" )
             setDataBLE( nsData )
             ToastView.shared.short(self.view, txt_msg: set_notis_off[sender.tag-7])
             break
         case 10:
-            let nsData:NSData = MainManager.shared.member_info.setSUNROOF( "0" )
+            let nsData:NSData = MainManager.shared.info.setSUNROOF( "0" )
             setDataBLE( nsData )
             ToastView.shared.short(self.view, txt_msg: set_notis_off[sender.tag-7])
             break
         case 11:
-            let nsData:NSData = MainManager.shared.member_info.setRVS( "0" )
+            let nsData:NSData = MainManager.shared.info.setRVS( "0" )
             setDataBLE( nsData )
             ToastView.shared.short(self.view, txt_msg: set_notis_off[sender.tag-7])
             break
         case 12:
-            let nsData:NSData = MainManager.shared.member_info.setKEYON( "0" )
+            let nsData:NSData = MainManager.shared.info.setKEYON( "0" )
             setDataBLE( nsData )
             ToastView.shared.short(self.view, txt_msg: set_notis_off[sender.tag-7])
             break
@@ -4710,57 +5457,100 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         var setData:String = "0"
         if( sender.isOn == true ) { setData = "1" }
         
+        // 자동 버튼 단말기 명령 실행 플래그, 2회 카운트
+        // BLE 명령을 주고, 파싱 2회 안에 결과를 유저한테 알린다.
+//        var bSetDataBleAutoBtn = false
+//        var iSetDataBleAutoBtnCount = 0
+        
+//        if( bSetDataBleAutoBtn[AutoBtn.REV_WINDOW.rawValue] == true ) {
+//
+//            iSetDataBleAutoBtnCount[AutoBtn.REV_WINDOW.rawValue] += 1
+//        }
+        
+        
         
         switch sender.tag {
             
         case 6:
-            let nsData:NSData = MainManager.shared.member_info.setLOCKFOLDING( setData )
-            setDataBLE( nsData )
-            MainManager.shared.member_info.bCar_Btn_AutoLockFolding = sender.isOn
+            
+            if( MainManager.shared.info.bSetDataBleAutoBtn[AutoBtn.LOCKFOLDING.rawValue] == false ) {
+
+                MainManager.shared.info.bSetDataBleAutoBtn[AutoBtn.LOCKFOLDING.rawValue] = true
+                MainManager.shared.info.iSetDataBleAutoBtnCount[AutoBtn.LOCKFOLDING.rawValue] = 0
+
+                let nsData:NSData = MainManager.shared.info.setLOCKFOLDING( setData )
+                setDataBLE( nsData )
+                MainManager.shared.info.bUserInputAutoBtnState[AutoBtn.LOCKFOLDING.rawValue] = sender.isOn
+
+                ToastIndicatorView.shared.setup(self.view, "")
+
+                print( "LOCKFOLDING :: \(MainManager.shared.info.bUserInputAutoBtnState[AutoBtn.LOCKFOLDING.rawValue])"  )
+                sleep(0)
+            }
             break
             
         case 7:
-            let nsData:NSData = MainManager.shared.member_info.setAUTOWINDOWS( setData )
-            setDataBLE( nsData )
-            MainManager.shared.member_info.bCar_Btn_AutoWindowClose = sender.isOn
+            
+            if( MainManager.shared.info.bSetDataBleAutoBtn[AutoBtn.AUTOWINDOWS.rawValue] == false ) {
+                
+                MainManager.shared.info.bSetDataBleAutoBtn[AutoBtn.AUTOWINDOWS.rawValue] = true
+                MainManager.shared.info.iSetDataBleAutoBtnCount[AutoBtn.AUTOWINDOWS.rawValue] = 0
+                
+                let nsData:NSData = MainManager.shared.info.setAUTOWINDOWS( setData )
+                setDataBLE( nsData )
+                MainManager.shared.info.bUserInputAutoBtnState[AutoBtn.AUTOWINDOWS.rawValue] = sender.isOn
+                
+                ToastIndicatorView.shared.setup(self.view, "")
+            }
             break
             
         case 8:
-            let nsData:NSData = MainManager.shared.member_info.setAUTOSUNROOF( setData )
-            setDataBLE( nsData )
-            MainManager.shared.member_info.bCar_Btn_AutoSunroofClose = sender.isOn
+            if( MainManager.shared.info.bSetDataBleAutoBtn[AutoBtn.AUTOSUNROOF.rawValue] == false ) {
+                
+                MainManager.shared.info.bSetDataBleAutoBtn[AutoBtn.AUTOSUNROOF.rawValue] = true
+                MainManager.shared.info.iSetDataBleAutoBtnCount[AutoBtn.AUTOSUNROOF.rawValue] = 0
+                let nsData:NSData = MainManager.shared.info.setAUTOSUNROOF( setData )
+                setDataBLE( nsData )
+                MainManager.shared.info.bUserInputAutoBtnState[AutoBtn.AUTOSUNROOF.rawValue] = sender.isOn
+                
+                ToastIndicatorView.shared.setup(self.view, "")
+            }
             break
             
         case 9:
-            let nsData:NSData = MainManager.shared.member_info.setREVWINDOW( setData )
-            setDataBLE( nsData )
-            MainManager.shared.member_info.bCar_Btn_AutoWindowRevOpen = sender.isOn
+            if( MainManager.shared.info.bSetDataBleAutoBtn[AutoBtn.REV_WINDOW.rawValue] == false ) {
+                
+                MainManager.shared.info.bSetDataBleAutoBtn[AutoBtn.REV_WINDOW.rawValue] = true
+                MainManager.shared.info.iSetDataBleAutoBtnCount[AutoBtn.REV_WINDOW.rawValue] = 0
+                
+                let nsData:NSData = MainManager.shared.info.setREVWINDOW( setData )
+                setDataBLE( nsData )
+                MainManager.shared.info.bUserInputAutoBtnState[AutoBtn.REV_WINDOW.rawValue] = sender.isOn
+                
+                ToastIndicatorView.shared.setup(self.view, "")
+            }
             break
             
         case 10:
-            // 예약 시동 On/OFF
-            let nsData:NSData = MainManager.shared.member_info.setRES_RVS( "0" )
-            setDataBLE( nsData )
-            MainManager.shared.member_info.bCar_Btn_RVS = sender.isOn
+            
+            if( MainManager.shared.info.bSetDataBleAutoBtn[AutoBtn.RES_RVS.rawValue] == false ) {
+                
+                MainManager.shared.info.bSetDataBleAutoBtn[AutoBtn.RES_RVS.rawValue] = true
+                MainManager.shared.info.iSetDataBleAutoBtnCount[AutoBtn.RES_RVS.rawValue] = 0
+                // 예약 시동 On/OFF
+                let nsData:NSData = MainManager.shared.info.setRES_RVS( setData )
+                setDataBLE( nsData )
+                MainManager.shared.info.bUserInputAutoBtnState[AutoBtn.RES_RVS.rawValue] = sender.isOn
+                
+                ToastIndicatorView.shared.setup(self.view, "")
+            }
             break
         default:
             break
         }
         
-        
-        
-        // 토스트 알람 메세지
-        if( sender.isOn == true ) {
-            
-            ToastView.shared.short(self.view, txt_msg: set_notis_on[sender.tag])
-        }
-        else {
-            
-            ToastView.shared.short(self.view, txt_msg: set_notis_off[sender.tag])
-        }
-        
-        // UI ON/Off 버튼  a02 각각의 뷰 버튼 이미지 세팅
-        carOnOffSetting()
+     
+       
     }
     
     
@@ -4770,130 +5560,6 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
     // a02_02~12 view 개별 화면
     @IBAction func a02BtnOnOff(_ sender: UIButton) {
         
-        if( self.isBLE_CAR_FRIENDS_CONNECT() == false )
-        {
-            return
-        }
-
-        
-        var isON = false
-        var setData:String = "0"
-        
-        switch sender.tag {
-        case 0:
-            break
-            
-        case 1:
-            break
-            
-        case 2:
-            break
-            
-        case 3:
-            break
-            
-        case 4:
-            break
-            
-        case 5:
-            break
-            
-        case 6:
-            if( MainManager.shared.member_info.bCar_Btn_AutoLockFolding ) {
-                MainManager.shared.member_info.bCar_Btn_AutoLockFolding = false
-                setData = "0"
-            }
-            else {
-                MainManager.shared.member_info.bCar_Btn_AutoLockFolding = true
-                setData = "1"
-            }
-            isON = MainManager.shared.member_info.bCar_Btn_AutoLockFolding
-            
-            let nsData:NSData = MainManager.shared.member_info.setLOCKFOLDING( setData )
-            setDataBLE( nsData )
-            break
-        case 7:
-            if( MainManager.shared.member_info.bCar_Btn_AutoWindowClose ) {
-                MainManager.shared.member_info.bCar_Btn_AutoWindowClose = false
-                setData = "0"
-            }
-            else {
-                MainManager.shared.member_info.bCar_Btn_AutoWindowClose = true
-                setData = "1"
-            }
-            isON = MainManager.shared.member_info.bCar_Btn_AutoWindowClose
-            let nsData:NSData = MainManager.shared.member_info.setAUTOWINDOWS( setData )
-            setDataBLE( nsData )
-            break
-            
-        case 8:
-            if( MainManager.shared.member_info.bCar_Btn_AutoSunroofClose ) {
-                MainManager.shared.member_info.bCar_Btn_AutoSunroofClose = false
-                setData = "0"
-            }
-            else {
-                MainManager.shared.member_info.bCar_Btn_AutoSunroofClose = true
-                setData = "1"
-            }
-            isON = MainManager.shared.member_info.bCar_Btn_AutoSunroofClose
-            let nsData:NSData = MainManager.shared.member_info.setAUTOSUNROOF( setData )
-            setDataBLE( nsData )
-            break
-            
-        case 9:
-            if( MainManager.shared.member_info.bCar_Btn_AutoWindowRevOpen ) {
-                MainManager.shared.member_info.bCar_Btn_AutoWindowRevOpen = false
-                setData = "0"
-            }
-            else {
-                MainManager.shared.member_info.bCar_Btn_AutoWindowRevOpen = true
-                setData = "1"
-            }
-            isON = MainManager.shared.member_info.bCar_Btn_AutoWindowRevOpen
-            let nsData:NSData = MainManager.shared.member_info.setREVWINDOW( setData )
-            setDataBLE( nsData )
-            break
-            
-        case 10:
-            
-            if( MainManager.shared.member_info.bCar_Btn_RVS ) {
-                MainManager.shared.member_info.bCar_Btn_RVS = false
-                setData = "0"
-            }
-            else {
-                MainManager.shared.member_info.bCar_Btn_RVS = true
-                setData = "1"
-            }
-            isON = MainManager.shared.member_info.bCar_Btn_RVS
-            let nsData:NSData = MainManager.shared.member_info.setRES_RVS( setData )
-            setDataBLE( nsData )
-            
-            
-            //            // 예약시동 시간 설정
-//            // Segue -> 사용 팝업뷰컨트롤러 띠우기
-//            // MainManager.shared.member_info.bCar_Func_RVS = true <---- 팝업창에서 세팅 되고 설정한다
-//            self.performSegue(withIdentifier: "ReservTimePopSegue", sender: self)
-//            print("ReservTimePopSegue")
-            
-            break
-        default:
-            break
-        }
-        
-        
-        // 토스트 알람 메세지
-        if( isON == true ) {
-            
-            // 예약시동은 팝업창 시간 세팅 후 결과에 따라 띠운다
-            ToastView.shared.short(self.view, txt_msg: set_notis_on[sender.tag])
-        }
-        else {
-            
-            ToastView.shared.short(self.view, txt_msg: set_notis_off[sender.tag])
-        }
-        
-        // UI ON/Off 버튼  a02 각각의 뷰 버튼 이미지 세팅
-        carOnOffSetting()
     }
     
     
@@ -4905,27 +5571,28 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
     // blue001 / 01012345678
     func userLogin() {
         
-        // login.php?Req=Login&ID=아이디&Pass=패스워드
-        // MainManager.shared.member_info.str_id_nick = "테스트03"
+        // login.php?Req=Login&ID=닉네임&Pass=패스워드
+        // MainManager.shared.info.str_id_nick = "테스트03"
         
-        var parameters = [
+        let parameters = [
             "Req": "Login",
-            "ID": MainManager.shared.member_info.str_id_nick,
-            "Pass": MainManager.shared.member_info.str_password]
+            "ID": MainManager.shared.info.str_id_nick,
+            "Pass": MainManager.shared.info.str_password,
+            "Token": MainManager.shared.ASPN_TOKEN]
         
         
 //        if( MainManager.shared.bAPP_TEST ) {
-//            MainManager.shared.member_info.str_id_nick = "blue009"
+//            MainManager.shared.info.str_id_nick = "blue009"
 //            parameters = [
 //                "Req": "Login",
-//                "ID": MainManager.shared.member_info.str_id_nick,
-//                "Pass": MainManager.shared.member_info.str_id_nick]
+//                "ID": MainManager.shared.info.str_id_nick,
+//                "Pass": MainManager.shared.info.str_id_nick]
 //        }
 
 
-        print(MainManager.shared.member_info.str_id_nick)
+        print(MainManager.shared.info.str_id_nick)
 
-        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
+        ToastIndicatorView.shared.setup(self.view, "")
         
         Alamofire.request(MainManager.shared.SeverURL+"login.php", method: .post, parameters: parameters)
             .responseJSON { response in
@@ -4966,7 +5633,8 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
                         self.getData8Week_myDTC()
                         self.getData8Week_AllMemberDTC()
                         
-                        self.getDataWeekDTCCount()
+                        // 8주 DTC 서 값을 읽는다.
+                        // self.getDataWeekDTCCount()
                         
                         // 연료 타입 읽기
                         self.getFuelTypeDB()
@@ -4981,9 +5649,21 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
                         }
                         else {
                             
-                            MainManager.shared.bLoginTryErr = true
-                            let alert = UIAlertView(title: "No Login Connection", message: "로그인이 지연되고 있습니다. 잠시후 다시 실행해 주세요.", delegate: nil, cancelButtonTitle: "OK")
-                            alert.show()
+                            
+                            let alertController = UIAlertController(title: "", message: "로그인이 지연되고 있습니다. 인터넷 연결을 확인해 주세요.", preferredStyle: UIAlertControllerStyle.alert)
+                            //                let DestructiveAction = UIAlertAction(title: "취소", style: UIAlertActionStyle.Destructive) { (result : UIAlertAction) -> Void in
+                            //
+                            //                    print("취소")
+                            //                }
+                            
+                            let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+                                
+                                print("단말기를 찾을수 없습니다. 연결을 확인해 주세요")
+                            }
+                            // alertController.addAction(DestructiveAction)
+                            
+                            alertController.addAction(okAction)
+                            self.present(alertController, animated: true, completion: nil)
                         }
                         
                         print( "LOGIN_FAIL_1" )
@@ -5000,8 +5680,20 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
                     else {
                         
                         MainManager.shared.bLoginTryErr = true
-                        let alert = UIAlertView(title: "No Login Connection", message: "로그인이 지연되고 있습니다. 잠시후 다시 실행해 주세요.", delegate: nil, cancelButtonTitle: "OK")
-                        alert.show()
+                        let alertController = UIAlertController(title: "", message: "로그인이 지연되고 있습니다. 인터넷 연결을 확인해 주세요.", preferredStyle: UIAlertControllerStyle.alert)
+                        //                let DestructiveAction = UIAlertAction(title: "취소", style: UIAlertActionStyle.Destructive) { (result : UIAlertAction) -> Void in
+                        //
+                        //                    print("취소")
+                        //                }
+                        
+                        let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+                            
+                            print("단말기를 찾을수 없습니다. 연결을 확인해 주세요")
+                        }
+                        // alertController.addAction(DestructiveAction)
+                        
+                        alertController.addAction(okAction)
+                        self.present(alertController, animated: true, completion: nil) 
                     }
                     print( "LOGIN_FAIL_2" )
                 }
@@ -5013,13 +5705,13 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
     
     func getData8Week_myDrive() {
         
-        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
+        ToastIndicatorView.shared.setup(self.view, "")
         // database.php?Req=CarList
         // "Res":"CarList","CarList":["스파크","크루즈",…..]
         let parameters = [
             "Req": "Get8WeeksDriveMileage",
             "CheckDate": nowDateDay,
-            "Car_Model": MainManager.shared.member_info.str_car_kind]
+            "Car_Model": MainManager.shared.info.str_car_kind]
         
         print(parameters)
         Alamofire.request(MainManager.shared.SeverURL+"database.php", method: .post, parameters: parameters)
@@ -5087,11 +5779,11 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
                     
                     
                     // 첫주 데이타
-                    MainManager.shared.member_info.str_ThisWeekDriveMileage = MainManager.shared.str_My8WeeksDriveMileage[0]
+                    MainManager.shared.info.str_ThisWeekDriveMileage = MainManager.shared.str_My8WeeksDriveMileage[0]
                     // 로컬 저장
-                    if( MainManager.shared.member_info.str_ThisWeekDriveMileage != "0" ) {
+                    if( MainManager.shared.info.str_ThisWeekDriveMileage != "0" ) {
                         
-                        UserDefaults.standard.set(MainManager.shared.member_info.str_ThisWeekDriveMileage, forKey: "str_ThisWeekDriveMileage")
+                        UserDefaults.standard.set(MainManager.shared.info.str_ThisWeekDriveMileage, forKey: "str_ThisWeekDriveMileage")
                     }
                     
                     print("")
@@ -5102,13 +5794,13 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
     
     func getData8Week_AllMemberDrive() {
         
-        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
+        ToastIndicatorView.shared.setup(self.view, "")
         // database.php?Req=CarList
         // "Res":"CarList","CarList":["스파크","크루즈",…..]
         let parameters = [
             "Req": "Get8WeeksDriveMileageAllMember",
             "CheckDate": nowDateDay,
-            "Car_Model": MainManager.shared.member_info.str_car_kind]
+            "Car_Model": MainManager.shared.info.str_car_kind]
         
         print(parameters)
         Alamofire.request(MainManager.shared.SeverURL+"database.php", method: .post, parameters: parameters)
@@ -5186,13 +5878,13 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
     
     func getData8Week_myFuel() {
         
-        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
+        ToastIndicatorView.shared.setup(self.view, "")
         // database.php?Req=CarList
         // "Res":"CarList","CarList":["스파크","크루즈",…..]
         let parameters = [
             "Req": "Get8WeeksFuelMileage",
             "CheckDate": nowDateDay,
-            "Car_Model": MainManager.shared.member_info.str_car_kind]
+            "Car_Model": MainManager.shared.info.str_car_kind]
         
         print(parameters)
         Alamofire.request(MainManager.shared.SeverURL+"database.php", method: .post, parameters: parameters)
@@ -5262,11 +5954,11 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
                     
                     
                     // 첫주 데이타
-                    MainManager.shared.member_info.str_ThisWeekFuelMileage = MainManager.shared.str_My8weeksFuelMileage[0]
+                    MainManager.shared.info.str_ThisWeekFuelMileage = MainManager.shared.str_My8weeksFuelMileage[0]
                     // 로컬 저장
-                    if( MainManager.shared.member_info.str_ThisWeekFuelMileage != "0" ) {
+                    if( MainManager.shared.info.str_ThisWeekFuelMileage != "0" ) {
                         
-                        UserDefaults.standard.set(MainManager.shared.member_info.str_ThisWeekFuelMileage, forKey: "str_ThisWeekFuelMileage")
+                        UserDefaults.standard.set(MainManager.shared.info.str_ThisWeekFuelMileage, forKey: "str_ThisWeekFuelMileage")
                     }
                     
                     print("")
@@ -5281,13 +5973,13 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
     
     func getData8Week_AllMemberFuel() {
         
-        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
+        ToastIndicatorView.shared.setup(self.view, "")
         // database.php?Req=CarList
         // "Res":"CarList","CarList":["스파크","크루즈",…..]
         let parameters = [
             "Req": "Get8WeeksFuelMileageAllMember",
             "CheckDate": nowDateDay,
-            "Car_Model": MainManager.shared.member_info.str_car_kind]
+            "Car_Model": MainManager.shared.info.str_car_kind]
         
         print(parameters)
         Alamofire.request(MainManager.shared.SeverURL+"database.php", method: .post, parameters: parameters)
@@ -5367,13 +6059,13 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
     
     func getData8Week_myDTC() {
         
-        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
+        ToastIndicatorView.shared.setup(self.view, "")
         // database.php?Req=CarList
         // "Res":"CarList","CarList":["스파크","크루즈",…..]
         let parameters = [
             "Req": "Get8WeeksDTCCount",
             "CheckDate": nowDateDay,
-            "Car_Model": MainManager.shared.member_info.str_car_kind]
+            "Car_Model": MainManager.shared.info.str_car_kind]
         
         print(parameters)
         Alamofire.request(MainManager.shared.SeverURL+"database.php", method: .post, parameters: parameters)
@@ -5445,6 +6137,14 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
                         MainManager.shared.str_My8WeeksDTCCount[7] = "0"
                     }
                     
+                    // 첫주 데이타
+                    MainManager.shared.info.str_ThisWeekDtcCount = MainManager.shared.str_My8WeeksDTCCount[0]
+                    // 로컬 저장
+                    if( MainManager.shared.info.str_ThisWeekDtcCount != "0" ) {
+                        
+                        UserDefaults.standard.set(MainManager.shared.info.str_ThisWeekDtcCount, forKey: "str_ThisWeekDtcCount")
+                    }
+                    
                     print("")
                 }
         }
@@ -5473,14 +6173,13 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
     
     func getData8Week_AllMemberDTC() {
         
-        
-        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
+        ToastIndicatorView.shared.setup(self.view, "")
         // database.php?Req=CarList
         // "Res":"CarList","CarList":["스파크","크루즈",…..]
         let parameters = [
             "Req": "Get8WeeksDTCCountAllMember",
             "CheckDate": nowDateDay,
-            "Car_Model": MainManager.shared.member_info.str_car_kind]
+            "Car_Model": MainManager.shared.info.str_car_kind]
         
         print(parameters)
         Alamofire.request(MainManager.shared.SeverURL+"database.php", method: .post, parameters: parameters)
@@ -5563,13 +6262,13 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
     // 금주 DTC
     func getDataWeekDTCCount() {
         
-        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
+        ToastIndicatorView.shared.setup(self.view, "")
         // database.php?Req=CarList
         // "Res":"CarList","CarList":["스파크","크루즈",…..]
         let parameters = [
             "Req": "GetDTCCount",
             "CheckDate": nowDateDay,
-            "Car_Model": MainManager.shared.member_info.str_car_kind]
+            "Car_Model": MainManager.shared.info.str_car_kind]
         
         print(parameters)
         Alamofire.request(MainManager.shared.SeverURL+"database.php", method: .post, parameters: parameters)
@@ -5595,7 +6294,7 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
                 
                 if let json = try? JSON(response.result.value) {
                     
-                    MainManager.shared.member_info.str_ThisWeekDtcCount = json["Result"].stringValue
+                    MainManager.shared.info.str_ThisWeekDtcCount = json["Result"].stringValue
                     
                     print("")
                 }
@@ -5608,7 +6307,7 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
     // 연료 타입 읽기
     func getFuelTypeDB() {
         
-        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
+        ToastIndicatorView.shared.setup(self.view, "")
         // database.php?Req=CarList
         // "Res":"CarList","CarList":["스파크","크루즈",…..]
         let parameters = ["Req": "GetFuelType"]
@@ -5618,7 +6317,7 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
             .responseJSON { response in
                 
                 ToastIndicatorView.shared.close()
-                print(response)
+                print("response : \(response)")
                 //to get status code
                 
                 if let status = response.response?.statusCode {
@@ -5632,13 +6331,13 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
                 
                 if let json = try? JSON(response.result.value) {
                     
-                    MainManager.shared.member_info.str_car_fuel_type = json["Result"].stringValue
-                    self.a01_01_info_mod_view.field_car_fuel.text = MainManager.shared.member_info.str_car_fuel_type
+                    MainManager.shared.info.str_car_fuel_type = json["Result"].stringValue
+                    self.a01_01_info_mod_view.field_car_fuel.text = MainManager.shared.info.str_car_fuel_type
                     
                     // 클라 저장
-                    UserDefaults.standard.set(MainManager.shared.member_info.str_car_fuel_type, forKey: "str_car_fuel_type")
+                    UserDefaults.standard.set(MainManager.shared.info.str_car_fuel_type, forKey: "str_car_fuel_type")
                     
-                    print("연료 타입 읽기" + MainManager.shared.member_info.str_car_fuel_type )
+                    print("연료 타입 읽기" + MainManager.shared.info.str_car_fuel_type )
                 }
         }
     }
@@ -5663,7 +6362,7 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
             scrollView == a01_04_1_view.webView.scrollView )
         {
             // 가로 스크롤 막기
-            scrollView.contentOffset = CGPoint(x: 0, y: scrollView.contentOffset.y)
+            // scrollView.contentOffset = CGPoint(x: 0, y: scrollView.contentOffset.y)
         }
     }
     
@@ -5696,19 +6395,7 @@ class AViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
 
 
 
-extension UIScrollView {
-    
-    func resizeScrollViewContentSize() {
-        
-        var contentRect = CGRect.zero
-        
-        for view in self.subviews {
-            
-            contentRect = contentRect.union(view.frame)
-        }
-        self.contentSize = contentRect.size
-    }
-}
+
 
 
 
@@ -5770,23 +6457,23 @@ extension AViewController: CBPeripheralDelegate, CBCentralManagerDelegate {
         switch central.state {
         case .unknown:
             print("###### central.state is .unknown")
-            MainManager.shared.member_info.isBLE_ON = false
-            //MainManager.shared.member_info.isCAR_FRIENDS_CONNECT = false;
+            MainManager.shared.info.isBLE_ON = false
+            MainManager.shared.info.isCAR_FRIENDS_CONNECT = false;
             bleSerachDelayStopState = 0
         case .resetting:
             print("###### central.state is .resetting")
-            MainManager.shared.member_info.isBLE_ON = false
-           // MainManager.shared.member_info.isCAR_FRIENDS_CONNECT = false;
+            MainManager.shared.info.isBLE_ON = false
+            MainManager.shared.info.isCAR_FRIENDS_CONNECT = false;
             bleSerachDelayStopState = 0
         case .unsupported:
             print("###### central.state is .unsupported")
-            MainManager.shared.member_info.isBLE_ON = false
-           // MainManager.shared.member_info.isCAR_FRIENDS_CONNECT = false;
+            MainManager.shared.info.isBLE_ON = false
+            MainManager.shared.info.isCAR_FRIENDS_CONNECT = false;
             bleSerachDelayStopState = 0
         case .unauthorized:
             print("###### central.state is .unauthorized")
-            MainManager.shared.member_info.isBLE_ON = false
-         //   MainManager.shared.member_info.isCAR_FRIENDS_CONNECT = false;
+            MainManager.shared.info.isBLE_ON = false
+            MainManager.shared.info.isCAR_FRIENDS_CONNECT = false;
             bleSerachDelayStopState = 0
         case .poweredOff:
             
@@ -5795,22 +6482,22 @@ extension AViewController: CBPeripheralDelegate, CBCentralManagerDelegate {
             // 블루투스 켜라 팝업
             self.performSegue(withIdentifier: "blueToothOffPopSegue02", sender: self)
             
-            print("central.state is .poweredOff")
-            MainManager.shared.member_info.isBLE_ON = false
-            // MainManager.shared.member_info.isCAR_FRIENDS_CONNECT = false;
+            print("###### central.state is .poweredOff")
+            MainManager.shared.info.isBLE_ON = false
+            MainManager.shared.info.isCAR_FRIENDS_CONNECT = false;
             bleSerachDelayStopState = 0
             
         case .poweredOn:
             print("###### central.state is .poweredOn")
-            MainManager.shared.member_info.isBLE_ON = true
+            MainManager.shared.info.isBLE_ON = true
             // 블루투스 켜져 있다 장비 스캔 시작
             centralManager.scanForPeripherals (withServices : nil )
             
             // A4992052-4B0D-3041-EABB-729B52C73924
         default:
             print("###### central.state is .other")
-            MainManager.shared.member_info.isBLE_ON = false
-            MainManager.shared.member_info.isCAR_FRIENDS_CONNECT = false;
+            MainManager.shared.info.isBLE_ON = false
+            MainManager.shared.info.isCAR_FRIENDS_CONNECT = false;
             bleSerachDelayStopState = 0
         }
     }
@@ -5821,7 +6508,7 @@ extension AViewController: CBPeripheralDelegate, CBCentralManagerDelegate {
         
             if( peripheral.name == MainManager.shared.BEAN_NAME ) {
                 
-                ToastIndicatorView.shared.setup(self.view, txt_msg: "")
+                ToastIndicatorView.shared.setup(self.view, "")
                 
                 // 카프랜드를 하나 찾으면 3초 동안 다른 카프랜드 기기를 찾아보고 연결 시작
                 if( bleSerachDelayStopState == 0 ) {
@@ -5844,7 +6531,7 @@ extension AViewController: CBPeripheralDelegate, CBCentralManagerDelegate {
            }
             else {
 
-                // print("###### 다른장치 BLE 기기 신호세기\(RSSI)  ::  \(peripheral)")
+                print("###### 다른장치 BLE 기기 신호세기\(RSSI)  ::  \(peripheral)")
             }
         
     }
@@ -5852,8 +6539,7 @@ extension AViewController: CBPeripheralDelegate, CBCentralManagerDelegate {
     // 장치의 서비스 목록 가져올수 있다
     func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
         
-        MainManager.shared.member_info.isCAR_FRIENDS_CONNECT = true;
-        print("###### BLE Connected! 서비스 목록 가져오기 :: isCAR_FRIENDS_CONNECT = TRUE ")
+        print("###### 카프랜드 연결 성공 BLE Connected! 서비스 목록 가져오기 ")
         carFriendsPeripheral?.discoverServices(nil)
     }
     
@@ -5872,13 +6558,21 @@ extension AViewController: CBPeripheralDelegate, CBCentralManagerDelegate {
             peripheral.discoverCharacteristics( nil, for: service   )
         }
         
-        // 카프랜드 연결후 데이타 두번 파싱 후 카프랜드 명령실행 보낼수 있게 딜레이 주고 인디케이터 돌린다
-        BLE_WAKE_UP_DELEY_COUNT = 0
-        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
+        MainManager.shared.info.isCAR_FRIENDS_CONNECT = true;
+        // 5초 파싱 데이타 없으면 단말기 재연결 초기화
+        MainManager.shared.info.parsingStartCount = 0
+        MainManager.shared.info.parsingEndCount = 0
+        MainManager.shared.info.parsingTimeCount = 50
+        
+        // 앱 실행후 핀코드 한번만 비교, 접속 끊어졌다 다시 연결때 비교 안함
+        if( MainManager.shared.isBlePinCodeCheckFirst == false ) {
+            
+            MainManager.shared.isBlePinCodeCheckFirst = true
+            // 카프랜드 연결 되면 1초후   한번 실행
+            timerDATETIME = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(timerActionSetDATETIME), userInfo: nil, repeats: false)
+        }
         
         
-        // 카프랜드 연결 되면 1초후   한번 실행
-        timerDATETIME = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(timerActionSetDATETIME), userInfo: nil, repeats: false)
     }
     
     
@@ -5889,7 +6583,9 @@ extension AViewController: CBPeripheralDelegate, CBCentralManagerDelegate {
         guard let characteristics = service.characteristics else { return }
         
         for characteristic in characteristics {
+            
             let uuid = CBUUID(string: "FFE1")
+            
             if characteristic.uuid == uuid {
                 
                 //                    if characteristic.properties.contains(.read) {
@@ -5937,9 +6633,9 @@ extension AViewController: CBPeripheralDelegate, CBCentralManagerDelegate {
         
         // 데이타
         if( dataString != nil ) {
-            MainManager.shared.member_info.AddStr( dataString! )
+            MainManager.shared.info.AddStr( dataString! )
         }
-        //MainManager.shared.member_info.TOTAL_BLE_READ_ACC_DATA += dataString!
+
     }
     
     
@@ -5951,34 +6647,53 @@ extension AViewController: CBPeripheralDelegate, CBCentralManagerDelegate {
         // Something disconnected, check to see if it's our peripheral
         // If so, clear active device/service
         
-        print( "###### didDisconnectPeripheral 연결된 블루투스 장치 끊김(꺼짐) ___" )
+        MainManager.shared.info.isCAR_FRIENDS_CONNECT = false
+        print( "###### didDisconnectPeripheral 연결된 블루투스 장치 끊김(꺼짐)." )
         
-        
-        if peripheral == self.carFriendsPeripheral {
-            
-            MainManager.shared.member_info.isCAR_FRIENDS_CONNECT = false;
-            self.carFriendsPeripheral = nil
-            self.myCharacteristic = nil
-            //self.mySerview = nil
-            bleSerachDelayStopState = 0
-        }
-        
-        // Scan for new devices using the function you initially connected to the perhipheral
-        // self.scanForNewDevices()
-        
-        // 다른씬으로 이동이면 블투 스캔 재 연결 안한다
+        // 다른씬으로 이동이면 재 연결 안한다
         if( isMoveSceneDisConnectBLE == false ) {
-            // 끊기면 다시 스캔 연결
-            centralManager.scanForPeripherals (withServices : nil )
+            
+            // 다시 재 연결
+            centralManager.connect(carFriendsPeripheral!, options: nil)
+            
+            // DB 데이타 저장
+            MainManager.shared.info.bBleConnectSaveDb = true
+            MainManager.shared.info.bBleConnectSaveDbParsingCount = 0
+            
+            // 연결 될때 인디케이트 3초 돌리기
+            ToastIndicatorView.shared.setup(self.view, "")
+            timerBleReconnect = Timer.scheduledTimer(timeInterval: 3, target: self, selector: #selector(timerActionBleReConnect), userInfo: nil, repeats: false)
+            
+            
+            
+            print( "###### centralManager.connect 끊겼다. 다시 연결." )
+            
         }
+        
+//        if peripheral == self.carFriendsPeripheral {
+//
+//            MainManager.shared.info.isCAR_FRIENDS_CONNECT = false;
+//            self.carFriendsPeripheral = nil
+//            self.myCharacteristic = nil
+//            //self.mySerview = nil
+//            bleSerachDelayStopState = 0
+//
+//
+//        // Scan for new devices using the function you initially connected to the perhipheral
+//        // self.scanForNewDevices()
+//
+//        // 다른씬으로 이동이면 블투 스캔 재 연결 안한다
+//        if( isMoveSceneDisConnectBLE == false ) {
+//            // 끊기면 다시 스캔 연결
+//            centralManager.scanForPeripherals (withServices : nil )
+//            print( "###### didDisconnectPeripheral 끊겼다. 다시 스캔 시작" )
+//        }
+        
     }
     
     
-    
-    
-    
     // 장치를 감지하면 "didDiscoverPeripheral"대리자 메서드가 다시 호출됩니다. 그런 다음 탐지 된 BLE 장치와의 연결을 설정하십시오.
-    
+    // 현재 호출 안됨
     func centralManager(central: CBCentralManager, didDiscoverPeripheral peripheral: CBPeripheral, advertisementData: [String : AnyObject], RSSI: NSNumber)
     {
         if peripheral.state == .connected {
@@ -5990,13 +6705,18 @@ extension AViewController: CBPeripheralDelegate, CBCentralManagerDelegate {
         }
     }
     
+        
+
+
+
+    
     
     
     
     // 블루 투스 카프랜드 연결 체크
     func isBLE_CAR_FRIENDS_CONNECT() -> Bool {
 
-        if( MainManager.shared.member_info.isBLE_ON == false || MainManager.shared.member_info.isCAR_FRIENDS_CONNECT == false )
+        if( MainManager.shared.info.isBLE_ON == false || MainManager.shared.info.isCAR_FRIENDS_CONNECT == false )
         {
             return false
         }
@@ -6030,8 +6750,10 @@ extension AViewController: CBPeripheralDelegate, CBCentralManagerDelegate {
         centralManager = CBCentralManager(delegate: self, queue: nil)
     }
     
+    
+    // 연결된 블루 투스 단말기에 명령을 보낸다.
     func setDataBLE(_ nsData:NSData ) {
-        // 블루투스 연결시 데이타 전송 실행
+        // 블루투스 연결시 단말기 명령 데이타 전송 실행
         if( isBLE_CAR_FRIENDS_CONNECT() == true && isPeripheral_LIVE() == true) {
             
             self.carFriendsPeripheral?.writeValue( nsData as Data, for: self.myCharacteristic!, type: CBCharacteristicWriteType.withoutResponse)
@@ -6052,12 +6774,11 @@ extension AViewController: CBPeripheralDelegate, CBCentralManagerDelegate {
 //        return
 //        //
         
-        
         // 카프랜드 한개 그냥접속
         if( peripherals.count == 1 ) {
             
             connectCarFriends(0)
-            print("_____ 카프랜드 단일 Connect\(carFriendsPeripheral)")
+            print("###### 카프랜드 단일 Connect\(carFriendsPeripheral)")
         }
         // 카프랜드 여러개
         else if( peripherals.count > 1 ) {
@@ -6067,11 +6788,11 @@ extension AViewController: CBPeripheralDelegate, CBCentralManagerDelegate {
             for i in 0..<peripherals.count {
                 
                 var bleMacAdd:String = (peripherals[i]?.identifier.uuidString)!
-                // 같은 맥주소 찾았다.
-                if( bleMacAdd == MainManager.shared.member_info.carFriendsMacAdd ) {
+                // 이전 연결 됬었던 같은 맥주소 찾았다.
+                if( bleMacAdd == MainManager.shared.info.carFriendsMacAdd ) {
                     
                     connectCarFriends(i)
-                    print("_____ 카프랜드 MAC FIND Connect\(carFriendsPeripheral)")
+                    print("###### 카프랜드 MAC FIND Connect\(carFriendsPeripheral)")
                     isMacFind = true
                 }
             }
@@ -6094,40 +6815,42 @@ extension AViewController: CBPeripheralDelegate, CBCentralManagerDelegate {
                 }
                 
                 connectCarFriends(tempIndex)
-                print("_____ 카프랜드 SignalStrength Connect\(carFriendsPeripheral)")
+                print("###### 카프랜드 연결 SignalStrength Connect\(carFriendsPeripheral)")
             }
         }
-
-        
-        //            carFriendsPeripheral = peripheral
-        //            carFriendsPeripheral?.delegate = self
-        //            centralManager.stopScan()
-        //            centralManager.connect(carFriendsPeripheral!)
     }
     
+    // 여러개 연결용
     func connectCarFriends(_ index:Int) {
         
         // 카프랜드 저장
         carFriendsPeripheral = peripherals[index]
-        
         // 맥주소 저장
-        MainManager.shared.member_info.carFriendsMacAdd = (carFriendsPeripheral?.identifier.uuidString)!
+        MainManager.shared.info.carFriendsMacAdd = (carFriendsPeripheral?.identifier.uuidString)!
         // 맥주소 로컬 저장
-        UserDefaults.standard.set(MainManager.shared.member_info.carFriendsMacAdd, forKey: "carFriendsMacAdd")
+        UserDefaults.standard.set(MainManager.shared.info.carFriendsMacAdd, forKey: "carFriendsMacAdd")
         
-        print("_____ MAC :: \(MainManager.shared.member_info.carFriendsMacAdd)" )
-        
+        // print("_____ MAC :: \(MainManager.shared.info.carFriendsMacAdd)" )
         
         // 스캔 중지 연결
         carFriendsPeripheral?.delegate = self
         centralManager.stopScan()
         centralManager.connect(carFriendsPeripheral!)
+        
+        MainManager.shared.info.bBleConnectSaveDb = true
+        MainManager.shared.info.bBleConnectSaveDbParsingCount = 0
+        
+        // 연결 될때 인디케이트 3초 돌리기
+        ToastIndicatorView.shared.setup(self.view, "")
+        timerBleReconnect = Timer.scheduledTimer(timeInterval: 3, target: self, selector: #selector(timerActionBleReConnect), userInfo: nil, repeats: false)
+        
+        //print("###### 카프렌즈 연결 Connect: \(carFriendsPeripheral)")
     }
     
     
-//    MainManager.shared.getDateTimeSendBLE()
-    
-    
+    func connectCarFriendsDirect(_ index:Int) {
+        
+    }
     
 }
 
@@ -6186,8 +6909,20 @@ extension String {
     }
     
     
-    
 }
 
 
 
+extension UIScrollView {
+    
+    func resizeScrollViewContentSize() {
+        
+        var contentRect = CGRect.zero
+        
+        for view in self.subviews {
+            
+            contentRect = contentRect.union(view.frame)
+        }
+        self.contentSize = contentRect.size
+    }
+}

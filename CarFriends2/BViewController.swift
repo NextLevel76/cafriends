@@ -106,7 +106,6 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
     // B 는 첫 서브메뉴에 스크롤 버튼이 없다. 그래서 안보이게
     var bFirstSubMenuLoadShow = false
     
-    
 
     var isScrollMenuUse = false // 서브 메뉴 사용중? b01 메뉴사용안함, b02~03 사용
     var bHideSubMenu = false
@@ -117,6 +116,8 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
     var webViewChangeOldRect:CGRect = CGRect(x:0, y:0, width:0, height:0)
     var webViewChangeBigRect:CGRect = CGRect(x:0, y:0, width:0, height:0)
     
+    
+    @IBOutlet weak var mainSubView: UIView!
     
     weak var webView: WKWebView!
     var activityIndicator:UIActivityIndicatorView = UIActivityIndicatorView()
@@ -173,7 +174,7 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
         activityIndicator.center = self.view.center
         activityIndicator.hidesWhenStopped = true
         activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.gray
-        self.view.addSubview(activityIndicator)
+        self.mainSubView.addSubview(activityIndicator)
         
         
         
@@ -225,63 +226,14 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
         
         // 저장된 쿠키 불러오기
         HTTPCookieStorage.restore()
-        print("____________ 유저 로그인")
-        //userLogin()
 
+        
+        // 아이폰 X 대응
+        MainManager.shared.initLoadChangeFrameIPhoneX(mainView: self.view, changeView: mainSubView)
     }
 
     
-    // blue001 / 01012345678
-    func userLogin() {
-        
-        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
-        
-        // login.php?Req=Login&ID=아이디&Pass=패스워드
-        var parameters = [
-            "Req": "Login",
-            "ID": MainManager.shared.member_info.str_id_nick,
-            "Pass": MainManager.shared.member_info.str_password]
-        
-        
-        
-        print(MainManager.shared.member_info.str_id_nick)
-
-        Alamofire.request(MainManager.shared.SeverURL+"login.php", method: .post, parameters: parameters)
-            .responseJSON { response in
-                
-                // self.activityIndicator.stopAnimating()
-                ToastIndicatorView.shared.close()
-                
-                print(response)
-                //to get status code
-                if let status = response.response?.statusCode {
-                    switch(status){
-                    case 201:
-                        print("example success")
-                    default:
-                        print("error with response status: \(status)")
-                    }
-                }
-                //to get JSON return value
-                if let json = try? JSON(response.result.value) {
-                    
-                    print(json["Result"])
-                    let Result = json["Result"].rawString()!
-                    if( Result == "LOGIN_OK" ) {
-                        
-                        print( "LOGIN_OK" )
-                        HTTPCookieStorage.save()
-                        // 웹뷰 세팅
-                        self.setupWebView()
-                    }
-                    else {
-                        print( "LOGIN_FAIL" )
-                    }
-                    print( Result )
-                }
-        
-        }
-    }
+    
     
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -304,7 +256,7 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
         // 가로 스크롤 막기
         if scrollView == webView.scrollView {
         
-            webView.scrollView.contentOffset = CGPoint(x: 0, y: webView.scrollView.contentOffset.y)
+            // webView.scrollView.contentOffset = CGPoint(x: 0, y: webView.scrollView.contentOffset.y)
         }
        
         
@@ -394,6 +346,7 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
     @IBAction func pressedA(_ sender: UIButton) {
         let myView = self.storyboard?.instantiateViewController(withIdentifier: "a00") as! AViewController
         self.present(myView, animated: true, completion: nil)
+
     }
     
     
@@ -401,10 +354,11 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
     @IBAction func pressedC(_ sender: UIButton) {
         
         // 인터넷 연결 확인
-        if( MainManager.shared.isConnectCheck() == false ) {
+        if( MainManager.shared.isConnectCheck(self) == false ) {
             
             let myView = self.storyboard?.instantiateViewController(withIdentifier: "a00") as! AViewController
             self.present(myView, animated: true, completion: nil)
+
             return
         }
         
@@ -426,10 +380,11 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
     @IBAction func pressed_b_01(_ sender: UIButton) {
         
         // 인터넷 연결 확인
-        if( MainManager.shared.isConnectCheck() == false ) {
+        if( MainManager.shared.isConnectCheck(self) == false ) {
             
             let myView = self.storyboard?.instantiateViewController(withIdentifier: "a00") as! AViewController
             self.present(myView, animated: true, completion: nil)
+
             return
         }
         
@@ -462,17 +417,18 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
         self.webView.frame = webViewChangeBigRect
 
         
-        //self.view.bringSubview(toFront: b01_ScrollMenuView)
+
     }
     
     // 실내용품,외장용품,오일류,튜닝,계절상품
     @IBAction func pressed_b_02(_ sender: UIButton) {
         
         // 인터넷 연결 확인
-        if( MainManager.shared.isConnectCheck() == false ) {
+        if( MainManager.shared.isConnectCheck(self) == false ) {
             
             let myView = self.storyboard?.instantiateViewController(withIdentifier: "a00") as! AViewController
             self.present(myView, animated: true, completion: nil)
+
             return
         }
         
@@ -497,7 +453,7 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
 
         
         
-        self.view.bringSubview(toFront: menuScrollView)
+        self.mainSubView.bringSubview(toFront: menuScrollView)
     }
     
     
@@ -505,10 +461,11 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
     @IBAction func pressed_b_03(_ sender: UIButton) {
         
         // 인터넷 연결 확인
-        if( MainManager.shared.isConnectCheck() == false ) {
+        if( MainManager.shared.isConnectCheck(self) == false ) {
             
             let myView = self.storyboard?.instantiateViewController(withIdentifier: "a00") as! AViewController
             self.present(myView, animated: true, completion: nil)
+
             return
         }
         
@@ -531,7 +488,7 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
         restartWebView( MainManager.shared.SeverURL+"bbs/board.php?bo_table=B_3_1", true )
         
         
-        self.view.bringSubview(toFront: menuScrollView)
+        self.mainSubView.bringSubview(toFront: menuScrollView)
     }
     
     
@@ -579,15 +536,16 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
     func b02MenuBtnAction(_ sender: UIButton) {
         
         // 인터넷 연결 확인
-        if( MainManager.shared.isConnectCheck() == false ) {
+        if( MainManager.shared.isConnectCheck(self) == false ) {
             
             let myView = self.storyboard?.instantiateViewController(withIdentifier: "a00") as! AViewController
             self.present(myView, animated: true, completion: nil)
+
             return
         }
         
         
-       ToastIndicatorView.shared.setup(self.view, txt_msg: "")
+       ToastIndicatorView.shared.setup(self.view, "")
         
         for i in 1...btn_image1.count {
             
@@ -698,7 +656,7 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
     func b03MenuBtnAction(_ sender: UIButton) {
         
         // 인터넷 연결 확인
-        if( MainManager.shared.isConnectCheck() == false ) {
+        if( MainManager.shared.isConnectCheck(self) == false ) {
             
             let myView = self.storyboard?.instantiateViewController(withIdentifier: "a00") as! AViewController
             self.present(myView, animated: true, completion: nil)
@@ -707,7 +665,7 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
         
 
         
-        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
+        ToastIndicatorView.shared.setup(self.view, "")
 
 //
 //        let btn_image = ["frame-A-02-01-off","frame-A-02-02-off","frame-A-02-03-off","frame-A-02-04-off","frame-A-02-05-off","frame-A-02-06-off","frame-A-02-07-off","frame-A-02-08-off","frame-A-02-09-off","frame-A-02-10-off","frame-A-02-11-off"]
@@ -789,7 +747,7 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
     func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
         
         print("Webview start");
-        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
+        ToastIndicatorView.shared.setup(self.view, "")
         // 첫번째 화면이 다 로딩되면 다른 버튼 클릭 동작 가능하게
         
     }
@@ -823,15 +781,15 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
         self.webView.navigationDelegate = self
         webView.uiDelegate         = self
         self.webView.translatesAutoresizingMaskIntoConstraints = false
-        self.view.addSubview(webView)
+        self.mainSubView.addSubview(webView)
         
         // 스크롤 딜리게이트 연결
         self.webView.scrollView.delegate = self
         
-        //self.view.bringSubview(toFront: activityIndicator)
+
         //activityIndicator.startAnimating()        
         
-        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
+        ToastIndicatorView.shared.setup(self.view, "")
         
         let temp = MainManager.shared.SeverURL+"bbs/board.php?bo_table=B_1_1&wr_id=1"
         let url = URL(string: temp.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! )
@@ -890,13 +848,13 @@ class BViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKS
         self.webView.navigationDelegate = self
         webView.uiDelegate         = self
         self.webView.translatesAutoresizingMaskIntoConstraints = false
-        self.view.addSubview(webView)
+        self.mainSubView.addSubview(webView)
         
         // 스크롤 딜리게이트 연결
         self.webView.scrollView.delegate = self
         
         
-        // ToastIndicatorView.shared.setup(self.view, txt_msg: "")
+        // ToastIndicatorView.shared.setup(self.view, "")
         
         //self.view.bringSubview(toFront: activityIndicator)
         //activityIndicator.startAnimating()

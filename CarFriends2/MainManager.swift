@@ -6,6 +6,7 @@
 //  Copyright © 2018년 Cheong Lee. All rights reserved.
 //
 
+// https://bitbucket.org/ 무료 비공개 nextlevel7676@gmail.com
 // 깃허브 주소
 // git remote add CarFriends2 https://github.com/NextLevel76/cafriends
 
@@ -48,19 +49,44 @@ struct Batt_dynamic {
 }
 
 
+enum AutoBtn: Int {
+    
+    case LOCKFOLDING = 0
+    case AUTOWINDOWS
+    case AUTOSUNROOF
+    case REV_WINDOW
+    case RES_RVS
+}
+
+
+enum EN_DB_KIND: Int {
+    
+    case SET_TOT_DRIVE = 0
+    case SET_WEEK_DRIVE
+    case SET_AVG_FUEL
+    case SET_WEEK_FUEL
+    case SET_VIN_DATA
+    case SET_SEED
+    case GET_KEY
+}
+
+
 struct Member_Info {
     
-    let DF_DOOR_LOCK = 0
-    let DF_HATCH = 1
-    let DF_WINDOW = 2
-    let DF_SUNROOF = 3
-    let DF_RVS = 4
-    let DF_KEY_ON_IGN = 5
-    let DF_AUTO_LOCK_FOLDING = 6
-    let DF_AUTO_WINDOW_CLOSE = 7
-    let DF_AUTO_SUNROOF = 8
-    let DF_AUTO_WINDOW_REV_OPEN = 9
-    let DF_RES_RVS_TIME = 10
+    var bCommunicationTry3 = [false,false,false,false,false,false,false]
+    var bCommunicationTry3Count = [0,0,0,0,0,0,0]
+    
+//    let DF_DOOR_LOCK = 0
+//    let DF_HATCH = 1
+//    let DF_WINDOW = 2
+//    let DF_SUNROOF = 3
+//    let DF_RVS = 4
+//    let DF_KEY_ON_IGN = 5
+//    let DF_AUTO_LOCK_FOLDING = 6
+//    let DF_AUTO_WINDOW_CLOSE = 7
+//    let DF_AUTO_SUNROOF = 8
+//    let DF_AUTO_WINDOW_REV_OPEN = 9
+//    let DF_RES_RVS_TIME = 10
     
     // mem_join
     var str_password = "1111"
@@ -76,6 +102,7 @@ struct Member_Info {
     
     var str_car_fuel_type = "수소차"
     var i_fuel_piker_select = 0
+    
     
     var str_car_vin_number = ""
     var str_car_plate_num = "서울가1234"
@@ -137,24 +164,42 @@ struct Member_Info {
     var ser_Car_Status_Key = "0"
     var bCar_Status_Security = false
     
-    var bCar_Func_AutoLockFolding = false
-    var bCar_Func_AutoWindowClose = false
-    var bCar_Func_AutoSunroofClose = false
-    var bCar_Func_AutoWindowRevOpen = false
-    var bCar_Func_RVS = false
-    // BLE에서 가져온 시간
-    var strCar_Status_ReservedRVSTime = "0"
     
+    // 자동 버튼 초기값 UI 세팅
+    var autoBtnDataSet = false
+    var autoBtnDataSetCount = 0
     
+    // 자동 버튼 단말기 명령 실행 플래그, 2회 카운트
+    // BLE 명령을 주고, 파싱 2회 안에 결과를 유저한테 알린다.
+    var bSetDataBleAutoBtn = [false,false,false,false,false]
+    var iSetDataBleAutoBtnCount = [0,0,0,0,0]
+    
+    // 단말기에서 읽어온 값
+    var bGetBleAutoBtnState = [false,false,false,false,false]
+//    var bCar_Func_AutoLockFolding = false
+//    var bCar_Func_AutoWindowClose = false
+//    var bCar_Func_AutoSunroofClose = false
+//    var bCar_Func_AutoWindowRevOpen = false
+//    var bCar_Func_RVS = false
     
     // 유저가 동작한 값을 가지고 위 auto 변수들 값과 다를 경우 BLE에 명령을 보내 같아지게 만든다.
-    var bCar_Btn_AutoLockFolding = false
-    var bCar_Btn_AutoWindowClose = false
-    var bCar_Btn_AutoSunroofClose = false
-    var bCar_Btn_AutoWindowRevOpen = false
-    var bCar_Btn_RVS = false
+    var bUserInputAutoBtnState = [false,false,false,false,false]
+//    var bCar_Btn_AutoLockFolding = false
+//    var bCar_Btn_AutoWindowClose = false
+//    var bCar_Btn_AutoSunroofClose = false
+//    var bCar_Btn_AutoWindowRevOpen = false
+//    var bCar_Btn_RVS = false
+    
+    // 팝업창에서 예약시동 설정
+    var bStartPopTimeReserv:Bool = false
+    // 시간 세팅도, 2회 카운트
+    var bSetResRvsTime = false
+    var bSetResRvsTimeCount = 0
+    // 단말기 올라온 시간
+    var strGetBleReservedRVSTime = "0"
     // 유저가 세팅한 시간
-    var strCar_Check_ReservedRVSTime = "11:22:33"
+    var strUserInputReservedRVSTime = "00:00:00"
+    
     
     
     var str_SetPinCode = "aaaa"    // 유저 입력 핀코드
@@ -170,6 +215,20 @@ struct Member_Info {
     
     
     
+    // 단말기 차량 정보 저장 카운터 2회 파싱 후 DB 저장
+    var bBleConnectSaveDb = false
+    var bBleConnectSaveDbParsingCount = 0
+    
+    // 파싱 데이타가 5초 동안 제대로 들어오지 않으면 단말기 블루투스 재연결 한다.
+    // [TOTAL_MILEAGE]
+    var parsingStartCount = 0
+    // [ENGINE_RUN]
+    var parsingEndCount = 0
+    // 시간 0.1 초 쓰레드에 돌린다.
+    var parsingTimeCount = 50
+    
+    
+
     
     
     
@@ -197,7 +256,7 @@ struct Member_Info {
         
         var stringValue = READ_DATA;
         
-        //print ("______ str value : \(stringValue)")
+            // print ("______ AddStr value : \(stringValue)")
         
         for 	i in 0..<stringValue.count {
             // 한글자 빼기
@@ -241,7 +300,8 @@ struct Member_Info {
         
         var arr = READ_DATA.components(separatedBy: "=")
         // 배열 갯수 얻기 배열이 2개가 아님 제대로 된 명령이 아니다.
-        let count = arr.flatMap({$0}).count
+        
+        let count = arr.count
         if( count < 2 ) {
             
             print("______BLE DATA ERR = \(READ_DATA)")
@@ -265,6 +325,19 @@ struct Member_Info {
             str_TotalDriveMileage = String(cleanedText)
             // 클라 저장
             UserDefaults.standard.set(str_TotalDriveMileage, forKey: "str_TotalDriveMileage")
+            
+            
+            if( bBleConnectSaveDb == true ) {
+                
+                if( bBleConnectSaveDbParsingCount < 2 ) {
+                    
+                    bBleConnectSaveDbParsingCount += 1
+                }
+            }
+            
+            
+            
+            parsingStartCount += 1
             break
         case "[WEEK_MILEAGE]":
             if( cleanedText == "unknown" ) { cleanedText = "0" }
@@ -357,43 +430,79 @@ struct Member_Info {
             bCar_Status_Security = false
             if( cleanedText == "1" ) { bCar_Status_Security = true }
             break
+            
+        // 여기서 부터 AUTO_BTN
         case "[LOCKFOLDING]":
             if( cleanedText == "unknown" ) { cleanedText = "0" }
-            bCar_Func_AutoLockFolding = false
-            if( cleanedText == "1" ) { bCar_Func_AutoLockFolding = true }
-
+            bGetBleAutoBtnState[AutoBtn.LOCKFOLDING.rawValue] = false
+            if( cleanedText == "1" ) { bGetBleAutoBtnState[AutoBtn.LOCKFOLDING.rawValue] = true }
+            
+            // auto btn A화면 처음 초기화
+            setAutoBtnInit()
+            
+            
+            if( bSetDataBleAutoBtn[AutoBtn.LOCKFOLDING.rawValue] == true ) {
+                
+                iSetDataBleAutoBtnCount[AutoBtn.LOCKFOLDING.rawValue] += 1
+            }
+            
             break
         case "[AUTOWINDOWS]":
             if( cleanedText == "unknown" ) { cleanedText = "0" }
-            bCar_Func_AutoWindowClose = false
-            if( cleanedText == "1" ) { bCar_Func_AutoWindowClose = true }
+            bGetBleAutoBtnState[AutoBtn.AUTOWINDOWS.rawValue] = false
+            if( cleanedText == "1" ) { bGetBleAutoBtnState[AutoBtn.AUTOWINDOWS.rawValue] = true }
+            
+            if( bSetDataBleAutoBtn[AutoBtn.AUTOWINDOWS.rawValue] == true ) {
+                
+                iSetDataBleAutoBtnCount[AutoBtn.AUTOWINDOWS.rawValue] += 1
+            }
             
             break
         case "[AUTOSUNROOF]":
             if( cleanedText == "unknown" ) { cleanedText = "0" }
-            bCar_Func_AutoSunroofClose = false
-            if( cleanedText == "1" ) { bCar_Func_AutoSunroofClose = true }
+            bGetBleAutoBtnState[AutoBtn.AUTOSUNROOF.rawValue] = false
+            if( cleanedText == "1" ) { bGetBleAutoBtnState[AutoBtn.AUTOSUNROOF.rawValue] = true }
+            
+            if( bSetDataBleAutoBtn[AutoBtn.AUTOSUNROOF.rawValue] == true ) {
+                
+                iSetDataBleAutoBtnCount[AutoBtn.AUTOSUNROOF.rawValue] += 1
+            }
             
             break
         case "[REV_WINDOW]":
             if( cleanedText == "unknown" ) { cleanedText = "0" }
-            bCar_Func_AutoWindowRevOpen = false
-            if( cleanedText == "1" ) { bCar_Func_AutoWindowRevOpen = true }
+            bGetBleAutoBtnState[AutoBtn.REV_WINDOW.rawValue] = false
+            if( cleanedText == "1" ) { bGetBleAutoBtnState[AutoBtn.REV_WINDOW.rawValue] = true }
             
-            break
-        case "[RES_RVS_TIME]":
-            strCar_Status_ReservedRVSTime = String(cleanedText)
+            if( bSetDataBleAutoBtn[AutoBtn.REV_WINDOW.rawValue] == true ) {
+                
+                iSetDataBleAutoBtnCount[AutoBtn.REV_WINDOW.rawValue] += 1
+            }
+            
             break
         case "[RES_RVS]":
             if( cleanedText == "unknown" ) { cleanedText = "0" }
-            bCar_Func_RVS = false
-            if( cleanedText == "1" ) { bCar_Func_RVS = true }
+            bGetBleAutoBtnState[AutoBtn.RES_RVS.rawValue] = false
+            if( cleanedText == "1" ) { bGetBleAutoBtnState[AutoBtn.RES_RVS.rawValue] = true }
+            
+            if( bSetDataBleAutoBtn[AutoBtn.RES_RVS.rawValue] == true ) {
+                
+                iSetDataBleAutoBtnCount[AutoBtn.RES_RVS.rawValue] += 1
+            }
+            break
+        case "[RES_RVS_TIME]":
+            strGetBleReservedRVSTime = String(cleanedText)
+            
+            if( bSetResRvsTime == true ) {
+                
+                bSetResRvsTimeCount += 1
+            }
             break
             
         case "[PIN_CODE]":
             // 기기에서 올라온 핀코드
             //var tempPinCode = String(cleanedText)
-            if( cleanedText == "unknown" ) { cleanedText = "0000" }
+            // if( cleanedText == "unknown" ) { cleanedText = "0000" }
             str_GetPinCode = String(cleanedText)
             break
             
@@ -406,10 +515,15 @@ struct Member_Info {
         case "[DTC]":
             // [DTC_EBCM]=P0000-00 YYYY-MM-DD HH:MM:SS
             let data:String = String(cleanedText)
-            let tempCode:String = String(data[..<data.index(data.startIndex, offsetBy: 8)])
-            
-            if( cleanedText == "unknown" ) { cleanedText = "0" }
-            else                           { setDTC_INFO_DB(tempCode) }
+            if( data.count != 28 ) { cleanedText = "unknown" }
+            if( cleanedText == "unknown" ) { cleanedText = "_Err_DTC_" }
+            // [DTC]=A0000-0A 1970-01-01 04:29:58
+            else
+            {
+                // DTC 코드가 올라오면 앞 8자리 잘라서 실시간으로 바로 DB 저장
+                let tempCode:String = String(data[..<data.index(data.startIndex, offsetBy: 8)])
+                setDTC_INFO_DB(tempCode)
+            }
             break
             
         case "[DRIVEABLE]":
@@ -423,11 +537,9 @@ struct Member_Info {
         case "[ENGINE_RUN]":
             bENGINE_RUN = false
             if( cleanedText == "1" ) { bENGINE_RUN = true }
+            
+            parsingEndCount += 1
             break
-
-            
-            
-            
             
 //        case "[DTC_ECM]":
 //            // [DTC_EBCM]=P0000-00 YYYY-MM-DD HH:MM:SS
@@ -451,13 +563,27 @@ struct Member_Info {
 //            setDTC_INFO_DB(tempCode)
 //            break
             
-            
         default:
-            print(String(cleanedText))
+            print("______BLE DATA default = " + arr[0] + " : " + String(cleanedText))
         }
     }
 
     
+    // auto 버튼 초기화 세팅
+    mutating func setAutoBtnInit() {
+        
+        if( autoBtnDataSet == false ) {
+            
+            if( autoBtnDataSetCount > 2) {
+                
+                autoBtnDataSet = true
+            }
+            else {
+                
+                autoBtnDataSetCount += 1
+            }
+        }
+    }
     
     
     
@@ -469,10 +595,8 @@ struct Member_Info {
             "Req": "AddDTC",
             "Diag_Date": str_Phone_DateTime,
             "DTC": strDATA,
-            "Car_Model": MainManager.shared.member_info.str_car_kind,
-            "VIN": MainManager.shared.member_info.str_car_vin_number]
-        
-        
+            "Car_Model": str_car_kind,
+            "VIN": str_car_vin_number]
         
         Alamofire.request(MainManager.shared.SeverURL+"database.php", method: .post, parameters: parameters)
             .responseJSON { response in
@@ -496,9 +620,11 @@ struct Member_Info {
                     if( Result == "SAVE_OK" ) {
                         
                         print( "DTC_저장 OK!" )
-                        
                         // 8주 DTC 다시 읽는 플래그
-                        MainManager.shared.member_info.bAddDtcOK_8WeekReadDtc = true
+                        MainManager.shared.info.bAddDtcOK_8WeekReadDtc = true
+                        
+                        print("###### DTC parameters \(parameters)")
+                        
                     }
                     else {
                         
@@ -506,6 +632,68 @@ struct Member_Info {
                     }
                     print( Result )
                 }
+        }
+    }
+    
+    
+    
+    mutating func readCarListFromDB(_ viewCtr:UIViewController  ) {
+        
+        // 카 리스트 데이타 받았다 리스트 획득. 필요 없다
+        if( MainManager.shared.bCarListRequest == true ) { return }
+        
+        print("initReadSelectCar")
+        
+        ToastIndicatorView.shared.setup(viewCtr.view, "")
+        
+        // database.php?Req=CarList
+        // "Res":"CarList","CarList":["스파크","크루즈",…..]
+        let parameters = [
+            "Req": "CarList"
+        ]  // 차종
+        
+        Alamofire.request(MainManager.shared.SeverURL+"database.php", method: .post, parameters: parameters)
+            .responseJSON
+        { response in
+                
+            ToastIndicatorView.shared.close()
+            print(response)
+            
+            if let status = response.response?.statusCode {
+                switch(status){
+                case 201:
+                    print("example success")
+                default:
+                    print("error with response status: \(status)")
+                }
+            }
+            
+            //to get JSON return value
+            if let json = try? JSON(response.result.value) {
+                
+                print(json["Res"])
+                let Result = json["Res"].rawString()!
+                
+                if( Result == "CarList" ) {
+                    
+                    MainManager.shared.bCarListRequest = true // 데이타 받았다 체크
+                    
+                    let carList = json["CarList"]
+                    print( carList )
+                    
+                    for i in 0..<carList.count {
+                        MainManager.shared.str_select_carList.append( carList[i].stringValue )
+                    }
+                }
+                else {                    
+                    // 카 리스트 못받았다
+                    MainManager.shared.alertPopMessage(viewCtr, "서버와의 연결이 지연되고 있습니다. 인터넷 연결을 확인해 주세요.")
+                }
+            }
+            else {
+                // 카 리스트 못받았다
+                MainManager.shared.alertPopMessage(viewCtr, "서버와의 연결이 지연되고 있습니다. 인터넷 연결을 확인해 주세요.")
+            }
         }
     }
     
@@ -662,6 +850,7 @@ struct Member_Info {
     mutating func getREAD_DTC_ALL() -> NSData {
         
         str_Instruction = "[READ_DTC_ALL]=1!"
+        
         return writeData( str_Instruction )
     }
     
@@ -676,6 +865,15 @@ struct Member_Info {
         
         return dataWriteBLE
     }
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     mutating func readDataCarFriendsBLE() {
         
@@ -752,7 +950,14 @@ class MainManager   {
     
     var SeverURL = "http://carfriends.tunetech.co.kr/"
     
+    
+    // let BEAN_NAME = "JDY-09-V4.3"
     let BEAN_NAME = "BT05"
+    // let BEAN_NAME = "HMSoft"
+    
+    var ASPN_TOKEN = ""
+    
+    
     
     var bAPP_TEST = true
     
@@ -760,8 +965,9 @@ class MainManager   {
     var isBLE_RESTART = false
     
     
-    // 앱 인테넷 체크 실행 팝업 플레그
-    var isPopupStartNeteorkCheck = false
+
+    
+    var isBlePinCodeCheckFirst = false // 앱 실행후 처음 접속시 한번만 핀코드 비교 플래그
     
     
     var bUserLoginOK = false
@@ -780,7 +986,7 @@ class MainManager   {
     
     var check: Int = 0
     
-    var member_info:Member_Info = Member_Info.init()
+    var info:Member_Info = Member_Info.init()
 
     
     
@@ -791,8 +997,6 @@ class MainManager   {
     
     // 10: 예약시동
     var bA02ON:[Bool] = [false,true,false,true,false,true,true,false,true,false,false]
-    // 팝업창에서 예약시동 설정, 이미지 변경
-    var bStartPopTimeReserv:Bool = false
     
     
     var bCarListRequest:Bool = false
@@ -815,18 +1019,40 @@ class MainManager   {
     //Initializer access level change now
     private init(){}
     
-    func requestForMainManager(){
+    func requestForMainManager() {
         //Code Process
         mainGranted = true
         iMemberJoinState = 0
-        self.member_info = Member_Info.init()
+        self.info = Member_Info.init()
         print("[[ MainManager granted ]]")
     }
     
     
     
+    
+    
     // 인터넷 연결 체크
-    func isConnectCheck() -> Bool {
+    func alertPopMessage(_ viewCtr:UIViewController, _ msg:String  ) {
+            
+        let alertController = UIAlertController(title: "", message: msg, preferredStyle: UIAlertControllerStyle.alert)
+        //                let DestructiveAction = UIAlertAction(title: "취소", style: UIAlertActionStyle.Destructive) { (result : UIAlertAction) -> Void in
+        //
+        //                    print("취소")
+        //                }
+        
+        let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+            
+            print( "_____alertPopMessage : " + msg )
+        }
+        // alertController.addAction(DestructiveAction)
+        
+        alertController.addAction(okAction)
+        viewCtr.present(alertController, animated: true, completion: nil)
+    }
+    
+    
+    // 인터넷 연결 체크
+    func isConnectCheck(_ viewCtr:UIViewController  ) -> Bool {
         
         if Connectivity.isConnectedToInternet {
             print("Internet Connected")
@@ -834,8 +1060,23 @@ class MainManager   {
         } else {
             
             print("No Internet")
-            var alert = UIAlertView(title: "No Internet Connection", message: "서버와의 연결이 지연되고 있습니다. 인터넷 연결을 확인해 주세요.", delegate: nil, cancelButtonTitle: "OK")
-            alert.show()
+            
+            
+            let alertController = UIAlertController(title: "", message: "서버와의 연결이 지연되고 있습니다. 인터넷 연결을 확인해 주세요.", preferredStyle: UIAlertControllerStyle.alert)
+            //                let DestructiveAction = UIAlertAction(title: "취소", style: UIAlertActionStyle.Destructive) { (result : UIAlertAction) -> Void in
+            //
+            //                    print("취소")
+            //                }
+            
+            let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+                
+                print("isConnectCheck")
+            }
+            // alertController.addAction(DestructiveAction)
+            
+            alertController.addAction(okAction)
+            viewCtr.present(alertController, animated: true, completion: nil)
+            
             return false
         }
     }
@@ -854,13 +1095,29 @@ class MainManager   {
     }
     
     // 인터넷 연결 체크
-    func isLoginErrMessage() -> Bool {
+    func isLoginErrMessage(_ viewCtr:UIViewController ) -> Bool {
         
         if( bUserLoginOK == false ) {
             
-            print("No Login")
-            let alert = UIAlertView(title: "No Login Connection", message: "로그인이 지연되고 있습니다. 잠시후 확인해 주세요.", delegate: nil, cancelButtonTitle: "OK")
-            alert.show()
+            print("Faild Login")
+            
+//            let alert = UIAlertView(title: "No Login Connection", message: "로그인이 지연되고 있습니다. 잠시후 확인해 주세요.", delegate: nil, cancelButtonTitle: "OK")
+//            alert.show()            
+            
+            let alertController = UIAlertController(title: "", message: "로그인이 지연되고 있습니다. 인터넷 연결을 확인해 주세요.", preferredStyle: UIAlertControllerStyle.alert)
+            //                let DestructiveAction = UIAlertAction(title: "취소", style: UIAlertActionStyle.Destructive) { (result : UIAlertAction) -> Void in
+            //
+            //                    print("취소")
+            //                }
+            
+            let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+                
+                print("isLoginErrMessage")
+            }
+            // alertController.addAction(DestructiveAction)
+            
+            alertController.addAction(okAction)
+            viewCtr.present(alertController, animated: true, completion: nil)
         }
         
         return bUserLoginOK
@@ -880,7 +1137,7 @@ class MainManager   {
     let DEVICE_WIDTH_6PLUS: CGFloat  = 736.0   // 414x736
     let DEVICE_WIDTH_X: CGFloat      = 812.0   // 375x812
     
-    var bDeviceOther = false
+    var bDevice_iPhoneX = false
     
     var ratio_X:CGFloat = 0.0
     var ratio_Y:CGFloat = 0.0
@@ -890,24 +1147,37 @@ class MainManager   {
         
         let deviceScreenSize : CGSize = view.bounds.size
         
+        ratio_X = 1.0
+        ratio_Y = 1.0
         
         if deviceScreenSize.height == DEVICE_WIDTH_6 {
 
             //bDeviceOther = false // 6 기준으로 했기때문에 변환 없음
+            // 375, 667 + 145
             print("DEVICE_WIDTH_6")
-            ratio_X = 1.0
-            ratio_Y = 1.0
         }
         else {
             
             // 핫스팟 테더링 때문에... 직접 비율 전부 계산
             
-            ratio_X = deviceScreenSize.width / 375
-            ratio_Y = deviceScreenSize.height / 667
+            if( deviceScreenSize.height == 812.0 ) {
+            
+                // iPhone X = 375.0, 812.0
+                
+                bDevice_iPhoneX = true
+                
+                ratio_X = deviceScreenSize.width / 375
+                ratio_Y = 792.0 / 667
+            }
+            else {
+                
+                ratio_X = deviceScreenSize.width / 375
+                ratio_Y = deviceScreenSize.height / 667
+                
+                print("DEVICE width : \(deviceScreenSize.width)")
+                print("DEVICE height : \(deviceScreenSize.height)")
+            }
         }
-        
-        
-        
         
 //        if deviceScreenSize.height == DEVICE_WIDTH_5S {
 //
@@ -958,11 +1228,28 @@ class MainManager   {
         return newFrame
     }
     
+    // 아이폰X 대응 세로크기 812 에서 20 줄이고 위치를 20 내린다.
+    func initLoadChangeFrameIPhoneX( mainView: UIView, changeView: UIView ) {
+        
+        if( bDevice_iPhoneX ) {
+            
+            var newFrame: CGRect = CGRect()
+            
+            newFrame.origin.x = 0
+            newFrame.origin.y = 20
+            newFrame.size.width = mainView.frame.size.width
+            // 812
+            newFrame.size.height = 792
+            
+            changeView.frame = newFrame
+        }
+    }
+    
     
 
     
     // [DATETIME]=YYYY-MM-DD HH:MM:SS!
-    func getDateTimeSetTimeBLE(_ carFriendsPeripheral:CBPeripheral, _ myCharacteristic: CBCharacteristic ) {
+    func getDateTime_SetTimeBLE(_ carFriendsPeripheral:CBPeripheral, _ myCharacteristic: CBCharacteristic ) {
         
         if( carFriendsPeripheral == nil || myCharacteristic == nil )
             { return }
@@ -975,14 +1262,15 @@ class MainManager   {
         dateFormatter.locale = Locale(identifier: "ko_KR")
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
         
-        member_info.str_Phone_DateTime = dateFormatter.string(from: now)
+        info.str_Phone_DateTime = dateFormatter.string(from: now)
         
-//        var tempTime = "1111 " + member_info.str_Phone_DateTime
-        var tempTime = member_info.str_LocalPinCode + " " + member_info.str_Phone_DateTime
+//        var tempTime = "1111 " + info.str_Phone_DateTime
+        let tempTime = info.str_LocalPinCode + " " + info.str_Phone_DateTime
         
-        
-        let nsData:NSData = member_info.setDATETIME( member_info.str_Phone_DateTime )
+        let nsData:NSData = info.setDATETIME( info.str_Phone_DateTime )
         carFriendsPeripheral.writeValue( nsData as Data, for: myCharacteristic, type: CBCharacteristicWriteType.withoutResponse)
+        
+        print("##### 단말기 날짜 세팅 명령 -> " + tempTime )
         
 //        dateFormatter.dateFormat = "yyyy"
 //        let iNowYear:Int = Int(dateFormatter.string(from: now))!
@@ -1007,9 +1295,9 @@ class MainManager   {
         
         var batt_Table:[Batt_dynamic] = []
         // 배열 5개 초기화
-        for k in 0..<5 {
+        for _ in 0..<5 {
             
-            var tamp_Batt_dynamic = Batt_dynamic.init()
+            let tamp_Batt_dynamic = Batt_dynamic.init()
             batt_Table.append(tamp_Batt_dynamic)
         }
         
@@ -1045,6 +1333,112 @@ class MainManager   {
         
         return 100.0
     }
+    
+    
+    
+    
+    
+    
+    // 자동 로그인시 로컬 읽기
+    func getMyDataLocal() {
+        
+        let defaults = UserDefaults.standard
+        
+        // 클라에 저장된 유저 데이타 불러오기
+        if UserDefaults.standard.object(forKey: "str_id_nick") != nil
+        { MainManager.shared.info.str_id_nick = defaults.string(forKey: "str_id_nick")! }
+        if UserDefaults.standard.object(forKey: "str_password") != nil
+        { MainManager.shared.info.str_password = defaults.string(forKey: "str_password")! }
+
+        
+        if UserDefaults.standard.object(forKey: "str_id_phone_num") != nil
+        { MainManager.shared.info.str_id_phone_num = defaults.string(forKey: "str_id_phone_num")! }
+        if UserDefaults.standard.object(forKey: "str_car_kind") != nil
+        { MainManager.shared.info.str_car_kind = defaults.string(forKey: "str_car_kind")! }
+        
+        if UserDefaults.standard.object(forKey: "str_car_year") != nil
+        { MainManager.shared.info.str_car_year = defaults.string(forKey: "str_car_year")! }
+        if UserDefaults.standard.object(forKey: "str_car_fuel_type") != nil
+        { MainManager.shared.info.str_car_fuel_type = defaults.string(forKey: "str_car_fuel_type")! }
+        
+        if UserDefaults.standard.object(forKey: "str_car_plate_num") != nil
+        { MainManager.shared.info.str_car_plate_num = defaults.string(forKey: "str_car_plate_num")! }
+        
+        if UserDefaults.standard.object(forKey: "i_car_piker_select") != nil
+        { MainManager.shared.info.i_car_piker_select = defaults.integer(forKey: "i_car_piker_select") }
+        if UserDefaults.standard.object(forKey: "i_year_piker_select") != nil
+        { MainManager.shared.info.i_year_piker_select = defaults.integer(forKey: "i_year_piker_select") }
+        if UserDefaults.standard.object(forKey: "i_fuel_piker_select") != nil
+        { MainManager.shared.info.i_fuel_piker_select = defaults.integer(forKey: "i_fuel_piker_select") }
+        
+        //총 주행거리, 당주 주행거리, 누적 연비, 당주 연비-----------------------------------------------------------------
+        
+        
+        if UserDefaults.standard.object(forKey: "str_car_vin_number") != nil
+        { MainManager.shared.info.str_car_vin_number = defaults.string(forKey: "str_car_vin_number")! }
+        
+        if UserDefaults.standard.object(forKey: "str_TotalAvgFuelMileage") != nil
+        { MainManager.shared.info.str_TotalAvgFuelMileage = defaults.string(forKey: "str_TotalAvgFuelMileage")! }
+        
+        if UserDefaults.standard.object(forKey: "str_TotalDriveMileage") != nil
+        { MainManager.shared.info.str_TotalDriveMileage = defaults.string(forKey: "str_TotalDriveMileage")! }
+        
+        // 주행거리, 8주중 첫주째
+        if UserDefaults.standard.object(forKey: "str_ThisWeekDriveMileage") != nil
+        { MainManager.shared.info.str_ThisWeekDriveMileage = defaults.string(forKey: "str_ThisWeekDriveMileage")! }
+        
+        // 연비, 8주중 첫번째 이번주
+        if UserDefaults.standard.object(forKey: "str_ThisWeekFuelMileage") != nil
+        { MainManager.shared.info.str_ThisWeekFuelMileage = defaults.string(forKey: "str_ThisWeekFuelMileage")! }
+        
+        // DTC, 8주중 첫번째 이번주
+        if UserDefaults.standard.object(forKey: "str_ThisWeekDtcCount") != nil
+        { MainManager.shared.info.str_ThisWeekDtcCount = defaults.string(forKey: "str_ThisWeekDtcCount")! }
+        
+        // PIN CODE
+        if UserDefaults.standard.object(forKey: "str_LocalPinCode") != nil
+        { MainManager.shared.info.str_LocalPinCode = defaults.string(forKey: "str_LocalPinCode")! }
+        
+        // BLE_MAC_ADDRESS
+        if UserDefaults.standard.object(forKey: "carFriendsMacAdd") != nil
+        { MainManager.shared.info.carFriendsMacAdd = defaults.string(forKey: "carFriendsMacAdd")! }
+        
+        
+    }
+    
+    func setMyDataLocal() {
+        
+        let defaults = UserDefaults.standard
+        
+        defaults.set(2, forKey: "iMemberJoinState")
+        
+        // 클라이언트 저장
+        defaults.set(MainManager.shared.info.str_id_phone_num, forKey: "str_id_phone_num")
+        defaults.set(MainManager.shared.info.str_id_nick, forKey: "str_id_nick")
+        defaults.set(MainManager.shared.info.str_password, forKey: "str_password")
+        
+        
+        defaults.set(MainManager.shared.info.str_car_kind, forKey: "str_car_kind")
+        defaults.set(MainManager.shared.info.str_car_year, forKey: "str_car_year")
+        defaults.set(MainManager.shared.info.str_car_vin_number, forKey: "str_car_vin_number")
+        defaults.set(MainManager.shared.info.str_car_fuel_type, forKey: "str_car_fuel_type")
+        defaults.set(MainManager.shared.info.str_car_plate_num, forKey: "str_car_plate_num")
+        defaults.set(MainManager.shared.info.str_car_year, forKey: "str_car_year")
+        defaults.set(MainManager.shared.info.str_TotalAvgFuelMileage, forKey: "str_TotalAvgFuelMileage")
+        
+        // 피커뷰 선택번호 저장
+        defaults.set(MainManager.shared.info.i_car_piker_select, forKey: "i_car_piker_select")
+        defaults.set(MainManager.shared.info.i_year_piker_select, forKey: "i_year_piker_select")
+        defaults.set(MainManager.shared.info.i_fuel_piker_select, forKey: "i_fuel_piker_select")
+        
+        // 핀코드 처음 "0000"
+        MainManager.shared.info.str_LocalPinCode = "0000"
+        UserDefaults.standard.set(MainManager.shared.info.str_LocalPinCode, forKey: "str_LocalPinCode")
+        
+    }
+
+    
+    
     
     
     //
@@ -1099,17 +1493,6 @@ class MainManager   {
     //}
     //
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
 }
 
 
@@ -1117,14 +1500,14 @@ class MainManager   {
 
 
 
-
-
-
+// 문자열에 "=" 포함 하냐?
 extension String {
     func contains(find: String) -> Bool{
         return self.range(of: find) != nil
     }
 }
+
+
 
 
 //함수는 func 키워드를 사용해서 정의합니다. -> 를 사용해서 함수의 반환 타입을 지정합니다.
@@ -1135,6 +1518,7 @@ extension String {
 //    }
 //    return string
 //}
+
 
 
 //파라미터 이름을 _로 정의하면 함수를 호출할 때 파라미터 이름을 생략할 수 있게 됩니다.

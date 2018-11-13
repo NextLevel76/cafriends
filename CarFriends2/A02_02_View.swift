@@ -39,5 +39,30 @@ class A02_02_View: UIView {
         // Drawing code
     }
     */
+    
+    
+    
+    
+    @IBOutlet weak var btn_ble_state: UIButton!
+    @IBOutlet weak var label_ble_state: UILabel!
+    
+    func ble_state(_ state:Bool ) {
+        
+        if( state ) {
+            btn_ble_state.setBackgroundImage(UIImage(named:"a_01_01_link"), for: .normal)
+            label_ble_state.text = "카프랜드단말기  블루투스와 연결됨"
+            label_ble_state.textColor = UIColor(red: 41/256, green: 232/255, blue: 223/255, alpha: 1)
+            
+        }
+        else {
+            
+            btn_ble_state.setBackgroundImage(UIImage(named:"a_01_01_unlink"), for: .normal)
+            label_ble_state.text = "카프랜드단말기  블루투스와 연결  끊김"
+            label_ble_state.textColor = UIColor.red
+            
+        }
+    }
+    
+    
 
 }

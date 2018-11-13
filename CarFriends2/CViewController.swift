@@ -90,13 +90,6 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
     
     
     
-    
-    
-    
-    
-    
-    
-    
     var btn_name:[String] = ["차량최신정보","지역별 게시판","차량전용 중고장터"]
     let btn_car_trade_name = ["차량 직거래","용품 직거래"]
     
@@ -104,8 +97,11 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
     // 처음 시작일때 메뉴를 보이게
     var bFirstSubMenuLoadShow = true
     
-    
     var iWebStart:Int = 0
+    
+    
+    @IBOutlet weak var mainSubView: UIView!
+    
     
     weak var webView: WKWebView!
     var activityIndicator:UIActivityIndicatorView = UIActivityIndicatorView()
@@ -160,19 +156,10 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
         activityIndicator.center = self.view.center
         activityIndicator.hidesWhenStopped = true
         activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.gray
-        self.view.addSubview(activityIndicator)
+        self.mainSubView.addSubview(activityIndicator)
 
         
-        
-        
-//        self.view.addSubview(menuView_c03)
-//        menuView_c03.frame.origin.y = 40
-//
-//        self.view.addSubview(menuView_c02)
-//        menuView_c02.frame.origin.y = 40
-//
-//        self.view.addSubview(menuView_c01)
-//        menuView_c01.frame.origin.y = 40
+
         
         subMenuViewHeight = menuScrollView.frame.height
         print( menuScrollView.frame )
@@ -203,6 +190,9 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
         self.setupWebView()
 //        print("____________ 유저 로그인")
 //        userLogin()
+        
+        // 아이폰 X 대응
+        MainManager.shared.initLoadChangeFrameIPhoneX(mainView: self.view, changeView: mainSubView)
 
     }
     
@@ -240,7 +230,7 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
         if scrollView == webView.scrollView {
             
             // 가로 스크롤 막기
-            webView.scrollView.contentOffset = CGPoint(x: 0, y: webView.scrollView.contentOffset.y)
+            // webView.scrollView.contentOffset = CGPoint(x: 0, y: webView.scrollView.contentOffset.y)
             
             
             
@@ -312,24 +302,24 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
     // blue001 / 01012345678
     func userLogin() {
         
-        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
-        // login.php?Req=Login&ID=아이디&Pass=패스워드
+        ToastIndicatorView.shared.setup(self.view, "")
+        // login.php?Req=Login&ID=닉네임&Pass=패스워드
         var parameters = [
             "Req": "Login",
-            "ID": MainManager.shared.member_info.str_id_nick,
-            "Pass": MainManager.shared.member_info.str_password]
+            "ID": MainManager.shared.info.str_id_nick,
+            "Pass": MainManager.shared.info.str_password]
         
         
 //        if( MainManager.shared.bAPP_TEST ) {
-//            MainManager.shared.member_info.str_id_nick = "blue009"
+//            MainManager.shared.info.str_id_nick = "blue009"
 //            parameters = [
 //                "Req": "Login",
-//                "ID": MainManager.shared.member_info.str_id_nick,
-//                "Pass": MainManager.shared.member_info.str_id_nick]
+//                "ID": MainManager.shared.info.str_id_nick,
+//                "Pass": MainManager.shared.info.str_id_nick]
 //        }
         
        
-        print(MainManager.shared.member_info.str_id_nick)
+        print(MainManager.shared.info.str_id_nick)
         
         Alamofire.request(MainManager.shared.SeverURL+"login.php", method: .post, parameters: parameters)
             .responseJSON { response in
@@ -439,13 +429,13 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
 // */
 //
 //        request.httpMethod = "POST"
-//        // let postString = "Req=Login&ID=\(MainManager.shared.member_info.str_id_nick)&Pass=\(MainManager.shared.member_info.str_id_phone_num)"
+//        // let postString = "Req=Login&ID=\(MainManager.shared.info.str_id_nick)&Pass=\(MainManager.shared.info.str_id_phone_num)"
 //        let postString = "Req=Login&ID=blue002&Pass=01011112222"
 //        request.httpBody = postString.data(using: .utf8)
 //        webView.load(request)
 //
-//        print(MainManager.shared.member_info.str_id_nick)
-//        print(MainManager.shared.member_info.str_id_phone_num)
+//        print(MainManager.shared.info.str_id_nick)
+//        print(MainManager.shared.info.str_id_phone_num)
         
         
         
@@ -453,14 +443,14 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
         
 //
 //
-//        // login.php?Req=Login&ID=아이디&Pass=패스워드
+//        // login.php?Req=Login&ID=닉네임&Pass=패스워드
 //        let parameters = [
 //            "Req": "Login",
-//            "ID": MainManager.shared.member_info.str_id_nick,
-//            "Pass": MainManager.shared.member_info.str_id_phone_num]
+//            "ID": MainManager.shared.info.str_id_nick,
+//            "Pass": MainManager.shared.info.str_id_phone_num]
 //
-//        print(MainManager.shared.member_info.str_id_nick)
-//        print(MainManager.shared.member_info.str_id_phone_num)
+//        print(MainManager.shared.info.str_id_nick)
+//        print(MainManager.shared.info.str_id_phone_num)
 //        Alamofire.request(MainManager.shared.SeverURL+"login.php", method: .post, parameters: parameters)
 //            .responseJSON { response in
 //
@@ -549,16 +539,17 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
         
         
         // 인터넷 연결 확인
-        if( MainManager.shared.isConnectCheck() == false ) {
+        if( MainManager.shared.isConnectCheck(self) == false ) {
             
             let myView = self.storyboard?.instantiateViewController(withIdentifier: "a00") as! AViewController
             self.present(myView, animated: true, completion: nil)
+
             return
         }
         
         
         
-        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
+        ToastIndicatorView.shared.setup(self.view, "")
         
         let btn_image = ["최신뉴스","자유게시판","궁금해요","정보","갤러리"]
         
@@ -608,7 +599,7 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
     
     func c02_BtnCreate() {
         
-        let btn_image = ["서울,경기","인천,부천","대전,충청","전주,전북","광주,전남","대구,경북","원주,강원","제주도"]
+        let btn_image = ["서울,경기","인천,부천","대전,충청","전주,전북","광주,전남","대구,경북","부산,경남","원주,강원","제주도"]
         
         var count = 0
         var px = 0
@@ -651,10 +642,11 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
     func c02MenuBtnAction(_ sender: UIButton) {
         
         // 인터넷 연결 확인
-        if( MainManager.shared.isConnectCheck() == false ) {
+        if( MainManager.shared.isConnectCheck(self) == false ) {
             
             let myView = self.storyboard?.instantiateViewController(withIdentifier: "a00") as! AViewController
             self.present(myView, animated: true, completion: nil)
+
             return
         }
         
@@ -662,10 +654,10 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
         //if( iWebStart < 2 ) { return }
         
         
-        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
+        ToastIndicatorView.shared.setup(self.view, "")
         
         
-        let btn_image = ["서울,경기","인천,부천","대전,충청","전주,전북","광주,전남","대구,경북","원주,강원","제주도"]
+        let btn_image = ["서울,경기","인천,부천","대전,충청","전주,전북","광주,전남","대구,경북","부산,경남","원주,강원","제주도"]
         //
         //        let btn_image = ["frame-A-02-01-off","frame-A-02-02-off","frame-A-02-03-off","frame-A-02-04-off","frame-A-02-05-off","frame-A-02-06-off","frame-A-02-07-off","frame-A-02-08-off","frame-A-02-09-off","frame-A-02-10-off","frame-A-02-11-off"]
         
@@ -771,16 +763,17 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
         
         
         // 인터넷 연결 확인
-        if( MainManager.shared.isConnectCheck() == false ) {
+        if( MainManager.shared.isConnectCheck(self) == false ) {
             
             let myView = self.storyboard?.instantiateViewController(withIdentifier: "a00") as! AViewController
             self.present(myView, animated: true, completion: nil)
+
             return
         }
         
         
         
-        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
+        ToastIndicatorView.shared.setup(self.view, "")
         
         // let btn_image = ["차량 직거래","차량용품 직거래"]
         
@@ -823,7 +816,6 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
         
         let myView = self.storyboard?.instantiateViewController(withIdentifier: "a00") as! AViewController
         self.present(myView, animated: true, completion: nil)
-        
     }
     
     
@@ -831,7 +823,7 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
     @IBAction func pressedB(_ sender: UIButton) {
         
         // 인터넷 연결 확인
-        if( MainManager.shared.isConnectCheck() == false ) {
+        if( MainManager.shared.isConnectCheck(self) == false ) {
             
             let myView = self.storyboard?.instantiateViewController(withIdentifier: "a00") as! AViewController
             self.present(myView, animated: true, completion: nil)
@@ -840,6 +832,7 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
         
         let myView = self.storyboard?.instantiateViewController(withIdentifier: "b00") as! BViewController
         self.present(myView, animated: true, completion: nil)
+
     }
     
     
@@ -849,10 +842,11 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
     @IBAction func pressed_C01(_ sender: UIButton) {
         
         // 인터넷 연결 확인
-        if( MainManager.shared.isConnectCheck() == false ) {
+        if( MainManager.shared.isConnectCheck(self) == false ) {
             
             let myView = self.storyboard?.instantiateViewController(withIdentifier: "a00") as! AViewController
             self.present(myView, animated: true, completion: nil)
+
             return
         }
         
@@ -879,7 +873,7 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
     @IBAction func pressed_C02(_ sender: UIButton) {
         
         // 인터넷 연결 확인
-        if( MainManager.shared.isConnectCheck() == false ) {
+        if( MainManager.shared.isConnectCheck(self) == false ) {
             
             let myView = self.storyboard?.instantiateViewController(withIdentifier: "a00") as! AViewController
             self.present(myView, animated: true, completion: nil)
@@ -907,7 +901,7 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
     @IBAction func pressed_C03(_ sender: UIButton) {
         
         // 인터넷 연결 확인
-        if( MainManager.shared.isConnectCheck() == false ) {
+        if( MainManager.shared.isConnectCheck(self) == false ) {
             
             let myView = self.storyboard?.instantiateViewController(withIdentifier: "a00") as! AViewController
             self.present(myView, animated: true, completion: nil)
@@ -974,7 +968,7 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
         
         
         print("Webview start");
-        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
+        ToastIndicatorView.shared.setup(self.view, "")
         // 첫번째 화면이 다 로딩되면 다른 버튼 클릭 동작 가능하게
 //        if( iWebStart == 0 ) {
 //
@@ -1022,13 +1016,13 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
         self.webView.navigationDelegate = self
         webView.uiDelegate         = self
         self.webView.translatesAutoresizingMaskIntoConstraints = false
-        self.view.addSubview(webView)
+        self.mainSubView.addSubview(webView)
         
         // 스크롤 딜리게이트 연결
         self.webView.scrollView.delegate = self
         
         
-        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
+        ToastIndicatorView.shared.setup(self.view, "")
         
         //self.view.bringSubview(toFront: activityIndicator)
         //activityIndicator.startAnimating()
@@ -1079,13 +1073,13 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
         self.webView.navigationDelegate = self
         webView.uiDelegate         = self
         self.webView.translatesAutoresizingMaskIntoConstraints = false
-        self.view.addSubview(webView)
+        self.mainSubView.addSubview(webView)
         
         // 스크롤 딜리게이트 연결
         self.webView.scrollView.delegate = self
         
         
-        // ToastIndicatorView.shared.setup(self.view, txt_msg: "")
+        // ToastIndicatorView.shared.setup(self.view, "")
         
         //self.view.bringSubview(toFront: activityIndicator)
         //activityIndicator.startAnimating()
@@ -1132,7 +1126,7 @@ class CViewController: UIViewController , WKUIDelegate, WKNavigationDelegate, WK
 //    func loadUrl(){
 //
 //
-//        // login.php?Req=Login&ID=아이디&Pass=패스워드
+//        // login.php?Req=Login&ID=닉네임&Pass=패스워드
 //
 //        // blue001 / 01012345678
 //

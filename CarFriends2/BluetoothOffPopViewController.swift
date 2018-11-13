@@ -23,12 +23,12 @@ class BluetoothOffPopViewController: UIViewController {
     
     @IBAction func pressed_ok(_ sender: UIButton) {
         
-        MainManager.shared.member_info.isBLE_ON_POPUP_CHECK = false
+        MainManager.shared.info.isBLE_ON_POPUP_CHECK = false
         
 //        let myView = self.storyboard?.instantiateViewController(withIdentifier: "MainView") as! MainViewController
 //        self.present(myView, animated: true, completion: nil)
         
-//        if( MainManager.shared.member_info.isBLE_ON == true ) {
+//        if( MainManager.shared.info.isBLE_ON == true ) {
 //            // 비회원 회원가입
 //            if( MainManager.shared.iMemberJoinState == 0 ) {
 //

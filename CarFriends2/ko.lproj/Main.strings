@@ -1,0 +1,543 @@
+
+/* Class = "UIButton"; normalTitle = "차량정보"; ObjectID = "038-IJ-Vde"; */
+"038-IJ-Vde.normalTitle" = "차량정보";
+
+/* Class = "UILabel"; text = "썬루프"; ObjectID = "0ey-qg-SB9"; */
+"0ey-qg-SB9.text" = "썬루프";
+
+/* Class = "UITextField"; placeholder = "비밀번호 다시 입력"; ObjectID = "0ry-HW-ca4"; */
+"0ry-HW-ca4.placeholder" = "비밀번호 다시 입력";
+
+/* Class = "UIButton"; normalTitle = "로 그 인"; ObjectID = "0tt-6o-sd7"; */
+"0tt-6o-sd7.normalTitle" = "로 그 인";
+
+/* Class = "UIButton"; normalTitle = "변경"; ObjectID = "1Bh-W5-wBr"; */
+"1Bh-W5-wBr.normalTitle" = "변경";
+
+/* Class = "UIButton"; normalTitle = "취소"; ObjectID = "1L3-aj-ixk"; */
+"1L3-aj-ixk.normalTitle" = "취소";
+
+/* Class = "UIButton"; normalTitle = "확인"; ObjectID = "1dv-Ey-bkn"; */
+"1dv-Ey-bkn.normalTitle" = "확인";
+
+/* Class = "UIButton"; normalTitle = "차량용품"; ObjectID = "2G2-tp-cce"; */
+"2G2-tp-cce.normalTitle" = "차량용품";
+
+/* Class = "UILabel"; text = "99 km/l"; ObjectID = "3Le-gU-zrR"; */
+"3Le-gU-zrR.text" = "99 km/l";
+
+/* Class = "UILabel"; text = "회원님 차량의 왼쪽 좌석 하단 OBD 포트에"; ObjectID = "3qf-52-g9d"; */
+"3qf-52-g9d.text" = "회원님 차량의 왼쪽 좌석 하단 OBD 포트에";
+
+/* Class = "UILabel"; text = "블루투스로 연결 되어야만"; ObjectID = "3vc-F8-RRl"; */
+"3vc-F8-RRl.text" = "블루투스로 연결 되어야만";
+
+/* Class = "UILabel"; text = "• 미사용"; ObjectID = "40Y-po-7Qi"; */
+"40Y-po-7Qi.text" = "• 미사용";
+
+/* Class = "UILabel"; text = "휴대폰 번호입력후 인증해주세요."; ObjectID = "4RN-aY-8nn"; */
+"4RN-aY-8nn.text" = "휴대폰 번호입력후 인증해주세요.";
+
+/* Class = "UILabel"; text = "____________________________________________________"; ObjectID = "4cX-KA-nte"; */
+"4cX-KA-nte.text" = "____________________________________________________";
+
+/* Class = "UILabel"; text = "연료타입  |"; ObjectID = "4sT-9P-a58"; */
+"4sT-9P-a58.text" = "연료타입  |";
+
+/* Class = "UILabel"; text = "차량내 카프랜드 전용 단말기가"; ObjectID = "4yW-2E-80N"; */
+"4yW-2E-80N.text" = "차량내 카프랜드 전용 단말기가";
+
+/* Class = "UILabel"; text = "25 회"; ObjectID = "54y-Ii-p7n"; */
+"54y-Ii-p7n.text" = "25 회";
+
+/* Class = "UILabel"; text = "총주행거리(km)"; ObjectID = "5dP-Ae-WaU"; */
+"5dP-Ae-WaU.text" = "총주행거리(km)";
+
+/* Class = "UIButton"; normalTitle = "         열림"; ObjectID = "6Dn-Jz-UqD"; */
+"6Dn-Jz-UqD.normalTitle" = "         열림";
+
+/* Class = "UILabel"; text = "블루투스 연결 가이드"; ObjectID = "78f-gL-fuC"; */
+"78f-gL-fuC.text" = "블루투스 연결 가이드";
+
+/* Class = "UIButton"; normalTitle = "확인"; ObjectID = "7Em-MP-6Af"; */
+"7Em-MP-6Af.normalTitle" = "확인";
+
+/* Class = "UILabel"; text = "카프랜드는 회원님의 휴대폰과"; ObjectID = "7M9-yL-KTy"; */
+"7M9-yL-KTy.text" = "카프랜드는 회원님의 휴대폰과";
+
+/* Class = "UIButton"; normalTitle = "변경"; ObjectID = "7TF-po-dSR"; */
+"7TF-po-dSR.normalTitle" = "변경";
+
+/* Class = "UILabel"; text = "( 남은시간 2분 00초 )"; ObjectID = "7rO-bU-Zky"; */
+"7rO-bU-Zky.text" = "( 남은시간 2분 00초 )";
+
+/* Class = "UILabel"; text = "*입력시간 초과시 인증번호 버튼을 한번 더 눌러 진행해 주시기 바랍니다."; ObjectID = "7sB-iO-Qge"; */
+"7sB-iO-Qge.text" = "*입력시간 초과시 인증번호 버튼을 한번 더 눌러 진행해 주시기 바랍니다.";
+
+/* Class = "UIButton"; normalTitle = "확인"; ObjectID = "8Wl-3w-Vte"; */
+"8Wl-3w-Vte.normalTitle" = "확인";
+
+/* Class = "UILabel"; text = "회원 가입"; ObjectID = "8cg-Ie-dK7"; */
+"8cg-Ie-dK7.text" = "회원 가입";
+
+/* Class = "UILabel"; text = "KLYDA487DHC201393 "; ObjectID = "8yU-eu-RYq"; */
+"8yU-eu-RYq.text" = "KLYDA487DHC201393 ";
+
+/* Class = "UILabel"; text = "내 정보"; ObjectID = "98d-yw-HfT"; */
+"98d-yw-HfT.text" = "내 정보";
+
+/* Class = "UILabel"; text = "블루투스 연결"; ObjectID = "9Lt-qp-VvV"; */
+"9Lt-qp-VvV.text" = "블루투스 연결";
+
+/* Class = "UILabel"; text = "차대번호  |"; ObjectID = "9W5-nK-YTS"; */
+"9W5-nK-YTS.text" = "차대번호  |";
+
+/* Class = "UIButton"; normalTitle = "        닫기"; ObjectID = "9ed-PV-FQL"; */
+"9ed-PV-FQL.normalTitle" = "        닫기";
+
+/* Class = "UIButton"; normalTitle = "연결시작(가이드 보기)"; ObjectID = "ADw-PS-Grr"; */
+"ADw-PS-Grr.normalTitle" = "연결시작(가이드 보기)";
+
+/* Class = "UIButton"; normalTitle = "커뮤니티"; ObjectID = "ASF-es-T5T"; */
+"ASF-es-T5T.normalTitle" = "커뮤니티";
+
+/* Class = "UILabel"; text = "*입력시간 초과시 인증번호 버튼을 한번 더 눌러 진행해 주시기 바랍니다."; ObjectID = "AcW-xZ-wwc"; */
+"AcW-xZ-wwc.text" = "*입력시간 초과시 인증번호 버튼을 한번 더 눌러 진행해 주시기 바랍니다.";
+
+/* Class = "UILabel"; text = "블루투스를 활성화 해 주세요."; ObjectID = "AyZ-YP-Ege"; */
+"AyZ-YP-Ege.text" = "블루투스를 활성화 해 주세요.";
+
+/* Class = "UILabel"; text = "차량  상태  수신 : "; ObjectID = "B6Z-bN-4gB"; */
+"B6Z-bN-4gB.text" = "차량  상태  수신 : ";
+
+/* Class = "UILabel"; text = "8주 합계  :"; ObjectID = "BDZ-82-Gd1"; */
+"BDZ-82-Gd1.text" = "8주 합계  :";
+
+/* Class = "UILabel"; text = "사이드미러 자동접기"; ObjectID = "C72-eg-W4i"; */
+"C72-eg-W4i.text" = "사이드미러 자동접기";
+
+/* Class = "UIButton"; normalTitle = "차량 관리"; ObjectID = "CAD-cY-G73"; */
+"CAD-cY-G73.normalTitle" = "차량 관리";
+
+/* Class = "UIButton"; normalTitle = "차량 관리"; ObjectID = "CtJ-c9-le7"; */
+"CtJ-c9-le7.normalTitle" = "차량 관리";
+
+/* Class = "UIButton"; normalTitle = "커뮤니티"; ObjectID = "DoZ-2e-01X"; */
+"DoZ-2e-01X.normalTitle" = "커뮤니티";
+
+/* Class = "UIButton"; normalTitle = "닫기"; ObjectID = "E7U-Qs-zyk"; */
+"E7U-Qs-zyk.normalTitle" = "닫기";
+
+/* Class = "UILabel"; text = "휴대폰 번호"; ObjectID = "FF7-Gz-7kb"; */
+"FF7-Gz-7kb.text" = "휴대폰 번호";
+
+/* Class = "UIButton"; normalTitle = "시간 설정"; ObjectID = "FH7-k5-fs8"; */
+"FH7-k5-fs8.normalTitle" = "시간 설정";
+
+/* Class = "UILabel"; text = "이용약관 안내 (미동의 시 앱 사용을 할 수 없습니다)"; ObjectID = "FQS-YU-id4"; */
+"FQS-YU-id4.text" = "이용약관 안내 (미동의 시 앱 사용을 할 수 없습니다)";
+
+/* Class = "UILabel"; text = "  매일 00:00 시동을 겁니다."; ObjectID = "G0p-sS-Plx"; */
+"G0p-sS-Plx.text" = "  매일 00:00 시동을 겁니다.";
+
+/* Class = "UIButton"; normalTitle = "앱 사용 시작하기"; ObjectID = "IJt-8f-sbL"; */
+"IJt-8f-sbL.normalTitle" = "앱 사용 시작하기";
+
+/* Class = "UILabel"; text = "• 미사용"; ObjectID = "Ihn-oG-pTF"; */
+"Ihn-oG-pTF.text" = "• 미사용";
+
+/* Class = "UILabel"; text = "차량종류"; ObjectID = "Ive-rz-uaE"; */
+"Ive-rz-uaE.text" = "차량종류";
+
+/* Class = "UILabel"; text = "단말기의 비밀번호를 설정 합니다."; ObjectID = "JOF-GJ-Zdd"; */
+"JOF-GJ-Zdd.text" = "단말기의 비밀번호를 설정 합니다.";
+
+/* Class = "UILabel"; text = "썬루프 자동닫기"; ObjectID = "JUG-NA-39z"; */
+"JUG-NA-39z.text" = "썬루프 자동닫기";
+
+/* Class = "UIButton"; normalTitle = "         열림"; ObjectID = "Jji-CP-uib"; */
+"Jji-CP-uib.normalTitle" = "         열림";
+
+/* Class = "UILabel"; text = "원격 시동"; ObjectID = "Kqm-6l-5b4"; */
+"Kqm-6l-5b4.text" = "원격 시동";
+
+/* Class = "UILabel"; text = "카프랜드단말기  블루투스와 연결  끊김"; ObjectID = "Lhj-Sp-aOy"; */
+"Lhj-Sp-aOy.text" = "카프랜드단말기  블루투스와 연결  끊김";
+
+/* Class = "UILabel"; text = "비밀번호를 입력해주세요."; ObjectID = "LmZ-rQ-4on"; */
+"LmZ-rQ-4on.text" = "비밀번호를 입력해주세요.";
+
+/* Class = "UIButton"; normalTitle = "카프랜드 협력업체"; ObjectID = "MUD-yF-daJ"; */
+"MUD-yF-daJ.normalTitle" = "카프랜드 협력업체";
+
+/* Class = "UITextView"; text = "Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda."; ObjectID = "NCO-s8-Oon"; */
+"NCO-s8-Oon.text" = "Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.";
+
+/* Class = "UILabel"; text = "25 회"; ObjectID = "NV1-vZ-lpl"; */
+"NV1-vZ-lpl.text" = "25 회";
+
+/* Class = "UIButton"; normalTitle = "변경"; ObjectID = "Ngd-Kr-Shr"; */
+"Ngd-Kr-Shr.normalTitle" = "변경";
+
+/* Class = "UILabel"; text = "누적연비(km/l)"; ObjectID = "Ods-vE-bR1"; */
+"Ods-vE-bR1.text" = "누적연비(km/l)";
+
+/* Class = "UIButton"; normalTitle = "차량 관리"; ObjectID = "OeG-qV-RHo"; */
+"OeG-qV-RHo.normalTitle" = "차량 관리";
+
+/* Class = "UILabel"; text = "옵티마이즈 님"; ObjectID = "Ola-ku-oxZ"; */
+"Ola-ku-oxZ.text" = "옵티마이즈 님";
+
+/* Class = "UILabel"; text = "디젤차량"; ObjectID = "Olm-5M-l6b"; */
+"Olm-5M-l6b.text" = "디젤차량";
+
+/* Class = "UILabel"; text = "블루투스를 켜주세요."; ObjectID = "Ooo-B9-J6k"; */
+"Ooo-B9-J6k.text" = "블루투스를 켜주세요.";
+
+/* Class = "UIButton"; normalTitle = "다음에 구매"; ObjectID = "P1I-EE-6hb"; */
+"P1I-EE-6hb.normalTitle" = "다음에 구매";
+
+/* Class = "UITextField"; placeholder = "발송 받은 인증번호 입력"; ObjectID = "PMK-98-v11"; */
+"PMK-98-v11.placeholder" = "발송 받은 인증번호 입력";
+
+/* Class = "UILabel"; text = "트렁크"; ObjectID = "Plq-0z-xED"; */
+"Plq-0z-xED.text" = "트렁크";
+
+/* Class = "UILabel"; text = "기존 비밀번호"; ObjectID = "Q9c-TE-Hxj"; */
+"Q9c-TE-Hxj.text" = "기존 비밀번호";
+
+/* Class = "UIButton"; normalTitle = "카프랜드 단말기"; ObjectID = "QQ1-Zc-eRv"; */
+"QQ1-Zc-eRv.normalTitle" = "카프랜드 단말기";
+
+/* Class = "UILabel"; text = "• 미사용"; ObjectID = "QuF-Pz-xGr"; */
+"QuF-Pz-xGr.text" = "• 미사용";
+
+/* Class = "UILabel"; text = "• 미사용"; ObjectID = "RrF-An-73y"; */
+"RrF-An-73y.text" = "• 미사용";
+
+/* Class = "UILabel"; text = "8주 합계  :"; ObjectID = "Ry0-d0-0iU"; */
+"Ry0-d0-0iU.text" = "8주 합계  :";
+
+/* Class = "UILabel"; text = "*휴대폰으로 전송한 인증번호 4자리를 2분 이내에 입력해주세요."; ObjectID = "Sxs-wu-uDh"; */
+"Sxs-wu-uDh.text" = "*휴대폰으로 전송한 인증번호 4자리를 2분 이내에 입력해주세요.";
+
+/* Class = "UILabel"; text = "• 미사용"; ObjectID = "T6x-SA-ONz"; */
+"T6x-SA-ONz.text" = "• 미사용";
+
+/* Class = "UIButton"; normalTitle = "         해제"; ObjectID = "T98-tw-m7T"; */
+"T98-tw-m7T.normalTitle" = "         해제";
+
+/* Class = "UILabel"; text = "차량종류"; ObjectID = "TT6-de-dXz"; */
+"TT6-de-dXz.text" = "차량종류";
+
+/* Class = "UILabel"; text = "블루투스 연결"; ObjectID = "Tct-Bg-nE8"; */
+"Tct-Bg-nE8.text" = "블루투스 연결";
+
+/* Class = "UILabel"; text = "카프랜드는 회원님의 휴대폰과"; ObjectID = "TqL-Qu-zu2"; */
+"TqL-Qu-zu2.text" = "카프랜드는 회원님의 휴대폰과";
+
+/* Class = "UILabel"; text = "(최초 비밀번호는 0000 입니다.)"; ObjectID = "Ubr-0a-1Xx"; */
+"Ubr-0a-1Xx.text" = "(최초 비밀번호는 0000 입니다.)";
+
+/* Class = "UILabel"; text = "연료 타입"; ObjectID = "Ukm-hc-hnT"; */
+"Ukm-hc-hnT.text" = "연료 타입";
+
+/* Class = "UIButton"; normalTitle = "         열림"; ObjectID = "VBE-2e-abB"; */
+"VBE-2e-abB.normalTitle" = "         열림";
+
+/* Class = "UITextField"; placeholder = "닉네임 입력"; ObjectID = "VKz-mE-V7W"; */
+"VKz-mE-V7W.placeholder" = "닉네임 입력";
+
+/* Class = "UIButton"; normalTitle = "확인"; ObjectID = "VSo-Ug-KQe"; */
+"VSo-Ug-KQe.normalTitle" = "확인";
+
+/* Class = "UILabel"; text = "2018.06.01 05:21:27"; ObjectID = "WMP-AB-g3D"; */
+"WMP-AB-g3D.text" = "2018.06.01 05:21:27";
+
+/* Class = "UILabel"; text = "개인정보 수집 동의 (미동의 시 앱 사용을 할 수 없습니다)"; ObjectID = "WzQ-8k-elM"; */
+"WzQ-8k-elM.text" = "개인정보 수집 동의 (미동의 시 앱 사용을 할 수 없습니다)";
+
+/* Class = "UIButton"; normalTitle = "         걸기"; ObjectID = "XG9-Ja-f6J"; */
+"XG9-Ja-f6J.normalTitle" = "         걸기";
+
+/* Class = "UIButton"; normalTitle = "인공지능진단"; ObjectID = "Xeb-gW-pDk"; */
+"Xeb-gW-pDk.normalTitle" = "인공지능진단";
+
+/* Class = "UILabel"; text = "차량등록번호"; ObjectID = "XlS-Oj-OO9"; */
+"XlS-Oj-OO9.text" = "차량등록번호";
+
+/* Class = "UIButton"; normalTitle = "처음 사용자(회원가입)"; ObjectID = "XsF-2b-C79"; */
+"XsF-2b-C79.normalTitle" = "처음 사용자(회원가입)";
+
+/* Class = "UILabel"; text = "99 km"; ObjectID = "Y1D-Yx-5hF"; */
+"Y1D-Yx-5hF.text" = "99 km";
+
+/* Class = "UILabel"; text = " 이번주 DTC 발생:"; ObjectID = "Y51-ce-ejE"; */
+"Y51-ce-ejE.text" = " 이번주 DTC 발생:";
+
+/* Class = "UILabel"; text = "차대번호"; ObjectID = "Y9q-aK-7Ua"; */
+"Y9q-aK-7Ua.text" = "차대번호";
+
+/* Class = "UIButton"; normalTitle = "        닫기"; ObjectID = "YU0-Gf-Qwr"; */
+"YU0-Gf-Qwr.normalTitle" = "        닫기";
+
+/* Class = "UILabel"; text = "블루투스 연결중"; ObjectID = "Yis-SL-8io"; */
+"Yis-SL-8io.text" = "블루투스 연결중";
+
+/* Class = "UITextView"; text = "무선기기의 특성상 주파수 혼선으로 명령 전달이 실패하는 경우도 있습니다. 이럴때는 잠시 후 또는 장소를 이동하여 시도해 주시기 바랍니다."; ObjectID = "Z4v-xe-cSr"; */
+"Z4v-xe-cSr.text" = "무선기기의 특성상 주파수 혼선으로 명령 전달이 실패하는 경우도 있습니다. 이럴때는 잠시 후 또는 장소를 이동하여 시도해 주시기 바랍니다.";
+
+/* Class = "UILabel"; text = "창문 자동닫기"; ObjectID = "a0V-TL-Qef"; */
+"a0V-TL-Qef.text" = "창문 자동닫기";
+
+/* Class = "UILabel"; text = "DTC"; ObjectID = "aO9-8v-a0D"; */
+"aO9-8v-a0D.text" = "DTC";
+
+/* Class = "UILabel"; text = "9999km"; ObjectID = "aWh-bu-UMh"; */
+"aWh-bu-UMh.text" = "9999km";
+
+/* Class = "UILabel"; text = "예약시동"; ObjectID = "bLy-1x-Iih"; */
+"bLy-1x-Iih.text" = "예약시동";
+
+/* Class = "UILabel"; text = "블루투스 연결"; ObjectID = "bXB-Ju-Wrk"; */
+"bXB-Ju-Wrk.text" = "블루투스 연결";
+
+/* Class = "UILabel"; text = "알림"; ObjectID = "bXa-hG-raS"; */
+"bXa-hG-raS.text" = "알림";
+
+/* Class = "UILabel"; text = "예약 시간 24시 기준 입니다."; ObjectID = "bYM-Ub-wH8"; */
+"bYM-Ub-wH8.text" = "예약 시간 24시 기준 입니다.";
+
+/* Class = "UILabel"; text = "카프랜드단말기  블루투스와 연결  끊김"; ObjectID = "baG-1D-9ew"; */
+"baG-1D-9ew.text" = "카프랜드단말기  블루투스와 연결  끊김";
+
+/* Class = "UILabel"; text = "연식(년)"; ObjectID = "bfh-Kl-t3P"; */
+"bfh-Kl-t3P.text" = "연식(년)";
+
+/* Class = "UILabel"; text = "간단한 연결 가이드를 따라 연결해보세요."; ObjectID = "bnG-67-ta7"; */
+"bnG-67-ta7.text" = "간단한 연결 가이드를 따라 연결해보세요.";
+
+/* Class = "UILabel"; text = "회원가입 절차가 모두 완료되었습니다."; ObjectID = "bpn-3H-TQ5"; */
+"bpn-3H-TQ5.text" = "회원가입 절차가 모두 완료되었습니다.";
+
+/* Class = "UILabel"; text = "차량등록 번호"; ObjectID = "cBR-QV-GgC"; */
+"cBR-QV-GgC.text" = "차량등록 번호";
+
+/* Class = "UILabel"; text = "회원님 핸드폰의 블루투스 아이콘을 눌러"; ObjectID = "cFP-KZ-HYB"; */
+"cFP-KZ-HYB.text" = "회원님 핸드폰의 블루투스 아이콘을 눌러";
+
+/* Class = "UILabel"; text = "카프랜드 기기를 연결시킵니다."; ObjectID = "cLk-sb-fRX"; */
+"cLk-sb-fRX.text" = "카프랜드 기기를 연결시킵니다.";
+
+/* Class = "UILabel"; text = "연비"; ObjectID = "cTj-qe-on6"; */
+"cTj-qe-on6.text" = "연비";
+
+/* Class = "UILabel"; text = "를 불러오는 중입니다."; ObjectID = "cjz-qX-SOS"; */
+"cjz-qX-SOS.text" = "를 불러오는 중입니다.";
+
+/* Class = "UIButton"; normalTitle = "커뮤니티"; ObjectID = "ctM-O8-UJA"; */
+"ctM-O8-UJA.normalTitle" = "커뮤니티";
+
+/* Class = "UILabel"; text = "( 남은시간 2분 00초 )"; ObjectID = "cvb-4J-r5c"; */
+"cvb-4J-r5c.text" = "( 남은시간 2분 00초 )";
+
+/* Class = "UITextField"; placeholder = "닉네임:"; ObjectID = "d4s-hw-789"; */
+"d4s-hw-789.placeholder" = "닉네임:";
+
+/* Class = "UITextField"; placeholder = " 비밀번호"; ObjectID = "d6d-Ig-IiS"; */
+"d6d-Ig-IiS.placeholder" = " 비밀번호";
+
+/* Class = "UILabel"; text = "신규 비밀번호"; ObjectID = "dTi-pB-nlB"; */
+"dTi-pB-nlB.text" = "신규 비밀번호";
+
+/* Class = "UIButton"; normalTitle = "차량설정"; ObjectID = "drl-KY-KJy"; */
+"drl-KY-KJy.normalTitle" = "차량설정";
+
+/* Class = "UITextField"; placeholder = "비밀번호 입력"; ObjectID = "dz5-9d-qfa"; */
+"dz5-9d-qfa.placeholder" = "비밀번호 입력";
+
+/* Class = "UIButton"; normalTitle = "도움말"; ObjectID = "dzl-VU-d9I"; */
+"dzl-VU-d9I.normalTitle" = "도움말";
+
+/* Class = "UIButton"; normalTitle = "악세사리"; ObjectID = "e5C-jA-soH"; */
+"e5C-jA-soH.normalTitle" = "악세사리";
+
+/* Class = "UILabel"; text = "9999km"; ObjectID = "e8z-Up-qva"; */
+"e8z-Up-qva.text" = "9999km";
+
+/* Class = "UIButton"; normalTitle = "확인"; ObjectID = "eVl-FI-53g"; */
+"eVl-FI-53g.normalTitle" = "확인";
+
+/* Class = "UIButton"; normalTitle = "악세사리"; ObjectID = "eeg-mO-gQV"; */
+"eeg-mO-gQV.normalTitle" = "악세사리";
+
+/* Class = "UIButton"; normalTitle = "지역 게시판"; ObjectID = "eqe-HJ-Ytv"; */
+"eqe-HJ-Ytv.normalTitle" = "지역 게시판";
+
+/* Class = "UIButton"; normalTitle = "저장"; ObjectID = "euh-ic-enk"; */
+"euh-ic-enk.normalTitle" = "저장";
+
+/* Class = "UIButton"; normalTitle = "인증 번호"; ObjectID = "ewK-od-Zmu"; */
+"ewK-od-Zmu.normalTitle" = "인증 번호";
+
+/* Class = "UILabel"; text = "크루즈 2018년형"; ObjectID = "f1E-9C-dqw"; */
+"f1E-9C-dqw.text" = "크루즈 2018년형";
+
+/* Class = "UIButton"; normalTitle = "Button"; ObjectID = "f1J-OF-lU1"; */
+"f1J-OF-lU1.normalTitle" = "Button";
+
+/* Class = "UIButton"; normalTitle = "확인"; ObjectID = "g7I-Me-kdy"; */
+"g7I-Me-kdy.normalTitle" = "확인";
+
+/* Class = "UIButton"; normalTitle = "중복 체크"; ObjectID = "gvO-Bl-FAy"; */
+"gvO-Bl-FAy.normalTitle" = "중복 체크";
+
+/* Class = "UILabel"; text = "동의합니다."; ObjectID = "gzp-hf-RUV"; */
+"gzp-hf-RUV.text" = "동의합니다.";
+
+/* Class = "UIButton"; normalTitle = "인증 번호"; ObjectID = "h1Q-dC-tI5"; */
+"h1Q-dC-tI5.normalTitle" = "인증 번호";
+
+/* Class = "UIButton"; normalTitle = "         끄기"; ObjectID = "hXC-FQ-49u"; */
+"hXC-FQ-49u.normalTitle" = "         끄기";
+
+/* Class = "UILabel"; text = "주행거리"; ObjectID = "hXm-ae-PGr"; */
+"hXm-ae-PGr.text" = "주행거리";
+
+/* Class = "UILabel"; text = "동의합니다."; ObjectID = "hZY-c4-pqx"; */
+"hZY-c4-pqx.text" = "동의합니다.";
+
+/* Class = "UILabel"; text = "위치 정보 이용안내 (미동의 시 앱 사용을 할 수 없습니다)"; ObjectID = "jAO-sr-fKN"; */
+"jAO-sr-fKN.text" = "위치 정보 이용안내 (미동의 시 앱 사용을 할 수 없습니다)";
+
+/* Class = "UILabel"; text = "차량번호  |"; ObjectID = "jdf-mI-WmV"; */
+"jdf-mI-WmV.text" = "차량번호  |";
+
+/* Class = "UILabel"; text = "차대번호"; ObjectID = "jys-J9-uKI"; */
+"jys-J9-uKI.text" = "차대번호";
+
+/* Class = "UIButton"; normalTitle = "다음"; ObjectID = "kSU-Wb-xAS"; */
+"kSU-Wb-xAS.normalTitle" = "다음";
+
+/* Class = "UILabel"; text = "동의합니다."; ObjectID = "knx-eJ-kjl"; */
+"knx-eJ-kjl.text" = "동의합니다.";
+
+/* Class = "UILabel"; text = "연료 타입"; ObjectID = "ktG-yK-cHQ"; */
+"ktG-yK-cHQ.text" = "연료 타입";
+
+/* Class = "UILabel"; text = "연식(년)"; ObjectID = "kyG-hE-nFu"; */
+"kyG-hE-nFu.text" = "연식(년)";
+
+/* Class = "UIButton"; normalTitle = "차량전용 중고장터"; ObjectID = "l63-yW-zfM"; */
+"l63-yW-zfM.normalTitle" = "차량전용 중고장터";
+
+/* Class = "UILabel"; text = "25가 1234"; ObjectID = "mEp-6N-YsB"; */
+"mEp-6N-YsB.text" = "25가 1234";
+
+/* Class = "UIButton"; normalTitle = "기기없음"; ObjectID = "mP1-NI-gh4"; */
+"mP1-NI-gh4.normalTitle" = "기기없음";
+
+/* Class = "UILabel"; text = "사용이 가능합니다."; ObjectID = "nWP-OW-lid"; */
+"nWP-OW-lid.text" = "사용이 가능합니다.";
+
+/* Class = "UILabel"; text = "연결방법"; ObjectID = "nhX-C5-Vmy"; */
+"nhX-C5-Vmy.text" = "연결방법";
+
+/* Class = "UILabel"; text = "카프랜드에서 사용할 닉네임을 입력해주세요."; ObjectID = "oKC-4b-BXC"; */
+"oKC-4b-BXC.text" = "카프랜드에서 사용할 닉네임을 입력해주세요.";
+
+/* Class = "UILabel"; text = "OS 최신버전으로 업데이트 후 사용가능합니다."; ObjectID = "oSg-1A-sdo"; */
+"oSg-1A-sdo.text" = "OS 최신버전으로 업데이트 후 사용가능합니다.";
+
+/* Class = "UIButton"; normalTitle = "확인"; ObjectID = "oU1-zX-UXl"; */
+"oU1-zX-UXl.normalTitle" = "확인";
+
+/* Class = "UIButton"; normalTitle = "취소"; ObjectID = "oVm-uj-D8w"; */
+"oVm-uj-D8w.normalTitle" = "취소";
+
+/* Class = "UILabel"; text = "*휴대폰으로 전송한 인증번호 4자리를 2분 이내에 입력해주세요."; ObjectID = "pHm-vF-chr"; */
+"pHm-vF-chr.text" = "*휴대폰으로 전송한 인증번호 4자리를 2분 이내에 입력해주세요.";
+
+/* Class = "UILabel"; text = "카프랜드 단말기 : "; ObjectID = "pJw-Xk-1ms"; */
+"pJw-Xk-1ms.text" = "카프랜드 단말기 : ";
+
+/* Class = "UILabel"; text = "인증되었습니다."; ObjectID = "ptv-sM-QER"; */
+"ptv-sM-QER.text" = "인증되었습니다.";
+
+/* Class = "UILabel"; text = "OS 버전이 낮습니다.!"; ObjectID = "pwu-w0-dOn"; */
+"pwu-w0-dOn.text" = "OS 버전이 낮습니다.!";
+
+/* Class = "UILabel"; text = "OBD 정보"; ObjectID = "qG3-1g-YQU"; */
+"qG3-1g-YQU.text" = "OBD 정보";
+
+/* Class = "UILabel"; text = "(단말기 비밀번호는 반드시 설정하여 사용 하여야 합니다.)"; ObjectID = "qMS-ym-hyo"; */
+"qMS-ym-hyo.text" = "(단말기 비밀번호는 반드시 설정하여 사용 하여야 합니다.)";
+
+/* Class = "UIButton"; normalTitle = "악세사리"; ObjectID = "qaY-g2-juI"; */
+"qaY-g2-juI.normalTitle" = "악세사리";
+
+/* Class = "UIButton"; normalTitle = "차량 최신 정보"; ObjectID = "r7e-Nm-lhk"; */
+"r7e-Nm-lhk.normalTitle" = "차량 최신 정보";
+
+/* Class = "UILabel"; text = "창문"; ObjectID = "rki-gt-X01"; */
+"rki-gt-X01.text" = "창문";
+
+/* Class = "UITextField"; placeholder = "휴대폰 번호 입력"; ObjectID = "rlK-UZ-eu0"; */
+"rlK-UZ-eu0.placeholder" = "휴대폰 번호 입력";
+
+/* Class = "UITextView"; text = "Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda."; ObjectID = "sNc-BE-Mkj"; */
+"sNc-BE-Mkj.text" = "Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.";
+
+/* Class = "UILabel"; text = "차내 카프랜드 전용 단말기가"; ObjectID = "sfO-dO-iWx"; */
+"sfO-dO-iWx.text" = "차내 카프랜드 전용 단말기가";
+
+/* Class = "UILabel"; text = "환영합니다."; ObjectID = "sqz-zK-AjR"; */
+"sqz-zK-AjR.text" = "환영합니다.";
+
+/* Class = "UILabel"; text = "도어락"; ObjectID = "stH-Tm-6Yc"; */
+"stH-Tm-6Yc.text" = "도어락";
+
+/* Class = "UIButton"; normalTitle = "BLE_WRITE"; ObjectID = "tDk-Os-wK7"; */
+"tDk-Os-wK7.normalTitle" = "BLE_WRITE";
+
+/* Class = "UILabel"; text = "카프랜드 단말기"; ObjectID = "tMH-le-AIJ"; */
+"tMH-le-AIJ.text" = "카프랜드 단말기";
+
+/* Class = "UILabel"; text = "8주 평균  :"; ObjectID = "tMM-f1-uw1"; */
+"tMM-f1-uw1.text" = "8주 평균  :";
+
+/* Class = "UILabel"; text = "보안설정"; ObjectID = "tZP-9G-dP7"; */
+"tZP-9G-dP7.text" = "보안설정";
+
+/* Class = "UIButton"; normalTitle = "변경"; ObjectID = "ts8-Yl-xwA"; */
+"ts8-Yl-xwA.normalTitle" = "변경";
+
+/* Class = "UIButton"; normalTitle = "         잠금"; ObjectID = "vFq-3F-p8O"; */
+"vFq-3F-p8O.normalTitle" = "         잠금";
+
+/* Class = "UILabel"; text = "사용이 가능합니다."; ObjectID = "wAd-rh-d9e"; */
+"wAd-rh-d9e.text" = "사용이 가능합니다.";
+
+/* Class = "UILabel"; text = " 이번주 연비 :"; ObjectID = "wF5-bM-bCz"; */
+"wF5-bM-bCz.text" = " 이번주 연비 :";
+
+/* Class = "UILabel"; text = " 이번주 주행거리 :"; ObjectID = "wlE-ds-due"; */
+"wlE-ds-due.text" = " 이번주 주행거리 :";
+
+/* Class = "UILabel"; text = "블루투스로 연결 되어야만"; ObjectID = "xi2-aO-rCB"; */
+"xi2-aO-rCB.text" = "블루투스로 연결 되어야만";
+
+/* Class = "UIButton"; normalTitle = "확인"; ObjectID = "yxv-bR-JmY"; */
+"yxv-bR-JmY.normalTitle" = "확인";
+
+/* Class = "UIButton"; normalTitle = "         닫기"; ObjectID = "zBg-lC-X2T"; */
+"zBg-lC-X2T.normalTitle" = "         닫기";
+
+/* Class = "UILabel"; text = "차       량  |"; ObjectID = "zL6-dV-Ext"; */
+"zL6-dV-Ext.text" = "차       량  |";
+
+/* Class = "UILabel"; text = "이제 카프랜드 서비스를 이용할 수 있습니다."; ObjectID = "zNV-e9-QHt"; */
+"zNV-e9-QHt.text" = "이제 카프랜드 서비스를 이용할 수 있습니다.";
+
+/* Class = "UILabel"; text = "후진시 창문내림"; ObjectID = "zY0-Dv-vcc"; */
+"zY0-Dv-vcc.text" = "후진시 창문내림";

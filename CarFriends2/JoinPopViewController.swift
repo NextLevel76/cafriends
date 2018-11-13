@@ -45,13 +45,9 @@ class JoinPopViewController: UIViewController {
             
             MainManager.shared.bMemberPhoneCertifi = true
         }
-        else if( MainManager.shared.str_certifi_notis == "인터넷 연결을 확인해 주세요." ) {
-            
-            MainManager.shared.isPopupStartNeteorkCheck = false
-        }
         else if( MainManager.shared.str_certifi_notis == "단말기 비밀번호가 다릅니다.비밀번호 설정을 해주세요" ) {
 
-            MainManager.shared.member_info.bPinCodeViewGO = true            
+            MainManager.shared.info.bPinCodeViewGO = true            
         }
         
         

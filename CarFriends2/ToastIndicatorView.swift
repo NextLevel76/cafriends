@@ -68,7 +68,7 @@ open class ToastIndicatorView: UILabel {
     
     
     
-    func setup(_ view: UIView,txt_msg:String)
+    func setup(_ view: UIView,_ txt_msg:String)
     {
         timerStartInit()
         
@@ -120,7 +120,7 @@ open class ToastIndicatorView: UILabel {
     
     open func short(_ view: UIView ) {
         
-        self.setup(view,txt_msg: "")
+        self.setup(view, "")
     }
     
     
@@ -145,8 +145,6 @@ open class ToastIndicatorView: UILabel {
             self.backView.removeFromSuperview()
         }
     }
-    
-    
     
     
     

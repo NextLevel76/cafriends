@@ -36,23 +36,14 @@ class MainViewController: UIViewController, UITextFieldDelegate {
     var isLogin:Bool = false
     var iGetUserInfoStart:Int = 0
     
-    var getMyDrive:Bool = false
-    var getAllDrive:Bool = false
-    
-    var getMyFuel:Bool = false
-    var getAllFuel:Bool = false
-    
-    var getMyDTC:Bool = false
-    var getAllDTC:Bool = false
-    
-    var getWeekDTC:Bool = false
-    
+    @IBOutlet weak var mainSubView: UIView!
+    @IBOutlet weak var join_scrollView: UIScrollView!
     
     // 로그인
     @IBAction func pressed_Login(_ sender: UIButton) {
         
         // 인터넷 연결 체크
-        if( MainManager.shared.isConnectCheck() == false ) {
+        if( MainManager.shared.isConnectCheck(self) == false ) {
             
             return
         }
@@ -60,21 +51,46 @@ class MainViewController: UIViewController, UITextFieldDelegate {
         
         if( field_ID.text?.count == 0 ) {
             
-            var alert = UIAlertView(title: "ID INPUT", message: "아이디를 입력해주세요.", delegate: nil, cancelButtonTitle: "OK")
-            alert.show()
-            return
+            let alertController = UIAlertController(title: "", message: "닉네임를 입력해주세요.", preferredStyle: UIAlertControllerStyle.alert)
+            //                let DestructiveAction = UIAlertAction(title: "취소", style: UIAlertActionStyle.Destructive) { (result : UIAlertAction) -> Void in
+            //
+            //                    print("취소")
+            //                }
             
+            let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+                
+                print("닉네임를 입력")
+            }
+            // alertController.addAction(DestructiveAction)
+            
+            alertController.addAction(okAction)
+            self.present(alertController, animated: true, completion: nil)
+            
+            return            
         }
         
         if( field_PASSWORD.text?.count == 0 ) {
+
+            let alertController = UIAlertController(title: "", message: "패스워드를 입력해주세요.", preferredStyle: UIAlertControllerStyle.alert)
+            //                let DestructiveAction = UIAlertAction(title: "취소", style: UIAlertActionStyle.Destructive) { (result : UIAlertAction) -> Void in
+            //
+            //                    print("취소")
+            //                }
             
-            var alert = UIAlertView(title: "PWD INPUT", message: "패스워드를 입력해주세요.", delegate: nil, cancelButtonTitle: "OK")
-            alert.show()
+            let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+                
+                print("패스워드를 입력")
+            }
+            // alertController.addAction(DestructiveAction)
+            
+            alertController.addAction(okAction)
+            self.present(alertController, animated: true, completion: nil)
+            
             return
         }
         
-        MainManager.shared.member_info.str_id_nick = field_ID.text!
-        MainManager.shared.member_info.str_password = field_PASSWORD.text!
+        MainManager.shared.info.str_id_nick = field_ID.text!
+        MainManager.shared.info.str_password = field_PASSWORD.text!
         
         userLogin()
     }
@@ -84,7 +100,7 @@ class MainViewController: UIViewController, UITextFieldDelegate {
     @IBAction func pressed_JoinMember(_ sender: UIButton) {
         
         // 인터넷 연결 체크
-        if( MainManager.shared.isConnectCheck() == false ) {
+        if( MainManager.shared.isConnectCheck(self) == false ) {
             
             return
         }
@@ -104,7 +120,7 @@ class MainViewController: UIViewController, UITextFieldDelegate {
     }
     
     // Called when 'return' key pressed. return NO to ignore.
-    func textFieldShouldReturn(textField: UITextField) -> Bool {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         
         textField.resignFirstResponder()
         return true
@@ -152,8 +168,9 @@ class MainViewController: UIViewController, UITextFieldDelegate {
         MainManager.shared.getDeviceRatio(view: self.view )
         
         LoginMemberJoinView.frame.origin.y = 22
-        self.view.addSubview(LoginMemberJoinView)
         
+        // self.view.addSubview(LoginMemberJoinView)
+        mainSubView.addSubview(LoginMemberJoinView)
 
         
         // view 크기 플러스폰 대응
@@ -161,43 +178,28 @@ class MainViewController: UIViewController, UITextFieldDelegate {
         
 
         
+        // 스크롤 뷰 콘텐츠 사이즈 맞추기 (닉네임,패스워드 입력 위로)
+        join_scrollView.resizeScrollViewContentSize()
+        join_scrollView.contentSize.height += 600
         
         
+        let myColor = UIColor.white
+        field_ID.layer.borderWidth = 1.0
+        field_ID.layer.borderColor = myColor.cgColor
         
+        field_PASSWORD.layer.borderWidth = 1.0
+        field_PASSWORD.layer.borderColor = myColor.cgColor
+        
+        
+        field_ID.attributedPlaceholder = NSAttributedString(string: "닉네임", attributes: [NSForegroundColorAttributeName: UIColor.white])
+        field_PASSWORD.attributedPlaceholder = NSAttributedString(string: "비밀번호", attributes: [NSForegroundColorAttributeName: UIColor.white])
+        //field_ID.attributedPlaceholder(
         
         field_ID.delegate = self
         field_PASSWORD.delegate = self
                 
-        
-        // 클라에 저장해둔 회원가입정보 읽어오기
-        // 키값이 없으면 0 을 반환
-        if UserDefaults.standard.object(forKey: "iMemberJoinState") != nil
-        {
-            // 데이타가 있으면 그냥 진행
-            MainManager.shared.iMemberJoinState = UserDefaults.standard.integer(forKey: "iMemberJoinState")
-            LoginMemberJoinView.isHidden = true
-        }
-        else {
-            
-            // 데이타가 없으면 로그인 또는 회원가입
-            LoginMemberJoinView.isHidden = false
-            MainManager.shared.iMemberJoinState = 0
-        }
-        
-        
-        
-        //__________________________________________________________________________
-        // TEST // 0:비회원    1:차정보없이 가입     2:차정보입력 가입
-        //LoginMemberJoinView.isHidden = false
-        //MainManager.shared.iMemberJoinState = 0
-        //__________________________________________________________________________
-
-
-        // 가입된 회원 아니면 정보 안 읽는다.
-        if( MainManager.shared.iMemberJoinState > 0 ) {
-            // 회원정보 로컬 데이타 읽기
-            readMyLocalData()
-        }
+        // 유저 데이타가 있나? 체크
+        isLocalUserData()
 
         let sz_car_fuel = ["디젤 (경유)","가솔린 (휘발유)","LPG (가스)","E/V (전기차)"]
 
@@ -230,30 +232,29 @@ class MainViewController: UIViewController, UITextFieldDelegate {
         getTimeYearList()
         
         MainManager.shared.str_select_carList.append("나중에 입력")
-        // 서버에서 피커뷰 car 리스트 받기
-        initReadSelectCar()
         
-//        // 회원이면
-//        if( MainManager.shared.iMemberJoinState > 0 ) {
-//            // 유저 로그인 & 8주 데이타 읽어오기
-//            userLogin()
-//        }
+        // 서버에서 피커뷰 car 리스트 받기
+        if( MainManager.shared.isConnectCheck(self) == true ) {
+        
+            MainManager.shared.info.readCarListFromDB(self)
+        }
+
 
         timer = Timer.scheduledTimer(timeInterval: 2, target: self, selector: #selector(appStart), userInfo: nil, repeats: true)
+                
+        // 아이폰 X 대응
+        MainManager.shared.initLoadChangeFrameIPhoneX(mainView: self.view, changeView: mainSubView)
         
-        initStartBLE()
+        // 아이폰 블루투스 ON/OFF 상태
+        initStartBLE()        
     }
     
     
     
-//    func appAlert() {
-//
-//        var alert = UIAlertView(title: "OS 버전이 낮습니다.!", message: "OS 최신버전으로 업데이트 후 사용가능합니다.", delegate: nil, cancelButtonTitle: "OK")
-//    }
+    
 
     // 2초 반복
-    func appStart() {
-        
+    func appStart() {        
         
         // 로그인 할꺼냐 회원가입 할꺼냐
         if( LoginMemberJoinView.isHidden == false ) {
@@ -273,59 +274,26 @@ class MainViewController: UIViewController, UITextFieldDelegate {
                 defaults.set(2, forKey: "iMemberJoinState")                
             }
             
+            // 유저 로그인 성공 = 4 다음 단계 진행
             if(iGetUserInfoStart < 4) { return }
         }
+        
+        // 블루투스 켜졌나 체크?
+        // if( phoneBlueToothIsOn() == false ) { return }
+        
+        
+        
+
+        
+        
+        
+        // 테스트
+        //MainManager.shared.info.isBLE_ON = true
         
         
         
         
 
-//        // 신규 유저가 아니면 통과!
-//        if( MainManager.shared.isConnectCheck2() == false ) {
-//
-//            if( MainManager.shared.isPopupStartNeteorkCheck == false ) {
-//            // 팝업창 띠우기
-//                MainManager.shared.isPopupStartNeteorkCheck = true
-//                MainManager.shared.str_certifi_notis = "인터넷 연결을 확인해 주세요.!"
-//                self.performSegue(withIdentifier: "joinPopSegueMain", sender: self)
-//            }
-//            return
-//        }
-        
-//        if( MainManager.shared.isPopupStartNeteorkCheck == true ) {
-//
-//            return
-//        }
-        
-//        // 자동차 목록 못받았다. 대기
-//        if( MainManager.shared.bCarListRequest == false ) {
-//
-//            initReadSelectCar()
-//            return
-//        }
-        
-        
-        
-        
-        
-        // 블루 투스 안켜졌다
-        if( MainManager.shared.member_info.isBLE_ON == false) {
-            // 팝업창 닫혔으면 다시 띠운다
-            if( MainManager.shared.member_info.isBLE_ON_POPUP_CHECK == false ) {
-                // 블루투스 켜라 팝업
-                self.performSegue(withIdentifier: "blueToothOffPopSegue", sender: self)
-                MainManager.shared.member_info.isBLE_ON_POPUP_CHECK = true
-                print("blueToothOffPopSegue")
-            }
-            return
-        }
-        
-        // 팝업창 떠 있는동안 화면 이동 금지
-        if( MainManager.shared.member_info.isBLE_ON_POPUP_CHECK == true ) {
-            
-            return
-        }
-        
         
         
         // 비회원 회원가입
@@ -333,7 +301,7 @@ class MainViewController: UIViewController, UITextFieldDelegate {
             
             timer.invalidate() // 쓰레드 중지
             
-            let myView = self.storyboard?.instantiateViewController(withIdentifier: "bluetoothmain") as! BlueToothViewController
+            let myView = self.storyboard?.instantiateViewController(withIdentifier: "guidemain") as! GuideViewController
             self.present(myView, animated: true, completion: nil)
         }
             // 회원
@@ -360,63 +328,67 @@ class MainViewController: UIViewController, UITextFieldDelegate {
     }
     
     
-    
-
-    @IBAction func pressed(_ sender: UIButton) {
-
-        // 자동차 목록 못받았다. 대기
-        if( MainManager.shared.bCarListRequest == false ) {
-
-            var alert = UIAlertView(title: "No Internet Connection1", message: "서버와의 연결이 지연되고 있습니다. 잠시후에 다시 사용해 주세요.", delegate: nil, cancelButtonTitle: "OK")
-            alert.show()
-            return
+    // 유저 데이타 있나?
+    func isLocalUserData () {
+        
+        // 클라에 저장해둔 회원가입정보 읽어오기
+        // 키값이 없으면 0 을 반환
+        if UserDefaults.standard.object(forKey: "iMemberJoinState") != nil
+        {
+            // 데이타가 있으면 그냥 진행
+            MainManager.shared.iMemberJoinState = UserDefaults.standard.integer(forKey: "iMemberJoinState")
+            LoginMemberJoinView.isHidden = true
         }
-
-        // 회원이면 DB 통신완료 까지 대기 체크
+        else {
+            
+            // 데이타가 없으면 로그인 또는 회원가입
+            LoginMemberJoinView.isHidden = false
+            MainManager.shared.iMemberJoinState = 0
+        }
+        
+        //__________________________________________________________________________
+        // TEST // 0:비회원    1:차정보없이 가입     2:차정보입력 가입
+        //LoginMemberJoinView.isHidden = false
+        //MainManager.shared.iMemberJoinState = 0
+        //__________________________________________________________________________
+        
+        
+        // 가입된 회원 아니면 정보 안 읽는다.
         if( MainManager.shared.iMemberJoinState > 0 ) {
-
-            if( !isLogin ) {
-
-                var alert = UIAlertView(title: "No Internet Connection2", message: "서버와의 연결이 지연되고 있습니다. 잠시후에 다시 사용해 주세요.", delegate: nil, cancelButtonTitle: "OK")
-                alert.show()
-                return
-            }
-        }
-        else {
-            // 전체 회원 정보 8주치만 읽는다.
-            if( !getAllDrive || !getAllFuel || !getAllDTC ) {
-
-                var alert = UIAlertView(title: "No Internet Connection2", message: "서버와의 연결이 지연되고 있습니다. 잠시후에 다시 사용해 주세요.", delegate: nil, cancelButtonTitle: "OK")
-                alert.show()
-                return
-            }
+            // 회원정보 로컬 데이타 읽기
+            MainManager.shared.getMyDataLocal()
         }
         
-        
-        
-        
-        // BLE TEST
-        //let myView = self.storyboard?.instantiateViewController(withIdentifier: "ScannerViewController") as! ScannerViewController
-        //
-        //let myView = self.storyboard?.instantiateViewController(withIdentifier: "MainView") as! MainViewController
-        //
-        
-        
-        // 비회원
-        if( MainManager.shared.iMemberJoinState == 0 ) {
-            
-            let myView = self.storyboard?.instantiateViewController(withIdentifier: "bluetoothmain") as! BlueToothViewController
-            self.present(myView, animated: true, completion: nil)
-        }
-        // 회원
-        else {
-            
-            
-            
-            let myView = self.storyboard?.instantiateViewController(withIdentifier: "a00") as! AViewController
-            self.present(myView, animated: true, completion: nil)
-        }
     }
+    
+    
+    
+    
+    // 블루투스 On 체크
+    func phoneBlueToothIsOn() -> Bool {
+        
+        // 블루 투스 안켜졌다
+        if( MainManager.shared.info.isBLE_ON == false) {
+            // 팝업창 닫혔으면 다시 띠운다
+            if( MainManager.shared.info.isBLE_ON_POPUP_CHECK == false ) {
+                // 블루투스 켜라 팝업
+                self.performSegue(withIdentifier: "blueToothOffPopSegue", sender: self)
+                MainManager.shared.info.isBLE_ON_POPUP_CHECK = true
+                print("blueToothOffPopSegue")
+            }
+            return false
+        }
+        
+        // 팝업창 떠 있는동안 화면 이동 금지
+        if( MainManager.shared.info.isBLE_ON_POPUP_CHECK == true ) {
+            
+            return false
+        }
+        
+        return true
+    }
+
+    
     
     /*
     // MARK: - Navigation
@@ -432,24 +404,25 @@ class MainViewController: UIViewController, UITextFieldDelegate {
     // blue001 / 01012345678
     func userLogin() {
         
-        // login.php?Req=Login&ID=아이디&Pass=패스워드
-        var parameters = [
+        // login.php?Req=Login&ID=닉네임&Pass=패스워드
+        let parameters = [
             "Req": "Login",
-            "ID": MainManager.shared.member_info.str_id_nick,
-            "Pass": MainManager.shared.member_info.str_password]
+            "ID": MainManager.shared.info.str_id_nick,
+            "Pass": MainManager.shared.info.str_password,
+            "Token": MainManager.shared.ASPN_TOKEN]
         
 //        if( MainManager.shared.bAPP_TEST ) {
-//            MainManager.shared.member_info.str_id_nick = "blue009"
+//            MainManager.shared.info.str_id_nick = "blue009"
 //            parameters = [
 //                "Req": "Login",
-//                "ID": MainManager.shared.member_info.str_id_nick,
-//                "Pass": MainManager.shared.member_info.str_id_nick]
+//                "ID": MainManager.shared.info.str_id_nick,
+//                "Pass": MainManager.shared.info.str_id_nick]
 //        }
         
         
-        print(MainManager.shared.member_info.str_id_nick)
+        print(MainManager.shared.info.str_id_nick)
         
-        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
+        ToastIndicatorView.shared.setup(self.view, "")
         
         Alamofire.request(MainManager.shared.SeverURL+"login.php", method: .post, parameters: parameters)
             .responseJSON { response in
@@ -479,36 +452,62 @@ class MainViewController: UIViewController, UITextFieldDelegate {
                         print( "LOGIN_OK" )
                         // 쿠키저장
                         HTTPCookieStorage.save()
-                        // 아이디 패스워드 저장
-                        UserDefaults.standard.set(MainManager.shared.member_info.str_id_nick, forKey: "str_id_nick")
-                        UserDefaults.standard.set(MainManager.shared.member_info.str_password, forKey: "str_password")
+                        // 닉네임 패스워드 저장
+                        UserDefaults.standard.set(MainManager.shared.info.str_id_nick, forKey: "str_id_nick")
+                        UserDefaults.standard.set(MainManager.shared.info.str_password, forKey: "str_password")
                         
                         self.isLogin = true
                     }
                     else {
 
-                        var alert = UIAlertView(title: "Login Fail", message: "아이디 또는 패스워드가 틀렸습니다.", delegate: nil, cancelButtonTitle: "OK")
-                        alert.show()
+                        let alertController = UIAlertController(title: "", message: "닉네임 또는 패스워드가 틀렸습니다.", preferredStyle: UIAlertControllerStyle.alert)
+                        //                let DestructiveAction = UIAlertAction(title: "취소", style: UIAlertActionStyle.Destructive) { (result : UIAlertAction) -> Void in
+                        //
+                        //                    print("취소")
+                        //                }
+                        
+                        let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+                            
+                            print("닉네임 또는 패스워드가 틀렸습니다.")
+                        }
+                        // alertController.addAction(DestructiveAction)
+                        
+                        alertController.addAction(okAction)
+                        self.present(alertController, animated: true, completion: nil)
+
                     }
                     print( Result )
                 }
                 else {
                     
-                    var alert = UIAlertView(title: "Login Fail", message: "아이디 또는 패스워드가 틀렸습니다.", delegate: nil, cancelButtonTitle: "OK")
-                    alert.show()
+                    let alertController = UIAlertController(title: "", message: "닉네임 또는 패스워드가 틀렸습니다.", preferredStyle: UIAlertControllerStyle.alert)
+                    //                let DestructiveAction = UIAlertAction(title: "취소", style: UIAlertActionStyle.Destructive) { (result : UIAlertAction) -> Void in
+                    //
+                    //                    print("취소")
+                    //                }
+                    
+                    let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+                        
+                        print("닉네임 또는 패스워드가 틀렸습니다.")
+                    }
+                    // alertController.addAction(DestructiveAction)
+                    
+                    alertController.addAction(okAction)
+                    self.present(alertController, animated: true, completion: nil)
+
                 }
                 
         }
     }
     
     
-
+    // 로그인시 DB 읽기
     func getUserInfoDB() {
         
         print("getUserInfoDB")
 
         
-        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
+        ToastIndicatorView.shared.setup(self.view, "")
         
         // database.php?Req=CarList
         // {"Res":"GetUserInfo","Result":["테스트01","01012341234","말리부","2020","가나다라마바사","휘발유","46다1234","13.4","11104","1111"]}
@@ -546,100 +545,58 @@ class MainViewController: UIViewController, UITextFieldDelegate {
                         carList[1].stringValue
                         // {"Res":"GetUserInfo","Result":["테스트01","01012341234","말리부","2020","가나다라마바사","휘발유","46다1234","13.4","11104","1111"]}
                         
-                        MainManager.shared.member_info.str_id_nick          = carList[0].stringValue
-                        MainManager.shared.member_info.str_id_phone_num     = carList[1].stringValue
-                        MainManager.shared.member_info.str_car_kind         = carList[2].stringValue
-                        MainManager.shared.member_info.str_car_year         = carList[3].stringValue
-                        MainManager.shared.member_info.str_car_vin_number     = carList[4].stringValue
-                        MainManager.shared.member_info.str_car_fuel_type      = carList[5].stringValue
-                        MainManager.shared.member_info.str_car_plate_num      = carList[6].stringValue
-                        MainManager.shared.member_info.str_TotalAvgFuelMileage      = carList[7].stringValue
-                        MainManager.shared.member_info.str_TotalDriveMileage   = carList[8].stringValue
-                        MainManager.shared.member_info.str_LocalPinCode          = carList[9].stringValue
+                        MainManager.shared.info.str_id_nick          = carList[0].stringValue
+                        MainManager.shared.info.str_id_phone_num     = carList[1].stringValue
+                        MainManager.shared.info.str_car_kind         = carList[2].stringValue
+                        MainManager.shared.info.str_car_year         = carList[3].stringValue
+                        MainManager.shared.info.str_car_vin_number     = carList[4].stringValue
+                        MainManager.shared.info.str_car_fuel_type      = carList[5].stringValue
+                        MainManager.shared.info.str_car_plate_num      = carList[6].stringValue
+                        MainManager.shared.info.str_TotalAvgFuelMileage      = carList[7].stringValue
+                        MainManager.shared.info.str_TotalDriveMileage   = carList[8].stringValue
+                        MainManager.shared.info.str_LocalPinCode          = carList[9].stringValue
                         
                         let defaults = UserDefaults.standard
                         // 클라이언트 저장
-                        defaults.set(MainManager.shared.member_info.str_id_phone_num, forKey: "str_id_phone_num")
-                        defaults.set(MainManager.shared.member_info.str_id_nick, forKey: "str_id_nick")
+                        defaults.set(MainManager.shared.info.str_id_phone_num, forKey: "str_id_phone_num")
+                        defaults.set(MainManager.shared.info.str_id_nick, forKey: "str_id_nick")
                         
                         
-                        defaults.set(MainManager.shared.member_info.str_car_kind, forKey: "str_car_kind")
-                        defaults.set(MainManager.shared.member_info.str_car_year, forKey: "str_car_year")
-                        defaults.set(MainManager.shared.member_info.str_car_vin_number, forKey: "str_car_vin_number")
-                        defaults.set(MainManager.shared.member_info.str_car_fuel_type, forKey: "str_car_fuel_type")
-                        defaults.set(MainManager.shared.member_info.str_car_plate_num, forKey: "str_car_plate_num")
-                        defaults.set(MainManager.shared.member_info.str_car_year, forKey: "str_car_year")
-                        defaults.set(MainManager.shared.member_info.str_TotalAvgFuelMileage, forKey: "str_TotalAvgFuelMileage")
-                        defaults.set(MainManager.shared.member_info.str_TotalDriveMileage, forKey: "str_TotalDriveMileage")
+                        defaults.set(MainManager.shared.info.str_car_kind, forKey: "str_car_kind")
+                        defaults.set(MainManager.shared.info.str_car_year, forKey: "str_car_year")
+                        defaults.set(MainManager.shared.info.str_car_vin_number, forKey: "str_car_vin_number")
+                        defaults.set(MainManager.shared.info.str_car_fuel_type, forKey: "str_car_fuel_type")
+                        defaults.set(MainManager.shared.info.str_car_plate_num, forKey: "str_car_plate_num")
+                        defaults.set(MainManager.shared.info.str_TotalAvgFuelMileage, forKey: "str_TotalAvgFuelMileage")
+                        defaults.set(MainManager.shared.info.str_TotalDriveMileage, forKey: "str_TotalDriveMileage")
                         
                         // 핀 코드 클라 저장
-                        UserDefaults.standard.set(MainManager.shared.member_info.str_LocalPinCode, forKey: "str_LocalPinCode")
+                        UserDefaults.standard.set(MainManager.shared.info.str_LocalPinCode, forKey: "str_LocalPinCode")
                     }
                     else {
                         
-                        var alert = UIAlertView(title: "Server", message: "서버와의 연결이 지연되고 있습니다. 잠시후 다시 시도해 주세요.", delegate: nil, cancelButtonTitle: "OK")
-                        alert.show()
-                    }
-                }
-                
-        }
-    }
-    
-    
-    
-    
-    
-    func initReadSelectCar() {
-        
-        print("initReadSelectCar")
-        
-        // 카 리스트 데이타 받았다 리스트 획득. 필요 없다
-        if( MainManager.shared.bCarListRequest == true ) { return }
-        
-        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
-        
-        // database.php?Req=CarList
-        // "Res":"CarList","CarList":["스파크","크루즈",…..]
-        let parameters = [
-            "Req": "CarList"
-        ]  // 차종
-        
-        Alamofire.request(MainManager.shared.SeverURL+"database.php", method: .post, parameters: parameters)
-            .responseJSON { response in
-                
-                ToastIndicatorView.shared.close()
-                print(response)
-               
-                if let status = response.response?.statusCode {
-                    switch(status){
-                    case 201:
-                        print("example success")
-                    default:
-                        print("error with response status: \(status)")
-                    }
-                }
-                
-                //to get JSON return value
-                if let json = try? JSON(response.result.value) {
-                    
-                    print(json["Res"])
-                    let Result = json["Res"].rawString()!
-                    
-                    if( Result == "CarList" ) {
+                        let alertController = UIAlertController(title: "", message: "서버와의 연결이 지연되고 있습니다. 인터넷 연결을 확인해 주세요.", preferredStyle: UIAlertControllerStyle.alert)
+                        //                let DestructiveAction = UIAlertAction(title: "취소", style: UIAlertActionStyle.Destructive) { (result : UIAlertAction) -> Void in
+                        //
+                        //                    print("취소")
+                        //                }
                         
-                        MainManager.shared.bCarListRequest = true // 데이타 받았다 체크
-                        
-                        let carList = json["CarList"]
-                        print( carList )
-                        
-                        for i in 0..<carList.count {
-                            MainManager.shared.str_select_carList.append( carList[i].stringValue )
+                        let okAction = UIAlertAction(title: "확인", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+                            
+                            print("닉네임 또는 패스워드가 틀렸습니다.")
                         }
+                        // alertController.addAction(DestructiveAction)
+                        
+                        alertController.addAction(okAction)
+                        self.present(alertController, animated: true, completion: nil)                        
                     }
                 }
                 
         }
     }
+    
+    
+
     
     
     var nowDateDay = ""
@@ -667,467 +624,28 @@ class MainViewController: UIViewController, UITextFieldDelegate {
     // database.php?Req=Get8WeeksDrivelMileageAllMember&CheckDate=yyyy-mm-dd 회원평균
     
     
-    func getData8Week_myDrive() {
-        
-        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
-        // database.php?Req=CarList
-        // "Res":"CarList","CarList":["스파크","크루즈",…..]
-        let parameters = [
-            "Req": "Get8WeeksDriveMileage",
-            "CheckDate": nowDateDay,
-            "Car_Model": MainManager.shared.member_info.str_car_kind]
-        
-        print(parameters)
-        Alamofire.request(MainManager.shared.SeverURL+"database.php", method: .post, parameters: parameters)
-            .responseJSON { response in
-                
-                ToastIndicatorView.shared.close()
-                print(response)
-               
-                if let status = response.response?.statusCode {
-                    switch(status){
-                    case 201:
-                        print("example success")
-                    default:
-                        print("error with response status: \(status)")
-                    }
-                }
-                
-                self.getMyDrive = true
-                //to get JSON return value
-                // "Res":"Get8WeeksDrivelMileage",[ {"이번주":"10.1"}, {"1주전":"5.8"}, {"2주전":"3.8"}, {"3주전":"5.8"}, {"4주전":"9.8"}, {"5주전":"9.8"}, {"6주전":"3.8"}, {"7주전":"2.8"} ];
-                
-                if let json = try? JSON(response.result.value) {
-                    
-                    var tempResult0 = JSON(json["Result"][0])
-                    var tempResult1 = JSON(json["Result"][1])
-                    var tempResult2 = JSON(json["Result"][2])
-                    var tempResult3 = JSON(json["Result"][3])
-                    var tempResult4 = JSON(json["Result"][4])
-                    var tempResult5 = JSON(json["Result"][5])
-                    var tempResult6 = JSON(json["Result"][6])
-                    var tempResult7 = JSON(json["Result"][7])
-                    
-//                    print( tempResult0["이번주"].stringValue )
-//                    print( tempResult1["1주전"].stringValue )
-//                    print( tempResult2["2주전"].stringValue )
-//                    print( tempResult3["3주전"].stringValue )
-//                    print( tempResult4["4주전"].stringValue )
-//                    print( tempResult5["5주전"].stringValue )
-//                    print( tempResult6["6주전"].stringValue )
-//                    print( tempResult7["7주전"].stringValue )
-                    
-                    MainManager.shared.str_My8WeeksDriveMileage.append(tempResult0["이번주"].stringValue)
-                    MainManager.shared.str_My8WeeksDriveMileage.append(tempResult1["1주전"].stringValue)
-                    MainManager.shared.str_My8WeeksDriveMileage.append(tempResult2["2주전"].stringValue)
-                    MainManager.shared.str_My8WeeksDriveMileage.append(tempResult3["3주전"].stringValue)
-                    MainManager.shared.str_My8WeeksDriveMileage.append(tempResult4["4주전"].stringValue)
-                    MainManager.shared.str_My8WeeksDriveMileage.append(tempResult5["5주전"].stringValue)
-                    MainManager.shared.str_My8WeeksDriveMileage.append(tempResult6["6주전"].stringValue)
-                    MainManager.shared.str_My8WeeksDriveMileage.append(tempResult7["7주전"].stringValue)
-                    
-                    print("")
-                }
-                
-        }
-    }
-    
-    func getData8Week_AllMemberDrive() {
-        
-        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
-        // database.php?Req=CarList
-        // "Res":"CarList","CarList":["스파크","크루즈",…..]
-        let parameters = [
-            "Req": "Get8WeeksDriveMileageAllMember",
-            "CheckDate": nowDateDay,
-            "Car_Model": MainManager.shared.member_info.str_car_kind]
-        
-        print(parameters)
-        Alamofire.request(MainManager.shared.SeverURL+"database.php", method: .post, parameters: parameters)
-            .responseJSON { response in
-                
-                ToastIndicatorView.shared.close()
-                print(response)
-               
-                if let status = response.response?.statusCode {
-                    switch(status){
-                    case 201:
-                        print("example success")
-                    default:
-                        print("error with response status: \(status)")
-                    }
-                }
-                
-                //to get JSON return value
-                // "Res":"Get8WeeksDrivelMileage",[ {"이번주":"10.1"}, {"1주전":"5.8"}, {"2주전":"3.8"}, {"3주전":"5.8"}, {"4주전":"9.8"}, {"5주전":"9.8"}, {"6주전":"3.8"}, {"7주전":"2.8"} ];
-                self.getAllDrive = true
-                
-                if let json = try? JSON(response.result.value) {
-                    
-                    var tempResult0 = JSON(json["Result"][0])
-                    var tempResult1 = JSON(json["Result"][1])
-                    var tempResult2 = JSON(json["Result"][2])
-                    var tempResult3 = JSON(json["Result"][3])
-                    var tempResult4 = JSON(json["Result"][4])
-                    var tempResult5 = JSON(json["Result"][5])
-                    var tempResult6 = JSON(json["Result"][6])
-                    var tempResult7 = JSON(json["Result"][7])
-                    
-//                    print( tempResult0["이번주"].stringValue )
-//                    print( tempResult1["1주전"].stringValue )
-//                    print( tempResult2["2주전"].stringValue )
-//                    print( tempResult3["3주전"].stringValue )
-//                    print( tempResult4["4주전"].stringValue )
-//                    print( tempResult5["5주전"].stringValue )
-//                    print( tempResult6["6주전"].stringValue )
-//                    print( tempResult7["7주전"].stringValue )
-                    
-                    MainManager.shared.str_All8WeeksDriveMileage.append(tempResult0["이번주"].stringValue)
-                    MainManager.shared.str_All8WeeksDriveMileage.append(tempResult1["1주전"].stringValue)
-                    MainManager.shared.str_All8WeeksDriveMileage.append(tempResult2["2주전"].stringValue)
-                    MainManager.shared.str_All8WeeksDriveMileage.append(tempResult3["3주전"].stringValue)
-                    MainManager.shared.str_All8WeeksDriveMileage.append(tempResult4["4주전"].stringValue)
-                    MainManager.shared.str_All8WeeksDriveMileage.append(tempResult5["5주전"].stringValue)
-                    MainManager.shared.str_All8WeeksDriveMileage.append(tempResult6["6주전"].stringValue)
-                    MainManager.shared.str_All8WeeksDriveMileage.append(tempResult7["7주전"].stringValue)
-
-                    
-                    print("")
-                }
-                
-        }
-        
-    }
-    
-    
-    
-    func getData8Week_myFuel() {
-        
-        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
-        // database.php?Req=CarList
-        // "Res":"CarList","CarList":["스파크","크루즈",…..]
-        let parameters = [
-            "Req": "Get8WeeksFuelMileage",
-            "CheckDate": nowDateDay,
-            "Car_Model": MainManager.shared.member_info.str_car_kind]
-        
-        print(parameters)
-        Alamofire.request(MainManager.shared.SeverURL+"database.php", method: .post, parameters: parameters)
-            .responseJSON { response in
-                
-                ToastIndicatorView.shared.close()
-                print(response)
-               
-                if let status = response.response?.statusCode {
-                    switch(status){
-                    case 201:
-                        print("example success")
-                    default:
-                        print("error with response status: \(status)")
-                    }
-                }
-                
-                self.getMyFuel = true
-               
-                
-                //to get JSON return value
-                // "Res":"Get8WeeksDrivelMileage",[ {"이번주":"10.1"}, {"1주전":"5.8"}, {"2주전":"3.8"}, {"3주전":"5.8"}, {"4주전":"9.8"}, {"5주전":"9.8"}, {"6주전":"3.8"}, {"7주전":"2.8"} ];
-                
-                if let json = try? JSON(response.result.value) {
-                    
-                    var tempResult0 = JSON(json["Result"][0])
-                    var tempResult1 = JSON(json["Result"][1])
-                    var tempResult2 = JSON(json["Result"][2])
-                    var tempResult3 = JSON(json["Result"][3])
-                    var tempResult4 = JSON(json["Result"][4])
-                    var tempResult5 = JSON(json["Result"][5])
-                    var tempResult6 = JSON(json["Result"][6])
-                    var tempResult7 = JSON(json["Result"][7])
-                    
-//                    print( tempResult0["이번주"].stringValue )
-//                    print( tempResult1["1주전"].stringValue )
-//                    print( tempResult2["2주전"].stringValue )
-//                    print( tempResult3["3주전"].stringValue )
-//                    print( tempResult4["4주전"].stringValue )
-//                    print( tempResult5["5주전"].stringValue )
-//                    print( tempResult6["6주전"].stringValue )
-//                    print( tempResult7["7주전"].stringValue )
-                    
-                    
-                    MainManager.shared.str_My8weeksFuelMileage.append(tempResult0["이번주"].stringValue)
-                    MainManager.shared.str_My8weeksFuelMileage.append(tempResult1["1주전"].stringValue)
-                    MainManager.shared.str_My8weeksFuelMileage.append(tempResult2["2주전"].stringValue)
-                    MainManager.shared.str_My8weeksFuelMileage.append(tempResult3["3주전"].stringValue)
-                    MainManager.shared.str_My8weeksFuelMileage.append(tempResult4["4주전"].stringValue)
-                    MainManager.shared.str_My8weeksFuelMileage.append(tempResult5["5주전"].stringValue)
-                    MainManager.shared.str_My8weeksFuelMileage.append(tempResult6["6주전"].stringValue)
-                    MainManager.shared.str_My8weeksFuelMileage.append(tempResult7["7주전"].stringValue)
-                    
-                    print("")
-                }
-                
-        }
-        
-        
-    }
-    
-    func getData8Week_AllMemberFuel() {
-        
-        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
-        // database.php?Req=CarList
-        // "Res":"CarList","CarList":["스파크","크루즈",…..]
-        let parameters = [
-            "Req": "Get8WeeksFuelMileageAllMember",
-            "CheckDate": nowDateDay,
-            "Car_Model": MainManager.shared.member_info.str_car_kind]
-
-        
-        print(parameters)
-        Alamofire.request(MainManager.shared.SeverURL+"database.php", method: .post, parameters: parameters)
-            .responseJSON { response in
-                
-                ToastIndicatorView.shared.close()
-                print(response)
-                //to get status code
-                
-                if let status = response.response?.statusCode {
-                    switch(status){
-                    case 201:
-                        print("example success")
-                    default:
-                        print("error with response status: \(status)")
-                    }
-                }
-                
-                //to get JSON return value
-                // "Res":"Get8WeeksDrivelMileage",[ {"이번주":"10.1"}, {"1주전":"5.8"}, {"2주전":"3.8"}, {"3주전":"5.8"}, {"4주전":"9.8"}, {"5주전":"9.8"}, {"6주전":"3.8"}, {"7주전":"2.8"} ];
-                
-                
-                self.getAllFuel = true
-                
-                
-                if let json = try? JSON(response.result.value) {
-                    
-                    var tempResult0 = JSON(json["Result"][0])
-                    var tempResult1 = JSON(json["Result"][1])
-                    var tempResult2 = JSON(json["Result"][2])
-                    var tempResult3 = JSON(json["Result"][3])
-                    var tempResult4 = JSON(json["Result"][4])
-                    var tempResult5 = JSON(json["Result"][5])
-                    var tempResult6 = JSON(json["Result"][6])
-                    var tempResult7 = JSON(json["Result"][7])
-                    
-                    print( tempResult0["이번주"].stringValue )
-                    print( tempResult1["1주전"].stringValue )
-                    print( tempResult2["2주전"].stringValue )
-                    print( tempResult3["3주전"].stringValue )
-                    print( tempResult4["4주전"].stringValue )
-                    print( tempResult5["5주전"].stringValue )
-                    print( tempResult6["6주전"].stringValue )
-                    print( tempResult7["7주전"].stringValue )
-                    
-                    
-                    MainManager.shared.str_All8weeksFuelMileage.append(tempResult0["이번주"].stringValue)
-                    MainManager.shared.str_All8weeksFuelMileage.append(tempResult1["1주전"].stringValue)
-                    MainManager.shared.str_All8weeksFuelMileage.append(tempResult2["2주전"].stringValue)
-                    MainManager.shared.str_All8weeksFuelMileage.append(tempResult3["3주전"].stringValue)
-                    MainManager.shared.str_All8weeksFuelMileage.append(tempResult4["4주전"].stringValue)
-                    MainManager.shared.str_All8weeksFuelMileage.append(tempResult5["5주전"].stringValue)
-                    MainManager.shared.str_All8weeksFuelMileage.append(tempResult6["6주전"].stringValue)
-                    MainManager.shared.str_All8weeksFuelMileage.append(tempResult7["7주전"].stringValue)
-                    print("")
-                }
-                
-        }
-    }
-    
-    
-    
-    func getData8Week_myDTC() {
-        
-        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
-        // database.php?Req=CarList
-        // "Res":"CarList","CarList":["스파크","크루즈",…..]
-        let parameters = [
-            "Req": "Get8WeeksDTCCount",
-            "CheckDate": nowDateDay,
-            "Car_Model": MainManager.shared.member_info.str_car_kind]
-        
-        print(parameters)
-        Alamofire.request(MainManager.shared.SeverURL+"database.php", method: .post, parameters: parameters)
-            .responseJSON { response in
-                
-                ToastIndicatorView.shared.close()
-                print(response)
-                //to get status code
-               
-                if let status = response.response?.statusCode {
-                    switch(status){
-                    case 201:
-                        print("example success")
-                    default:
-                        print("error with response status: \(status)")
-                    }
-                }
-                
-                
-                self.getMyDTC = true
-                
-
-                
-                
-                //to get JSON return value
-                // "Res":"Get8WeeksDrivelMileage",[ {"이번주":"10.1"}, {"1주전":"5.8"}, {"2주전":"3.8"}, {"3주전":"5.8"}, {"4주전":"9.8"}, {"5주전":"9.8"}, {"6주전":"3.8"}, {"7주전":"2.8"} ];
-                
-                if let json = try? JSON(response.result.value) {
-                    
-                    var tempResult0 = JSON(json["Result"][0])
-                    var tempResult1 = JSON(json["Result"][1])
-                    var tempResult2 = JSON(json["Result"][2])
-                    var tempResult3 = JSON(json["Result"][3])
-                    var tempResult4 = JSON(json["Result"][4])
-                    var tempResult5 = JSON(json["Result"][5])
-                    var tempResult6 = JSON(json["Result"][6])
-                    var tempResult7 = JSON(json["Result"][7])
-                    
-//                    print( tempResult0["이번주"].stringValue )
-//                    print( tempResult1["1주전"].stringValue )
-//                    print( tempResult2["2주전"].stringValue )
-//                    print( tempResult3["3주전"].stringValue )
-//                    print( tempResult4["4주전"].stringValue )
-//                    print( tempResult5["5주전"].stringValue )
-//                    print( tempResult6["6주전"].stringValue )
-//                    print( tempResult7["7주전"].stringValue )
-                    
-                    
-                    MainManager.shared.str_My8WeeksDTCCount.append(tempResult0["이번주"].stringValue)
-                    MainManager.shared.str_My8WeeksDTCCount.append(tempResult1["1주전"].stringValue)
-                    MainManager.shared.str_My8WeeksDTCCount.append(tempResult2["2주전"].stringValue)
-                    MainManager.shared.str_My8WeeksDTCCount.append(tempResult3["3주전"].stringValue)
-                    MainManager.shared.str_My8WeeksDTCCount.append(tempResult4["4주전"].stringValue)
-                    MainManager.shared.str_My8WeeksDTCCount.append(tempResult5["5주전"].stringValue)
-                    MainManager.shared.str_My8WeeksDTCCount.append(tempResult6["6주전"].stringValue)
-                    MainManager.shared.str_My8WeeksDTCCount.append(tempResult7["7주전"].stringValue)
-                    
-                    print("")
-                }
-        }
-    }
-    
-    
-    
-    func getData8Week_AllMemberDTC() {
-        
-        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
-        // database.php?Req=CarList
-        // "Res":"CarList","CarList":["스파크","크루즈",…..]
-        let parameters = [
-            "Req": "Get8WeeksDTCCountAllMember",
-            "CheckDate": nowDateDay,
-            "Car_Model": MainManager.shared.member_info.str_car_kind]
-        
-        print(parameters)
-        Alamofire.request(MainManager.shared.SeverURL+"database.php", method: .post, parameters: parameters)
-            .responseJSON { response in
-                
-                ToastIndicatorView.shared.close()
-                print(response)
-                //to get status code
-               
-                if let status = response.response?.statusCode {
-                    switch(status){
-                    case 201:
-                        print("example success")
-                    default:
-                        print("error with response status: \(status)")
-                    }
-                }
-                
-                //to get JSON return value
-                // "Res":"Get8WeeksDrivelMileage",[ {"이번주":"10.1"}, {"1주전":"5.8"}, {"2주전":"3.8"}, {"3주전":"5.8"}, {"4주전":"9.8"}, {"5주전":"9.8"}, {"6주전":"3.8"}, {"7주전":"2.8"} ];
-                
-                
-                self.getAllDTC = true
-                
-                if let json = try? JSON(response.result.value) {
-                    
-                    var tempResult0 = JSON(json["Result"][0])
-                    var tempResult1 = JSON(json["Result"][1])
-                    var tempResult2 = JSON(json["Result"][2])
-                    var tempResult3 = JSON(json["Result"][3])
-                    var tempResult4 = JSON(json["Result"][4])
-                    var tempResult5 = JSON(json["Result"][5])
-                    var tempResult6 = JSON(json["Result"][6])
-                    var tempResult7 = JSON(json["Result"][7])
-                    
-//                    print( tempResult0["이번주"].stringValue )
-//                    print( tempResult1["1주전"].stringValue )
-//                    print( tempResult2["2주전"].stringValue )
-//                    print( tempResult3["3주전"].stringValue )
-//                    print( tempResult4["4주전"].stringValue )
-//                    print( tempResult5["5주전"].stringValue )
-//                    print( tempResult6["6주전"].stringValue )
-//                    print( tempResult7["7주전"].stringValue )
-                    
-                    MainManager.shared.str_All8WeeksDTCCount.append(tempResult0["이번주"].stringValue)
-                    MainManager.shared.str_All8WeeksDTCCount.append(tempResult1["1주전"].stringValue)
-                    MainManager.shared.str_All8WeeksDTCCount.append(tempResult2["2주전"].stringValue)
-                    MainManager.shared.str_All8WeeksDTCCount.append(tempResult3["3주전"].stringValue)
-                    MainManager.shared.str_All8WeeksDTCCount.append(tempResult4["4주전"].stringValue)
-                    MainManager.shared.str_All8WeeksDTCCount.append(tempResult5["5주전"].stringValue)
-                    MainManager.shared.str_All8WeeksDTCCount.append(tempResult6["6주전"].stringValue)
-                    MainManager.shared.str_All8WeeksDTCCount.append(tempResult7["7주전"].stringValue)
-                    
-                    print("")
-                }
-                
-        }
-    }
     
     
     
     
-    // 금주 DTC
-    func getDataWeekDTCCount() {
-        
-        ToastIndicatorView.shared.setup(self.view, txt_msg: "")
-        // database.php?Req=CarList
-        // "Res":"CarList","CarList":["스파크","크루즈",…..]
-        let parameters = [
-            "Req": "GetDTCCount",
-            "CheckDate": nowDateDay,
-            "Car_Model": MainManager.shared.member_info.str_car_kind]
-        
-        print(parameters)
-        Alamofire.request(MainManager.shared.SeverURL+"database.php", method: .post, parameters: parameters)
-            .responseJSON { response in
-                
-                ToastIndicatorView.shared.close()
-                print(response)
-                //to get status code
-                
-                if let status = response.response?.statusCode {
-                    switch(status){
-                    case 201:
-                        print("example success")
-                    default:
-                        print("error with response status: \(status)")
-                    }
-                }
-                
-                //to get JSON return value
-                // "Res":"Get8WeeksDrivelMileage",[ {"이번주":"10.1"}, {"1주전":"5.8"}, {"2주전":"3.8"}, {"3주전":"5.8"}, {"4주전":"9.8"}, {"5주전":"9.8"}, {"6주전":"3.8"}, {"7주전":"2.8"} ];
-                
-                self.getWeekDTC = true
-                
-                if let json = try? JSON(response.result.value) {
-                    
-                    MainManager.shared.member_info.str_ThisWeekDtcCount = json["Result"].stringValue
-                    
-                    print("")
-                }
-        }
-    }
+    
+    
+    
+    
+    
+    
+    
+    
+   
+    
+    
+    
+    
+    
+    
+    
+    
+   
     
     
     
@@ -1179,92 +697,6 @@ class MainViewController: UIViewController, UITextFieldDelegate {
     
     
     
-    func readMyLocalData() {
-        
-        let defaults = UserDefaults.standard
-        
-        // 클라에 저장된 유저 데이타 불러오기
-        if UserDefaults.standard.object(forKey: "str_id_nick") != nil
-        { MainManager.shared.member_info.str_id_nick = defaults.string(forKey: "str_id_nick")! }
-        if UserDefaults.standard.object(forKey: "str_password") != nil
-        { MainManager.shared.member_info.str_password = defaults.string(forKey: "str_password")! }
-        
-        
-        
-        if UserDefaults.standard.object(forKey: "str_id_nick") != nil
-        { MainManager.shared.member_info.str_id_nick = defaults.string(forKey: "str_id_nick")! }
-        
-        if UserDefaults.standard.object(forKey: "str_id_phone_num") != nil
-        { MainManager.shared.member_info.str_id_phone_num = defaults.string(forKey: "str_id_phone_num")! }
-        if UserDefaults.standard.object(forKey: "str_car_kind") != nil
-        { MainManager.shared.member_info.str_car_kind = defaults.string(forKey: "str_car_kind")! }
-        
-        if UserDefaults.standard.object(forKey: "str_car_year") != nil
-        { MainManager.shared.member_info.str_car_year = defaults.string(forKey: "str_car_year")! }
-        if UserDefaults.standard.object(forKey: "str_car_vin_number") != nil
-        { MainManager.shared.member_info.str_car_vin_number = defaults.string(forKey: "str_car_vin_number")! }
-        if UserDefaults.standard.object(forKey: "str_car_fuel_type") != nil
-        { MainManager.shared.member_info.str_car_fuel_type = defaults.string(forKey: "str_car_fuel_type")! }
-        
-        if UserDefaults.standard.object(forKey: "str_car_plate_num") != nil
-        { MainManager.shared.member_info.str_car_plate_num = defaults.string(forKey: "str_car_plate_num")! }
-        if UserDefaults.standard.object(forKey: "str_car_year") != nil
-        { MainManager.shared.member_info.str_car_year = defaults.string(forKey: "str_car_year")! }
-        if UserDefaults.standard.object(forKey: "str_TotalAvgFuelMileage") != nil
-        { MainManager.shared.member_info.str_TotalAvgFuelMileage = defaults.string(forKey: "str_TotalAvgFuelMileage")! }
-        
-//        if UserDefaults.standard.object(forKey: "str_ThisWeekFuelMileage") != nil
-//        { MainManager.shared.member_info.str_ThisWeekFuelMileage = defaults.string(forKey: "str_ThisWeekFuelMileage")! }
-        
-        
-        
-        if UserDefaults.standard.object(forKey: "i_car_piker_select") != nil
-        { MainManager.shared.member_info.i_car_piker_select = defaults.integer(forKey: "i_car_piker_select") }
-        if UserDefaults.standard.object(forKey: "i_year_piker_select") != nil
-        { MainManager.shared.member_info.i_year_piker_select = defaults.integer(forKey: "i_year_piker_select") }
-        if UserDefaults.standard.object(forKey: "i_fuel_piker_select") != nil
-        { MainManager.shared.member_info.i_fuel_piker_select = defaults.integer(forKey: "i_fuel_piker_select") }
-        
-        //총 주행거리, 당주 주행거리, 누적 연비, 당주 연비-----------------------------------------------------------------
-        if UserDefaults.standard.object(forKey: "str_TotalDriveMileage") != nil
-        { MainManager.shared.member_info.str_TotalDriveMileage = defaults.string(forKey: "str_TotalDriveMileage")! }
-        
-//        if UserDefaults.standard.object(forKey: "str_ThisWeekDriveMileage") != nil
-//        { MainManager.shared.member_info.str_ThisWeekDriveMileage = defaults.string(forKey: "str_ThisWeekDriveMileage")! }
-        
-        if UserDefaults.standard.object(forKey: "str_TotalAvgFuelMileage") != nil
-        { MainManager.shared.member_info.str_TotalAvgFuelMileage = defaults.string(forKey: "str_TotalAvgFuelMileage")! }
-        
-//        if UserDefaults.standard.object(forKey: "str_ThisWeekFuelMileage") != nil
-//        { MainManager.shared.member_info.str_ThisWeekFuelMileage = defaults.string(forKey: "str_ThisWeekFuelMileage")! }
-        
-        
-        
-        if UserDefaults.standard.object(forKey: "str_Car_Status_Seed") != nil
-        { MainManager.shared.member_info.str_Car_Status_Seed = defaults.string(forKey: "str_Car_Status_Seed")! }
-        
-        
-        
-        // PIN CODE
-        if UserDefaults.standard.object(forKey: "str_LocalPinCode") != nil
-        { MainManager.shared.member_info.str_LocalPinCode = defaults.string(forKey: "str_LocalPinCode")! }
-        
-        // BLE_MAC_ADDRESS
-        if UserDefaults.standard.object(forKey: "carFriendsMacAdd") != nil
-        { MainManager.shared.member_info.carFriendsMacAdd = defaults.string(forKey: "carFriendsMacAdd")! }
-        
-        
-//        print("_____ 회원가입된 정보 불러오기 _____")
-        print(MainManager.shared.member_info.str_id_nick)
-        print(MainManager.shared.member_info.str_id_phone_num)
-        print(MainManager.shared.member_info.str_car_kind)
-        print(MainManager.shared.member_info.str_car_year)
-        print(MainManager.shared.member_info.str_car_vin_number)
-        print(MainManager.shared.member_info.str_car_fuel_type)
-        print(MainManager.shared.member_info.str_car_plate_num)
-        print(MainManager.shared.member_info.str_car_year)
-        print(MainManager.shared.member_info.str_TotalAvgFuelMileage)
-    }
 }
 
 
@@ -1278,7 +710,7 @@ class MainViewController: UIViewController, UITextFieldDelegate {
 
 
 
-
+// 블루투스 켜라 팝업
 extension MainViewController: CBPeripheralDelegate, CBCentralManagerDelegate {
     
     // 핸드폰 블루투스 상태?
@@ -1296,22 +728,23 @@ extension MainViewController: CBPeripheralDelegate, CBCentralManagerDelegate {
         case .poweredOff:
             print("central.state is .poweredOff")
             
-            if( MainManager.shared.member_info.isBLE_ON_POPUP_CHECK == false ) {
+            if( MainManager.shared.info.isBLE_ON_POPUP_CHECK == false ) {
                 // 블루투스 켜라 팝업
                 self.performSegue(withIdentifier: "blueToothOffPopSegue", sender: self)
-                MainManager.shared.member_info.isBLE_ON_POPUP_CHECK = true
+                MainManager.shared.info.isBLE_ON_POPUP_CHECK = true
                 print("blueToothOffPopSegue")
-            }            
-            MainManager.shared.member_info.isBLE_ON = false
+            }
+            MainManager.shared.info.isBLE_ON = false
+            
         case .poweredOn:
             print("central.state is .poweredOn")
-            MainManager.shared.member_info.isBLE_ON = true
+            MainManager.shared.info.isBLE_ON = true
         default:
             print("central.state is .other")
         }
     }
     
-    
+    // 블루투스 켜라 팝업
     func initStartBLE() {
         
 //        // BLE init

@@ -5,6 +5,20 @@
       "scale" : "1x"
     },
     {
+      "resizing" : {
+        "mode" : "9-part",
+        "center" : {
+          "mode" : "tile",
+          "width" : 1,
+          "height" : 1
+        },
+        "cap-insets" : {
+          "bottom" : 88,
+          "top" : 88,
+          "right" : 344,
+          "left" : 343
+        }
+      },
       "idiom" : "universal",
       "filename" : "D-01-TextBg@2x.png",
       "scale" : "2x"

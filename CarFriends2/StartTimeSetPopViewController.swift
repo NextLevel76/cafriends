@@ -12,7 +12,7 @@ class StartTimeSetPopViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var btn_cancel: UIButton!
     @IBOutlet weak var btn_OK: UIButton!
 
-        
+    
     var strHours:String = "00"
     var strMin:String = "00"
     
@@ -27,7 +27,7 @@ class StartTimeSetPopViewController: UIViewController, UITextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        MainManager.shared.bStartPopTimeReserv = false
+        MainManager.shared.info.bStartPopTimeReserv = false
 
         btn_OK.backgroundColor = UIColor(red: 11/256, green: 85/255, blue: 156/255, alpha: 1)
         btn_cancel.backgroundColor = UIColor(red: 11/256, green: 85/255, blue: 156/255, alpha: 1)
@@ -70,7 +70,7 @@ class StartTimeSetPopViewController: UIViewController, UITextFieldDelegate {
     
     @IBAction func pressed_cancel(_ sender: UIButton) {
         
-        MainManager.shared.bStartPopTimeReserv = false
+        MainManager.shared.info.bStartPopTimeReserv = false
        
         // self close
         dismiss(animated: true)
@@ -82,16 +82,16 @@ class StartTimeSetPopViewController: UIViewController, UITextFieldDelegate {
         
         
         
-        MainManager.shared.bStartPopTimeReserv = true
-        MainManager.shared.member_info.strCar_Check_ReservedRVSTime = strHours+":"+strMin+":00"
+        MainManager.shared.info.bStartPopTimeReserv = true
+        MainManager.shared.info.strUserInputReservedRVSTime = strHours+":"+strMin+":00"
         
-        print( "__________ strCar_Check_ReservedRVSTime " + MainManager.shared.member_info.strCar_Check_ReservedRVSTime )
+        print( "__________ strUserInputReservedRVSTime = \(MainManager.shared.info.strUserInputReservedRVSTime) " )
         
         // self close
         dismiss(animated: true)
     }
     
-        
+    
     
     // 시간 입력창 글자수 제한 2자로
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
@@ -104,7 +104,7 @@ class StartTimeSetPopViewController: UIViewController, UITextFieldDelegate {
     
     // 피커뷰 닫기
     // Called when 'return' key pressed. return NO to ignore.
-    func textFieldShouldReturn(textField: UITextField) -> Bool {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         
         textField.resignFirstResponder()
         return true

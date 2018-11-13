@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		1B704892C0AE35B83B6076D7 /* Pods_CarFriends2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2B18F4C52A0844427610EB5 /* Pods_CarFriends2.framework */; };
+		CE0A2628219987E2001F3B6A /* PushKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE62D32E218C03D5006F84CA /* PushKit.framework */; };
+		CE0A26292199880D001F3B6A /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE62D330218C03E6006F84CA /* UserNotifications.framework */; };
+		CE2CDF612195128B003B86F8 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CE2CDF632195128B003B86F8 /* InfoPlist.strings */; };
 		CF0B087E20B98ED60056A87E /* CustomA0105TableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0B087D20B98ED60056A87E /* CustomA0105TableViewCell.swift */; };
 		CF15081D21106BDC001A24FC /* BluetoothOffPopViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF15081C21106BDC001A24FC /* BluetoothOffPopViewController.swift */; };
 		CF2CCC2320B90F1E00AA97D9 /* A01_01_View.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2CCC1920B90F1E00AA97D9 /* A01_01_View.swift */; };
@@ -19,7 +22,7 @@
 		CF2CCC2A20B90F1E00AA97D9 /* A01_04_View.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF2CCC2020B90F1E00AA97D9 /* A01_04_View.xib */; };
 		CF2CCC2B20B90F1E00AA97D9 /* A01_05_View.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2CCC2120B90F1E00AA97D9 /* A01_05_View.swift */; };
 		CF2CCC2C20B90F1E00AA97D9 /* A01_05_View.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF2CCC2220B90F1E00AA97D9 /* A01_05_View.xib */; };
-		CF3562AD20CFB9BF0015ACBC /* BlueToothViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF3562AC20CFB9BF0015ACBC /* BlueToothViewController.swift */; };
+		CF3562AD20CFB9BF0015ACBC /* GuideViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF3562AC20CFB9BF0015ACBC /* GuideViewController.swift */; };
 		CF3BA48A20BA307000419770 /* CustomA0106TableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF3BA48920BA307000419770 /* CustomA0106TableViewCell.swift */; };
 		CF3BA48C20BA3FC600419770 /* A02_ScrollMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF3BA48B20BA3FC600419770 /* A02_ScrollMenu.swift */; };
 		CF3BA48E20BA5D9000419770 /* A02_01_View.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF3BA48D20BA5D9000419770 /* A02_01_View.swift */; };
@@ -218,6 +221,13 @@
 /* Begin PBXFileReference section */
 		164EEC2455911BC453FA071B /* Pods-CarFriends2.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CarFriends2.debug.xcconfig"; path = "Pods/Target Support Files/Pods-CarFriends2/Pods-CarFriends2.debug.xcconfig"; sourceTree = "<group>"; };
 		489AC366EBC89051FA1278A6 /* Pods-CarFriends2.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CarFriends2.release.xcconfig"; path = "Pods/Target Support Files/Pods-CarFriends2/Pods-CarFriends2.release.xcconfig"; sourceTree = "<group>"; };
+		CE2CDF622195128B003B86F8 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		CE2CDF6421951357003B86F8 /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/Main.strings; sourceTree = "<group>"; };
+		CE2CDF6521951359003B86F8 /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
+		CE2CDF662195135B003B86F8 /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		CE62D32D218C03B3006F84CA /* CarFriends2.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CarFriends2.entitlements; sourceTree = "<group>"; };
+		CE62D32E218C03D5006F84CA /* PushKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PushKit.framework; path = System/Library/Frameworks/PushKit.framework; sourceTree = SDKROOT; };
+		CE62D330218C03E6006F84CA /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotifications.framework; path = System/Library/Frameworks/UserNotifications.framework; sourceTree = SDKROOT; };
 		CF0B087D20B98ED60056A87E /* CustomA0105TableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomA0105TableViewCell.swift; sourceTree = "<group>"; };
 		CF15081C21106BDC001A24FC /* BluetoothOffPopViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothOffPopViewController.swift; sourceTree = "<group>"; };
 		CF2CCC1920B90F1E00AA97D9 /* A01_01_View.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = A01_01_View.swift; sourceTree = "<group>"; };
@@ -229,7 +239,7 @@
 		CF2CCC2020B90F1E00AA97D9 /* A01_04_View.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = A01_04_View.xib; sourceTree = "<group>"; };
 		CF2CCC2120B90F1E00AA97D9 /* A01_05_View.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = A01_05_View.swift; sourceTree = "<group>"; };
 		CF2CCC2220B90F1E00AA97D9 /* A01_05_View.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = A01_05_View.xib; sourceTree = "<group>"; };
-		CF3562AC20CFB9BF0015ACBC /* BlueToothViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlueToothViewController.swift; sourceTree = "<group>"; };
+		CF3562AC20CFB9BF0015ACBC /* GuideViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuideViewController.swift; sourceTree = "<group>"; };
 		CF3BA48920BA307000419770 /* CustomA0106TableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomA0106TableViewCell.swift; sourceTree = "<group>"; };
 		CF3BA48B20BA3FC600419770 /* A02_ScrollMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = A02_ScrollMenu.swift; sourceTree = "<group>"; };
 		CF3BA48D20BA5D9000419770 /* A02_01_View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = A02_01_View.swift; sourceTree = "<group>"; };
@@ -285,6 +295,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CE0A26292199880D001F3B6A /* UserNotifications.framework in Frameworks */,
+				CE0A2628219987E2001F3B6A /* PushKit.framework in Frameworks */,
 				CF7D8E7320E0E798008263A9 /* SwiftyJSON.framework in Frameworks */,
 				CF7D8E6F20E0E793008263A9 /* Charts.framework in Frameworks */,
 				CF7D8E7720E0E79C008263A9 /* XLPagerTabStrip.framework in Frameworks */,
@@ -313,6 +325,8 @@
 		A4CCE6B1A0889C5CF1A3ED16 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CE62D330218C03E6006F84CA /* UserNotifications.framework */,
+				CE62D32E218C03D5006F84CA /* PushKit.framework */,
 				D2B18F4C52A0844427610EB5 /* Pods_CarFriends2.framework */,
 				F97622EC7540145F2B93ABF1 /* Pods_CarFriends2Tests.framework */,
 				EDE987B767F5EC0DB00BDC72 /* Pods_CarFriends2UITests.framework */,
@@ -367,10 +381,11 @@
 		CFA67F7C20B4044E00E089D4 /* CarFriends2 */ = {
 			isa = PBXGroup;
 			children = (
+				CE62D32D218C03B3006F84CA /* CarFriends2.entitlements */,
 				CFA67F7D20B4044E00E089D4 /* AppDelegate.swift */,
 				CF8DAF7A20CCF29200D6FF00 /* MainManager.swift */,
 				CFA67FAF20B4429C00E089D4 /* MainViewController.swift */,
-				CF3562AC20CFB9BF0015ACBC /* BlueToothViewController.swift */,
+				CF3562AC20CFB9BF0015ACBC /* GuideViewController.swift */,
 				CF8DAF7220CCC53F00D6FF00 /* Terms01_ViewController.swift */,
 				CF8DAF7420CCC55700D6FF00 /* Terms02_ViewController.swift */,
 				CF8DAF7620CCE02100D6FF00 /* MemberJoinViewController.swift */,
@@ -409,6 +424,7 @@
 				CF746C3E20CAAB7E0080C1C0 /* C02_Menu.swift */,
 				CF746C4020CAAB9D0080C1C0 /* C03_Menu.swift */,
 				CFA67F8120B4044E00E089D4 /* Main.storyboard */,
+				CE2CDF632195128B003B86F8 /* InfoPlist.strings */,
 				CFA67F8420B4044E00E089D4 /* Assets.xcassets */,
 				CFA67F8620B4044E00E089D4 /* LaunchScreen.storyboard */,
 				CFA67F8920B4044E00E089D4 /* Info.plist */,
@@ -511,6 +527,9 @@
 							com.apple.BackgroundModes = {
 								enabled = 1;
 							};
+							com.apple.Push = {
+								enabled = 1;
+							};
 						};
 					};
 					CFA67F8D20B4044F00E089D4 = {
@@ -532,6 +551,7 @@
 			knownRegions = (
 				en,
 				Base,
+				ko,
 			);
 			mainGroup = CFA67F7120B4044E00E089D4;
 			productRefGroup = CFA67F7B20B4044E00E089D4 /* Products */;
@@ -617,6 +637,7 @@
 				CF2CCC2820B90F1E00AA97D9 /* A01_03_View.xib in Resources */,
 				CF2CCC2A20B90F1E00AA97D9 /* A01_04_View.xib in Resources */,
 				CFA67F8320B4044E00E089D4 /* Main.storyboard in Resources */,
+				CE2CDF612195128B003B86F8 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -719,7 +740,7 @@
 				CF7D8E8020E10F7B008263A9 /* StartTimeSetPopViewController.swift in Sources */,
 				CF7D8E8220E1149C008263A9 /* ToastView.swift in Sources */,
 				CF3BA48C20BA3FC600419770 /* A02_ScrollMenu.swift in Sources */,
-				CF3562AD20CFB9BF0015ACBC /* BlueToothViewController.swift in Sources */,
+				CF3562AD20CFB9BF0015ACBC /* GuideViewController.swift in Sources */,
 				CF8DAF7920CCE45000D6FF00 /* JoinPopViewController.swift in Sources */,
 				CF746C4120CAAB9D0080C1C0 /* C03_Menu.swift in Sources */,
 				CF746C3720CAAB6C0080C1C0 /* C01_Menu.swift in Sources */,
@@ -808,10 +829,21 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		CE2CDF632195128B003B86F8 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CE2CDF622195128B003B86F8 /* en */,
+				CE2CDF662195135B003B86F8 /* ko */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+			usesTabs = 0;
+		};
 		CFA67F8120B4044E00E089D4 /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
 				CFA67F8220B4044E00E089D4 /* Base */,
+				CE2CDF6421951357003B86F8 /* ko */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
@@ -820,6 +852,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				CFA67F8720B4044E00E089D4 /* Base */,
+				CE2CDF6521951359003B86F8 /* ko */,
 			);
 			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
@@ -831,6 +864,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -880,6 +914,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -925,6 +960,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = CarFriends2/CarFriends2.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 7SQ7YA78EQ;
@@ -933,6 +969,7 @@
 					"$(PROJECT_DIR)",
 				);
 				INFOPLIST_FILE = CarFriends2/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_SWIFT_FLAGS = "$(inherited) \"-D\" \"COCOAPODS\" \"-Onone\"";
 				PRODUCT_BUNDLE_IDENTIFIER = test.blue.CarFriends2;
@@ -952,6 +989,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = CarFriends2/CarFriends2.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 7SQ7YA78EQ;
@@ -960,6 +998,7 @@
 					"$(PROJECT_DIR)",
 				);
 				INFOPLIST_FILE = CarFriends2/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_SWIFT_FLAGS = "$(inherited) \"-D\" \"COCOAPODS\" \"-Onone\"";
